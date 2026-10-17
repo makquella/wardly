@@ -144,7 +144,7 @@ def test_against_illusions_butterfly_then_the_dragon_lance_into_hydras_breath():
     # No Maelstrom for him; other carries keep the generic counter.
     assert _tb(lineup, ["item_butterfly", "item_hydras_breath"]) is None
     other = situational_item(
-        [], [], META, enemies=lineup, position="carry", minute=20, hero="Juggernaut"
+        [], [], META, enemies=lineup, position="carry", minute=20, hero="Medusa"
     )
     assert other["key"] == "maelstrom"
 
@@ -296,10 +296,10 @@ def test_a_consumed_shard_counts_as_owned(monkeypatch):
 
 def test_other_heroes_and_other_positions_keep_the_generic_counters():
     lineup = ["Phantom Assassin", "Queen of Pain", "Lion", "Axe"]
-    jugg = situational_item(
-        [], [], META, enemies=lineup, position="carry", minute=20, hero="Juggernaut"
+    medusa = situational_item(
+        [], [], META, enemies=lineup, position="carry", minute=20, hero="Medusa"
     )
-    assert jugg["key"] == "monkey_king_bar"
+    assert medusa["key"] == "monkey_king_bar"
     assert plan_for("Terrorblade", "mid") is None
     generic_mid = situational_item([], [], META, enemies=lineup, position="mid", minute=20)
     assert _tb(lineup, position="mid") == generic_mid
@@ -523,7 +523,7 @@ def test_the_first_point_and_the_talents_name_the_high_rank_choice():
 def test_other_heroes_keep_the_pro_games_skill_build():
     from app.player_api import PLAYER_SERVICE
 
-    assert PLAYER_SERVICE.skill_build("Juggernaut") is None  # nothing cached in the tests
+    assert PLAYER_SERVICE.skill_build("Medusa") is None  # nothing cached in the tests
 
 
 def test_a_broken_skill_plan_is_refused():
@@ -581,3 +581,74 @@ def test_a_broken_talent_alternative_is_refused():
         talents = {**good["skills"]["talents"], "20": {**row, "instead": instead}}
         with pytest.raises(ValueError):
             validate({**good, "skills": {**good["skills"], "talents": talents}})
+
+
+# --- wave 1: the first carries after Terrorblade -------------------------------------
+
+MAGIC_LINEUP = ["Lion", "Lina", "Leshrac", "Axe"]
+
+
+def _carry(hero, enemies, owned=(), minute=20):
+    return situational_item(
+        [], list(owned), META, enemies=list(enemies), position="carry", minute=minute, hero=hero
+    )
+
+
+@pytest.mark.parametrize(
+    ("hero", "enemies", "key", "why"),
+    [
+        ("Juggernaut", ["Phantom Assassin", "Axe"], "monkey_king_bar", "evasion"),
+        ("Juggernaut", ["Bristleback", "Axe"], "silver_edge", "break"),
+        ("Phantom Lancer", ["Phantom Assassin", "Axe"], "bloodthorn", "evasion_bloodthorn"),
+        ("Phantom Lancer", ["Naga Siren", "Axe"], "butterfly", "illusion_evasion"),
+        ("Luna", ["Spectre", "Axe"], "silver_edge", "break"),
+        ("Lifestealer", ["Windranger", "Axe"], "monkey_king_bar", "evasion"),
+        ("Lifestealer", ["Huskar", "Axe"], "silver_edge", "break"),
+        ("Slark", ["Bristleback", "Axe"], "silver_edge", "break"),
+    ],
+)
+def test_wave_one_counters_come_with_the_plans_reason(hero, enemies, key, why):
+    item = _carry(hero, enemies)
+    assert (item["key"], item["why"], item["enemy"]) == (key, why, enemies[0])
+    assert item["reason"]["en"].startswith(enemies[0])
+    assert item["reason"]["uk"].startswith(enemies[0])
+
+
+@pytest.mark.parametrize(
+    ("hero", "enemies"),
+    [
+        # Battle Fury cleaves, Moon Glaives bounce, Diffusal is in the build.
+        ("Juggernaut", ["Naga Siren", "Axe"]),
+        ("Luna", ["Phantom Lancer", "Axe"]),
+        ("Slark", ["Chaos Knight", "Axe"]),
+        # Blade Fury and Rage: debuff immunity with 80% magic resistance.
+        ("Juggernaut", MAGIC_LINEUP),
+        ("Lifestealer", MAGIC_LINEUP),
+        # His illusions do not break: no Silver Edge.
+        ("Phantom Lancer", ["Bristleback", "Axe"]),
+    ],
+)
+def test_wave_one_suppressed_generic_counters(hero, enemies):
+    assert _carry(hero, enemies) is None
+    # A hero without a plan keeps the generic counter.
+    assert _carry("Medusa", enemies) is not None
+
+
+def test_lifestealer_takes_manta_or_sange_and_yasha_not_both():
+    from app.next_item import next_listed_item
+
+    build = plan_for("Lifestealer", "carry")["build"]
+    items = {e["item"]: {"name": e["name"], "cost": 4000, "components": []} for e in build}
+    meta = {"constants": {"items": items, "by_id": {}}, "popularity": {}}
+    owned = ["item_phase_boots", "item_radiance", "item_armlet"]
+    assert next_listed_item(build, meta, owned)["key"] == "sange_and_yasha"
+    for first in ("item_sange_and_yasha", "item_manta"):
+        assert next_listed_item(build, meta, [*owned, first])["key"] == "ultimate_scepter"
+
+
+def test_juggernaut_tempo_line_is_straight_from_20_to_30():
+    plan = plan_for("Juggernaut", "carry")
+    assert [tempo_threshold(plan, m) for m in (20, 25, 30)] == [11000, 16050, 21100]
+    # Phantom Lancer's line starts at 25:00: nothing earlier.
+    assert tempo_threshold(plan_for("Phantom Lancer", "carry"), 20) is None
+    assert plan_for("Luna", "carry").get("tempo") is None

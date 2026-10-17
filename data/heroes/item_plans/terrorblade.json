@@ -206,6 +206,11 @@
       "name": "terrorblade_conjure_image",
       "agree": 463
     },
+    "names": {
+      "terrorblade_conjure_image": "Conjure Image",
+      "terrorblade_metamorphosis": "Metamorphosis",
+      "terrorblade_reflection": "Reflection"
+    },
     "talents": {
       "10": {
         "name": "special_bonus_unique_terrorblade_4",

@@ -22,6 +22,7 @@
    "win": 95.5
   }
  },
+ "tempo_win_target": 85.0,
  "usual_build": [
   {
    "item": "wraith_band",
@@ -89,7 +90,73 @@
    "minute": 36.5
   }
  ],
- "tempo_build": [],
+ "tempo_build": [
+  {
+   "item": "wraith_band",
+   "share": 0.346,
+   "minute": 2.2
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.923,
+   "minute": 4.2
+  },
+  {
+   "item": "power_treads",
+   "share": 1.0,
+   "minute": 5.4
+  },
+  {
+   "item": "yasha",
+   "share": 1.0,
+   "minute": 10.0
+  },
+  {
+   "item": "manta",
+   "share": 0.962,
+   "minute": 14.0
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.885,
+   "minute": 19.0
+  },
+  {
+   "item": "butterfly",
+   "share": 0.423,
+   "minute": 21.5
+  },
+  {
+   "item": "skadi",
+   "share": 0.846,
+   "minute": 25.8
+  },
+  {
+   "item": "oblivion_staff",
+   "share": 0.577,
+   "minute": 28.3
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.5,
+   "minute": 28.4
+  },
+  {
+   "item": "orchid",
+   "share": 0.577,
+   "minute": 29.0
+  },
+  {
+   "item": "bloodthorn",
+   "share": 0.462,
+   "minute": 33.2
+  },
+  {
+   "item": "heart",
+   "share": 0.462,
+   "minute": 33.2
+  }
+ ],
  "skills": {
   "games": 317,
   "orders": [
@@ -276,20 +343,20 @@
      "win_without": 50.0
     },
     {
-     "item": "magic_wand",
-     "share": 0.913,
-     "elsewhere": 0.796,
-     "lift": 1.15,
-     "win_with": 57.1,
-     "win_without": 0.0
-    },
-    {
      "item": "skadi",
      "share": 0.609,
      "elsewhere": 0.527,
      "lift": 1.15,
      "win_with": 50.0,
      "win_without": 55.6
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.913,
+     "elsewhere": 0.796,
+     "lift": 1.15,
+     "win_with": 57.1,
+     "win_without": 0.0
     },
     {
      "item": "butterfly",
@@ -574,20 +641,20 @@
      "win_without": 28.6
     },
     {
-     "item": "magic_wand",
-     "share": 0.818,
-     "elsewhere": 0.802,
-     "lift": 1.02,
-     "win_with": 48.9,
-     "win_without": 60.0
-    },
-    {
      "item": "great_famango",
      "share": 0.109,
      "elsewhere": 0.107,
      "lift": 1.02,
      "win_with": 66.7,
      "win_without": 49.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.818,
+     "elsewhere": 0.802,
+     "lift": 1.02,
+     "win_with": 48.9,
+     "win_without": 60.0
     },
     {
      "item": "yasha",
@@ -716,20 +783,20 @@
      "win_without": 27.8
     },
     {
-     "item": "manta",
-     "share": 0.956,
-     "elsewhere": 0.956,
-     "lift": 1.0,
-     "win_with": 47.2,
-     "win_without": 40.0
-    },
-    {
      "item": "aghanims_shard",
      "share": 0.442,
      "elsewhere": 0.441,
      "lift": 1.0,
      "win_with": 56.0,
      "win_without": 39.7
+    },
+    {
+     "item": "manta",
+     "share": 0.956,
+     "elsewhere": 0.956,
+     "lift": 1.0,
+     "win_with": 47.2,
+     "win_without": 40.0
     }
    ]
   },
@@ -762,20 +829,20 @@
      "win_without": 100.0
     },
     {
-     "item": "butterfly",
-     "share": 0.278,
-     "elsewhere": 0.274,
-     "lift": 1.01,
-     "win_with": 100.0,
-     "win_without": 53.8
-    },
-    {
      "item": "yasha",
      "share": 1.0,
      "elsewhere": 0.99,
      "lift": 1.01,
      "win_with": 66.7,
      "win_without": null
+    },
+    {
+     "item": "butterfly",
+     "share": 0.278,
+     "elsewhere": 0.274,
+     "lift": 1.01,
+     "win_with": 100.0,
+     "win_without": 53.8
     },
     {
      "item": "ultimate_scepter",

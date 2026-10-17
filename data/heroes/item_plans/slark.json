@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "hero": "Slark",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-17",
+  "sources": {
+    "games": "370 league games since 7.41 (data/heroes/item_stats), win 50.0%. Reproduce: python scripts/hero_item_stats.py slark.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 93, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. Shadow Blade is in his build (35%, ~23 min): against Bristleback, Spectre or Huskar finish it into Silver Edge, 36% of 44 games against them (12% otherwise), won 75% against 50%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "diffusal_blade",
+      "name": "Diffusal Blade"
+    },
+    {
+      "item": "mage_slayer",
+      "name": "Mage Slayer"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "invis_sword",
+      "name": "Shadow Blade"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "disperser",
+      "name": "Disperser"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 86% (4), power_treads 100% (6), diffusal_blade 85% (12), pers 40% (14), mage_slayer 36% (16), echo_sabre 20% (16), ultimate_scepter 74% (21), great_famango 22% (22), invis_sword 35% (23), aghanims_shard 58% (28), silver_edge 21% (28), black_king_bar 35% (29), skadi 25% (35), disperser 34% (36).",
+  "skills": {
+    "order": [
+      "slark_dark_pact",
+      "slark_pounce",
+      "slark_saltwater_shiv"
+    ],
+    "games": 370,
+    "first_agree": 355,
+    "opening": {
+      "name": "slark_pounce",
+      "agree": 209
+    },
+    "names": {
+      "slark_dark_pact": "Dark Pact",
+      "slark_pounce": "Pounce",
+      "slark_saltwater_shiv": "Saltwater Shiv"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_slark",
+        "label": "Pounce Leash",
+        "picked": 206,
+        "games": 368
+      },
+      "15": {
+        "name": "special_bonus_unique_slark_2",
+        "label": "Dark Pact Damage",
+        "picked": 264,
+        "games": 346
+      },
+      "20": {
+        "name": "special_bonus_unique_slark_7",
+        "label": "Shadow Dance Attack Speed",
+        "picked": 168,
+        "games": 192
+      },
+      "25": {
+        "name": "special_bonus_unique_slark_4",
+        "label": "Essence Shift Duration",
+        "picked": 58,
+        "games": 96
+      }
+    },
+    "basis": "370 games: maxed slark_dark_pact > slark_pounce > slark_saltwater_shiv 311 (win 50.5%), slark_dark_pact > slark_pounce 27 (win 29.6%), slark_dark_pact > slark_saltwater_shiv > slark_pounce 17 (win 58.8%); talents 10: Pounce Leash 206/368 (54.9%), Dark Pact Cooldown 162/368 (44.4%); 15: Dark Pact Damage 264/346 (50.0%), Shadow Dance Regen 82/346 (62.2%); 20: Shadow Dance Attack Speed 168/192 (60.1%), Agility gain/stolen per Essence Shift Stack 24/192 (66.7%); 25: Essence Shift Duration 58/96 (70.7%), Shadow Dance Duration 38/96 (63.2%)."
+  },
+  "suppress": {
+    "illusions": "Diffusal Blade and Disperser are in his build and high-rank Slarks do not buy Maelstrom against illusion heroes (Disperser 28% of games against them, 22% otherwise)."
+  }
+}

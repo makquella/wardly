@@ -9,6 +9,7 @@
  "games": 370,
  "win": 50.0,
  "tempo_line": {},
+ "tempo_win_target": 85.0,
  "usual_build": [
   {
    "item": "magic_wand",
@@ -394,20 +395,20 @@
      "win_without": 33.3
     },
     {
-     "item": "ultimate_scepter",
-     "share": 0.688,
-     "elsewhere": 0.689,
-     "lift": 1.0,
-     "win_with": 45.5,
-     "win_without": 40.0
-    },
-    {
      "item": "power_treads",
      "share": 1.0,
      "elsewhere": 1.0,
      "lift": 1.0,
      "win_with": 43.8,
      "win_without": null
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.688,
+     "elsewhere": 0.689,
+     "lift": 1.0,
+     "win_with": 45.5,
+     "win_without": 40.0
     },
     {
      "item": "magic_wand",
@@ -590,20 +591,20 @@
      "win_without": 45.2
     },
     {
-     "item": "disperser",
-     "share": 0.24,
-     "elsewhere": 0.225,
-     "lift": 1.07,
-     "win_with": 75.0,
-     "win_without": 34.2
-    },
-    {
      "item": "diffusal_blade",
      "share": 0.86,
      "elsewhere": 0.8,
      "lift": 1.07,
      "win_with": 44.2,
      "win_without": 42.9
+    },
+    {
+     "item": "disperser",
+     "share": 0.24,
+     "elsewhere": 0.225,
+     "lift": 1.07,
+     "win_with": 75.0,
+     "win_without": 34.2
     },
     {
      "item": "invis_sword",
@@ -636,20 +637,20 @@
      "win_without": 51.4
     },
     {
-     "item": "mage_slayer",
-     "share": 0.446,
-     "elsewhere": 0.311,
-     "lift": 1.43,
-     "win_with": 51.5,
-     "win_without": 52.4
-    },
-    {
      "item": "disperser",
      "share": 0.277,
      "elsewhere": 0.194,
      "lift": 1.43,
      "win_with": 73.2,
      "win_without": 43.9
+    },
+    {
+     "item": "mage_slayer",
+     "share": 0.446,
+     "elsewhere": 0.311,
+     "lift": 1.43,
+     "win_with": 51.5,
+     "win_without": 52.4
     },
     {
      "item": "invis_sword",
@@ -692,20 +693,20 @@
      "win_without": 52.8
     },
     {
-     "item": "wraith_band",
-     "share": 0.149,
-     "elsewhere": 0.144,
-     "lift": 1.03,
-     "win_with": 50.0,
-     "win_without": 52.4
-    },
-    {
      "item": "diffusal_blade",
      "share": 0.824,
      "elsewhere": 0.797,
      "lift": 1.03,
      "win_with": 55.7,
      "win_without": 34.6
+    },
+    {
+     "item": "wraith_band",
+     "share": 0.149,
+     "elsewhere": 0.144,
+     "lift": 1.03,
+     "win_with": 50.0,
+     "win_without": 52.4
     },
     {
      "item": "aghanims_shard",
@@ -1108,7 +1109,7 @@
      "win_without": 41.2
     },
     {
-     "item": "basher",
+     "item": "sange",
      "share": 0.143,
      "elsewhere": 0.117,
      "lift": 1.22,
@@ -1116,7 +1117,7 @@
      "win_without": 33.3
     },
     {
-     "item": "sange",
+     "item": "basher",
      "share": 0.143,
      "elsewhere": 0.117,
      "lift": 1.22,

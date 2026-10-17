@@ -45,7 +45,11 @@ Three layers, so the same detail scales past one hero:
    and the 85% line (the tempo curve), the item order in all won games and in
    the farmed ones, the skill build and each counter per enemy group. Every
    rule below is checked against it; a rule the high-rank games contradict
-   needs a stated reason.
+   needs a stated reason. `--draft` prints a plan skeleton from the same
+   numbers (build, tempo curve, skills with names and talents); a part bought
+   6+ minutes before its upgrade stays a step of its own (Slark's Diffusal
+   Blade before the Disperser). The rules, `suppress` and the words are written
+   by hand.
 1. **The hero's build.** Read `data/meta/stratz_builds.json` (STRATZ
    Divine–Immortal, refreshed weekly) for the position: the core items and
    their minutes. A counter that is already in the build is "buy it earlier";
@@ -95,6 +99,9 @@ Three layers, so the same detail scales past one hero:
    A talent row may carry `instead` ({name, label, enemy group, min}) for the
    lineup that changes the pick, and `never` for a talent the hero should not
    take.
+   `names` maps the ability keys of the order and the first point to their
+   in-game names (OpenDota constants), so the game plan and the skill tips never
+   show a raw key before the pro games are cached.
 7. **Tempo** (optional). `tempo.net_worth` is a curve `[[minute, net worth], ...]`
    from high-rank games of the hero: above it the hero wins most games (read the
    gold timelines in OpenDota Explorer, `player_matches.gold_t`; net worth is
@@ -165,3 +172,19 @@ bought item also means a farmed hero: these are checks, not proof.
 The illusion, Pike and tempo rules come from a player's review (2026-10-17),
 checked against the items' Valve data. Butterfly and other enemy items are not
 visible to a player's GSI, so no rule may depend on them.
+
+## Wave 1: Juggernaut, Phantom Lancer, Luna, Lifestealer, Slark (7.41f, drafted 2026-10-17)
+
+Drafted from `--draft` and the counters in `data/heroes/item_stats/`; the open
+questions went to the player and the plans change with the answers.
+
+| Hero | Rules | Suppressed generic | Tempo |
+|---|---|---|---|
+| Juggernaut | evasion: Monkey King Bar (43% vs 13%, won 62% vs 47%); break: Silver Edge (14% vs 2%, 21 games) | illusions (Battle Fury cleaves), magic (Blade Fury: debuff immunity, 80% magic resistance) | 11.0k at 20:00, 21.1k at 30:00 (the 25:00 point had 11 games) |
+| Phantom Lancer | evasion: Bloodthorn (True Strike for his illusions on the silenced target; Orchid 65% vs 43%); illusions: Butterfly (57% vs 25%, won 75% vs 33%) | break (his illusions do not break; 0 of 18 games) | 15.4k at 25:00, 20.2k at 30:00 |
+| Luna | break: Silver Edge (39% vs 7%, won 61% vs 41%) | illusions (Moon Glaives bounce to 6) | none: no 85% line in 1129 games |
+| Lifestealer | evasion: Monkey King Bar (36% vs 12%); break: Silver Edge (27% vs 2%) | magic (Rage: debuff immunity, 80% magic resistance) | 14.9k at 25:00, 18.2k at 30:00 |
+| Slark | break: Silver Edge (Shadow Blade in his build; 36% vs 12%, won 75% vs 50%) | illusions (Diffusal/Disperser in his build) | none: 78-81% at best |
+
+Builds: Lifestealer takes Sange and Yasha or Manta Style, not both; Luna's
+Crystalys step is the Daedalus it is built into.

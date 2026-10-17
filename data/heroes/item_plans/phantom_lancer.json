@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "hero": "Phantom Lancer",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-17",
+  "sources": {
+    "games": "317 league games since 7.41 (data/heroes/item_stats), win 50.5%. Reproduce: python scripts/hero_item_stats.py phantom_lancer.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 12, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion_bloodthorn",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: {item} silences them, and your attacks and illusions never miss the silenced target",
+        "uk": "{enemy} ухиляється від атак: {item} накладає тишу, і по цілі під тишею ваші атаки й ілюзії не промахуються"
+      },
+      "basis": "Valve 7.41f Bloodthorn: Soul Rend silences for 5 s and gives True Strike to your attacks and your controlled units' attacks against the silenced target, so his illusions stop missing too; its passive pierces evasion on 40% of attacks. It is in his build (~35 min, Orchid at ~30): buy it earlier. Orchid 65% of 23 games against them (44% otherwise), won 67% against 25%."
+    },
+    {
+      "id": "illusion_evasion",
+      "why": "illusion_evasion",
+      "family": "illusions",
+      "item": "butterfly",
+      "name": "Butterfly",
+      "enemy": "illusions",
+      "minute": 20,
+      "basis": "Butterfly: 35% evasion, so about a third of the enemy illusions' attacks miss; high-rank Phantom Lancers: 57% of 28 games against them (25% otherwise), won 75% against 33%.",
+      "reason": {
+        "en": "{enemy} fights with illusions: with the 35% evasion of {item} about a third of their attacks miss you",
+        "uk": "{enemy} б'ється ілюзіями: з 35 % ухилення від {item} приблизно третина їхніх атак по вас промахується"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "bloodthorn",
+      "name": "Bloodthorn"
+    },
+    {
+      "item": "heart",
+      "name": "Heart of Tarrasque"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: wraith_band 34% (2), magic_wand 82% (3), power_treads 100% (6), yasha 99% (11), manta 97% (15), ultimate_scepter 89% (21), oblivion_staff 58% (29), butterfly 35% (29), skadi 66% (29), orchid 57% (30), aghanims_shard 50% (32), bloodthorn 42% (35), heart 34% (36).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        15400
+      ],
+      [
+        30,
+        20200
+      ]
+    ],
+    "items": [
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "bloodthorn",
+        "name": "Bloodthorn"
+      },
+      {
+        "item": "heart",
+        "name": "Heart of Tarrasque"
+      }
+    ],
+    "basis": "Gold lines where he wins 85.0%+: 25:00 16000 (30 games, 86.7%), 30:00 21000 (22 games, 95.5%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "phantom_lancer_spirit_lance",
+      "phantom_lancer_phantom_edge",
+      "phantom_lancer_doppelwalk"
+    ],
+    "games": 317,
+    "first_agree": 263,
+    "opening": {
+      "name": "phantom_lancer_spirit_lance",
+      "agree": 268
+    },
+    "names": {
+      "phantom_lancer_spirit_lance": "Spirit Lance",
+      "phantom_lancer_phantom_edge": "Phantom Rush",
+      "phantom_lancer_doppelwalk": "Doppelganger"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_phantom_lancer_juxtapose_illusio_proc_chance",
+        "label": "Juxtapose Illusion Trigger Chance",
+        "picked": 284,
+        "games": 316
+      },
+      "15": {
+        "name": "special_bonus_unique_phantom_lancer_illusion_lances",
+        "label": "Illusion Spirit Lance Damage",
+        "picked": 219,
+        "games": 297
+      },
+      "20": {
+        "name": "special_bonus_unique_phantom_lancer_juxtapose_damage_in",
+        "label": "Juxtapose Illusion Damage Taken",
+        "picked": 139,
+        "games": 214
+      },
+      "25": {
+        "name": "special_bonus_unique_phantom_lancer_4",
+        "label": "Doppelganger Cooldown",
+        "picked": 92,
+        "games": 95
+      }
+    },
+    "basis": "317 games: maxed phantom_lancer_spirit_lance > phantom_lancer_phantom_edge > phantom_lancer_doppelwalk 241 (win 55.2%), phantom_lancer_phantom_edge > phantom_lancer_spirit_lance > phantom_lancer_doppelwalk 34 (win 32.4%), phantom_lancer_spirit_lance > phantom_lancer_doppelwalk > phantom_lancer_phantom_edge 18 (win 38.9%); talents 10: Juxtapose Illusion Trigger Chance 284/316 (50.4%), Spirit Lance Slow Duration 32/316 (53.1%); 15: Illusion Spirit Lance Damage 219/297 (49.8%), Doppelganger Cast Range 78/297 (65.4%); 20: Juxtapose Illusion Damage Taken 139/214 (59.0%), Spirit Lance Damage 75/214 (66.7%); 25: Doppelganger Cooldown 92/95 (65.2%), Illusory Armaments Duration 3/95 (33.3%)."
+  },
+  "suppress": {
+    "break": "Only his own attack out of Shadow Walk breaks (Valve 7.41f), his illusions do not, and 5700 gold comes off his Manta-Aghanim's-Skadi core; high-rank Phantom Lancers never bought Silver Edge against Bristleback, Spectre or Huskar."
+  }
+}

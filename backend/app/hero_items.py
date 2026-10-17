@@ -319,7 +319,8 @@ def tempo_rows(
 
 def validate_skills(skills: Any, fail: Any) -> None:
     """A plan's `skills`: {order, games, first_agree, opening {name, agree},
-    talents {tier: {name, label, picked, games}}, basis}."""
+    names {ability: in-game name}?, talents {tier: {name, label, picked, games}},
+    basis}."""
 
     def count(value: Any) -> bool:
         return isinstance(value, int) and not isinstance(value, bool) and value > 0
@@ -340,6 +341,11 @@ def validate_skills(skills: Any, fail: Any) -> None:
         or opening["agree"] > games
     ):
         raise fail("skills.opening is {name, agree}")
+    names = skills.get("names", {})
+    if not isinstance(names, dict) or not all(
+        isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in names.items()
+    ):
+        raise fail("skills.names maps an ability name to its in-game name")
     talents = skills.get("talents") or {}
     for tier, talent in talents.items() if isinstance(talents, dict) else []:
         if (
@@ -370,7 +376,7 @@ def validate_skills(skills: Any, fail: Any) -> None:
 def plan_skills(
     plan: dict[str, Any] | None, enemies: list[str] | None = None
 ) -> dict[str, Any] | None:
-    """The plan's skill build in skill_build.skill_order's shape (order,
+    """The plan's skill build in skill_build.skill_order's shape (order, names,
     talents by hero level, opening, first_agree, games); None without one. A
     talent row's `instead` replaces the usual pick when `min` heroes of its
     enemy group are among `enemies` ({name, label, because: {count, enemies}})."""
@@ -395,6 +401,7 @@ def plan_skills(
             }
     return {
         "order": list(skills["order"]),
+        "names": dict(skills.get("names") or {}),
         "games": skills["games"],
         "first_agree": skills["first_agree"],
         "opening": {**opening, "games": skills["games"]} if opening else None,

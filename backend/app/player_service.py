@@ -602,11 +602,12 @@ class PlayerService:
     ) -> dict[str, Any] | None:
         """A hero plan's skill build (high-rank games, its talents for the enemy
         lineup) over the few pro games; their ability names stay for the texts
-        (the ultimate's too)."""
+        (the ultimate's too), with the plan's own names over them."""
         planned = plan_skills(plan_for(hero, get_hero_position(hero)), enemies)
         if planned is None:
             return build
-        return {**planned, "names": dict((build or {}).get("names") or {})}
+        # The pro games also name the ultimate; the plan names its own order.
+        return {**planned, "names": {**((build or {}).get("names") or {}), **planned["names"]}}
 
     def next_item(
         self,

@@ -119,3 +119,14 @@ def test_every_supported_hero_has_a_plan_or_is_pending():
     assert not planned & pending, "a hero with a plan is still listed as pending"
     assert supported <= planned | pending, sorted(supported - planned - pending)
     assert pending <= supported, sorted(pending - supported)
+
+
+@pytest.mark.parametrize("plan", PLANS, ids=lambda p: p["hero"])
+def test_skill_build_names_its_abilities(plan):
+    skills = plan.get("skills")
+    if not skills:
+        pytest.skip("no skill build")
+    named = skills.get("names") or {}
+    for key in [*skills["order"], (skills.get("opening") or {}).get("name")]:
+        if key:
+            assert named.get(key), f"{key} has no in-game name"

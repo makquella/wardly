@@ -16,6 +16,7 @@ for a hero in its usual position:
     python scripts/hero_item_stats.py terrorblade              # print a report
     python scripts/hero_item_stats.py terrorblade --write      # data/heroes/item_stats/
     python scripts/hero_item_stats.py --all --write            # every supported hero
+    python scripts/hero_item_stats.py terrorblade --draft      # a plan skeleton from the file
 
 Read-only, no key. A hero with fewer than --min-games games in the patch is read
 from the previous patch on too. Small samples and «a bought item means a farmed
@@ -343,7 +344,9 @@ def hero_stats(hero: str, since_name: str | None, min_games: int, win: float) ->
     built = built_items()
     won = [r for r in rows if r["win"]]
     line = tempo_line(rows, win)
-    rich = [r for r in won if "20" in line and (r.get("g20") or 0) >= line["20"]["gold"]]
+    # The tempo build: the won games over the earliest line found.
+    first = min(line, key=int) if line else None
+    rich = [r for r in won if first and (r.get(f"g{first}") or 0) >= line[first]["gold"]]
     table, candidates = counters(rows, lineups(hero_id, since, lane, rows), built)
     return {
         "hero": hero,
@@ -356,12 +359,137 @@ def hero_stats(hero: str, since_name: str | None, min_games: int, win: float) ->
         "games": len(rows),
         "win": rate(rows),
         "tempo_line": line,
+        "tempo_win_target": win,
         "usual_build": order(won, built),
         "tempo_build": order(rich, built),
         "skills": skills(rows, hero_npc_name(hero_id)),
         "counters": table,
         "candidates": candidates[:25],
     }
+
+
+DRAFT_SHARE = 0.25
+DRAFT_MIN_COST = 1000
+# A part bought this many minutes before its listed upgrade is its own step
+# (Slark's Diffusal Blade ~12 min, the Disperser ~36), not just the recipe.
+DRAFT_PART_GAP = 6
+
+
+def _listed(rows: list[dict]) -> list[dict]:
+    """Build rows worth naming: real items (1000+ gold) in DRAFT_SHARE+ of the
+    games, without the parts bought on the way to another listed item, as
+    {item, name}."""
+    items = constants("items")
+
+    def parts(key: str, depth: int = 0) -> set[str]:
+        found: set[str] = set()
+        for part in (items.get(key) or {}).get("components") or []:
+            if part and depth < 4:
+                found |= {part, *parts(part, depth + 1)}
+        return found
+
+    keep = [
+        r
+        for r in rows
+        if r["share"] >= DRAFT_SHARE
+        and (
+            int((items.get(r["item"]) or {}).get("cost") or 0) >= DRAFT_MIN_COST
+            or r["item"] == "aghanims_shard"
+        )
+    ]
+    minute = {r["item"]: r["minute"] for r in keep}
+    inside = {
+        part
+        for r in keep
+        for part in parts(r["item"])
+        if part in minute and r["minute"] - minute[part] < DRAFT_PART_GAP
+    }
+    return [
+        {"item": r["item"], "name": (items.get(r["item"]) or {}).get("dname") or r["item"]}
+        for r in keep
+        if r["item"] not in inside
+    ]
+
+
+def ability_names(keys: list[str]) -> dict[str, str]:
+    """{ability key: in-game name} from the OpenDota constants, for the texts."""
+    abilities = constants("abilities")
+    return {
+        key: str((abilities.get(key) or {}).get("dname"))
+        for key in dict.fromkeys(keys)
+        if (abilities.get(key) or {}).get("dname")
+    }
+
+
+def draft(stats: dict[str, Any]) -> dict[str, Any]:
+    """A plan skeleton from a stats file: positions, sources, build, tempo and
+    skills; the rules are left for the review (docs/HERO_ITEM_PLANS.md)."""
+    sk = stats["skills"]
+    top = sk["orders"][0] if sk["orders"] else None
+    opening = sk["openings"][0] if sk["openings"] else None
+    plan: dict[str, Any] = {
+        "schema": 1,
+        "hero": (constants("heroes").get(str(stats["hero_id"])) or {}).get("localized_name")
+        or stats["hero"],
+        "positions": [stats["position"]],
+        "patch": stats["since_patch"],
+        "checked": stats["generated"],
+        "sources": {
+            "games": f"{stats['games']} league games since {stats['since_patch']} "
+            f"(data/heroes/item_stats), win {stats['win']}%.",
+        },
+        "rules": [],
+        "build": _listed(stats["usual_build"]),
+        "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: "
+        + ", ".join(
+            f"{r['item']} {round(100 * r['share'])}% ({round(r['minute'])})"
+            for r in stats["usual_build"]
+        )
+        + ".",
+    }
+    line = stats["tempo_line"]
+    if line:
+        plan["tempo"] = {
+            "net_worth": [
+                [int(m), row["net_worth"]]
+                for m, row in sorted(line.items(), key=lambda kv: int(kv[0]))
+            ],
+            "items": _listed(stats["tempo_build"]),
+            "basis": "Gold lines where he wins "
+            f"{stats['tempo_win_target']}%+: "
+            + ", ".join(
+                f"{m}:00 {r['gold']} ({r['games']} games, {r['win']}%)" for m, r in line.items()
+            )
+            + "; net worth ~0.96 of that gold.",
+            "reason": {"en": "", "uk": ""},
+        }
+    if top and opening:
+        plan["skills"] = {
+            "order": [n for n in top["order"]],
+            "games": sk["games"],
+            "first_agree": sum(
+                o["games"] for o in sk["orders"] if o["order"][:1] == top["order"][:1]
+            ),
+            "opening": {"name": opening["name"], "agree": opening["games"]},
+            "names": ability_names([*top["order"], opening["name"]]),
+            "talents": {
+                level: {k: picks[0][k] for k in ("name", "label", "picked", "games")}
+                for level, picks in sk["talents"].items()
+                if picks
+            },
+            "basis": f"{sk['games']} games: maxed "
+            + ", ".join(
+                f"{' > '.join(o['order'])} {o['games']} (win {o['win']}%)" for o in sk["orders"][:3]
+            )
+            + "; talents "
+            + "; ".join(
+                f"{lvl}: "
+                + ", ".join(f"{t['label']} {t['picked']}/{t['games']} ({t['win']}%)" for t in picks)
+                for lvl, picks in sk["talents"].items()
+            )
+            + ".",
+        }
+    return plan
 
 
 def report(stats: dict[str, Any]) -> None:
@@ -401,6 +529,7 @@ def main() -> int:
     parser.add_argument("hero", nargs="?", help="e.g. terrorblade or 'Phantom Lancer'")
     parser.add_argument("--all", action="store_true", help="every supported hero")
     parser.add_argument("--write", action="store_true", help="write data/heroes/item_stats/")
+    parser.add_argument("--draft", action="store_true", help="print a plan skeleton from the file")
     parser.add_argument("--patch", default=None, help="from this patch on (default: the latest)")
     parser.add_argument("--min-games", type=int, default=300, help="else the patch before too")
     parser.add_argument("--win", type=float, default=85.0, help="the tempo line, win %%")
@@ -414,6 +543,11 @@ def main() -> int:
     else:
         parser.error("name a hero or pass --all")
     for hero in heroes:
+        if args.draft:
+            key = hero.lower().replace(" ", "_").replace("'", "").replace("-", "_")
+            stats = json.loads((OUT_DIR / f"{key}.json").read_text(encoding="utf-8"))
+            print(json.dumps(draft(stats), ensure_ascii=False, indent=2))
+            continue
         stats = hero_stats(hero, args.patch, args.min_games, args.win)
         if args.write:
             OUT_DIR.mkdir(parents=True, exist_ok=True)

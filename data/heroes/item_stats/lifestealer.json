@@ -22,6 +22,7 @@
    "win": 85.4
   }
  },
+ "tempo_win_target": 85.0,
  "usual_build": [
   {
    "item": "magic_wand",
@@ -89,7 +90,93 @@
    "minute": 37.1
   }
  ],
- "tempo_build": [],
+ "tempo_build": [
+  {
+   "item": "phase_boots",
+   "share": 1.0,
+   "minute": 5.5
+  },
+  {
+   "item": "great_famango",
+   "share": 0.2,
+   "minute": 12.8
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.495,
+   "minute": 12.9
+  },
+  {
+   "item": "radiance",
+   "share": 0.947,
+   "minute": 14.0
+  },
+  {
+   "item": "armlet",
+   "share": 0.716,
+   "minute": 17.8
+  },
+  {
+   "item": "yasha",
+   "share": 0.895,
+   "minute": 20.0
+  },
+  {
+   "item": "sange",
+   "share": 0.747,
+   "minute": 20.9
+  },
+  {
+   "item": "manta",
+   "share": 0.347,
+   "minute": 22.0
+  },
+  {
+   "item": "sange_and_yasha",
+   "share": 0.579,
+   "minute": 22.1
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.484,
+   "minute": 26.4
+  },
+  {
+   "item": "buckler",
+   "share": 0.4,
+   "minute": 27.0
+  },
+  {
+   "item": "assault",
+   "share": 0.347,
+   "minute": 28.5
+  },
+  {
+   "item": "basher",
+   "share": 0.663,
+   "minute": 29.4
+  },
+  {
+   "item": "black_king_bar",
+   "share": 0.211,
+   "minute": 31.6
+  },
+  {
+   "item": "monkey_king_bar",
+   "share": 0.242,
+   "minute": 31.8
+  },
+  {
+   "item": "abyssal_blade",
+   "share": 0.389,
+   "minute": 35.1
+  },
+  {
+   "item": "ultimate_scepter_2",
+   "share": 0.211,
+   "minute": 38.8
+  }
+ ],
  "skills": {
   "games": 895,
   "orders": [
@@ -304,20 +391,20 @@
      "win_without": 45.5
     },
     {
-     "item": "manta",
-     "share": 0.319,
-     "elsewhere": 0.318,
-     "lift": 1.0,
-     "win_with": 47.8,
-     "win_without": 44.9
-    },
-    {
      "item": "phase_boots",
      "share": 0.986,
      "elsewhere": 0.99,
      "lift": 1.0,
      "win_with": 45.1,
      "win_without": 100.0
+    },
+    {
+     "item": "manta",
+     "share": 0.319,
+     "elsewhere": 0.318,
+     "lift": 1.0,
+     "win_with": 47.8,
+     "win_without": 44.9
     },
     {
      "item": "yasha",
@@ -476,6 +563,14 @@
      "win_without": 42.9
     },
     {
+     "item": "phase_boots",
+     "share": 0.995,
+     "elsewhere": 0.988,
+     "lift": 1.01,
+     "win_with": 48.0,
+     "win_without": 0.0
+    },
+    {
      "item": "armlet",
      "share": 0.644,
      "elsewhere": 0.638,
@@ -498,14 +593,6 @@
      "lift": 1.01,
      "win_with": 51.5,
      "win_without": 46.0
-    },
-    {
-     "item": "phase_boots",
-     "share": 0.995,
-     "elsewhere": 0.988,
-     "lift": 1.01,
-     "win_with": 48.0,
-     "win_without": 0.0
     },
     {
      "item": "great_famango",
@@ -712,14 +799,6 @@
      "win_without": 40.1
     },
     {
-     "item": "buckler",
-     "share": 0.249,
-     "elsewhere": 0.227,
-     "lift": 1.09,
-     "win_with": 64.0,
-     "win_without": 40.5
-    },
-    {
      "item": "nullifier",
      "share": 0.12,
      "elsewhere": 0.11,
@@ -728,12 +807,20 @@
      "win_without": 46.0
     },
     {
-     "item": "armlet",
-     "share": 0.67,
-     "elsewhere": 0.618,
+     "item": "buckler",
+     "share": 0.249,
+     "elsewhere": 0.227,
+     "lift": 1.09,
+     "win_with": 64.0,
+     "win_without": 40.5
+    },
+    {
+     "item": "sange",
+     "share": 0.665,
+     "elsewhere": 0.616,
      "lift": 1.08,
-     "win_with": 48.8,
-     "win_without": 41.5
+     "win_with": 54.2,
+     "win_without": 30.8
     }
    ]
   },
@@ -1026,20 +1113,20 @@
      "win_without": 43.6
     },
     {
-     "item": "yasha",
-     "share": 0.786,
-     "elsewhere": 0.807,
-     "lift": 0.97,
-     "win_with": 50.8,
-     "win_without": 29.8
-    },
-    {
      "item": "armlet",
      "share": 0.632,
      "elsewhere": 0.648,
      "lift": 0.97,
      "win_with": 48.5,
      "win_without": 42.5
+    },
+    {
+     "item": "yasha",
+     "share": 0.786,
+     "elsewhere": 0.807,
+     "lift": 0.97,
+     "win_with": 50.8,
+     "win_without": 29.8
     }
    ]
   },
@@ -1136,12 +1223,12 @@
      "win_without": 20.0
     },
     {
-     "item": "manta",
-     "share": 0.315,
-     "elsewhere": 0.319,
+     "item": "abyssal_blade",
+     "share": 0.241,
+     "elsewhere": 0.244,
      "lift": 0.99,
-     "win_with": 47.1,
-     "win_without": 62.2
+     "win_with": 76.9,
+     "win_without": 51.2
     }
    ]
   }
