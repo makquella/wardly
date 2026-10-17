@@ -20,6 +20,7 @@ from app.hero_items import (
     groups,
     load_plans,
     plan_for,
+    plan_skills,
     tempo_threshold,
     validate,
 )
@@ -555,3 +556,45 @@ def test_a_broken_skill_plan_is_refused():
     ):
         with pytest.raises(ValueError):
             validate({**good, "skills": broken})
+
+
+def test_level_20_takes_the_stats_when_the_enemy_clears_illusions():
+    from app.player_api import PLAYER_SERVICE
+    from app.skill_tips import UNSPENT_WAIT, SkillTips, read_skills
+
+    def talent_hint(enemies, lang="en"):
+        build = PLAYER_SERVICE.skill_build("Terrorblade", enemies)
+        tips = SkillTips()
+        talents = [False, True, True, False] + [False] * 4  # rows 10 and 15 taken
+        tips.observe(2000, read_skills(_tb_skills(19, [4, 4, 4], sunder=3, talents=talents)))
+        tips.observe(2010, read_skills(_tb_skills(20, [4, 4, 4], sunder=3, talents=talents)))
+        return tips.tip(2010 + UNSPENT_WAIT, lang, alive=True, build=build)["hint"]
+
+    # Two enemy heroes whose area damage or Hex clears illusions: the stats.
+    two = talent_hint(["Lion", "Luna", "Axe"])
+    assert two == (
+        "Level 20: take “+10 All Attributes”. 2 enemy heroes clear illusions fast "
+        "(Lion, Luna): longer images would not last."
+    )
+    assert "+10 All Attributes" in talent_hint(["Lion", "Luna"], "uk")
+    # One of them, or none: the usual pick.
+    for lineup in (["Lion", "Axe"], [], None):
+        assert "Conjure Image Duration" in talent_hint(lineup)
+
+
+def test_sunder_hp_threshold_is_never_the_tip():
+    build = plan_skills(plan_for("Terrorblade", "carry"), ["Lion", "Luna", "Invoker"])
+    assert build["talents"][15]["label"] == "Metamorphosis Cooldown"
+    assert all(
+        t["name"] != "special_bonus_unique_terrorblade_sunder_hp_threshold"
+        for t in build["talents"].values()
+    )
+
+
+def test_a_broken_talent_alternative_is_refused():
+    good = json.loads((ITEM_PLANS_DIR / "terrorblade.json").read_text(encoding="utf-8"))
+    row = good["skills"]["talents"]["20"]
+    for instead in ({**row["instead"], "enemy": "tanks"}, {**row["instead"], "min": 0}):
+        talents = {**good["skills"]["talents"], "20": {**row, "instead": instead}}
+        with pytest.raises(ValueError):
+            validate({**good, "skills": {**good["skills"], "talents": talents}})

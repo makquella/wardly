@@ -536,7 +536,7 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         save_item=save_item,
         lane_record=lane_record,
         draft_item=draft,
-        skill_build=PLAYER_SERVICE.skill_build(hero),
+        skill_build=PLAYER_SERVICE.skill_build(hero, trackers.enemies or None),
     )
     return MATCH_MEMORY.live_hints(state, extra, trackers, inputs, lang)
 

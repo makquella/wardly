@@ -563,7 +563,7 @@ class PlayerService:
         self._plans[key] = (now, result)
         return result
 
-    def skill_build(self, hero: str) -> dict[str, Any] | None:
+    def skill_build(self, hero: str, enemies: list[str] | None = None) -> dict[str, Any] | None:
         """How pro players level the hero (app/skill_build.skill_order) for the live
         skill tip and the game plan; read once a minute, fetched on the job thread
         when missing or a week old (stale data is used meanwhile)."""
@@ -574,7 +574,7 @@ class PlayerService:
         cached = self._plans.get(key)
         now = time.monotonic()
         if cached is not None and now - cached[0] < GAME_PLAN_CACHE_SECONDS:
-            return cached[1]
+            return self._planned_skills(hero, cached[1], enemies)
         store_key = f"{SKILLS_KEY}:{hero_id}"
         client = self.client
         stored = self.store.cache_get(store_key)
@@ -593,13 +593,20 @@ class PlayerService:
                 ),
             )
         build = skill_order(stored)
-        # A hero plan's skill build (high-rank games) replaces the few pro games;
-        # their ability names stay for the texts (the ultimate's too).
-        planned = plan_skills(plan_for(hero, get_hero_position(hero)))
-        if planned is not None:
-            build = {**planned, "names": dict((build or {}).get("names") or {})}
         self._plans[key] = (now, build)
-        return build
+        return self._planned_skills(hero, build, enemies)
+
+    @staticmethod
+    def _planned_skills(
+        hero: str, build: dict[str, Any] | None, enemies: list[str] | None
+    ) -> dict[str, Any] | None:
+        """A hero plan's skill build (high-rank games, its talents for the enemy
+        lineup) over the few pro games; their ability names stay for the texts
+        (the ultimate's too)."""
+        planned = plan_skills(plan_for(hero, get_hero_position(hero)), enemies)
+        if planned is None:
+            return build
+        return {**planned, "names": dict((build or {}).get("names") or {})}
 
     def next_item(
         self,

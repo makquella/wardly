@@ -64,7 +64,7 @@ RULE_KEYS = {"id", "why", "family", "item", "name", "enemy", "also", "minute", "
 
 def groups() -> dict[str, dict[str, str | None]]:
     """Enemy hero groups a rule names: {group: {hero: spell or None}}."""
-    from app.draft_analysis import COUNTERS, ESCAPES, JUMPERS
+    from app.draft_analysis import COUNTERS, ESCAPES, ILLUSION_CLEARERS, JUMPERS
     from app.situational_items import BREAK_PASSIVES
 
     return {
@@ -74,6 +74,7 @@ def groups() -> dict[str, dict[str, str | None]]:
         "escape": dict(ESCAPES),
         "break": dict(BREAK_PASSIVES),
         "jumpers": dict(JUMPERS),
+        "illusion_clearers": dict.fromkeys(ILLUSION_CLEARERS),
     }
 
 
@@ -301,23 +302,51 @@ def validate_skills(skills: Any, fail: Any) -> None:
             or talent["picked"] > talent["games"]
         ):
             raise fail(f"skills.talents[{tier}] is {{name, label, picked, games}}")
+        instead = talent.get("instead")
+        if instead is not None and (
+            not isinstance(instead, dict)
+            or not isinstance(instead.get("name"), str)
+            or not instead.get("label")
+            or instead.get("enemy") not in groups()
+            or not count(instead.get("min"))
+            or not isinstance(instead.get("basis"), str)
+            or not instead["basis"].strip()
+        ):
+            raise fail(f"skills.talents[{tier}].instead is {{name, label, enemy, min, basis}}")
     if not isinstance(skills.get("basis"), str) or not skills["basis"].strip():
         raise fail("skills needs a basis")
 
 
-def plan_skills(plan: dict[str, Any] | None) -> dict[str, Any] | None:
+def plan_skills(
+    plan: dict[str, Any] | None, enemies: list[str] | None = None
+) -> dict[str, Any] | None:
     """The plan's skill build in skill_build.skill_order's shape (order,
-    talents by hero level, opening, first_agree, games); None without one."""
+    talents by hero level, opening, first_agree, games); None without one. A
+    talent row's `instead` replaces the usual pick when `min` heroes of its
+    enemy group are among `enemies` ({name, label, because: {count, enemies}})."""
     skills = (plan or {}).get("skills")
     if not skills:
         return None
     opening = skills.get("opening")
+    known = groups()
+    talents: dict[int, dict[str, Any]] = {}
+    for tier, talent in (skills.get("talents") or {}).items():
+        instead = talent.get("instead")
+        seen = [e for e in enemies or [] if e in known[instead["enemy"]]] if instead else []
+        if instead and len(seen) >= instead["min"]:
+            talents[int(tier)] = {
+                "name": instead["name"],
+                "label": instead["label"],
+                "because": {"group": instead["enemy"], "count": len(seen), "enemies": seen[:2]},
+            }
+        else:
+            talents[int(tier)] = {
+                k: v for k, v in talent.items() if k in ("name", "label", "picked", "games")
+            }
     return {
         "order": list(skills["order"]),
         "games": skills["games"],
         "first_agree": skills["first_agree"],
         "opening": {**opening, "games": skills["games"]} if opening else None,
-        "talents": {
-            int(tier): dict(talent) for tier, talent in (skills.get("talents") or {}).items()
-        },
+        "talents": talents,
     }

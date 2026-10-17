@@ -124,6 +124,24 @@ JUMPERS = {
     "Phantom Assassin": "Phantom Strike",
     "Spirit Breaker": "Charge of Darkness",
 }
+# Heroes whose area damage or Hex clears illusions fast (hero_items.py: a
+# Terrorblade's level-20 talent). From his 7.41 league games: with 2+ of them
+# in the enemy lineup he takes +10 All Attributes in 44% of games, with none in
+# 11%; heroes without area damage that read high there are left out.
+ILLUSION_CLEARERS = {
+    "Invoker",
+    "Mars",
+    "Disruptor",
+    "Dawnbreaker",
+    "Dark Seer",
+    "Venomancer",
+    "Lion",
+    "Alchemist",
+    "Lina",
+    "Lich",
+    "Luna",
+    "Phoenix",
+}
 # Lineups (live advice only): heroes whose damage is mostly magic, and
 # right-click carries. LINEUP_MIN of one kind among the enemies seen asks for
 # the item against it (situational_items.py, the support's save item tip).

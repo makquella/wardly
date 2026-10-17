@@ -59,6 +59,19 @@ TEXTS = {
             "Талант {tier}-го рівня: про-гравці на цьому герої беруть «{name}» ({picked} з {games}).",
         ),
     },
+    # A hero plan's talent for the enemy lineup (hero_items.plan_skills).
+    "talent_clearers": {
+        "en": (
+            "Pick a talent",
+            "Level {tier}: take “{name}”. {count} enemy heroes clear illusions fast ({enemies}): "
+            "longer images would not last.",
+        ),
+        "uk": (
+            "Оберіть талант",
+            "Талант {tier}-го рівня: беріть «{name}». Ворожих героїв, які швидко вбивають ілюзії, — "
+            "{count} ({enemies}): довші ілюзії не проживуть.",
+        ),
+    },
     "skill": {
         "en": ("Put the point in {name}", "The pro order on this hero: {order}."),
         "uk": ("Вкладіть очко в {name}", "Порядок прокачки в про-гравців на цьому герої: {order}."),
@@ -277,7 +290,18 @@ class SkillTips:
         tier = _talent_due(skills)
         if tier is not None:
             pro = ((build or {}).get("talents") or {}).get(tier)
-            if pro:
+            because = (pro or {}).get("because")
+            if pro and because and because.get("group") == "illusion_clearers":
+                return _hint(
+                    "talent_clearers",
+                    f"skill-talent@{level}",
+                    lang,
+                    tier=tier,
+                    name=pro["label"],
+                    count=because["count"],
+                    enemies=", ".join(because["enemies"]),
+                )
+            if pro and "picked" in pro:
                 return _hint(
                     "talent_pro",
                     f"skill-talent@{level}",

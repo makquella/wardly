@@ -60,6 +60,9 @@ allies and the player's own hero are never counted.
    their counts (the skill tips quote them: «463 of 634 games»), from the same
    games; it replaces the 3-5 recent pro games of `skill_build.py`. Check the
    order against the enemy groups too: if it does not change, one order stays.
+   A talent row may carry `instead` ({name, label, enemy group, min}) for the
+   lineup that changes the pick, and `never` for a talent the hero should not
+   take.
 7. **Tempo** (optional). `tempo.net_worth` is a curve `[[minute, net worth], ...]`
    from high-rank games of the hero: above it the hero wins most games (read the
    gold timelines in OpenDota Explorer, `player_matches.gold_t`; net worth is
@@ -106,7 +109,10 @@ Metamorphosis at level 2 (82%); Sunder at 6 (49%) or 7-9 (45%) wins the same
 (53%/52%), so the level-6 ultimate tip stays. Talents: 10 Conjure Image
 Cooldown (623 of 632), 15 Metamorphosis Cooldown (409 of 584), 20 Conjure Image
 Duration (347 of 445), 25 Metamorphosis Duration (40 of 63). Against illusion
-heroes the order is the same.
+heroes the order is the same. Level 15 never names Sunder Minimum HP Swap. Level
+20 names +10 All Attributes instead with 2+ enemy heroes whose area damage or
+Hex clears illusions (`draft_analysis.ILLUSION_CLEARERS`): his players take it in
+11% of games with none of them, 31% with one, 44% with two or more.
 
 **Tempo:** with his own net worth over 12.0k at 20:00, 16.8k at 25:00 and 21.1k
 at 30:00 (linear between, the same slope after), the counters wait and the next
