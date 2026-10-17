@@ -30,6 +30,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
+from app.hero_items import TEMPO_WHY, format_reason
 from app.hero_meta import item_key, item_name
 from app.next_item import _contains, _cost, gold_left, has_components
 
@@ -104,7 +105,7 @@ def _candidates(
         TARGETED_ITEM,
         TARGETED_NAME,
     )
-    from app.hero_items import TEMPO_WHY, hero_rows, plan_for, replaced, tempo_rows
+    from app.hero_items import hero_rows, plan_for, replaced, tempo_rows
 
     rows: list[Candidate] = []
     targeted = next((e for e in enemies if e in TARGETED_DISABLES), None)
@@ -134,12 +135,24 @@ def _candidates(
             # goes on (owned
             # items are passed over below).
             return rows + [
-                (TEMPO_WHY, row["key"], row["name"], net_worth or 0, None, None, {})
+                (
+                    TEMPO_WHY,
+                    row["key"],
+                    row["name"],
+                    net_worth or 0,
+                    None,
+                    None,
+                    {"reason": row["reason"]},
+                )
                 for row in tempo
             ]
         skip = replaced(plan)
         for row in hero_rows(plan, enemies, minute):
-            extra = {"escape": row["escape"], "family_items": row["family_items"]}
+            extra = {
+                "escape": row["escape"],
+                "family_items": row["family_items"],
+                "reason": row["reason"],
+            }
             rows.append((row["why"], row["key"], row["name"], 0, row["enemy"], row["spell"], extra))
     generic: list[Candidate] = []
     evasive = next((e for e in enemies if e in COUNTERS["evasion"][0]), None)
@@ -204,7 +217,7 @@ def situational_item(
         ):
             continue
         cost = _cost(key, constants) if priced else 0
-        item = {
+        item: dict[str, Any] = {
             "key": key,
             "name": item_name(key, constants) if key in known else fallback,
             "cost": cost or None,
@@ -216,6 +229,16 @@ def situational_item(
         }
         if extra.get("escape"):
             item["escape"] = extra["escape"]
+        if extra.get("reason"):
+            # A hero plan's own words, in both languages (hero_items.format_reason).
+            item["reason"] = format_reason(
+                extra["reason"],
+                item=item["name"],
+                enemy=enemy,
+                escape=extra.get("escape"),
+                spell=spell,
+                net_worth=count if why == TEMPO_WHY else None,
+            )
         return item
     return None
 

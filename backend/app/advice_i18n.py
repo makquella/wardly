@@ -19,6 +19,7 @@ fails on any visible text without a translation.
 from __future__ import annotations
 
 import re
+import string
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import lru_cache, partial
@@ -820,22 +821,6 @@ def _counter_reason(groups: dict[str, str]) -> str:
     return head + tail if tail is not None else ""
 
 
-def _with_tail(head: str, groups: dict[str, str]) -> str:
-    """A counter reason's Ukrainian head with the gold tail translated."""
-    tail = _situational_tail(groups["tail"])
-    return head + tail if tail is not None else ""
-
-
-def _escape_reason(groups: dict[str, str]) -> str:
-    """Evasion and an escape a silence stops (hero_items.py, why "evasion_escape")."""
-    head = (
-        f"{groups['enemy']} ухиляється від атак, а {groups['escape']} тікає через "
-        f"{groups['spell']} — {groups['name']} не дасть утекти й по цілі під тишею не промахується"
-    )
-    tail = _situational_tail(groups["tail"])
-    return head + tail if tail is not None else ""
-
-
 def _situational_reason(groups: dict[str, str]) -> str:
     count = int(groups["count"])
     if groups["kind"].strip().startswith("under stuns"):
@@ -914,58 +899,6 @@ _UK_FUNCTIONS: tuple[tuple[re.Pattern[str], Callable[[dict[str, str]], str]], ..
             + _SITUATIONAL_TAIL_RE
         ),
         _counter_reason,
-    ),
-    (
-        re.compile(
-            r"^(?P<enemy>.+?) fights with illusions, and (?P<name>.+?) makes a third of their "
-            r"attacks miss you" + _SITUATIONAL_TAIL_RE
-        ),
-        lambda g: _with_tail(
-            f"{g['enemy']} б'ється ілюзіями — з {g['name']} третина їхніх атак по вас промахується",
-            g,
-        ),
-    ),
-    (
-        re.compile(
-            r"^(?P<enemy>.+?) fights with illusions, and (?P<name>.+?) from your Dragon Lance hits "
-            r"up to 3 more of them in Metamorphosis" + _SITUATIONAL_TAIL_RE
-        ),
-        lambda g: _with_tail(
-            f"{g['enemy']} б'ється ілюзіями — {g['name']} з вашого Dragon Lance у Metamorphosis "
-            "б'є ще до 3 з них",
-            g,
-        ),
-    ),
-    (
-        re.compile(
-            r"^(?P<enemy>.+?) jumps on you with (?P<spell>.+?), and (?P<name>.+?) pushes them away "
-            r"and keeps your attacks going" + _SITUATIONAL_TAIL_RE
-        ),
-        lambda g: _with_tail(
-            f"{g['enemy']} стрибає на вас через {g['spell']} — {g['name']} відкине ворога, "
-            "і ви битимете далі",
-            g,
-        ),
-    ),
-    (
-        re.compile(
-            r"^Your net worth is (?P<count>\d+), well ahead for this minute, so (?P<name>.+?) on "
-            r"the tempo build comes "
-            r"before counters: then take the Aegis and push for the throne" + _SITUATIONAL_TAIL_RE
-        ),
-        lambda g: _with_tail(
-            f"Ваш нетворс — {g['count']}, набагато більше звичайного для цієї хвилини: спершу {g['name']} "
-            "з темпової збірки, потім заберіть Aegis і йдіть на трон",
-            g,
-        ),
-    ),
-    (
-        re.compile(
-            r"^(?P<enemy>.+?) dodges your attacks and (?P<escape>.+?) escapes with "
-            r"(?P<spell>.+?), and (?P<name>.+?) silences the escape and never misses a silenced "
-            r"target" + _SITUATIONAL_TAIL_RE
-        ),
-        _escape_reason,
     ),
     (
         re.compile(
@@ -1233,6 +1166,38 @@ for _source, _ukrainian in _UK_EXACT.items():
     _MESSAGE_RENDERERS[_id] = partial(_render_exact, text=_ukrainian)
 
 _PATTERN_MESSAGE_IDS: list[tuple[re.Pattern[str], str]] = []
+
+
+def _plan_reason(
+    english: str, ukrainian: str
+) -> tuple[re.Pattern[str], Callable[[dict[str, str]], str]]:
+    """A hero plan's reason (hero_items.reason_templates) as the farm advice says
+    it: the clause, then its gold tail; placeholders match any text."""
+    parts: list[str] = []
+    seen: set[str] = set()
+    for literal, name, _, _ in string.Formatter().parse(english):
+        parts.append(re.escape(literal))
+        if name is not None:
+            parts.append(f"(?P={name})" if name in seen else f"(?P<{name}>.+?)")
+            seen.add(name)
+    pattern = re.compile("^" + "".join(parts) + _SITUATIONAL_TAIL_RE)
+
+    def render(groups: dict[str, str]) -> str:
+        tail = _situational_tail(groups["tail"])
+        values = {k: v for k, v in groups.items() if k != "tail"}
+        return ukrainian.format(**values) + tail if tail is not None else ""
+
+    return pattern, render
+
+
+def _plan_reasons() -> tuple[tuple[re.Pattern[str], Callable[[dict[str, str]], str]], ...]:
+    from app.hero_items import reason_templates
+
+    return tuple(_plan_reason(en, uk) for en, uk in reason_templates())
+
+
+_UK_FUNCTIONS += _plan_reasons()
+
 for _pattern, _template in _UK_PATTERNS:
     _id = _message_id("pattern", f"{_pattern.flags}:{_pattern.pattern}")
     _PATTERN_MESSAGE_IDS.append((_pattern, _id))

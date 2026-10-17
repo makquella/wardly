@@ -1,19 +1,25 @@
-"""High-rank numbers for a hero item plan (docs/HERO_ITEM_PLANS.md), from the
-open OpenDota Explorer (league games with parsed gold timelines):
+"""High-rank numbers for hero item plans (docs/HERO_ITEM_PLANS.md), from the open
+OpenDota Explorer (league games with parsed gold timelines and purchase logs),
+for a hero in its usual position:
 
-- the win rate by the hero's gold at 20, 25 and 30 minutes, and the gold where
-  it first reaches --win (the plan's tempo curve; net worth is ~0.96 of it);
+- the win rate by the hero's gold at 20, 25 and 30 minutes and the gold where it
+  first reaches --win (the plan's tempo curve; net worth is ~0.96 of that gold);
 - the item order in all won games (the usual build) and in those over the
   20-minute line (the tempo build);
-- how often each counter is bought against each enemy group, and the win rate
-  with and without it (draft_analysis / hero_items groups);
-- the skill build: the order the basic abilities are maxed, the first point
-  and each talent row's picks, with win rates (a plan's `skills`).
+- the skill build: the order the basic abilities are maxed, the first point and
+  each talent row's picks, with win rates;
+- for every enemy group (hero_items.groups, and 3+ magic damage heroes) every
+  item bought there: its share against the group and elsewhere, the lift, and
+  the win rate with and without it; `candidates` are the items bought at least
+  CANDIDATE_LIFT times as often against the group (a plan rule to consider).
 
-    python scripts/hero_item_stats.py terrorblade --since 2026-03-24
+    python scripts/hero_item_stats.py terrorblade              # print a report
+    python scripts/hero_item_stats.py terrorblade --write      # data/heroes/item_stats/
+    python scripts/hero_item_stats.py --all --write            # every supported hero
 
-Read-only, no key; small samples and «a bought item means a farmed hero»
-apply: the numbers check a plan, they do not write it.
+Read-only, no key. A hero with fewer than --min-games games in the patch is read
+from the previous patch on too. Small samples and «a bought item means a farmed
+hero» apply: the numbers check a plan, they do not write it.
 """
 
 from __future__ import annotations
@@ -22,229 +28,403 @@ import argparse
 import json
 import statistics
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter, defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
 EXPLORER = "https://api.opendota.com/api/explorer?sql="
+CONSTANTS = "https://api.opendota.com/api/constants/"
+PATCHES = "https://api.opendota.com/api/constants/patch"
 USER_AGENT = "Wardly hero item stats"
+OUT_DIR = ROOT / "data" / "heroes" / "item_stats"
 NET_WORTH_SHARE = 0.96  # final net worth / gold earned, Terrorblade 7.41 games
-TIMEOUT = 120
+TIMEOUT = 150
+RETRIES = (5, 20, 60)
+PAUSE = 2  # seconds between Explorer queries (a shared free service)
+# OpenDota lane_role of a hero's usual position; supports are not filtered.
+LANE_ROLE = {"carry": 1, "mid": 2, "offlane": 3}
+MIN_LINE_GAMES = 10
+BUILD_SHARE = 0.2
+CANDIDATE_LIFT = 2.0
+CANDIDATE_MIN_GAMES = 20
+CANDIDATE_MIN_SHARE = 0.15
+MAGIC_LINEUP = 3
+# A counter is a real item, not a part of one or a consumable.
+CANDIDATE_MIN_COST = 1500
+
+
+def _get(url: str) -> Any:
+    for pause in (*RETRIES, None):
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        try:
+            with urllib.request.urlopen(request, timeout=TIMEOUT) as response:  # noqa: S310
+                answer = json.loads(response.read())
+        except (urllib.error.URLError, TimeoutError, ValueError) as error:
+            if pause is None:
+                raise SystemExit(f"OpenDota: {error}") from None
+            time.sleep(pause)
+            continue
+        if isinstance(answer, dict) and answer.get("err"):
+            if pause is None or "timeout" not in str(answer["err"]).lower():
+                raise SystemExit(f"OpenDota Explorer: {answer['err']}")
+            time.sleep(pause)
+            continue
+        return answer
+    raise SystemExit("OpenDota: no answer")
 
 
 def explorer(sql: str) -> list[dict]:
-    request = urllib.request.Request(
-        EXPLORER + urllib.parse.quote(sql), headers={"User-Agent": USER_AGENT}
-    )
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:  # noqa: S310
-        answer = json.loads(response.read())
-    if answer.get("err"):
-        raise SystemExit(f"OpenDota Explorer: {answer['err']}")
-    return list(answer.get("rows") or [])
+    rows = _get(EXPLORER + urllib.parse.quote(sql)).get("rows") or []
+    time.sleep(PAUSE)
+    return list(rows)
 
 
-def games(hero_id: int, since: int) -> list[dict]:
+_CONSTANTS: dict[str, Any] = {}
+
+
+def constants(name: str) -> dict:
+    if name not in _CONSTANTS:
+        _CONSTANTS[name] = dict(_get(CONSTANTS + name))
+    return _CONSTANTS[name]
+
+
+def patch_starts() -> list[tuple[str, int]]:
+    rows = _get(PATCHES)
+    return [
+        (r["name"], int(datetime.fromisoformat(r["date"].replace("Z", "+00:00")).timestamp()))
+        for r in rows
+    ]
+
+
+def rate(group: list[dict]) -> float | None:
+    return round(100 * sum(g["win"] for g in group) / len(group), 1) if group else None
+
+
+def _filter(hero_id: int, since: int, lane: int | None) -> str:
+    where = f"pm.hero_id={hero_id} AND m.start_time > {since}"
+    return where + (f" AND pm.lane_role={lane}" if lane else "")
+
+
+def games(hero_id: int, since: int, lane: int | None) -> list[dict]:
     rows = explorer(
         "SELECT pm.match_id, pm.player_slot, m.radiant_win, pm.gold_t[21] AS g20, "
-        "pm.gold_t[26] AS g25, pm.gold_t[31] AS g30, pm.purchase_log "
-        "FROM player_matches pm JOIN matches m USING(match_id) "
-        f"WHERE pm.hero_id={hero_id} AND m.start_time > {since} "
-        "AND array_length(pm.gold_t, 1) > 20"
+        "pm.gold_t[26] AS g25, pm.gold_t[31] AS g30, pm.purchase_log, "
+        "pm.ability_upgrades_arr AS ups FROM player_matches pm JOIN matches m USING(match_id) "
+        f"WHERE {_filter(hero_id, since, lane)} AND array_length(pm.gold_t, 1) > 20"
     )
     for row in rows:
         row["win"] = row["radiant_win"] == (row["player_slot"] < 128)
     return rows
 
 
-def enemies(hero_id: int, since: int, rows: list[dict]) -> dict[int, set[str]]:
+def lineups(hero_id: int, since: int, lane: int | None, rows: list[dict]) -> dict[int, set[str]]:
     from app.dota_constants import hero_name
 
     side = {r["match_id"]: r["player_slot"] < 128 for r in rows}
-    lineup: dict[int, set[str]] = defaultdict(set)
+    enemies: dict[int, set[str]] = defaultdict(set)
     for r in explorer(
         "SELECT o.match_id, o.player_slot, o.hero_id FROM player_matches o WHERE o.match_id IN "
         "(SELECT pm.match_id FROM player_matches pm JOIN matches m USING(match_id) "
-        f"WHERE pm.hero_id={hero_id} AND m.start_time > {since})"
+        f"WHERE {_filter(hero_id, since, lane)})"
     ):
         if r["match_id"] in side and (r["player_slot"] < 128) != side[r["match_id"]]:
-            lineup[r["match_id"]].add(hero_name(r["hero_id"]))
-    return lineup
+            enemies[r["match_id"]].add(hero_name(r["hero_id"]))
+    return enemies
 
 
-def assembled_items() -> set[str]:
-    """Item keys built from a recipe (no components, consumables or parts)."""
-    request = urllib.request.Request(
-        "https://api.opendota.com/api/constants/items", headers={"User-Agent": USER_AGENT}
-    )
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:  # noqa: S310
-        items = json.loads(response.read())
-    return {key for key, info in items.items() if isinstance(info, dict) and info.get("components")}
+def built_items() -> set[str]:
+    items = constants("items")
+    return {k for k, v in items.items() if isinstance(v, dict) and v.get("components")} | {
+        "aghanims_shard"
+    }
 
 
-def order(group: list[dict], built: set[str], title: str) -> None:
-    """Assembled items bought in 20%+ of `group`, by median minute."""
+def bought(game: dict, built: set[str]) -> dict[str, float]:
+    """{item: first minute} of the assembled items the game bought."""
+    first: dict[str, float] = {}
+    for p in game.get("purchase_log") or []:
+        key = p.get("key")
+        if key in built and key not in first:
+            first[key] = p.get("time", 0) / 60
+    return first
+
+
+def order(group: list[dict], built: set[str]) -> list[dict]:
+    """Items bought in BUILD_SHARE+ of `group`, by median minute."""
     share: Counter[str] = Counter()
     minutes: dict[str, list[float]] = defaultdict(list)
-    for r in group:
-        seen: set[str] = set()
-        for p in r.get("purchase_log") or []:
-            key = p.get("key")
-            if key in built and key not in seen:
-                seen.add(key)
-                minutes[key].append(p["time"] / 60)
-        share.update(seen)
-    print(f"\n{title} (share, median minute):")
-    rows = [(k, c) for k, c in share.items() if group and c / len(group) >= 0.2]
-    for key, count in sorted(rows, key=lambda kc: statistics.median(minutes[kc[0]])):
-        median = statistics.median(minutes[key])
-        print(f"  {key:22} {100 * count / len(group):3.0f}%  {median:4.0f}")
+    for game in group:
+        for key, minute in bought(game, built).items():
+            share[key] += 1
+            minutes[key].append(minute)
+    rows = [
+        {
+            "item": key,
+            "share": round(count / len(group), 3),
+            "minute": round(statistics.median(minutes[key]), 1),
+        }
+        for key, count in share.items()
+        if group and count / len(group) >= BUILD_SHARE
+    ]
+    return sorted(rows, key=lambda r: r["minute"])
 
 
-def constants(name: str) -> dict:
-    request = urllib.request.Request(
-        f"https://api.opendota.com/api/constants/{name}", headers={"User-Agent": USER_AGENT}
-    )
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:  # noqa: S310
-        return dict(json.loads(response.read()))
+def tempo_line(rows: list[dict], win: float) -> dict[str, Any]:
+    line: dict[str, Any] = {}
+    for minute, key in ((20, "g20"), (25, "g25"), (30, "g30")):
+        known = [r for r in rows if r.get(key)]
+        for gold in range(6000, 45001, 500):
+            over = [r for r in known if r[key] >= gold]
+            if len(over) < MIN_LINE_GAMES:
+                break
+            if 100 * sum(r["win"] for r in over) / len(over) >= win:
+                line[str(minute)] = {
+                    "gold": gold,
+                    "net_worth": int(round(gold * NET_WORTH_SHARE, -2)),
+                    "games": len(over),
+                    "win": rate(over),
+                }
+                break
+    return line
 
 
-def skills(hero_id: int, since: int, npc: str) -> None:
-    """The skill build of the hero's games (ability_upgrades_arr)."""
-    rows = explorer(
-        "SELECT pm.player_slot, m.radiant_win, pm.ability_upgrades_arr AS ups "
-        "FROM player_matches pm JOIN matches m USING(match_id) "
-        f"WHERE pm.hero_id={hero_id} AND m.start_time > {since} "
-        "AND pm.ability_upgrades_arr IS NOT NULL"
-    )
+def skills(rows: list[dict], npc: str) -> dict[str, Any]:
     ids = constants("ability_ids")
     abilities = constants("abilities")
     hero = constants("hero_abilities").get(npc) or {}
     tiers = {t["name"]: (10, 15, 20, 25)[t["level"] - 1] for t in hero.get("talents") or []}
-    games = []
-    for r in rows:
-        names = [ids.get(str(a)) for a in r["ups"] or []]
-        games.append(
-            {
-                "names": [n for n in names if n],
-                "win": r["radiant_win"] == (r["player_slot"] < 128),
-            }
-        )
     orders: dict[tuple[str, ...], list[dict]] = defaultdict(list)
     openings: dict[str, list[dict]] = defaultdict(list)
-    for g in games:
+    talents: dict[int, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
+    counted = 0
+    for game in rows:
+        names = [n for n in (ids.get(str(a)) for a in game.get("ups") or []) if n]
+        if not names:
+            continue
+        counted += 1
         counts: Counter[str] = Counter()
         maxed = []
-        for name in g["names"]:
+        for name in names:
             if name.startswith("special_bonus"):
                 continue
             counts[name] += 1
             if counts[name] == 4:
                 maxed.append(name)
-        orders[tuple(maxed)].append(g)
-        first = next((n for n in g["names"] if not n.startswith("special_bonus")), None)
+        orders[tuple(maxed)].append(game)
+        first = next((n for n in names if not n.startswith("special_bonus")), None)
         if first:
-            openings[first].append(g)
-    print(f"\nskill build ({len(games)} games):")
-    print("  maxed in this order:")
-    for order, group in sorted(orders.items(), key=lambda kv: -len(kv[1]))[:4]:
-        print(f"    {' > '.join(order) or '-'}: {len(group)} games, win {rate(group)}")
-    print("  first point:")
-    for name, group in sorted(openings.items(), key=lambda kv: -len(kv[1]))[:3]:
-        print(f"    {name}: {len(group)} games, win {rate(group)}")
-    print("  talents:")
-    for level in (10, 15, 20, 25):
-        picks: dict[str, list[dict]] = defaultdict(list)
-        for g in games:
-            talent = next((n for n in g["names"] if tiers.get(n) == level), None)
+            openings[first].append(game)
+        for level in (10, 15, 20, 25):
+            talent = next((n for n in names if tiers.get(n) == level), None)
             if talent:
-                picks[talent].append(g)
-        total = sum(len(v) for v in picks.values())
-        for name, group in sorted(picks.items(), key=lambda kv: -len(kv[1])):
-            label = (abilities.get(name) or {}).get("dname") or name
-            print(f"    {level}: {label} — {len(group)} of {total}, win {rate(group)}  [{name}]")
+                talents[level][talent].append(game)
+
+    def label(name: str) -> str:
+        from app.skill_build import talent_label
+
+        return talent_label(str((abilities.get(name) or {}).get("dname") or name))
+
+    return {
+        "games": counted,
+        "orders": [
+            {"order": list(o), "games": len(g), "win": rate(g)}
+            for o, g in sorted(orders.items(), key=lambda kv: -len(kv[1]))[:5]
+        ],
+        "openings": [
+            {"name": n, "games": len(g), "win": rate(g)}
+            for n, g in sorted(openings.items(), key=lambda kv: -len(kv[1]))[:4]
+        ],
+        "talents": {
+            str(level): [
+                {
+                    "name": n,
+                    "label": label(n),
+                    "picked": len(g),
+                    "games": sum(len(v) for v in picks.values()),
+                    "win": rate(g),
+                }
+                for n, g in sorted(picks.items(), key=lambda kv: -len(kv[1]))
+            ]
+            for level, picks in sorted(talents.items())
+        },
+    }
 
 
-def rate(group: list[dict]) -> str:
-    return f"{100 * sum(g['win'] for g in group) / len(group):.0f}%" if group else "-"
+def counters(
+    rows: list[dict], lineup: dict[int, set[str]], built: set[str]
+) -> tuple[dict[str, Any], list[dict]]:
+    from app.draft_analysis import MAGIC_DAMAGE
+    from app.hero_items import groups
+
+    sets = {name: set(heroes) for name, heroes in groups().items()}
+    tests = {name: (lambda e, h=heroes: bool(e & h)) for name, heroes in sets.items()}
+    tests["magic_lineup"] = lambda e: len(e & MAGIC_DAMAGE) >= MAGIC_LINEUP
+    purchases = {r["match_id"]: bought(r, built) for r in rows}
+    table: dict[str, Any] = {}
+    candidates: list[dict] = []
+    for name, test in tests.items():
+        inside = [r for r in rows if test(lineup[r["match_id"]])]
+        outside = [r for r in rows if not test(lineup[r["match_id"]])]
+        if not inside:
+            continue
+        items = []
+        keys = {k for r in inside for k in purchases[r["match_id"]]}
+        for key in keys:
+            yes = [r for r in inside if key in purchases[r["match_id"]]]
+            share = len(yes) / len(inside)
+            elsewhere = sum(key in purchases[r["match_id"]] for r in outside) / max(1, len(outside))
+            if share < 0.1:
+                continue
+            row = {
+                "item": key,
+                "share": round(share, 3),
+                "elsewhere": round(elsewhere, 3),
+                "lift": round(share / elsewhere, 2) if elsewhere else None,
+                "win_with": rate(yes),
+                "win_without": rate([r for r in inside if key not in purchases[r["match_id"]]]),
+            }
+            items.append(row)
+            lift = row["lift"]
+            if (
+                len(inside) >= CANDIDATE_MIN_GAMES
+                and share >= CANDIDATE_MIN_SHARE
+                and (lift is None or lift >= CANDIDATE_LIFT)
+            ):
+                candidates.append({"group": name, "games": len(inside), **row})
+        table[name] = {
+            "games": len(inside),
+            "win": rate(inside),
+            "items": sorted(items, key=lambda r: -(r["lift"] or 99))[:12],
+        }
+    items = constants("items")
+
+    def cost(key: str) -> int:
+        return int((items.get(key) or {}).get("cost") or 0)
+
+    def part_of_another(row: dict) -> bool:
+        return any(
+            row["item"] in (items.get(other["item"]) or {}).get("components") or []
+            for other in candidates
+            if other["group"] == row["group"] and other is not row
+        )
+
+    candidates = [
+        c for c in candidates if cost(c["item"]) >= CANDIDATE_MIN_COST and not part_of_another(c)
+    ]
+    candidates.sort(key=lambda r: (-(r["lift"] or 99), -r["share"]))
+    return table, candidates
 
 
-def bought(game: dict, item: str) -> bool:
-    return any(p.get("key") == item for p in game.get("purchase_log") or [])
+def hero_stats(hero: str, since_name: str | None, min_games: int, win: float) -> dict[str, Any]:
+    from app.dota_constants import hero_id_from_name, hero_npc_name
+    from app.hero_profiles import get_hero_position
+
+    hero_id = hero_id_from_name(hero)
+    if hero_id is None:
+        raise SystemExit(f"unknown hero {hero!r}")
+    position = get_hero_position(hero)
+    lane = LANE_ROLE.get(position or "")
+    patches = patch_starts()
+    names = [n for n, _ in patches]
+    index = names.index(since_name) if since_name in names else len(patches) - 1
+    since_label, since = patches[index]
+    rows = games(hero_id, since, lane)
+    if len(rows) < min_games and index > 0:
+        since_label, since = patches[index - 1]
+        rows = games(hero_id, since, lane)
+    built = built_items()
+    won = [r for r in rows if r["win"]]
+    line = tempo_line(rows, win)
+    rich = [r for r in won if "20" in line and (r.get("g20") or 0) >= line["20"]["gold"]]
+    table, candidates = counters(rows, lineups(hero_id, since, lane, rows), built)
+    return {
+        "hero": hero,
+        "hero_id": hero_id,
+        "position": position,
+        "lane_role": lane,
+        "since_patch": since_label,
+        "generated": datetime.now(UTC).date().isoformat(),
+        "source": "OpenDota Explorer: league games with parsed gold timelines",
+        "games": len(rows),
+        "win": rate(rows),
+        "tempo_line": line,
+        "usual_build": order(won, built),
+        "tempo_build": order(rich, built),
+        "skills": skills(rows, hero_npc_name(hero_id)),
+        "counters": table,
+        "candidates": candidates[:25],
+    }
+
+
+def report(stats: dict[str, Any]) -> None:
+    print(
+        f"{stats['hero']} ({stats['position']}): {stats['games']} games since "
+        f"{stats['since_patch']}, win {stats['win']}%"
+    )
+    for minute, row in stats["tempo_line"].items():
+        print(
+            f"  {minute}:00  {row['gold']}+ gold: {row['games']} games, win {row['win']}%"
+            f"  -> net worth ~{row['net_worth']}"
+        )
+    for title, key in (("usual build", "usual_build"), ("tempo build", "tempo_build")):
+        print(f"\n{title} (share, median minute):")
+        for row in stats[key]:
+            print(f"  {row['item']:22} {100 * row['share']:3.0f}%  {row['minute']:4.0f}")
+    sk = stats["skills"]
+    print(f"\nskill build ({sk['games']} games):")
+    for row in sk["orders"]:
+        print(f"  {' > '.join(row['order']) or '-'}: {row['games']} games, win {row['win']}%")
+    for row in sk["openings"]:
+        print(f"  first point {row['name']}: {row['games']} games, win {row['win']}%")
+    for level, picks in sk["talents"].items():
+        for t in picks:
+            print(f"  {level}: {t['label']} — {t['picked']} of {t['games']}, win {t['win']}%")
+    print("\ncandidates (group: item, share here / elsewhere, win with / without):")
+    for c in stats["candidates"]:
+        print(
+            f"  {c['group']:18} {c['item']:20} {100 * c['share']:3.0f}% / "
+            f"{100 * c['elsewhere']:3.0f}%  win {c['win_with']} / {c['win_without']}"
+            f"  ({c['games']} games)"
+        )
 
 
 def main() -> int:
-    from app.dota_constants import hero_id_from_name
-    from app.hero_items import groups
-
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("hero", help="e.g. terrorblade or 'Phantom Lancer'")
-    parser.add_argument("--since", default="2026-03-24", help="patch start (YYYY-MM-DD)")
+    parser.add_argument("hero", nargs="?", help="e.g. terrorblade or 'Phantom Lancer'")
+    parser.add_argument("--all", action="store_true", help="every supported hero")
+    parser.add_argument("--write", action="store_true", help="write data/heroes/item_stats/")
+    parser.add_argument("--patch", default=None, help="from this patch on (default: the latest)")
+    parser.add_argument("--min-games", type=int, default=300, help="else the patch before too")
     parser.add_argument("--win", type=float, default=85.0, help="the tempo line, win %%")
-    parser.add_argument("--items", default="", help="extra counter item keys, comma separated")
     args = parser.parse_args()
-    hero_id = hero_id_from_name(args.hero.replace("_", " "))
-    if hero_id is None:
-        raise SystemExit(f"unknown hero {args.hero!r}")
-    since = int(datetime.fromisoformat(args.since).replace(tzinfo=UTC).timestamp())
-    rows = games(hero_id, since)
-    if not rows:
-        raise SystemExit("no games")
-    print(f"{len(rows)} games since {args.since}, win {rate(rows)}")
+    if args.all:
+        from app.schemas import _SUPPORTED_HERO_LOOKUP
 
-    line: dict[int, int] = {}
-    for minute, key in ((20, "g20"), (25, "g25"), (30, "g30")):
-        known = [r for r in rows if r.get(key)]
-        for gold in range(8000, 40001, 500):
-            over = [r for r in known if r[key] >= gold]
-            if len(over) >= 10 and 100 * sum(r["win"] for r in over) / len(over) >= args.win:
-                line[minute] = gold
-                print(
-                    f"  {minute}:00  {gold}+ gold: {len(over)} games, win {rate(over)}"
-                    f"  -> net worth ~{round(gold * NET_WORTH_SHARE, -2):.0f}"
-                )
-                break
-    built = assembled_items() | {"aghanims_shard"}
-    won = [r for r in rows if r["win"]]
-    order(won, built, f"the usual build: items in all {len(won)} won games")
-    if 20 in line:
-        rich = [r for r in won if (r.get("g20") or 0) >= line[20]]
-        order(rich, built, f"the tempo build: the {len(rich)} won games over the 20:00 line")
-
-    from app.dota_constants import hero_npc_name
-
-    skills(hero_id, since, hero_npc_name(hero_id))
-    lineup = enemies(hero_id, since, rows)
-    counters = {
-        "evasion": ["monkey_king_bar", "bloodthorn", "javelin"],
-        "illusions": ["butterfly", "hydras_breath", "hurricane_pike", "maelstrom", "mjollnir"],
-        "healing": ["skadi", "spirit_vessel"],
-        "escape": ["bloodthorn", "orchid", "abyssal_blade"],
-        "break": ["silver_edge"],
-        "jumpers": ["hurricane_pike", "butterfly", "black_king_bar"],
-    }
-    extra = [i for i in args.items.split(",") if i]
-    print(
-        "\ncounters by enemy group (bought: share in these games / elsewhere, win with / without):"
-    )
-    for group, heroes in groups().items():
-        with_group = [r for r in rows if lineup[r["match_id"]] & set(heroes)]
-        others = [r for r in rows if not lineup[r["match_id"]] & set(heroes)]
-        if not with_group:
-            continue
-        print(f"  {group}: {len(with_group)} games, win {rate(with_group)}")
-        for item in counters.get(group, []) + extra:
-            yes = [r for r in with_group if bought(r, item)]
-            no = [r for r in with_group if not bought(r, item)]
-            elsewhere = sum(bought(r, item) for r in others) / max(1, len(others))
-            print(
-                f"    {item:18} {100 * len(yes) / len(with_group):3.0f}% / {100 * elsewhere:3.0f}%"
-                f"   win {rate(yes):>4} / {rate(no):>4}"
+        heroes = sorted(set(_SUPPORTED_HERO_LOOKUP.values()))
+    elif args.hero:
+        heroes = [args.hero.replace("_", " ")]
+    else:
+        parser.error("name a hero or pass --all")
+    for hero in heroes:
+        stats = hero_stats(hero, args.patch, args.min_games, args.win)
+        if args.write:
+            OUT_DIR.mkdir(parents=True, exist_ok=True)
+            key = stats["hero"].lower().replace(" ", "_").replace("'", "").replace("-", "_")
+            path = OUT_DIR / f"{key}.json"
+            path.write_text(
+                json.dumps(stats, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
             )
+            print(f"wrote {path.relative_to(ROOT)} ({stats['games']} games)")
+        else:
+            report(stats)
     return 0
 
 

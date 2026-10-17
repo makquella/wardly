@@ -34,6 +34,7 @@ shows no enemy net worth, so the hero's own farm is the observed sign.
 from __future__ import annotations
 
 import json
+import string
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -42,24 +43,25 @@ from app.config import DATA_DIR
 
 ITEM_PLANS_DIR = DATA_DIR / "heroes" / "item_plans"
 SCHEMA = 1
-# Every why a rule may use has a reason in each place that shows one:
-# map_hints.TIPS (draft_<why>), death_screen.TEXT (why_<why>) and
-# post_laning_coach.SITUATIONAL_BECAUSE (tests/test_hero_items.py checks it).
-WHYS = {
-    "evasion",
-    "evasion_escape",
-    "healing",
-    "illusions",
-    "illusion_evasion",
-    "illusion_splash",
-    "jumper",
-    "break",
-    "magic",
-}
-# The tempo build's why: shown on the death screen and in the farm advice.
+# Each rule (and the tempo build) carries its own reason, {en, uk}: one clause
+# without a final period, shown on the draft card, after «Why <item>:» on the
+# death screen and as the farm advice's reason (advice_i18n turns the English
+# into the Ukrainian with reason_templates). Placeholders it may use:
+PLACEHOLDERS = {"enemy", "escape", "spell", "item", "net_worth"}
 TEMPO_WHY = "tempo"
 POSITIONS = {"carry", "mid", "offlane"}
-RULE_KEYS = {"id", "why", "family", "item", "name", "enemy", "also", "minute", "basis"}
+RULE_KEYS = {
+    "id",
+    "why",
+    "family",
+    "item",
+    "name",
+    "enemy",
+    "also",
+    "minute",
+    "basis",
+    "reason",
+}
 
 
 def groups() -> dict[str, dict[str, str | None]]:
@@ -70,12 +72,56 @@ def groups() -> dict[str, dict[str, str | None]]:
     return {
         "evasion": dict.fromkeys(COUNTERS["evasion"][0]),
         "illusions": dict.fromkeys(COUNTERS["illusions"][0]),
+        "invisibility": dict.fromkeys(COUNTERS["invisibility"][0]),
         "healing": dict.fromkeys(COUNTERS["healing"][0]),
         "escape": dict(ESCAPES),
         "break": dict(BREAK_PASSIVES),
         "jumpers": dict(JUMPERS),
         "illusion_clearers": dict.fromkeys(ILLUSION_CLEARERS),
     }
+
+
+def placeholders(text: str) -> set[str]:
+    return {name for _, name, _, _ in string.Formatter().parse(text) if name is not None}
+
+
+def check_reason(reason: Any, fail: Any, where: str) -> None:
+    """{en, uk}: one clause each, no final period, the same known placeholders."""
+    if not isinstance(reason, dict) or set(reason) != {"en", "uk"}:
+        raise fail(f"{where}: reason must be {{en, uk}}")
+    try:
+        names = {lang: placeholders(text) for lang, text in reason.items()}
+    except (ValueError, TypeError):
+        raise fail(f"{where}: reason has a broken placeholder") from None
+    for lang, text in reason.items():
+        if not isinstance(text, str) or not text.strip() or text.rstrip().endswith("."):
+            raise fail(f"{where}: reason.{lang} is one clause without a final period")
+        if not names[lang] <= PLACEHOLDERS:
+            raise fail(f"{where}: reason.{lang} uses {sorted(names[lang] - PLACEHOLDERS)}")
+    if names["uk"] != names["en"]:
+        raise fail(f"{where}: reason.en and reason.uk name different placeholders")
+
+
+def format_reason(reason: dict[str, str], **values: Any) -> dict[str, str]:
+    """The reason in both languages with its placeholders filled."""
+    filled = {k: "" if v is None else str(v) for k, v in values.items()}
+    return {lang: text.format_map(_Missing(filled)) for lang, text in reason.items()}
+
+
+class _Missing(dict):  # type: ignore[type-arg]
+    def __missing__(self, key: str) -> str:
+        return ""
+
+
+def reason_templates() -> list[tuple[str, str]]:
+    """(English, Ukrainian) of every plan's reasons (advice_i18n)."""
+    pairs: list[tuple[str, str]] = []
+    for plan in load_plans().values():
+        for rule in plan["rules"]:
+            pairs.append((rule["reason"]["en"], rule["reason"]["uk"]))
+        if plan.get("tempo"):
+            pairs.append((plan["tempo"]["reason"]["en"], plan["tempo"]["reason"]["uk"]))
+    return pairs
 
 
 def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
@@ -104,8 +150,9 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
         if not isinstance(rule_id, str) or rule_id in ids:
             raise fail(f"rule id {rule_id!r} is missing or repeated")
         ids.add(rule_id)
-        if rule.get("why") not in WHYS:
-            raise fail(f"{rule_id}: why must be one of {sorted(WHYS)}")
+        if not isinstance(rule.get("why"), str) or not rule["why"].strip():
+            raise fail(f"{rule_id}: why is required")
+        check_reason(rule.get("reason"), fail, rule_id)
         for key in ("family", "item", "name", "basis"):
             if not isinstance(rule.get(key), str) or not rule[key].strip():
                 raise fail(f"{rule_id}: {key} is required")
@@ -167,6 +214,7 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
                 "tempo needs items [{item, name}], a net_worth curve [[minute, gold], ...] "
                 "with rising minutes, and a basis"
             )
+        check_reason(tempo.get("reason"), fail, "tempo")
     return plan
 
 
@@ -233,6 +281,7 @@ def hero_rows(plan: dict[str, Any], enemies: list[str], minute: int | None) -> l
                 "escape": escape,
                 "spell": spell,
                 "family_items": family_items[rule["family"]],
+                "reason": rule["reason"],
             }
         )
     return rows
@@ -264,7 +313,8 @@ def tempo_rows(
     threshold = tempo_threshold(plan, minute)
     if threshold is None or not isinstance(net_worth, int) or net_worth < threshold:
         return None
-    return [{"key": i["item"], "name": i["name"]} for i in plan["tempo"]["items"]]
+    reason = plan["tempo"]["reason"]
+    return [{"key": i["item"], "name": i["name"], "reason": reason} for i in plan["tempo"]["items"]]
 
 
 def validate_skills(skills: Any, fail: Any) -> None:

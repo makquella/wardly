@@ -23,7 +23,11 @@
       "enemy": "evasion",
       "also": "escape",
       "minute": 15,
-      "basis": "Soul Rend silences for 5 s (no Blink, Ball Lightning...) and gives True Strike to your attacks and your controlled units' attacks on the silenced target; its passive pierces evasion on 40% of attacks. One item answers both heroes."
+      "basis": "Soul Rend silences for 5 s (no Blink, Ball Lightning...) and gives True Strike to your attacks and your controlled units' attacks on the silenced target; its passive pierces evasion on 40% of attacks. One item answers both heroes.",
+      "reason": {
+        "en": "{enemy} dodges attacks and {escape} escapes with {spell}: {item} silences the escape, and your attacks and illusions never miss the silenced target",
+        "uk": "{enemy} ухиляється від атак, а {escape} тікає через {spell}: {item} накладає тишу, і по цілі під тишею ваші атаки й ілюзії не промахуються"
+      }
     },
     {
       "id": "evasion",
@@ -33,7 +37,11 @@
       "name": "Monkey King Bar",
       "enemy": "evasion",
       "minute": 15,
-      "basis": "Pierce: 80% of attacks go through evasion with 70 magic damage, nothing to cast. Against evasion alone it is cheaper (5000 against 6400) and always on."
+      "basis": "Pierce: 80% of attacks go through evasion with 70 magic damage, nothing to cast. Against evasion alone it is cheaper (5000 against 6400) and always on.",
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      }
     },
     {
       "id": "healing",
@@ -43,7 +51,11 @@
       "name": "Eye of Skadi",
       "enemy": "healing",
       "minute": 20,
-      "basis": "Eye of Skadi is in Terrorblade's usual build and its attacks cut health restoration by 50% for 3 s: against heavy healing keep it in the build (high-rank players buy it more often, at the same ~27 min) rather than an off-build Spirit Vessel."
+      "basis": "Eye of Skadi is in Terrorblade's usual build and its attacks cut health restoration by 50% for 3 s: against heavy healing keep it in the build (high-rank players buy it more often, at the same ~27 min) rather than an off-build Spirit Vessel.",
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      }
     },
     {
       "id": "illusion_evasion",
@@ -53,7 +65,11 @@
       "name": "Butterfly",
       "enemy": "illusions",
       "minute": 20,
-      "basis": "Butterfly: 35% evasion, so about a third of the illusions' attacks miss him; it is also in his tempo build."
+      "basis": "Butterfly: 35% evasion, so about a third of the illusions' attacks miss him; it is also in his tempo build.",
+      "reason": {
+        "en": "{enemy} fights with illusions: with the 35% evasion of {item} about a third of their attacks miss you",
+        "uk": "{enemy} б'ється ілюзіями: з 35 % ухилення від {item} приблизно третина їхніх атак по вас промахується"
+      }
     },
     {
       "id": "illusion_splash",
@@ -63,7 +79,11 @@
       "name": "Hydra's Breath",
       "enemy": "illusions",
       "minute": 20,
-      "basis": "Hydra's Breath (Dragon Lance + Specialist's Array + Orb of Venom): 30% of ranged attacks also fire at up to 3 nearby enemies, and Miasma poisons each one hit for 2.5% of max HP per second. Terrorblade attacks from range in Metamorphosis, so the Dragon Lance goes into it instead of Hurricane Pike."
+      "basis": "Hydra's Breath (Dragon Lance + Specialist's Array + Orb of Venom): 30% of ranged attacks also fire at up to 3 nearby enemies, and Miasma poisons each one hit for 2.5% of max HP per second. Terrorblade attacks from range in Metamorphosis, so the Dragon Lance goes into it instead of Hurricane Pike.",
+      "reason": {
+        "en": "{enemy} fights with illusions: upgrade your Dragon Lance into {item}, not Hurricane Pike; in Metamorphosis 30% of your attacks also hit up to 3 more enemies and poison them",
+        "uk": "{enemy} б'ється ілюзіями: Dragon Lance збирайте в {item}, а не в Hurricane Pike; у Metamorphosis 30 % атак б'ють ще до 3 ворогів поруч і отруюють їх"
+      }
     },
     {
       "id": "jumper",
@@ -73,7 +93,11 @@
       "name": "Hurricane Pike",
       "enemy": "jumpers",
       "minute": 20,
-      "basis": "Hurricane Thrust: pushes him and the target 425 apart, then 5 attacks on it from any range with +100 attack speed for 5 s. In his STRATZ build at ~29 min."
+      "basis": "Hurricane Thrust: pushes him and the target 425 apart, then 5 attacks on it from any range with +100 attack speed for 5 s. In his STRATZ build at ~29 min.",
+      "reason": {
+        "en": "{enemy} jumps on you with {spell}: {item} pushes you both apart, and for 5 seconds you keep hitting from range",
+        "uk": "{enemy} стрибає на вас через {spell}: {item} розкидає вас, і 5 секунд ви б'єте ціль здалеку"
+      }
     }
   ],
   "build": [
@@ -164,7 +188,11 @@
       }
     ],
     "basis": "His own net worth over this curve (12.5k, 17.5k and 22k gold by 20, 25 and 30 min in the games above, ~0.96 of it as net worth): he wins ~85% of those games. A player's GSI shows no enemy net worth, so his own farm stands for «their carry is poor». Then the counters wait: the tempo build, the Aegis and the throne.",
-    "order": "The order of the 72 won games with 12.5k+ gold by 20:00 (share of games, median minute): Manta Style 100% (15), Aghanim's Shard 78% (16), Dragon Lance 93% (18), Eye of Skadi 62% (25), Butterfly 50% (24), Daedalus 25% (30)."
+    "order": "The order of the 72 won games with 12.5k+ gold by 20:00 (share of games, median minute): Manta Style 100% (15), Aghanim's Shard 78% (16), Dragon Lance 93% (18), Eye of Skadi 62% (25), Butterfly 50% (24), Daedalus 25% (30).",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
   },
   "skills": {
     "order": [

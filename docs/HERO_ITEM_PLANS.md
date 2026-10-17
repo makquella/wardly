@@ -13,14 +13,39 @@ does not fit the hero. Outside the plan's `positions` the generic counters stay.
 The enemies come only from the enemy icon on the minimap (`enemy_heroes.py`):
 allies and the player's own hero are never counted.
 
+## How the 64 supported heroes get theirs
+
+Three layers, so the same detail scales past one hero:
+
+- **Numbers (automatic).** `.github/workflows/hero-stats.yml` runs
+  `scripts/hero_item_stats.py --all --write` every Wednesday and by hand after a
+  patch: `data/heroes/item_stats/<hero>.json` per supported hero in its usual
+  position (OpenDota `lane_role`; supports unfiltered), from the open OpenDota
+  Explorer (league games; a hero under 300 games in the patch is read from the
+  previous patch on too). It holds the usual and tempo builds, the tempo net
+  worth line, the skill build with talents, and for every enemy group each
+  item's share against it and elsewhere, the lift and the win rates, with
+  `candidates` (bought 2x+ as often against the group, 15%+ of 20+ games, a
+  real item of 1500+ gold). A changed file is a pull request.
+- **Mechanics (Valve).** Every item and ability a rule names is read from the
+  Valve datafeed for the current patch (step 2 below).
+- **Rules (judgement).** The candidates and the mechanics give a draft plan; the
+  doubtful points (data against mechanics, thin samples, a minority with a
+  better win rate) go to the player as 2-4 questions per hero. A hero's plan
+  lands with its answers; `data/heroes/plan_coverage.json` lists the supported
+  heroes still pending, and `tests/test_hero_plans.py` checks every plan the
+  same way: each rule can fire and its family answers it, the minute gate holds,
+  each reason renders in both languages on every screen, and no supported hero
+  is left out of both lists.
+
 ## The checklist for a hero
 
-0. **The numbers first.** `python scripts/hero_item_stats.py <hero> --since <patch start>`
-   reads the open OpenDota Explorer (league games, parsed gold timelines): the
-   win rate by the hero's gold at 20/25/30 min and the 85% line (the tempo
-   curve), the item order in the farmed won games (the tempo build) and each
-   counter's share and win rate per enemy group. Every rule below is checked
-   against it; a rule the high-rank games contradict needs a stated reason.
+0. **The numbers first.** `python scripts/hero_item_stats.py <hero>` prints the
+   report (`--write` saves it): the win rate by the hero's gold at 20/25/30 min
+   and the 85% line (the tempo curve), the item order in all won games and in
+   the farmed ones, the skill build and each counter per enemy group. Every
+   rule below is checked against it; a rule the high-rank games contradict
+   needs a stated reason.
 1. **The hero's build.** Read `data/meta/stratz_builds.json` (STRATZ
    Divine–Immortal, refreshed weekly) for the position: the core items and
    their minutes. A counter that is already in the build is "buy it earlier";
@@ -35,10 +60,17 @@ allies and the player's own hero are never counted.
    `evasion`, `illusions`, `healing` (`draft_analysis.COUNTERS`), `escape`
    (`draft_analysis.ESCAPES`: escapes a silence stops, spell names from
    `/herodata`), `break` (`situational_items.BREAK_PASSIVES`), `jumpers`
-   (`draft_analysis.JUMPERS`: heroes who jump onto a carry). A new group goes
+   (`draft_analysis.JUMPERS`: heroes who jump onto a carry), `invisibility`,
+   `illusion_clearers` (`draft_analysis.ILLUSION_CLEARERS`). A new group goes
    into those tables with its own check, not into one plan.
 4. **The rules**, in order; the first that holds wins its `family`:
-   - `why` — the reason shown (one of `hero_items.WHYS`);
+   - `why` — a short id of the reason;
+   - `reason` — `{en, uk}`: one clause each, no final period, with the
+     placeholders `{enemy}`, `{escape}`, `{spell}`, `{item}` (the tempo
+     reason: `{item}`, `{net_worth}`). The draft card shows it as is, the death
+     screen after «Why <item>:», the farm advice as its reason; the Ukrainian is
+     matched to the English by `advice_i18n` itself, so no code changes per
+     rule;
    - `item` / `name` — the OpenDota item key and the English name;
    - `enemy` (and `also`, a second group that must be seen too);
    - `minute` — from when the live farm advice may name it (the draft card
@@ -70,11 +102,10 @@ allies and the player's own hero are never counted.
    items carried, `next_item.net_worth`), the counters wait and `tempo.items`
    go on. A player's GSI has no enemy or team net worth: the hero's own farm is
    the observed sign.
-8. **The words.** A new `why` needs its reason in each place that shows one,
-   in English and Ukrainian: `map_hints.TIPS["draft_<why>"]`,
-   `death_screen.TEXT[lang]["why_<why>"]`, `post_laning_coach.SITUATIONAL_BECAUSE`
-   with its Ukrainian pattern in `advice_i18n.py`. `test_hero_items.py` fails
-   when one is missing.
+8. **The words.** Write `reason` in English and Ukrainian with the same
+   placeholders; `tests/test_hero_plans.py` renders it on all three screens and
+   checks the Ukrainian farm advice. A generic counter keeps its words in code
+   (`map_hints.TIPS`, `death_screen.TEXT`, `post_laning_coach.SITUATIONAL_BECAUSE`).
 9. **The scenarios.** Add the hero's cases to `backend/tests/test_hero_items.py`:
    each rule, the rule that must *not* fire (Anti-Mage is no escape for a
    silence: Counterspell), an owned item that answers the family, the minute

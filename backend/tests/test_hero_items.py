@@ -12,11 +12,9 @@ from test_next_item import META
 from test_situational_items import _stunned
 
 from app.advice_i18n import translate_uk
-from app.death_screen import TEXT as DEATH_TEXT
 from app.death_screen import build_death_screen
 from app.hero_items import (
     ITEM_PLANS_DIR,
-    WHYS,
     groups,
     load_plans,
     plan_for,
@@ -24,9 +22,8 @@ from app.hero_items import (
     tempo_threshold,
     validate,
 )
-from app.map_hints import TIPS
 from app.next_item import net_worth
-from app.post_laning_coach import SITUATIONAL_BECAUSE, _next_item_copy
+from app.post_laning_coach import _next_item_copy
 from app.situational_items import draft_item, situational_item
 
 GENERIC_WHYS = {"evasion", "illusions", "healing", "break", "magic"}
@@ -62,14 +59,6 @@ def test_every_plan_follows_the_template():
         assert set(plan.get("suppress", {})) <= GENERIC_WHYS
 
 
-@pytest.mark.parametrize("why", sorted(WHYS))
-def test_every_why_has_a_reason_wherever_one_is_shown(why):
-    # The draft card, the death screen and the farm advice, in both languages.
-    assert set(TIPS[f"draft_{why}"]) == {"en", "uk"}
-    assert f"why_{why}" in DEATH_TEXT["en"] and f"why_{why}" in DEATH_TEXT["uk"]
-    assert why in SITUATIONAL_BECAUSE
-
-
 def test_a_broken_plan_is_refused():
     good = json.loads((ITEM_PLANS_DIR / "terrorblade.json").read_text(encoding="utf-8"))
     validate(good)
@@ -78,7 +67,10 @@ def test_a_broken_plan_is_refused():
         {**good, "positions": ["jungle"]},
         {**good, "rules": [{**good["rules"][0], "enemy": "tanks"}]},
         {**good, "rules": [{**good["rules"][0], "basis": " "}]},
-        {**good, "rules": [{**good["rules"][0], "why": "vibes"}]},
+        {**good, "rules": [{**good["rules"][0], "reason": {"en": "x {enemy}"}}]},  # no uk
+        {**good, "rules": [{**good["rules"][0], "reason": {"en": "{hero} wins", "uk": "{hero}"}}]},
+        {**good, "rules": [{**good["rules"][0], "reason": {"en": "{enemy} heals", "uk": "лікує"}}]},
+        {**good, "rules": [{**good["rules"][0], "reason": {"en": "Ends.", "uk": "Кінець"}}]},
         {**good, "rules": [good["rules"][0], good["rules"][0]]},  # the same id twice
         {**good, "suppress": {"illusions": ""}},
         {**good, "tempo": {**good["tempo"], "net_worth": [[25, 16000], [20, 12000]]}},
@@ -246,7 +238,7 @@ def test_farmed_over_the_curve_the_tempo_build_before_the_counters():
     state = {"minute": 25, "gold": 900, "extra_context": {"next_item": ahead, "gpm": 600}}
     _, reason = _next_item_copy(state, state["extra_context"])
     assert reason.startswith(
-        "Your net worth is 17000, well ahead for this minute, so Eye of Skadi on the tempo build"
+        "Your net worth is 17000, well ahead for this minute: Eye of Skadi on the tempo build"
     )
     assert translate_uk(reason).startswith(
         "Ваш нетворс — 17000, набагато більше звичайного для цієї хвилини: спершу Eye of Skadi"
@@ -324,42 +316,38 @@ def test_the_minute_gate_and_the_death_patterns_still_come_first():
     assert early["key"] == "bloodthorn"
 
 
+BLOODTHORN_WHY = {
+    "en": (
+        "Phantom Assassin dodges attacks and Queen of Pain escapes with Blink: Bloodthorn "
+        "silences the escape, and your attacks and illusions never miss the silenced target"
+    ),
+    "uk": (
+        "Phantom Assassin ухиляється від атак, а Queen of Pain тікає через Blink: Bloodthorn "
+        "накладає тишу, і по цілі під тишею ваші атаки й ілюзії не промахуються"
+    ),
+}
+
+
 def test_bloodthorn_says_why_on_the_card_the_death_screen_and_the_farm_advice():
     item = _tb(["Phantom Assassin", "Queen of Pain", "Lion", "Axe"])
-    card = TIPS["draft_evasion_escape"]
-    params = {
-        "item": item["name"],
-        "enemy": item["enemy"],
-        "escape": item["escape"],
-        "spell": item["spell"],
-    }
-    assert card["en"][1].format(**params) == (
-        "Phantom Assassin dodges attacks and Queen of Pain escapes with Blink: plan Bloodthorn. "
-        "Its silence stops Blink, and your attacks and illusions never miss the silenced target."
-    )
-    assert "Queen of Pain тікає через Blink" in card["uk"][1].format(**params)
-    screen = build_death_screen(
-        death={"t": 1200, "usable": []},
-        place=None,
-        respawn=30,
-        gold=900,
-        buyback_cost=None,
-        minute=20,
-        next_item={**item, "gold_left": 4000},
-        lang="uk",
-    )
-    assert any("Queen of Pain тікає через Blink" in line for line in screen["lines"])
+    assert item["reason"] == BLOODTHORN_WHY
+    for lang, why in (("en", "Why Bloodthorn: "), ("uk", "Чому Bloodthorn: ")):
+        screen = build_death_screen(
+            death={"t": 1200, "usable": []},
+            place=None,
+            respawn=30,
+            gold=900,
+            buyback_cost=None,
+            minute=20,
+            next_item={**item, "gold_left": 4000},
+            lang=lang,
+        )
+        assert why + BLOODTHORN_WHY[lang] + "." in screen["lines"]
     state = {"minute": 20, "gold": 900, "extra_context": {"next_item": item, "gpm": 520}}
     action, reason = _next_item_copy(state, state["extra_context"])
     assert action == "Keep farming toward Bloodthorn on the safest waves and camps."
-    assert reason == (
-        "Phantom Assassin dodges your attacks and Queen of Pain escapes with Blink, and "
-        "Bloodthorn silences the escape and never misses a silenced target."
-    )
-    assert translate_uk(reason) == (
-        "Phantom Assassin ухиляється від атак, а Queen of Pain тікає через Blink — "
-        "Bloodthorn не дасть утекти й по цілі під тишею не промахується."
-    )
+    assert reason == BLOODTHORN_WHY["en"] + "."
+    assert translate_uk(reason) == BLOODTHORN_WHY["uk"] + "."
 
 
 def test_the_draft_card_for_terrorblade_reaches_the_overlay(client):
@@ -378,12 +366,7 @@ def test_the_draft_card_for_terrorblade_reaches_the_overlay(client):
         if payload["map"]["clock_time"] >= 180:
             hint = client.get("/overlay/recommendation?lang=en").json().get("map_hint") or {}
             texts.append((hint.get("title"), hint.get("hint")))
-    assert (
-        "Against their draft: Bloodthorn",
-        TIPS["draft_evasion_escape"]["en"][1].format(
-            enemy="Phantom Assassin", escape="Queen of Pain", spell="Blink", item="Bloodthorn"
-        ),
-    ) in texts
+    assert ("Against their draft: Bloodthorn", BLOODTHORN_WHY["en"] + ".") in texts
 
 
 # The usual build: real 7.41 recipes (OpenDota constants), so Hydra's Breath

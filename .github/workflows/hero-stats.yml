@@ -1,0 +1,82 @@
+name: Hero stats
+
+# Every Wednesday, and by hand after a Dota patch: rebuild
+# data/heroes/item_stats/<hero>.json for every supported hero from the open
+# OpenDota Explorer (league games with parsed gold timelines and purchase
+# logs): the usual and tempo builds, the tempo net worth line, the skill build
+# and the counter items bought against each enemy group, with win rates.
+# scripts/hero_item_stats.py writes them; hero item plans
+# (data/heroes/item_plans, docs/HERO_ITEM_PLANS.md) are checked against them.
+# No key is needed. A changed file becomes a pull request (Settings → Actions →
+# General → "Allow GitHub Actions to create and approve pull requests").
+on:
+  schedule:
+    - cron: "17 4 * * 3"
+  workflow_dispatch:
+    inputs:
+      hero:
+        description: "One hero (e.g. terrorblade) instead of every supported hero"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hero-stats
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      head_sha: ${{ steps.pr.outputs.pull-request-head-sha }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+      - name: Install
+        working-directory: backend
+        run: 'python -m pip install --require-hashes --only-binary=:all: -r requirements-dev.txt'
+      - name: Rebuild hero stats
+        env:
+          HERO: ${{ inputs.hero }}
+        run: |
+          if [ -n "$HERO" ]; then
+            python scripts/hero_item_stats.py "$HERO" --write
+          else
+            python scripts/hero_item_stats.py --all --write
+          fi
+      - name: Check the plans against the new files
+        working-directory: backend
+        run: python -m pytest -q tests/test_hero_plans.py tests/test_hero_items.py
+      - name: Show exact data change summary
+        run: git diff --stat -- data/heroes/item_stats >> "$GITHUB_STEP_SUMMARY"
+      - name: Open a pull request when it changed
+        id: pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/hero-stats
+          commit-message: "Refresh high-rank hero stats"
+          title: "Refresh high-rank hero stats"
+          body: |
+            `scripts/hero_item_stats.py` rebuilt `data/heroes/item_stats/` from the OpenDota Explorer (league games).
+            Compare the changed heroes with their plans in `data/heroes/item_plans/` (docs/HERO_ITEM_PLANS.md): a rule whose item is no longer bought against its group, or a tempo line that moved, needs a review.
+          add-paths: data/heroes/item_stats
+          delete-branch: true
+  validate:
+    needs: refresh
+    if: needs.refresh.outputs.head_sha != ''
+    permissions:
+      contents: read
+      checks: write
+    uses: ./.github/workflows/refresh-validation.yml
+    with:
+      source_sha: ${{ needs.refresh.outputs.head_sha }}

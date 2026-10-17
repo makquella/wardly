@@ -38,15 +38,11 @@ TEXT = {
         "why_burst": "Чому {item}: смертей за пару секунд із високого здоров'я — {n}, він дасть час.",
         "why_targeted": "Чому {item}: смертей під контролем проти {enemy} — {n}, він блокує {spell}.",
         "why_evasion": "Чому {item}: {enemy} ухиляється від атак, а з ним більшість атак пробиває ухилення.",
-        "why_evasion_escape": "Чому {item}: {enemy} ухиляється від атак, а {escape} тікає через {spell}; його тиша не дасть утекти, а по цілі під тишею ви не промахуєтеся.",
         "why_healing": "Чому {item}: {enemy} багато лікується, а він ріже лікування.",
-        "why_illusion_evasion": "Чому {item}: {enemy} б'ється ілюзіями, а з ним третина їхніх атак по вас промахується.",
-        "why_illusion_splash": "Чому {item}: {enemy} б'ється ілюзіями; у Metamorphosis він б'є ще до 3 з них і отруює.",
-        "why_jumper": "Чому {item}: {enemy} стрибає на вас через {spell}, а він відкидає ворога, поки ви б'єте далі.",
-        "why_tempo": "Чому {item}: ваш нетворс — {n}, набагато більше звичайного для цієї хвилини: тримайте темп, потім Aegis і трон.",
         "why_illusions": "Чому {item}: {enemy} б'ється ілюзіями, а він б'є їх усіх одразу.",
         "why_magic": "Чому {item}: героїв ворога з магічною шкодою — {n}, він захистить від неї.",
         "why_break": "Чому {item}: {enemy} тримається на {spell}, а він це вимикає.",
+        "why_reason": "Чому {item}: {reason}.",
     },
     "en": {
         "title": "Respawn in {s} s",
@@ -63,15 +59,11 @@ TEXT = {
         "why_burst": "Why {item}: {n} deaths in seconds from high health, and it buys you time.",
         "why_targeted": "Why {item}: {n} deaths under stuns against {enemy}, and it blocks {spell}.",
         "why_evasion": "Why {item}: {enemy} dodges attacks, and with it most attacks go through.",
-        "why_evasion_escape": "Why {item}: {enemy} dodges attacks and {escape} escapes with {spell}; its silence stops the escape, and you never miss the silenced target.",
         "why_healing": "Why {item}: {enemy} heals a lot, and it cuts the healing.",
-        "why_illusion_evasion": "Why {item}: {enemy} fights with illusions, and with it a third of their attacks miss you.",
-        "why_illusion_splash": "Why {item}: {enemy} fights with illusions; in Metamorphosis it hits up to 3 more of them and poisons them.",
-        "why_jumper": "Why {item}: {enemy} jumps on you with {spell}, and it pushes them away while you keep hitting.",
-        "why_tempo": "Why {item}: your net worth is {n}, well ahead for this minute — keep the tempo build, then take the Aegis and end.",
         "why_illusions": "Why {item}: {enemy} fights with illusions, and it hits them all.",
         "why_magic": "Why {item}: {n} enemy heroes deal magic damage, and it protects you.",
         "why_break": "Why {item}: {enemy} relies on {spell}, and it turns that off.",
+        "why_reason": "Why {item}: {reason}.",
     },
 }
 
@@ -128,7 +120,11 @@ def build_death_screen(
         why = (next_item or {}).get("why")
         enemy = (next_item or {}).get("enemy")
         count = _int((next_item or {}).get("count"))
-        if (why in ("disabled", "burst", "magic", "tempo") and count) or (
+        reason = (next_item or {}).get("reason")
+        if isinstance(next_item, dict) and isinstance(reason, dict) and reason.get(lang):
+            # A hero plan's own reason (hero_items.py).
+            lines.append(text["why_reason"].format(item=next_item["name"], reason=reason[lang]))
+        elif (why in ("disabled", "burst", "magic") and count) or (
             why == "targeted" and count and enemy and next_item.get("spell")
         ):
             lines.append(
@@ -136,32 +132,8 @@ def build_death_screen(
                     item=next_item["name"], n=count, enemy=enemy, spell=next_item.get("spell")
                 )
             )
-        elif (
-            why in ("evasion", "healing", "illusions", "illusion_evasion", "illusion_splash")
-            and enemy
-        ):
+        elif why in ("evasion", "healing", "illusions") and enemy:
             lines.append(text[f"why_{why}"].format(item=next_item["name"], enemy=enemy))
-        elif (
-            why == "evasion_escape"
-            and enemy
-            and isinstance(next_item, dict)
-            and next_item.get("escape")
-            and next_item.get("spell")
-        ):
-            lines.append(
-                text["why_evasion_escape"].format(
-                    item=next_item["name"],
-                    enemy=enemy,
-                    escape=next_item["escape"],
-                    spell=next_item["spell"],
-                )
-            )
-        elif why == "jumper" and enemy and isinstance(next_item, dict) and next_item.get("spell"):
-            lines.append(
-                text["why_jumper"].format(
-                    item=next_item["name"], enemy=enemy, spell=next_item["spell"]
-                )
-            )
         elif why == "break" and enemy and isinstance(next_item, dict) and next_item.get("spell"):
             lines.append(
                 text["why_break"].format(
