@@ -27,6 +27,7 @@ events carry both languages.
 from __future__ import annotations
 
 import json
+import math
 from functools import lru_cache
 from typing import Any
 
@@ -140,6 +141,15 @@ DRAFT_FROM, DRAFT_UNTIL = 3 * 60, 10 * 60
 DRAFT_SHOW = 20
 # A hero plan's note: once per match, this long.
 PLAN_NOTE_SHOW = 20
+# Enemies seen together far from the player (enemy_group): GROUP_MIN heroes
+# within GROUP_RADIUS of one another, GROUP_FAR or more from the player, from
+# GROUP_FROM on; shown GROUP_SHOW seconds, at most once per GROUP_EVERY.
+GROUP_MIN = 4
+GROUP_RADIUS = 2500
+GROUP_FAR = 4000
+GROUP_FROM = 10 * 60
+GROUP_SHOW = 15
+GROUP_EVERY = 180
 DENY_MIN_LAST_HITS = 8
 # A power rune kept in the Bottle this long (clock seconds, alive) → use it.
 BOTTLE_RUNE_HELD = 30
@@ -448,6 +458,17 @@ TIPS = {
             "{enemy} ухиляється від атак: заплануйте {item} після першого великого предмета, більшість ваших атак пробиватиме ухилення.",
         ),
     },
+    # Enemies seen together far away (enemy_group): no one goes there alone.
+    "enemy_group": {
+        "en": (
+            "{n} enemies together {place}",
+            "Do not go there alone: farm or push the other side of the map, with your TP ready for your team.",
+        ),
+        "uk": (
+            "Ворогів разом — {n}, {place}",
+            "Туди один не йдіть: фарміть чи штовхайте іншу сторону мапи, а ТП тримайте для команди.",
+        ),
+    },
     # A hero plan's note (hero_items.plan_note): advice with no item, its own words.
     "plan_note": {
         "en": ("Against {enemy}", "{reason}."),
@@ -623,7 +644,64 @@ STRIP_LABELS = {
     "roshan": ("Рошан", "Roshan"),
     "roshan_maybe": ("Рошан?", "Roshan?"),
     "aegis": ("Аегіс", "Aegis"),
+    "enemy_aegis": ("Аегіс ворогів", "Enemy Aegis"),
 }
+
+
+def enemy_group(
+    units: list[dict[str, Any]] | None, x: Any, y: Any, team: Any
+) -> dict[str, Any] | None:
+    """The largest group of visible enemy heroes (enemy_heroes.visible_enemy_units,
+    absolute coordinates) when it has GROUP_MIN+ heroes and is GROUP_FAR or more
+    from the player at (x, y): {count, heroes, zone, side}; None otherwise."""
+    from app.map_analysis import map_side, zone
+
+    if (
+        not isinstance(x, (int, float))
+        or not isinstance(y, (int, float))
+        or team
+        not in (
+            "radiant",
+            "dire",
+        )
+    ):
+        return None
+    points = [
+        (u["hero"], float(u["x"]), float(u["y"]))
+        for u in units or []
+        if isinstance(u, dict)
+        and isinstance(u.get("x"), (int, float))
+        and isinstance(u.get("y"), (int, float))
+    ]
+    best: list[tuple[str, float, float]] = []
+    for _, px, py in points:
+        near = [p for p in points if math.hypot(p[1] - px, p[2] - py) <= GROUP_RADIUS]
+        if len(near) > len(best):
+            best = near
+    if len(best) < GROUP_MIN:
+        return None
+    cx, cy = sum(p[1] for p in best) / len(best), sum(p[2] for p in best) / len(best)
+    if math.hypot(cx - x, cy - y) < GROUP_FAR:
+        return None
+    return {
+        "count": len(best),
+        "heroes": [p[0] for p in best],
+        "zone": zone(cx, cy),
+        "side": map_side(cx, cy, team == "radiant"),
+    }
+
+
+def group_place(group: dict[str, Any], lang: str) -> str:
+    """Where a group is, as in the death screen: «на нижній лінії на своїй половині»."""
+    from app.analysis_texts import PLACE_SIDES, PLACE_ZONES
+
+    zone_id, side = str(group.get("zone")), str(group.get("side"))
+    sides = PLACE_SIDES[lang]
+    if lang == "uk":
+        zones = PLACE_ZONES["uk"]["in"]
+        return f"{zones.get(zone_id, '')} {sides.get(side, '')}".strip()
+    names = PLACE_ZONES["en"]["name"]
+    return f"in the {names.get(zone_id, 'map')} {sides.get(side, '')}".strip()
 
 
 def strip_item(kind: str, at: int, clock: int, lang: str, **extra: Any) -> dict[str, Any]:
@@ -780,6 +858,7 @@ class RoleTips:
         self._shown: dict[str, int] = {}
         self._shown_record: dict[str, Any] = {}
         self._shown_draft: dict[str, Any] = {}
+        self._shown_group: dict[str, dict[str, Any]] = {}
         # (observer wards carried, the clock since when none was placed).
         self._ward_held: tuple[int, int] | None = None
         # The clock of the last observer ward placed (the carried count went down).
@@ -849,6 +928,26 @@ class RoleTips:
             lost=shown["lost"],
             games=shown["games"],
         )
+
+    def enemy_group(
+        self, clock: int, lang: str, group: dict[str, Any] | None
+    ) -> dict[str, Any] | None:
+        """«N enemies together …» (enemy_group): GROUP_SHOW seconds, at most
+        once per GROUP_EVERY; the card already up stays while it lasts."""
+        start = self._shown.get("enemy_group")
+        if start is not None and 0 <= clock - start <= GROUP_SHOW:
+            shown = self._shown_group
+            return _tip("enemy_group", f"enemy_group@{start}", lang, **shown[lang])
+        if not group or clock < GROUP_FROM:
+            return None
+        if start is not None and 0 <= clock - start < GROUP_EVERY:
+            return None
+        self._shown["enemy_group"] = clock
+        self._shown_group = {
+            lang_key: {"n": group["count"], "place": group_place(group, lang_key)}
+            for lang_key in ("en", "uk")
+        }
+        return _tip("enemy_group", f"enemy_group@{clock}", lang, **self._shown_group[lang])
 
     def missing(
         self, clock: int, lang: str, missing: dict[str, Any] | None
@@ -1367,6 +1466,7 @@ def map_hint(
     lane_record: dict[str, Any] | None = None,
     draft_item: dict[str, Any] | None = None,
     plan_note: dict[str, Any] | None = None,
+    enemy_group: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """A timer, but a role tip over a minor one (runes, lotus); None before the
     horn or without a role. `objective`: a Roshan / Aegis timer (roshan_timer.py),
@@ -1385,9 +1485,16 @@ def map_hint(
     called = tips.missing(clock, lang, missing if alive else None)
     if called is not None:
         return called
+    # Enemies grouped far away: no one goes there alone (over scheduled timers).
+    grouped = tips.enemy_group(clock, lang, enemy_group if alive else None)
+    if grouped is not None:
+        return grouped
     timer = next_timer(clock, role, lang)
     if objective is not None and (
-        timer is None or timer["minor"] or objective["in_seconds"] <= timer["in_seconds"]
+        timer is None
+        or timer["minor"]
+        or objective.get("urgent")
+        or objective["in_seconds"] <= timer["in_seconds"]
     ):
         timer = objective
     if (

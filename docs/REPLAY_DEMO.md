@@ -77,3 +77,20 @@ Clean logs are for showing the app. Verbose logs are for debugging.
 ## Limits
 
 Replay-derived GSI-like states may include missing or inferred fields. The current minimal replay parser does not reconstruct every live GSI signal. Advice therefore avoids claims that require exact enemy positions, exact team readiness, or exact objective context.
+
+## Replay a match recording through the current coach
+
+With «Keep match recordings for a week» on (Settings), every match is saved as
+gzip JSON lines (`match_records.py`). `scripts/replay_recording.py` feeds such a
+file to the current backend, payload by payload with the recording's own wall
+time (a fake clock for the advice scheduler), and prints every distinct overlay
+card with its match clock: advice, map hints, the death screen and the Aegis on
+the timer strip. Use it before and after a rule change to see what the coach
+would say in a real game. Recordings are the player's games: keep them on the
+computer, never in the repository.
+
+```bash
+cd backend
+.venv/bin/python ../scripts/replay_recording.py ~/Wardly-match-....jsonl.gz --from 20:00 \
+  --items items.json        # optional: OpenDota /api/constants/items saved once
+```

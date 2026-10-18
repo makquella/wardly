@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from app.map_hints import map_hint, score_gap, timer_strip
+from app.map_hints import enemy_group, map_hint, score_gap, timer_strip
 
 if TYPE_CHECKING:
     from app.match_memory import LiveTrackerSnapshot, MatchMemory
@@ -110,6 +110,12 @@ def render_live_hints(
             lane_record=inputs.lane_record,
             draft_item=inputs.draft_item,
             plan_note=inputs.plan_note,
+            enemy_group=enemy_group(
+                extra.get("enemy_units") if isinstance(extra.get("enemy_units"), list) else None,
+                extra.get("xpos"),
+                extra.get("ypos"),
+                extra.get("team_name"),
+            ),
             roshan_open=trackers.roshan_open,
             objective=trackers.objective,
             skill=skill,

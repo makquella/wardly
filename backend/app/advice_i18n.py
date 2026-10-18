@@ -533,6 +533,20 @@ _UK_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     ),
     (
         re.compile(
+            r"^You have (?P<gold>\d+) gold and buyback costs (?P<cost>\d+); "
+            r"the enemy holds the Aegis: one death without buyback can decide the game\.$"
+        ),
+        "Золота {gold}, байбек коштує {cost}. Аегіс у ворогів: одна смерть без байбеку може вирішити гру.",
+    ),
+    (
+        re.compile(
+            r"^You have (?P<gold>\d+) gold and buyback costs (?P<cost>\d+); "
+            r"your base is open: one death without buyback can decide the game\.$"
+        ),
+        "Золота {gold}, байбек коштує {cost}. Ваша база відкрита: одна смерть без байбеку може вирішити гру.",
+    ),
+    (
+        re.compile(
             r"^Recover farm: (?P<lh>\d+) last hits at minute (?P<m>\d+), a good pace is "
             r"(?P<low>\d+)\+\.$"
         ),

@@ -455,7 +455,8 @@ class PlayerService:
     ) -> dict[str, Any] | None:
         """The overlay card while the player waits to respawn (death_screen.py),
         from the death just recorded and the live state."""
-        extra = state.get("extra_context") if isinstance(state.get("extra_context"), dict) else {}
+        raw = state.get("extra_context")
+        extra: dict[str, Any] = raw if isinstance(raw, dict) else {}
         clock = extra.get("clock_time")
         death = self.tracker.last_death()
         if (
@@ -484,6 +485,8 @@ class PlayerService:
             "respawn": extra.get("respawn_seconds"),
             "gold": extra.get("available_gold", state.get("gold")),
             "buyback_cost": extra.get("buyback_cost"),
+            "buyback_cooldown": extra.get("buyback_cooldown"),
+            "danger": extra.get("base_danger"),
             "minute": state.get("minute"),
             "next_item": item,
         }

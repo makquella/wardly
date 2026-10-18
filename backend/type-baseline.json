@@ -464,7 +464,7 @@
       "path": "app/player_service.py",
       "message": "Item \"None\" of \"Any | dict[Any, Any] | None\" has no attribute \"get\"",
       "code": "union-attr",
-      "count": 9
+      "count": 3
     },
     {
       "path": "app/recommender.py",

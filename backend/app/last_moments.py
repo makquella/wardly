@@ -19,6 +19,8 @@ death on the timeline:
 - free_s: seconds of the last FREE_WINDOW the hero was not disabled;
 - held_s: seconds of the last FREE_WINDOW the hero was stunned or hexed (not
   just muted: a muted hero still moves and casts);
+- hexed_s: the seconds of them the hero was hexed (situational_items: Linken's
+  against a Hex, Black King Bar against the stuns);
 - burst_s: seconds from BURST_FROM % HP or more to the death (a burst kill),
   when that is BURST_SECONDS or less.
 
@@ -196,6 +198,7 @@ class LastSeconds:
             "mp": round(_number(hero.get("mana_percent")) or 0),
             "disabled": is_disabled(hero),
             "held": is_held(hero),
+            "hexed": hero.get("hexed") is True,
             "ready": ready_savers(items) + [f"{ABILITY_PREFIX}{name}" for name in abilities],
         }
         if self._entries and self._entries[-1]["t"] == clock:
@@ -228,6 +231,7 @@ class LastSeconds:
             "usable": usable,
             "free_s": sum(1 for e in recent if not e["disabled"]),
             "held_s": sum(1 for e in recent if e.get("held")),
+            "hexed_s": sum(1 for e in recent if e.get("hexed")),
         }
         high = [e for e in entries if e["hp"] >= BURST_FROM]
         if high:

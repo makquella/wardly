@@ -79,6 +79,22 @@ ESCAPE_OR_DEFENSIVE_FLAG_HINTS = (
 P = ParamSpec("P")
 R = TypeVar("R")
 
+# Own tier-3 towers and barracks at the start (GSI drops a destroyed building).
+OWN_TOWER3, OWN_BARRACKS = 3, 6
+
+
+def base_danger(enemy_aegis: bool, own_base: dict[str, Any] | None) -> str | None:
+    """The game on the line: "enemy_aegis" while an enemy can hold the Aegis,
+    "base" once an own tier-3 tower or barracks is down; None otherwise."""
+    if enemy_aegis:
+        return "enemy_aegis"
+    if own_base and (
+        int(own_base.get("tower3", OWN_TOWER3)) < OWN_TOWER3
+        or int(own_base.get("barracks", OWN_BARRACKS)) < OWN_BARRACKS
+    ):
+        return "base"
+    return None
+
 
 @dataclass(frozen=True)
 class LiveTrackerSnapshot:
@@ -140,6 +156,7 @@ class MatchMemory:
         self._last_player_deaths: int | None = None
         self.farm = FarmTracker()
         self.buyback = BuybackTracker()
+        self.danger: str | None = None  # base_danger: the game on the line
         self.tp = TpTracker()
         self.role = LiveRoleTracker()
         self.tips = RoleTips()
@@ -217,12 +234,18 @@ class MatchMemory:
             current_alive,
             paused=_ctx_bool(state, "paused"),
         )
+        own_base = _ctx_value(state, "own_base")
+        self.danger = base_danger(
+            self.roshan.enemy_aegis(_game_clock(state)),
+            own_base if isinstance(own_base, dict) else None,
+        )
         self.buyback.observe(
             _game_clock(state),
             _ctx_int_or_none(state, "gold"),
             _ctx_int_or_none(state, "buyback_cost"),
             _ctx_int_or_none(state, "buyback_cooldown"),
             current_alive,
+            self.danger,
         )
         has_tp = _ctx_value(state, "has_tp")
         self.tp.observe(
@@ -514,6 +537,7 @@ class MatchMemory:
                 "death_review_decision": self.death_review_decision(),
                 "farm_stall": self.farm.stall(),
                 "buyback_spent": self.buyback.signal(),
+                "base_danger": self.danger,
                 "tp_missing": self.tp.signal(),
             }
         )

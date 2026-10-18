@@ -71,6 +71,7 @@ def build_post_laning_advice(
         death_context=death_context,
         farm_stall=farm_stall is not None,
         buyback_spent=buyback_spent is not None,
+        buyback_danger=bool((buyback_spent or {}).get("danger")),
         tp_missing=tp_missing is not None,
     )
     if category is None:
@@ -197,6 +198,7 @@ def _category_for_state(
     death_context: bool,
     farm_stall: bool = False,
     buyback_spent: bool = False,
+    buyback_danger: bool = False,
     tp_missing: bool = False,
 ) -> str | None:
     # Phase 3 fix: death_route_reset is gated by the factual death_context (derived
@@ -221,8 +223,9 @@ def _category_for_state(
         return "post_laning_risky_showing"
 
     # A purchase just took the gold below the buyback cost late in the game
-    # (buyback_tracker.py). Under pressure the safety-first advice wins.
-    if buyback_spent and not pressure_active:
+    # (buyback_tracker.py). Under pressure the safety-first advice wins, unless
+    # the game is on the line (the enemy's Aegis, an own base building down).
+    if buyback_spent and (not pressure_active or buyback_danger):
         return "post_laning_buyback_reserve"
 
     # Almost no last hits for minutes while alive (farm_tracker.py): get back
@@ -331,7 +334,9 @@ def _spend_while_dead(state: Mapping[str, Any], extra: Mapping[str, Any]) -> dic
         return None
     gold = _to_int(gold, 0)
     reserve = 0
-    if _to_int(state.get("minute"), 0) >= BUYBACK_RESERVE_MINUTE:
+    # The buyback stays aside after minute 30, and earlier with the game on the
+    # line (match_memory.base_danger: the enemy's Aegis, an own base building down).
+    if _to_int(state.get("minute"), 0) >= BUYBACK_RESERVE_MINUTE or extra.get("base_danger"):
         cost = extra.get("buyback_cost")
         if cost is None:
             return None  # can't tell what to keep for buyback
@@ -391,7 +396,9 @@ def _next_item_copy(state: Mapping[str, Any], extra: Mapping[str, Any]) -> tuple
     if left <= 0 or gold is None:
         return None
     reserve = 0
-    if _to_int(state.get("minute"), 0) >= BUYBACK_RESERVE_MINUTE:
+    # The buyback stays aside after minute 30, and earlier with the game on the
+    # line (match_memory.base_danger: the enemy's Aegis, an own base building down).
+    if _to_int(state.get("minute"), 0) >= BUYBACK_RESERVE_MINUTE or extra.get("base_danger"):
         cost = extra.get("buyback_cost")
         if cost is None:
             return None  # can't tell what to keep for buyback
@@ -509,9 +516,21 @@ def _situational_because(item: Mapping[str, Any]) -> str | None:
     return template.format(count=count, name=item["name"], enemy=enemy, spell=item.get("spell"))
 
 
+BUYBACK_DANGER = {
+    "enemy_aegis": "the enemy holds the Aegis",
+    "base": "your base is open",
+}
+
+
 def _buyback_reason(signal: Mapping[str, Any]) -> str:
     gold = _to_int(signal.get("gold"), 0)
     cost = _to_int(signal.get("cost"), 0)
+    danger = BUYBACK_DANGER.get(str(signal.get("danger")))
+    if danger:
+        return (
+            f"You have {gold} gold and buyback costs {cost}; {danger}: "
+            "one death without buyback can decide the game."
+        )
     return (
         f"You have {gold} gold and buyback costs {cost}; "
         "after minute 30 one death without buyback can decide the game."
