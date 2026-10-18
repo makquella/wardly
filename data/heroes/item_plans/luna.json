@@ -9,7 +9,8 @@
   "sources": {
     "games": "1129 league games since 7.41 (data/heroes/item_stats), win 48.4%. Reproduce: python scripts/hero_item_stats.py luna.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 48, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 48, 7.41f.",
+    "player": "Player review, 2026-10-18: the 80% tempo line; Monkey King Bar against evasion stays: her low win rate there comes from the carry matchup, not the item."
   },
   "rules": [
     {
@@ -117,5 +118,52 @@
   },
   "suppress": {
     "illusions": "Moon Glaives already bounce each attack to up to 6 enemies within 500 (Valve 7.41f) and Lunar Orbit hits all around her; high-rank Lunas do not add Maelstrom against illusion heroes."
+  },
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        19700
+      ],
+      [
+        30,
+        22100
+      ]
+    ],
+    "items": [
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "hurricane_pike",
+        "name": "Hurricane Pike"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      }
+    ],
+    "basis": "Gold lines where he wins 80.0%+: 25:00 20500 (15 games, 80.0%), 30:00 23000 (99 games, 80.8%); net worth ~0.96 of that gold. No 85% line for this hero (two of the three minutes needed), so the hero's own 80% line (scripts/hero_item_stats.py WIN_TARGETS), per the player review of 2026-10-18.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
   }
 }

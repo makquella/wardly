@@ -3,7 +3,9 @@ OpenDota Explorer (league games with parsed gold timelines and purchase logs),
 for a hero in its usual position:
 
 - the win rate by the hero's gold at 20, 25 and 30 minutes and the gold where it
-  first reaches --win (the plan's tempo curve; net worth is ~0.96 of that gold);
+  first reaches the hero's tempo target (the plan's tempo curve; net worth is
+  ~0.96 of that gold): 85%, else 80% or 75% for a hero who never wins 85% of
+  his farmed games at two of those minutes (--win fixes one);
 - the item order in all won games (the usual build) and in those over the
   20-minute line (the tempo build);
 - the skill build: the order the basic abilities are maxed, the first point and
@@ -178,6 +180,23 @@ def order(group: list[dict], built: set[str]) -> list[dict]:
     return sorted(rows, key=lambda r: r["minute"])
 
 
+# The tempo target per hero: the first of these win rates whose line holds at
+# MIN_LINE_POINTS of the three minutes (Luna never reaches 85%).
+WIN_TARGETS = (85.0, 80.0, 75.0)
+MIN_LINE_POINTS = 2
+
+
+def tempo_target(rows: list[dict], win: float | None) -> tuple[float, dict[str, Any]]:
+    """(win target, line): `win` when given, else the first of WIN_TARGETS
+    with a line at MIN_LINE_POINTS minutes (the last one tried otherwise)."""
+    target, line = WIN_TARGETS[-1], {}
+    for target in (win,) if win else WIN_TARGETS:
+        line = tempo_line(rows, target)
+        if len(line) >= MIN_LINE_POINTS:
+            break
+    return target, line
+
+
 def tempo_line(rows: list[dict], win: float) -> dict[str, Any]:
     line: dict[str, Any] = {}
     for minute, key in ((20, "g20"), (25, "g25"), (30, "g30")):
@@ -324,7 +343,9 @@ def counters(
     return table, candidates
 
 
-def hero_stats(hero: str, since_name: str | None, min_games: int, win: float) -> dict[str, Any]:
+def hero_stats(
+    hero: str, since_name: str | None, min_games: int, win: float | None = None
+) -> dict[str, Any]:
     from app.dota_constants import hero_id_from_name, hero_npc_name
     from app.hero_profiles import get_hero_position
 
@@ -343,7 +364,7 @@ def hero_stats(hero: str, since_name: str | None, min_games: int, win: float) ->
         rows = games(hero_id, since, lane)
     built = built_items()
     won = [r for r in rows if r["win"]]
-    line = tempo_line(rows, win)
+    win, line = tempo_target(rows, win)
     # The tempo build: the won games over the earliest line found.
     first = min(line, key=int) if line else None
     rich = [r for r in won if first and (r.get(f"g{first}") or 0) >= line[first]["gold"]]
@@ -455,7 +476,7 @@ def draft(stats: dict[str, Any]) -> dict[str, Any]:
                 for m, row in sorted(line.items(), key=lambda kv: int(kv[0]))
             ],
             "items": _listed(stats["tempo_build"]),
-            "basis": "Gold lines where he wins "
+            "basis": "Gold lines where the hero wins "
             f"{stats['tempo_win_target']}%+: "
             + ", ".join(
                 f"{m}:00 {r['gold']} ({r['games']} games, {r['win']}%)" for m, r in line.items()
@@ -532,7 +553,9 @@ def main() -> int:
     parser.add_argument("--draft", action="store_true", help="print a plan skeleton from the file")
     parser.add_argument("--patch", default=None, help="from this patch on (default: the latest)")
     parser.add_argument("--min-games", type=int, default=300, help="else the patch before too")
-    parser.add_argument("--win", type=float, default=85.0, help="the tempo line, win %%")
+    parser.add_argument(
+        "--win", type=float, default=None, help="the tempo line's win %% (default: per hero)"
+    )
     args = parser.parse_args()
     if args.all:
         from app.schemas import _SUPPORTED_HERO_LOOKUP

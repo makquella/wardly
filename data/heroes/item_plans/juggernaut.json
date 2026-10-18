@@ -9,7 +9,8 @@
   "sources": {
     "games": "314 league games since 7.41 (data/heroes/item_stats), win 56.7%. Reproduce: python scripts/hero_item_stats.py juggernaut.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 8, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 8, 7.41f.",
+    "player": "Player review, 2026-10-18: no Black King Bar against magic (Blade Fury)."
   },
   "rules": [
     {

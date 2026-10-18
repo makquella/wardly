@@ -11,7 +11,15 @@ import pytest
 
 from app.advice_i18n import translate_uk
 from app.config import DATA_DIR
-from app.hero_items import format_reason, groups, hero_rows, load_plans, placeholders
+from app.hero_items import (
+    format_reason,
+    groups,
+    hero_rows,
+    load_plans,
+    placeholders,
+    plan_note,
+    validate,
+)
 from app.post_laning_coach import _next_item_copy
 from app.schemas import _SUPPORTED_HERO_LOOKUP
 from app.situational_items import situational_item
@@ -130,3 +138,37 @@ def test_skill_build_names_its_abilities(plan):
     for key in [*skills["order"], (skills.get("opening") or {}).get("name")]:
         if key:
             assert named.get(key), f"{key} has no in-game name"
+
+
+NOTES = [(plan, note) for plan in PLANS for note in plan.get("notes", [])]
+
+
+@pytest.mark.parametrize(("plan", "note"), NOTES, ids=[f"{p['hero']}:{n['id']}" for p, n in NOTES])
+def test_every_note_fires_and_renders(plan, note):
+    enemy = next(iter(groups()[note["enemy"]]))
+    assert plan_note(plan, [enemy], note["minute"] - 1) is None
+    shown = plan_note(plan, [enemy], note["minute"])
+    assert shown["enemy"] == enemy
+    for lang in ("en", "uk"):
+        assert shown["reason"][lang].startswith(enemy) and "{" not in shown["reason"][lang]
+
+
+def test_a_broken_note_is_refused():
+    plan = next(p for p in PLANS if p.get("notes"))
+    note = plan["notes"][0]
+    for broken in (
+        {**note, "enemy": "tanks"},
+        {**note, "minute": 99},
+        {**note, "reason": {"en": "{item} now", "uk": "{item} зараз"}},
+        {k: v for k, v in note.items() if k != "basis"},
+    ):
+        with pytest.raises(ValueError):
+            validate({**plan, "notes": [broken]})
+
+
+def test_the_service_names_the_note_for_the_plans_position_only():
+    from app.player_api import PLAYER_SERVICE
+
+    note = PLAYER_SERVICE.plan_note("Slark", ["Naga Siren"], 12, "carry")
+    assert note is not None and note["enemy"] == "Naga Siren"
+    assert PLAYER_SERVICE.plan_note("Slark", ["Naga Siren"], 12, "mid") is None

@@ -8,10 +8,68 @@
   "checked": "2026-10-17",
   "sources": {
     "games": "370 league games since 7.41 (data/heroes/item_stats), win 50.0%. Reproduce: python scripts/hero_item_stats.py slark.",
-    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 93, 7.41f."
+    "items": "Valve /datafeed/itemdata, 7.41f: Eye of Skadi, Bloodthorn, Silver Edge, Monkey King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 93 (Essence Shift, Shadow Dance), 44 (Phantom Assassin: Immaterial is her passive evasion) and 21 (Windranger: Windrun is cast), 7.41f.",
+    "player": "Player review, 2026-10-18: against evasion Eye of Skadi first for the bulk, then Silver Edge or Bloodthorn by the enemy draft (Monkey King Bar is much cheaper but answers less, e.g. Windranger); against illusions no item: find the real hero, stack Essence Shift, call the team; his own 80% tempo line."
   },
   "rules": [
+    {
+      "id": "evasion_skadi",
+      "why": "evasion_skadi",
+      "family": "skadi",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "evasion",
+      "minute": 15,
+      "basis": "Valve 7.41f Eye of Skadi: +35 all attributes; attacks slow movement by 25% (50% ranged) and attack speed by 25% and cut health restoration by 50% for 3 s. High-rank Slarks against Phantom Assassin or Windranger: 33% of 30 games against them (15% otherwise), won 70% against 35% (29 games). The player review: Skadi first for the bulk, then the answer to the evasion.",
+      "reason": {
+        "en": "{enemy} dodges attacks: take {item} first, its attributes and slow keep you alive while attacks miss, then answer the evasion",
+        "uk": "{enemy} ухиляється від атак: спершу візьміть {item} — його атрибути й уповільнення допоможуть вижити, поки атаки промахуються, а потім відповідайте на ухилення"
+      }
+    },
+    {
+      "id": "evasion_escape",
+      "why": "evasion_escape",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "also": "escape",
+      "minute": 18,
+      "basis": "Valve 7.41f Bloodthorn: Soul Rend silences for 5 s (no Blink, Ball Lightning...) and gives True Strike against the silenced target; the passive pierces evasion on 40% of attacks. One item answers both heroes; Monkey King Bar (5000 against 6400) only pierces.",
+      "reason": {
+        "en": "{enemy} dodges attacks and {escape} escapes with {spell}: {item} silences the escape, and your attacks never miss the silenced target; Monkey King Bar is cheaper but only pierces the evasion",
+        "uk": "{enemy} ухиляється від атак, а {escape} тікає через {spell}: {item} накладає тишу, і по цілі під тишею ваші атаки не промахуються; Monkey King Bar дешевший, але лише пробиває ухилення"
+      }
+    },
+    {
+      "id": "evasion_break",
+      "why": "evasion_break",
+      "family": "evasion",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "evasion_break",
+      "minute": 18,
+      "basis": "Valve 7.41f: Phantom Assassin's evasion is Immaterial, a passive (25-55%); the Silver Edge attack out of Shadow Walk breaks passives for 5 s (+300 physical damage, movement capped at 200). Shadow Blade is already in his build (35%, ~23 min).",
+      "reason": {
+        "en": "{enemy} dodges with {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds; Monkey King Bar is cheaper but only pierces the evasion",
+        "uk": "{enemy} ухиляється завдяки {spell}: удар із невидимості {item} вимикає цю здатність на 5 секунд; Monkey King Bar дешевший, але лише пробиває ухилення"
+      }
+    },
+    {
+      "id": "evasion",
+      "why": "evasion_bloodthorn",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "minute": 18,
+      "basis": "Valve 7.41f: Windranger's Windrun is cast (100% evasion from physical attacks for 3-6 s), so break does nothing; Bloodthorn's silence stops a new Windrun and gives True Strike against the silenced target. Monkey King Bar pierces 80% and is cheaper, but answers nothing else.",
+      "reason": {
+        "en": "{enemy} dodges attacks: {item} silences them, and your attacks never miss the silenced target; Monkey King Bar is cheaper but only pierces the evasion",
+        "uk": "{enemy} ухиляється від атак: {item} накладає тишу, і по цілі під тишею ваші атаки не промахуються; Monkey King Bar дешевший, але лише пробиває ухилення"
+      }
+    },
     {
       "id": "break",
       "why": "break",
@@ -57,11 +115,15 @@
       "name": "Black King Bar"
     },
     {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    },
+    {
       "item": "disperser",
       "name": "Disperser"
     }
   ],
-  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 86% (4), power_treads 100% (6), diffusal_blade 85% (12), pers 40% (14), mage_slayer 36% (16), echo_sabre 20% (16), ultimate_scepter 74% (21), great_famango 22% (22), invis_sword 35% (23), aghanims_shard 58% (28), silver_edge 21% (28), black_king_bar 35% (29), skadi 25% (35), disperser 34% (36).",
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 86% (4), power_treads 100% (6), diffusal_blade 85% (12), pers 39% (14), mage_slayer 36% (16), ultimate_scepter 74% (21), great_famango 22% (22), invis_sword 35% (23), aghanims_shard 59% (28), silver_edge 21% (28), black_king_bar 35% (29), skadi 25% (35), disperser 34% (36).",
   "skills": {
     "order": [
       "slark_dark_pact",
@@ -109,5 +171,56 @@
   },
   "suppress": {
     "illusions": "Diffusal Blade and Disperser are in his build and high-rank Slarks do not buy Maelstrom against illusion heroes (Disperser 28% of games against them, 22% otherwise)."
-  }
+  },
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        11000
+      ],
+      [
+        30,
+        16300
+      ]
+    ],
+    "items": [
+      {
+        "item": "diffusal_blade",
+        "name": "Diffusal Blade"
+      },
+      {
+        "item": "mage_slayer",
+        "name": "Mage Slayer"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "invis_sword",
+        "name": "Shadow Blade"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      }
+    ],
+    "basis": "Gold lines where he wins 80.0%+: 20:00 11500 (30 games, 83.3%), 30:00 17000 (93 games, 80.6%); net worth ~0.96 of that gold. No 85% line for this hero (two of the three minutes needed), so the hero's own 80% line (scripts/hero_item_stats.py WIN_TARGETS), per the player review of 2026-10-18.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "notes": [
+    {
+      "id": "illusions_real",
+      "enemy": "illusions",
+      "minute": 10,
+      "basis": "Valve 7.41f Essence Shift steals attributes from enemy heroes he attacks; no item answers illusions for him (Diffusal and Disperser are in his build). The player review: find the real hero, stack Essence Shift on them and call the team onto the real one.",
+      "reason": {
+        "en": "{enemy} fights with illusions: find the real hero, stack Essence Shift on them with your attacks and call your team onto the real one",
+        "uk": "{enemy} б'ється ілюзіями: знайдіть справжнього героя, накопичуйте на ньому Essence Shift атаками й кличте команду бити саме його"
+      }
+    }
+  ]
 }

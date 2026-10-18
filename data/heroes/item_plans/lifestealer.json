@@ -9,7 +9,8 @@
   "sources": {
     "games": "895 league games since 7.41 (data/heroes/item_stats), win 47.7%. Reproduce: python scripts/hero_item_stats.py lifestealer.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 54, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 54, 7.41f.",
+    "player": "Player review, 2026-10-18: Radiance is enough against illusions, Mjollnir as advice when they are very hard to kill; no Black King Bar against magic (Rage)."
   },
   "rules": [
     {
@@ -189,6 +190,19 @@
     "basis": "895 games: maxed life_stealer_feast > life_stealer_rage > life_stealer_open_wounds 790 (win 48.7%), life_stealer_feast > life_stealer_open_wounds > life_stealer_rage 75 (win 53.3%), life_stealer_feast > life_stealer_rage 18 (win 0.0%); talents 10: +20 Movement Speed 493/859 (48.1%), +4 All Attributes 366/859 (48.6%); 15: Attack Speed on Open Wounds Target 724/852 (50.4%), Infest Damage 128/852 (46.9%); 20: Open Wounds Lifesteal 371/603 (54.4%), Infest Target Movespeed/Health 232/603 (60.3%); 25: Rage Duration 190/273 (66.3%), Feast Heal and Damage 83/273 (67.5%)."
   },
   "suppress": {
-    "magic": "Rage makes him debuff immune with 80% magic resistance for up to 6 s (Valve 7.41f); against 3+ magic damage heroes his players buy Black King Bar no more often than otherwise (13%)."
-  }
+    "magic": "Rage makes him debuff immune with 80% magic resistance for up to 6 s (Valve 7.41f); against 3+ magic damage heroes his players buy Black King Bar no more often than otherwise (13%).",
+    "illusions": "Radiance (93% of his won games, ~15 min) burns the illusions around him; the player review: Radiance is enough, Mjollnir only as a note when they are very hard to kill."
+  },
+  "notes": [
+    {
+      "id": "illusions_mjollnir",
+      "enemy": "illusions",
+      "minute": 25,
+      "basis": "High-rank Lifestealers: Mjollnir 13% of 102 games against them (1% otherwise), won 54% against 49%; Maelstrom 16% of 102 games against them (1% otherwise), won 50% against 50%: the same win rate, so a note after a couple of items, not the next item.",
+      "reason": {
+        "en": "{enemy} fights with illusions: Radiance burns them, but if they are still hard to kill, consider Mjollnir after a couple of items",
+        "uk": "{enemy} б'ється ілюзіями: Radiance їх палить, але якщо їх усе одно важко вбити, після кількох предметів подумайте про Mjollnir"
+      }
+    }
+  ]
 }

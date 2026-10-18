@@ -23,6 +23,10 @@ entry another item answered (Hurricane Pike after Hydra's Breath).
 basic abilities are maxed, the first point, the talents), instead of the few
 recent pro games skill_build.py reads.
 
+`notes`: advice with no item for a lineup ({id, enemy, minute, reason,
+basis}), once per match on the overlay: Slark against illusions finds the
+real hero for Essence Shift and the team.
+
 `tempo`: with the player's own net worth over the plan's curve (minute → net
 worth, from high-rank games where the hero wins ~85% above it) the counters
 wait and the next item is the tempo build's (Terrorblade, in the order of his
@@ -49,6 +53,7 @@ SCHEMA = 1
 # into the Ukrainian with reason_templates). Placeholders it may use:
 PLACEHOLDERS = {"enemy", "escape", "spell", "item", "net_worth"}
 TEMPO_WHY = "tempo"
+NOTE_KEYS = {"id", "enemy", "minute", "reason", "basis"}
 POSITIONS = {"carry", "mid", "offlane"}
 RULE_KEYS = {
     "id",
@@ -66,11 +71,12 @@ RULE_KEYS = {
 
 def groups() -> dict[str, dict[str, str | None]]:
     """Enemy hero groups a rule names: {group: {hero: spell or None}}."""
-    from app.draft_analysis import COUNTERS, ESCAPES, ILLUSION_CLEARERS, JUMPERS
+    from app.draft_analysis import COUNTERS, ESCAPES, EVASION_PASSIVES, ILLUSION_CLEARERS, JUMPERS
     from app.situational_items import BREAK_PASSIVES
 
     return {
         "evasion": dict.fromkeys(COUNTERS["evasion"][0]),
+        "evasion_break": dict(EVASION_PASSIVES),
         "illusions": dict.fromkeys(COUNTERS["illusions"][0]),
         "invisibility": dict.fromkeys(COUNTERS["invisibility"][0]),
         "healing": dict.fromkeys(COUNTERS["healing"][0]),
@@ -169,6 +175,26 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
         isinstance(v, str) and v.strip() for v in suppress.values()
     ):
         raise fail("suppress maps a generic why to the reason it does not fit")
+    notes = plan.get("notes", [])
+    if not isinstance(notes, list):
+        raise fail("notes is a list")
+    note_ids: set[str] = set()
+    for note in notes:
+        if not isinstance(note, dict) or set(note) != NOTE_KEYS:
+            raise fail(f"a note has the keys {sorted(NOTE_KEYS)}")
+        if not isinstance(note["id"], str) or note["id"] in note_ids:
+            raise fail(f"note id {note['id']!r} is repeated")
+        note_ids.add(note["id"])
+        if note["enemy"] not in known:
+            raise fail(f"note {note['id']}: enemy must be one of {sorted(known)}")
+        minute = note["minute"]
+        if isinstance(minute, bool) or not isinstance(minute, int) or not 0 <= minute <= 60:
+            raise fail(f"note {note['id']}: minute must be 0..60")
+        check_reason(note["reason"], fail, f"note {note['id']}")
+        if not placeholders(note["reason"]["en"]) <= {"enemy"}:
+            raise fail(f"note {note['id']}: its reason may name only {{enemy}}")
+        if not isinstance(note["basis"], str) or not note["basis"].strip():
+            raise fail(f"note {note['id']}: basis is required")
     skills = plan.get("skills")
     if skills is not None:
         validate_skills(skills, fail)
@@ -243,6 +269,25 @@ def plan_for(hero: Any, position: str | None) -> dict[str, Any] | None:
     if plan is None or position not in plan["positions"]:
         return None
     return plan
+
+
+def plan_note(
+    plan: dict[str, Any] | None, enemies: list[str] | None, minute: int | None
+) -> dict[str, Any] | None:
+    """The plan's first note whose enemy group is seen from its minute on:
+    {id, enemy, reason {en, uk}}; None otherwise."""
+    if plan is None or minute is None:
+        return None
+    known = groups()
+    for note in plan.get("notes", []):
+        enemy = next((e for e in enemies or [] if e in known[note["enemy"]]), None)
+        if enemy is not None and minute >= note["minute"]:
+            return {
+                "id": note["id"],
+                "enemy": enemy,
+                "reason": format_reason(note["reason"], enemy=enemy),
+            }
+    return None
 
 
 def replaced(plan: dict[str, Any]) -> set[str]:

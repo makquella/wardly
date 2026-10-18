@@ -138,6 +138,8 @@ PACE_MARGIN = 3
 # in this window, for DRAFT_SHOW seconds.
 DRAFT_FROM, DRAFT_UNTIL = 3 * 60, 10 * 60
 DRAFT_SHOW = 20
+# A hero plan's note: once per match, this long.
+PLAN_NOTE_SHOW = 20
 DENY_MIN_LAST_HITS = 8
 # A power rune kept in the Bottle this long (clock seconds, alive) → use it.
 BOTTLE_RUNE_HELD = 30
@@ -445,6 +447,11 @@ TIPS = {
             "Проти їхнього драфту: {item}",
             "{enemy} ухиляється від атак: заплануйте {item} після першого великого предмета, більшість ваших атак пробиватиме ухилення.",
         ),
+    },
+    # A hero plan's note (hero_items.plan_note): advice with no item, its own words.
+    "plan_note": {
+        "en": ("Against {enemy}", "{reason}."),
+        "uk": ("Проти {enemy}", "{reason}."),
     },
     # A hero plan's rule (hero_items.py) brings its own reason, both languages.
     "draft_reason": {
@@ -900,6 +907,7 @@ class RoleTips:
         regen: list[str] | None = None,
         lane_record: dict[str, Any] | None = None,
         draft_item: dict[str, Any] | None = None,
+        plan_note: dict[str, Any] | None = None,
     ) -> dict[str, Any] | None:
         held_for = self._observe_wards(ward_charges, clock)
         if not alive or role is None:
@@ -929,6 +937,10 @@ class RoleTips:
                 planned = self._draft_item(clock, lang, draft_item)
                 if planned is not None:
                     return planned
+            if plan_note is not None:
+                noted = self._plan_note(clock, lang, plan_note)
+                if noted is not None:
+                    return noted
             pace = (lane_record or {}).get("pace")
             if role in ("carry", "mid") and pace is not None:
                 behind = self._lane_pace(clock, lang, pace, last_hits)
@@ -1086,6 +1098,21 @@ class RoleTips:
         )
         tip["items"] = [{"key": shown["key"], "name": shown["name"]}]
         return tip
+
+    def _plan_note(self, clock: int, lang: str, note: dict[str, Any]) -> dict[str, Any] | None:
+        """Once per match per note: a hero plan's advice with no item."""
+        key = f"note_{note['id']}"
+        start = self._once(key, clock, PLAN_NOTE_SHOW)
+        if start is None:
+            return None
+        reason = note["reason"]
+        return _tip(
+            "plan_note",
+            f"{key}@{start}",
+            lang,
+            enemy=note["enemy"],
+            reason=reason.get(lang) or reason["en"],
+        )
 
     def _lane_pace(
         self, clock: int, lang: str, pace: dict[str, Any], last_hits: int | None
@@ -1339,6 +1366,7 @@ def map_hint(
     missing: dict[str, Any] | None = None,
     lane_record: dict[str, Any] | None = None,
     draft_item: dict[str, Any] | None = None,
+    plan_note: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """A timer, but a role tip over a minor one (runes, lotus); None before the
     horn or without a role. `objective`: a Roshan / Aegis timer (roshan_timer.py),
@@ -1412,5 +1440,6 @@ def map_hint(
         regen=regen,
         lane_record=lane_record,
         draft_item=draft_item,
+        plan_note=plan_note,
     )
     return tip or timer

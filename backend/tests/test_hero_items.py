@@ -626,6 +626,8 @@ def test_wave_one_counters_come_with_the_plans_reason(hero, enemies, key, why):
         ("Lifestealer", MAGIC_LINEUP),
         # His illusions do not break: no Silver Edge.
         ("Phantom Lancer", ["Bristleback", "Axe"]),
+        # Radiance is enough (a note names Mjollnir).
+        ("Lifestealer", ["Naga Siren", "Axe"]),
     ],
 )
 def test_wave_one_suppressed_generic_counters(hero, enemies):
@@ -651,4 +653,82 @@ def test_juggernaut_tempo_line_is_straight_from_20_to_30():
     assert [tempo_threshold(plan, m) for m in (20, 25, 30)] == [11000, 16050, 21100]
     # Phantom Lancer's line starts at 25:00: nothing earlier.
     assert tempo_threshold(plan_for("Phantom Lancer", "carry"), 20) is None
-    assert plan_for("Luna", "carry").get("tempo") is None
+
+
+def test_luna_and_slark_take_their_own_80_percent_tempo_line():
+    # No 85% line in their high-rank games: the hero's own 80% one (player review).
+    luna, slark = plan_for("Luna", "carry"), plan_for("Slark", "carry")
+    assert [tempo_threshold(luna, m) for m in (24, 25, 30)] == [None, 19700, 22100]
+    assert [tempo_threshold(slark, m) for m in (20, 30)] == [11000, 16300]
+    item = situational_item(
+        [],
+        [],
+        META,
+        enemies=["Bristleback"],
+        position="carry",
+        minute=20,
+        hero="Slark",
+        net_worth=12000,
+    )
+    assert item["why"] == "tempo" and "12000" in item["reason"]["en"]
+
+
+@pytest.mark.parametrize(
+    ("enemies", "owned", "key", "why", "spell"),
+    [
+        # Eye of Skadi first for the bulk, whatever the evasion.
+        (["Phantom Assassin", "Axe"], [], "skadi", "evasion_skadi", None),
+        (["Windranger", "Axe"], [], "skadi", "evasion_skadi", None),
+        # Then Phantom Assassin: break turns off Immaterial.
+        (["Phantom Assassin", "Axe"], ["item_skadi"], "silver_edge", "evasion_break", "Immaterial"),
+        # With an escape a silence stops: Bloodthorn answers both.
+        (
+            ["Phantom Assassin", "Queen of Pain"],
+            ["item_skadi"],
+            "bloodthorn",
+            "evasion_escape",
+            "Blink",
+        ),
+        # Windrun is cast, break does nothing: the silence.
+        (["Windranger", "Axe"], ["item_skadi"], "bloodthorn", "evasion_bloodthorn", None),
+    ],
+)
+def test_slark_against_evasion_skadi_then_silver_edge_or_bloodthorn(
+    enemies, owned, key, why, spell
+):
+    item = _carry("Slark", enemies, owned)
+    assert (item["key"], item["why"], item["spell"]) == (key, why, spell)
+    if key != "skadi":
+        assert item["reason"]["en"].endswith(
+            "Monkey King Bar is cheaper but only pierces the evasion"
+        )
+        # One answer to the evasion owned: the family is done.
+        assert _carry("Slark", enemies, ["item_skadi", f"item_{key}"]) is None
+    # Other carries keep the generic Monkey King Bar.
+    assert _carry("Medusa", enemies)["key"] == "monkey_king_bar"
+
+
+def test_plan_notes_name_no_item():
+    from app.hero_items import plan_note
+    from app.map_hints import RoleTips
+
+    slark = plan_for("Slark", "carry")
+    assert plan_note(slark, ["Phantom Lancer", "Axe"], 9) is None
+    note = plan_note(slark, ["Axe", "Phantom Lancer"], 10)
+    assert note["enemy"] == "Phantom Lancer" and "Essence Shift" in note["reason"]["en"]
+    assert plan_note(slark, ["Axe"], 30) is None
+    ls = plan_for("Lifestealer", "carry")
+    assert plan_note(ls, ["Naga Siren"], 24) is None
+    assert "Mjollnir" in plan_note(ls, ["Naga Siren"], 25)["reason"]["uk"]
+    assert plan_note(plan_for("Juggernaut", "carry"), ["Naga Siren"], 30) is None
+
+    tips = RoleTips()
+
+    def shown(clock, lang="en"):
+        return tips.tip(clock, "carry", alive=True, has_ward=None, lang=lang, plan_note=note)
+
+    first = shown(15 * 60)
+    assert first["title"] == "Against Phantom Lancer"
+    assert first["hint"] == note["reason"]["en"] + "."
+    assert shown(15 * 60 + 10, "uk")["hint"] == note["reason"]["uk"] + "."
+    assert shown(15 * 60 + 30) is None  # once per match

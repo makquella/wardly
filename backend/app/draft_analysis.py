@@ -116,6 +116,11 @@ ESCAPES = {
     "Morphling": "Waveform",
     "Faceless Void": "Time Walk",
 }
+# Heroes whose evasion is a passive that break (Silver Edge) turns off; not
+# Windranger, whose Windrun is cast (hero_items.py). Valve /herodata, 7.41f.
+EVASION_PASSIVES = {
+    "Phantom Assassin": "Immaterial",
+}
 # Heroes who jump onto a carry: Hurricane Pike pushes them away and keeps the
 # attacks going (hero_items.py). Not Legion Commander: Pike does not work in a
 # Duel. Names from Valve's /herodata, patch 7.41f.

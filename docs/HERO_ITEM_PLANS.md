@@ -61,7 +61,9 @@ Three layers, so the same detail scales past one hero:
    units* against the silenced target, which is why it suits an illusion hero.
    Hero abilities from `/datafeed/herodata?hero_id=<id>`. No rule from memory.
 3. **The enemy groups.** Rules name groups from `hero_items.groups()`:
-   `evasion`, `illusions`, `healing` (`draft_analysis.COUNTERS`), `escape`
+   `evasion`, `illusions`, `healing` (`draft_analysis.COUNTERS`),
+   `evasion_break` (`draft_analysis.EVASION_PASSIVES`: evasion from a passive
+   that break turns off, Phantom Assassin's Immaterial), `escape`
    (`draft_analysis.ESCAPES`: escapes a silence stops, spell names from
    `/herodata`), `break` (`situational_items.BREAK_PASSIVES`), `jumpers`
    (`draft_analysis.JUMPERS`: heroes who jump onto a carry), `invisibility`,
@@ -102,8 +104,15 @@ Three layers, so the same detail scales past one hero:
    `names` maps the ability keys of the order and the first point to their
    in-game names (OpenDota constants), so the game plan and the skill tips never
    show a raw key before the pro games are cached.
+6c. **Notes** (optional). `notes` ({id, enemy, minute, reason, basis}) is
+   advice with no item, shown once per match on the overlay («Against
+   <enemy>») from its minute on when its group is seen: Slark against illusions
+   finds the real hero for Essence Shift and calls the team. The reason may name
+   only `{enemy}`.
 7. **Tempo** (optional). `tempo.net_worth` is a curve `[[minute, net worth], ...]`
-   from high-rank games of the hero: above it the hero wins most games (read the
+   from high-rank games of the hero: above it the hero wins most games — 85%,
+   or the hero's own 80% (75%) line when 85% holds at fewer than two of 20/25/30
+   min (`hero_item_stats.WIN_TARGETS`; Luna, Slark) (read the
    gold timelines in OpenDota Explorer, `player_matches.gold_t`; net worth is
    ~0.96 of that gold). With the player's own net worth over it (gold plus the
    items carried, `next_item.net_worth`), the counters wait and `tempo.items`
@@ -173,18 +182,18 @@ The illusion, Pike and tempo rules come from a player's review (2026-10-17),
 checked against the items' Valve data. Butterfly and other enemy items are not
 visible to a player's GSI, so no rule may depend on them.
 
-## Wave 1: Juggernaut, Phantom Lancer, Luna, Lifestealer, Slark (7.41f, drafted 2026-10-17)
+## Wave 1: Juggernaut, Phantom Lancer, Luna, Lifestealer, Slark (7.41f, 2026-10-18)
 
-Drafted from `--draft` and the counters in `data/heroes/item_stats/`; the open
-questions went to the player and the plans change with the answers.
+Drafted from `--draft` and the counters in `data/heroes/item_stats/`, then
+settled with the player's answers (2026-10-18).
 
-| Hero | Rules | Suppressed generic | Tempo |
+| Hero | Rules | Suppressed generic, notes | Tempo |
 |---|---|---|---|
-| Juggernaut | evasion: Monkey King Bar (43% vs 13%, won 62% vs 47%); break: Silver Edge (14% vs 2%, 21 games) | illusions (Battle Fury cleaves), magic (Blade Fury: debuff immunity, 80% magic resistance) | 11.0k at 20:00, 21.1k at 30:00 (the 25:00 point had 11 games) |
-| Phantom Lancer | evasion: Bloodthorn (True Strike for his illusions on the silenced target; Orchid 65% vs 43%); illusions: Butterfly (57% vs 25%, won 75% vs 33%) | break (his illusions do not break; 0 of 18 games) | 15.4k at 25:00, 20.2k at 30:00 |
-| Luna | break: Silver Edge (39% vs 7%, won 61% vs 41%) | illusions (Moon Glaives bounce to 6) | none: no 85% line in 1129 games |
-| Lifestealer | evasion: Monkey King Bar (36% vs 12%); break: Silver Edge (27% vs 2%) | magic (Rage: debuff immunity, 80% magic resistance) | 14.9k at 25:00, 18.2k at 30:00 |
-| Slark | break: Silver Edge (Shadow Blade in his build; 36% vs 12%, won 75% vs 50%) | illusions (Diffusal/Disperser in his build) | none: 78-81% at best |
+| Juggernaut | evasion: Monkey King Bar (43% vs 13%, won 62% vs 47%); break: Silver Edge (14% vs 2%, 21 games) | illusions (Battle Fury cleaves), magic (Blade Fury: debuff immunity, 80% magic resistance) | 85%: 11.0k at 20:00, 21.1k at 30:00 (the 25:00 point had 11 games) |
+| Phantom Lancer | evasion: Bloodthorn (True Strike for his illusions on the silenced target; Orchid 65% vs 43%); illusions: Butterfly (57% vs 25%, won 75% vs 33%) | break (his illusions do not break; 0 of 18 games) | 85%: 15.4k at 25:00, 20.2k at 30:00 |
+| Luna | break: Silver Edge (39% vs 7%, won 61% vs 41%); the generic Monkey King Bar stays (her low win rate there is the carry matchup) | illusions (Moon Glaives bounce to 6) | her 80%: 19.7k at 25:00, 22.1k at 30:00 |
+| Lifestealer | evasion: Monkey King Bar (36% vs 12%); break: Silver Edge (27% vs 2%) | magic (Rage: debuff immunity, 80% magic resistance); illusions (Radiance is enough), note from 25 min: Mjollnir after a couple of items if they are very hard to kill | 85%: 14.9k at 25:00, 18.2k at 30:00 |
+| Slark | evasion: Eye of Skadi first (bulk; 34% vs 15%, won 70% vs 37%), then Bloodthorn with an escape hero too, Silver Edge against Phantom Assassin (break turns off Immaterial), Bloodthorn against Windranger (Windrun is cast); each names Monkey King Bar as the cheaper, narrower answer; break: Silver Edge (Shadow Blade in his build) | illusions: no item; note from 10 min: find the real hero, stack Essence Shift on them, call the team | his 80%: 11.0k at 20:00, 16.3k at 30:00 |
 
 Builds: Lifestealer takes Sange and Yasha or Manta Style, not both; Luna's
 Crystalys step is the Daedalus it is built into.

@@ -31,6 +31,8 @@ class LiveHintInputs:
     lane_record: dict[str, Any] | None = None
     # The counter item to plan for against the enemy draft (situational_items.draft_item).
     draft_item: dict[str, Any] | None = None
+    # A hero plan's advice with no item for the lineup (hero_items.plan_note).
+    plan_note: dict[str, Any] | None = None
     skill_build: dict[str, Any] | None = None
 
 
@@ -107,6 +109,7 @@ def render_live_hints(
             missing=trackers.missing,
             lane_record=inputs.lane_record,
             draft_item=inputs.draft_item,
+            plan_note=inputs.plan_note,
             roshan_open=trackers.roshan_open,
             objective=trackers.objective,
             skill=skill,
