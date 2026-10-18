@@ -75,7 +75,7 @@ from app.finding_history import finding_history
 from app.focus_goal import can_focus, focus_summary, match_result, new_focus, played_after
 from app.friend_compare import compare
 from app.game_plan import build_game_plan, key_item
-from app.hero_items import plan_for, plan_note, plan_skills
+from app.hero_items import plan_fight, plan_for, plan_note, plan_skills
 from app.hero_meta import item_key, start_items
 from app.hero_profiles import get_hero_position
 from app.history_backup import export_backup, import_backup, preview_backup
@@ -679,6 +679,10 @@ class PlayerService:
             return None
         position = position or get_hero_position(hero)
         return draft_counter_item(enemies, owned, self._live_meta(hero_id), position, hero)
+
+    def fight_abilities(self, hero: str, position: str | None) -> dict[str, Any] | None:
+        """The hero plan's abilities for the fight summary (hero_items.plan_fight)."""
+        return plan_fight(plan_for(hero, position or get_hero_position(hero)))
 
     def plan_note(
         self, hero: str, enemies: list[str] | None, minute: int | None, position: str | None

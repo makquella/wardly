@@ -28,9 +28,10 @@ from app.item_timing import normalize_item_name
 from app.last_moments import active_slot, ready_savers
 from app.live_tools import bottle_rune, regen_items, wand_charges
 from app.map_hints import has_observer_ward, item_names, observer_charges, timers
+from app.minimap_units import towers, visible_ally_units
 from app.signal_capabilities import capability_summary, live_gsi_observed_capabilities
 from app.skill_tips import read_skills
-from app.tp_tracker import has_teleport
+from app.tp_tracker import has_teleport, teleport_cooldown
 
 _GSI = GSIRegister()
 
@@ -443,6 +444,8 @@ def _normalize_extra_context(
         "has_buildings": has_buildings,
         # TP scroll in its slot or Boots of Travel (None: no items block).
         "has_tp": has_teleport(payload.get("items")),
+        # Seconds until it can be used (0 ready; None: none or unknown).
+        "tp_cooldown": teleport_cooldown(payload.get("items")),
         # Observer ward in the inventory (support tip; None: no items block).
         "has_observer": has_observer_ward(payload.get("items")),
         # How many observer wards are carried (a ward kept in the bag: support tip).
@@ -460,6 +463,11 @@ def _normalize_extra_context(
         "enemy_units": visible_enemy_units(
             payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
         ),
+        # Allied heroes and the towers on the minimap (fight_summary.py).
+        "ally_units": visible_ally_units(
+            payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
+        ),
+        "towers": towers(payload.get("minimap")),
         "has_aegis": _has_aegis(hero_block, payload.get("items")),
         # The player's tier-3 towers and barracks still standing (None: no block).
         "own_base": _own_base(payload.get("buildings"), player_block.get("team_name")),

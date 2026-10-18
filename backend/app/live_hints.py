@@ -33,6 +33,8 @@ class LiveHintInputs:
     draft_item: dict[str, Any] | None = None
     # A hero plan's advice with no item for the lineup (hero_items.plan_note).
     plan_note: dict[str, Any] | None = None
+    # The abilities a fight summary names ({names, labels}; hero_items.plan_fight).
+    fight_abilities: dict[str, Any] | None = None
     skill_build: dict[str, Any] | None = None
 
 
@@ -110,6 +112,7 @@ def render_live_hints(
             lane_record=inputs.lane_record,
             draft_item=inputs.draft_item,
             plan_note=inputs.plan_note,
+            fight=_fight(memory, extra, trackers, inputs, clock),
             enemy_group=enemy_group(
                 extra.get("enemy_units") if isinstance(extra.get("enemy_units"), list) else None,
                 extra.get("xpos"),
@@ -168,3 +171,50 @@ def _with_gold_hint(
     if gold is None or _keeps_hint(hint):
         return hint
     return gold
+
+
+def _fight(
+    memory: MatchMemory,
+    extra: Mapping[str, Any],
+    trackers: LiveTrackerSnapshot,
+    inputs: LiveHintInputs,
+    clock: Any,
+) -> dict[str, Any] | None:
+    """A fight the player is not in (fight_summary.py), with what the card says:
+    where, who is there, the player's TP and fight abilities."""
+    from app.fight_summary import ability_states, find_fight, nearest_tower
+    from app.skill_build import label
+
+    if not isinstance(clock, int) or extra.get("alive") is False:
+        return None
+    fight = find_fight(
+        extra.get("ally_units"),
+        extra.get("enemy_units"),
+        extra.get("xpos"),
+        extra.get("ypos"),
+        clock=clock,
+        recent_kills=memory.fights.kills_since(clock),
+        known_enemies=list(trackers.enemies or []),
+    )
+    if fight is None:
+        return None
+    wanted = inputs.fight_abilities or {}
+    names = list(wanted.get("names") or [])
+    labels = dict(wanted.get("labels") or {})
+    if not names:
+        skills = extra.get("skills") if isinstance(extra.get("skills"), dict) else {}
+        ultimate = (skills or {}).get("ultimate") or {}
+        if ultimate.get("raw_name"):
+            names = [str(ultimate["raw_name"])]
+    for name in names:
+        labels.setdefault(name, label(name))
+    team = extra.get("team_name")
+    tower = nearest_tower(fight, extra.get("towers"))
+    return {
+        **fight,
+        "team": team,
+        "tower": tower,
+        "has_tp": extra.get("has_tp"),
+        "tp_cooldown": extra.get("tp_cooldown"),
+        "abilities": ability_states(extra.get("abilities"), names, labels),
+    }

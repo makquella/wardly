@@ -250,5 +250,8 @@
       }
     },
     "basis": "634 Terrorblade games of the 7.41 league data (OpenDota Explorer ability_upgrades_arr), instead of the 3-5 recent pro games: maxed Conjure Image → Metamorphosis → Reflection in 62% (won 56%), Conjure Image maxed first in 560; first point Conjure Image in 463 (Metamorphosis at level 2 in 82%). Sunder at 6 in 49% and at 7-9 in 45%, won 53% and 52%: the level-6 ultimate tip stays. Talents: 10 Conjure Image Cooldown 99%; 15 Metamorphosis Cooldown 70% (Sunder HP 30%); 20 Conjure Image Duration 78% (+10 All Attributes 22%); 25 Metamorphosis Duration 63% of 63 games. The order does not change against illusion heroes (Conjure Image first in 87% of those games, 88% of the rest). Reproduce: python scripts/hero_item_stats.py terrorblade."
-  }
+  },
+  "fight": [
+    "terrorblade_metamorphosis"
+  ]
 }

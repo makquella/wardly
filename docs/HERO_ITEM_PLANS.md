@@ -104,6 +104,9 @@ Three layers, so the same detail scales past one hero:
    `names` maps the ability keys of the order and the first point to their
    in-game names (OpenDota constants), so the game plan and the skill tips never
    show a raw key before the pro games are cached.
+6b'. **Fight abilities** (optional). `fight` lists the abilities the fight
+   summary names with their cooldowns («Metamorphosis — через 49 с»;
+   fight_summary.py); without it the ultimate. Terrorblade: Metamorphosis.
 6c. **Notes** (optional). `notes` ({id, enemy, minute, reason, basis}) is
    advice with no item, shown once per match on the overlay («Against
    <enemy>») from its minute on when its group is seen: Slark against illusions

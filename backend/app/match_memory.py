@@ -21,6 +21,7 @@ from app.buyback_tracker import BuybackTracker
 from app.enemy_heroes import EnemyHeroes
 from app.enemy_lanes import EnemyLanes
 from app.farm_tracker import FarmTracker
+from app.fight_summary import FightWatch
 from app.gold_tips import GoldTips
 from app.hero_gameplay import HeroGameplay
 from app.live_hints import LiveHintInputs, render_live_hints
@@ -165,6 +166,7 @@ class MatchMemory:
         self.roshan = RoshanTimer()
         self.enemies = EnemyHeroes()
         self.enemy_lanes = EnemyLanes()
+        self.fights = FightWatch()
         self.gameplay = HeroGameplay()
 
     def observe_state(self, state: dict[str, Any]) -> dict[str, Any]:
@@ -260,6 +262,9 @@ class MatchMemory:
             self.roshan.observe(extra)
             self.enemies.observe(extra.get("visible_enemies"))
             self.enemy_lanes.observe(_game_clock(state), extra.get("enemy_units"))
+            self.fights.observe(
+                _game_clock(state), extra.get("radiant_score"), extra.get("dire_score")
+            )
             skills = extra.get("skills")
             self.skills.observe(_game_clock(state), skills if isinstance(skills, dict) else None)
             names = extra.get("item_names")

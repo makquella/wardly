@@ -23,6 +23,9 @@ entry another item answered (Hurricane Pike after Hydra's Breath).
 basic abilities are maxed, the first point, the talents), instead of the few
 recent pro games skill_build.py reads.
 
+`fight`: the hero's abilities a fight summary names (fight_summary.py), e.g.
+Terrorblade's Metamorphosis; without it the ultimate.
+
 `notes`: advice with no item for a lineup ({id, enemy, minute, reason,
 basis}), once per match on the overlay: Slark against illusions finds the
 real hero for Essence Shift and the team.
@@ -175,6 +178,9 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
         isinstance(v, str) and v.strip() for v in suppress.values()
     ):
         raise fail("suppress maps a generic why to the reason it does not fit")
+    fight = plan.get("fight", [])
+    if not isinstance(fight, list) or not all(isinstance(n, str) and n for n in fight):
+        raise fail("fight lists ability names")
     notes = plan.get("notes", [])
     if not isinstance(notes, list):
         raise fail("notes is a list")
@@ -269,6 +275,16 @@ def plan_for(hero: Any, position: str | None) -> dict[str, Any] | None:
     if plan is None or position not in plan["positions"]:
         return None
     return plan
+
+
+def plan_fight(plan: dict[str, Any] | None) -> dict[str, Any] | None:
+    """{names, labels} of the abilities the fight summary names (the plan's
+    `fight`, with the skill build's in-game names); None without them."""
+    names = (plan or {}).get("fight") or []
+    if not names:
+        return None
+    labels = dict(((plan or {}).get("skills") or {}).get("names") or {})
+    return {"names": list(names), "labels": labels}
 
 
 def plan_note(
