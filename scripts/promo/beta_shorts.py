@@ -137,6 +137,12 @@ def package(language: str, video: dict[str, Any]) -> dict[str, Any]:
         from .beta_followups import metadata
 
         copy = {**copy, **metadata(video["creative"], language)}
+    topic = f"beta-testers-{language}-v{video['visual_revision']}"
+    if video.get("creative") == "carry-plans-0.57":
+        from .release_carry import metadata as release_metadata
+
+        copy = {**copy, **release_metadata(language)}
+        topic = f"release-0.57-carries-{language}"
     identity = {"video_sha256": video["sha256"], "language": language, "copy": copy}
     package_id = hashlib.sha256(
         json.dumps(identity, sort_keys=True, ensure_ascii=False).encode()
@@ -144,7 +150,7 @@ def package(language: str, video: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": package_id,
         "format": "release",
-        "topic": f"beta-testers-{language}-v{video['visual_revision']}",
+        "topic": topic,
         "hook": 0,
         "title": copy["title"],
         "youtube_title": copy["title"],

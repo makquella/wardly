@@ -1279,7 +1279,7 @@ h2 {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 12px;
 }
 .heroes li {
@@ -1868,6 +1868,32 @@ h2 {
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+.release-heroes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px 14px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.release-heroes li a,
+.release-heroes li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+.release-heroes li a:hover span {
+  color: var(--accent);
+}
+.release-heroes span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 1080px) {

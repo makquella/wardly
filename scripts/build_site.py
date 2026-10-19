@@ -37,11 +37,12 @@ from app.live_tools import USABLE_SAFETY  # noqa: E402
 sys.path.insert(0, str(ROOT / "scripts"))
 import news  # noqa: E402 - scripts/news.py, after the scripts path
 import news_hero  # noqa: E402
+import news_release  # noqa: E402
 
 # One version for styles.css, app.js and i18n-en.js on every page, hand-written
 # (index.html, heroes.html) and generated alike. Separate counters let one page
 # reuse a URL that browsers had already cached with older files.
-ASSET_VERSION = "26"
+ASSET_VERSION = "27"
 POSITIONS = ("carry", "mid", "offlane", "support")
 POSITION_NAMES = {
     "uk": {"carry": "Керрі", "mid": "Мід", "offlane": "Хардлайн", "support": "Саппорт"},
@@ -893,10 +894,13 @@ def _page(
 
 def news_pages(all_heroes: list[dict]) -> dict[Path, str]:
     """site/news.html, site/news/<slug>.html and their /en/ copies (scripts/news.py):
-    the meta posts, the patches and the heroes of the week (news_hero.py)."""
+    the meta posts, the patches, the heroes of the week (news_hero.py) and the
+    Wardly releases (news_release.py)."""
     posts = news.load_posts()
     patches = news.load_patches()
     weeks = news_hero.entries(all_heroes, posts)
+    releases = news_release.load_releases()
+    by_name = {hero["name"]: hero for hero in all_heroes}
     site = sys.modules[__name__]
     links = {hero["name"]: hero["slug"] for hero in all_heroes}
     images = {path.stem for path in news.HERO_IMAGES.glob("*.webp")}
@@ -921,6 +925,18 @@ def news_pages(all_heroes: list[dict]) -> dict[Path, str]:
             heroes_week.append(
                 (entry["date"], news_hero.list_item(entry, fact, lang, up_list, images))
             )
+        for release in releases:
+            name = f"news/{news_release.slug(release)}.html"
+            files[root / name] = _page(
+                lang,
+                up=up_list + "../",
+                home="../",
+                path=name,
+                title=f"{release[lang]['title']} — Wardly",
+                description=release[lang]["lead"],
+                main=news_release.post_main(release, lang, by_name, "../", up_list + "../", images),
+            )
+            heroes_week.append((release["date"], news_release.list_item(release, lang)))
         files[root / "news.html"] = _page(
             lang,
             up=up_list,
@@ -965,6 +981,7 @@ def sitemap(all_heroes: list[dict]) -> str:
         [f"/news/{news.slug(post)}.html" for post in posts]
         + [f"/news/{news.patch_slug(patch)}.html" for patch in news.load_patches()]
         + [f"/news/{news_hero.slug(entry)}.html" for entry in news_hero.entries(all_heroes, posts)]
+        + [f"/news/{news_release.slug(post)}.html" for post in news_release.load_releases()]
     ):
         pairs.append((page, f"/en{page}"))
     lines = [

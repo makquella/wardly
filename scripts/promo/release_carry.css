@@ -1,0 +1,41 @@
+.big-title { position:absolute; left:88px; top:380px; width:804px; margin:0; font:850 104px/1.25 Montserrat; letter-spacing:-5px; }
+html[lang=uk] .s0 .big-title { font-size:96px; }
+.big-title em, .mid-title em, .end-version em { font-style:normal; color:var(--coral); }
+.mid-title { position:absolute; left:88px; top:385px; width:804px; margin:0; font:800 84px/1.25 Montserrat; letter-spacing:-3.5px; }
+html[lang=en] .mid-title { font-size:78px; }
+.note { position:absolute; left:88px; top:1135px; width:804px; text-align:center; font:700 38px/1.3 Montserrat; color:#c9ced6; }
+.note.low { top:1185px; font-size:32px; color:#a7acb7; }
+.hook-hero { position:absolute; left:0; top:640px; width:1080px; height:460px; opacity:.55; }
+.hook-art { position:absolute; left:140px; width:800px; height:460px; object-fit:contain; filter:drop-shadow(0 30px 26px #000b) saturate(.7); }
+.same-row { position:absolute; left:88px; top:930px; width:804px; display:flex; justify-content:space-between; }
+.same { width:240px; height:230px; border:1px solid #ffffff2c; border-radius:24px; background:#15171cdd; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+.same span { font:700 30px Montserrat; color:#a7acb7; }
+.item { display:inline-flex; align-items:center; justify-content:center; width:132px; height:96px; border-radius:14px; overflow:hidden; background:#22252c; position:relative; }
+.item img { width:132px; height:96px; object-fit:cover; }
+.item b { font:700 20px/1.1 Inter; text-align:center; padding:6px; }
+.item.good { box-shadow:0 0 0 4px var(--coral), 0 0 40px #f0556055; }
+.item.crossed img { filter:grayscale(1) brightness(.55); }
+.item.crossed:after { content:''; position:absolute; left:-10px; top:46px; width:155px; height:6px; background:var(--coral); transform:rotate(-34deg); border-radius:3px; }
+.carry-grid { position:absolute; left:88px; top:560px; width:804px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.cell { height:96px; border-radius:14px; overflow:hidden; border:1px solid #ffffff22; }
+.cell .portrait { width:100%; height:100%; object-fit:cover; }
+.answers { position:absolute; left:88px; top:640px; width:804px; display:flex; flex-direction:column; gap:36px; }
+.answer { display:flex; align-items:center; gap:24px; height:200px; padding:0 28px; border:1px solid #ffffff2c; border-radius:26px; background:#15171cdd; }
+.answer .portrait { width:170px; height:96px; object-fit:cover; border-radius:14px; }
+.answer b { flex:1; font:750 40px/1.25 Montserrat; letter-spacing:-1px; }
+.answer .arrow { font:800 48px Montserrat; color:var(--coral); }
+.stat { position:absolute; left:88px; top:600px; width:804px; display:flex; align-items:baseline; gap:20px; }
+.stat b { font:850 110px/1.25 Montserrat; letter-spacing:-5px; color:var(--coral); }
+.stat span { font:700 38px Montserrat; color:#c9ced6; }
+.card-shot { position:absolute; left:88px; top:780px; width:804px; border-radius:22px; overflow:hidden; box-shadow:0 24px 75px #000a; }
+.card-shot img { display:block; width:804px; }
+.tempo-hero { position:absolute; left:0; top:800px; width:1080px; height:470px; }
+.tempo-art { position:absolute; left:90px; width:900px; height:470px; object-fit:contain; filter:drop-shadow(0 30px 26px #000b); }
+.tempo { position:absolute; left:88px; top:640px; width:804px; padding:26px 32px; border-radius:26px; background:#15171cee; border:1px solid #f0556066; display:flex; align-items:baseline; gap:22px; }
+.tempo b { flex:none; white-space:nowrap; font:850 80px/1.25 Montserrat; letter-spacing:-3px; color:var(--coral); }
+.tempo span { font:700 34px/1.25 Montserrat; color:#e4e0d8; }
+.window-art { position:absolute; left:280px; top:730px; width:400px; height:350px; display:grid; grid-template-columns:1fr 1fr; gap:16px; transform:perspective(600px) rotateY(-12deg); }
+.window-art i { background:var(--coral); border-radius:5px; box-shadow:0 15px 50px #f0556022; }
+.end-version { position:absolute; left:88px; top:470px; width:804px; text-align:center; font:850 132px/1.25 Montserrat; letter-spacing:-6px; }
+.end-line { position:absolute; left:88px; top:660px; width:804px; text-align:center; font:750 50px/1.25 Montserrat; letter-spacing:-1.5px; }
+.end-link { position:absolute; left:108px; top:820px; width:764px; padding:34px 0; text-align:center; border-radius:30px; background:var(--coral); color:#151419; font:850 58px/1.25 Montserrat; letter-spacing:-2px; box-shadow:0 26px 90px #f0556022; }
