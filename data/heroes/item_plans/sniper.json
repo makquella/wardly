@@ -9,7 +9,8 @@
   "sources": {
     "games": "290 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 59.3%. Reproduce: python scripts/hero_item_stats.py sniper.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Hydra's Breath, Hurricane Pike.",
-    "hero": "Valve /datafeed/herodata hero_id 35, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 35, 7.41f.",
+    "player": "Player review, 2026-10-19: the 30:00 tempo line only."
   },
   "rules": [
     {

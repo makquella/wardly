@@ -880,9 +880,10 @@ def test_wave_three_counters_come_with_the_plans_reason(hero, enemies, key, why,
         ("Gyrocopter", ["Phantom Lancer", "Axe"]),
         ("Kez", ["Naga Siren", "Axe"]),
         ("Monkey King", ["Phantom Lancer", "Axe"]),
-        ("Morphling", ["Naga Siren", "Axe"]),
         ("Naga Siren", ["Phantom Lancer", "Axe"]),
         ("Ursa", ["Chaos Knight", "Axe"]),
+        # Marksmanship procs have true strike: no Monkey King Bar for Drow.
+        ("Drow Ranger", ["Phantom Assassin", "Axe"]),
         # Abyssal Blade for Ursa; Kez's high-rank games skip Silver Edge.
         ("Ursa", ["Bristleback", "Axe"]),
         ("Kez", ["Huskar", "Axe"]),
@@ -918,10 +919,41 @@ def test_sniper_takes_hydras_breath_or_hurricane_pike_and_keeps_the_30_minute_li
 def test_wave_three_fight_abilities_and_skills():
     # Marksmanship is passive: Gust is the fight ability Drow keeps ready.
     assert plan_for("Drow Ranger", "carry")["fight"] == ["drow_ranger_wave_of_silence"]
-    # Kez's stances share skill points: no skill order from the high-rank games.
-    assert plan_skills(plan_for("Kez", "carry")) is None
+    # Kez: his stances share the skill points; the order from Yatoro's and Satanic's games.
+    kez = plan_skills(plan_for("Kez", "carry"))
+    assert kez["order"] == ["kez_kazurai_katana", "kez_echo_slash", "kez_grappling_claw"]
+    assert kez["names"]["kez_kazurai_katana"] == "Kazurai Katana / Shodo Sai"
     assert plan_skills(plan_for("Ursa", "carry"))["order"][0] == "ursa_fury_swipes"
     # Crystalys goes on into Daedalus in the build.
     for hero in ("Drow Ranger", "Morphling"):
         build = [e["item"] for e in plan_for(hero, "carry")["build"]]
         assert "greater_crit" in build and "lesser_crit" not in build
+
+
+def test_morphling_against_illusions_butterfly_then_hydras_breath():
+    lineup = ["Naga Siren", "Axe"]
+    first = _carry("Morphling", lineup)
+    assert (first["key"], first["why"]) == ("butterfly", "illusion_evasion")
+    assert _carry("Morphling", lineup, ["item_butterfly"]) is None  # Hydra's Breath from 22:00
+    second = _carry("Morphling", lineup, ["item_butterfly"], minute=22)
+    assert (second["key"], second["why"]) == ("hydras_breath", "illusion_splash")
+    assert "Butterfly" in second["reason"]["uk"]
+
+
+def test_drow_buys_hurricane_pike_not_aghanims_and_linkens_only_by_the_situation():
+    plan = plan_for("Drow Ranger", "carry")
+    build = [e["item"] for e in plan["build"]]
+    assert "ultimate_scepter" not in build and "sphere" not in build
+    assert build.index("hurricane_pike") == build.index("manta") + 1
+    tempo = [e["item"] for e in plan["tempo"]["items"]]
+    assert "ultimate_scepter" not in tempo and "sphere" not in tempo
+
+
+def test_monkey_king_names_battle_fury_against_illusions_as_a_note():
+    from app.hero_items import plan_note
+
+    mk = plan_for("Monkey King", "carry")
+    assert plan_note(mk, ["Phantom Lancer"], 11) is None
+    note = plan_note(mk, ["Phantom Lancer"], 12)
+    assert "Battle Fury" in note["reason"]["en"] and "Battle Fury" in note["reason"]["uk"]
+    assert _carry("Monkey King", ["Phantom Lancer", "Axe"]) is None  # no item pushed

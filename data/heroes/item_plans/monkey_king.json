@@ -8,8 +8,9 @@
   "checked": "2026-10-19",
   "sources": {
     "games": "530 league games since 7.41 (data/heroes/item_stats), win 55.3%. Reproduce: python scripts/hero_item_stats.py monkey_king.",
-    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Maelstrom, Mjollnir.",
-    "hero": "Valve /datafeed/herodata hero_id 114, 7.41f."
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Maelstrom, Mjollnir, Battle Fury.",
+    "hero": "Valve /datafeed/herodata hero_id 114, 7.41f.",
+    "player": "Player review, 2026-10-19: no Maelstrom against illusions, maybe Battle Fury (a note)."
   },
   "rules": [
     {
@@ -166,5 +167,17 @@
       }
     },
     "basis": "530 games: maxed monkey_king_tree_dance > monkey_king_boundless_strike > monkey_king_jingu_mastery 291 (win 56.4%), monkey_king_jingu_mastery > monkey_king_boundless_strike > monkey_king_tree_dance 102 (win 52.9%), monkey_king_tree_dance > monkey_king_jingu_mastery > monkey_king_boundless_strike 66 (win 50.0%); talents 10: Tree Dance Cast Range 435/529 (56.3%), Boundless Strike Stun Duration 94/529 (51.1%); 15: Jingu Mastery Damage 488/500 (57.2%), 0 Cooldown Primal Spring 12/500 (50.0%); 20: Boundless Strike Critical Damage 338/366 (62.7%), Jingu Mastery Undispellable 28/366 (67.9%); 25: Additional Wukong's Command Ring 170/177 (66.5%), Jingu Mastery Required Hits 7/177 (57.1%)."
-  }
+  },
+  "notes": [
+    {
+      "id": "illusions_battle_fury",
+      "enemy": "illusions",
+      "minute": 12,
+      "reason": {
+        "en": "{enemy} fights with illusions: if they are hard to kill, Battle Fury is an option, its cleave hits the illusions around your target",
+        "uk": "{enemy} б'ється ілюзіями: якщо їх важко вбити, можна взяти Battle Fury — його розщеплення б'є ілюзії навколо вашої цілі"
+      },
+      "basis": "Valve 7.41f Battle Fury, Cleave (melee): 60% of the attack damage in a 650 cone around the target. High-rank Monkey Kings against illusion heroes: 17% of 47 games against them (13% otherwise), won 38% against 54%, so a note, not the next item. The player review: maybe Battle Fury."
+    }
+  ]
 }

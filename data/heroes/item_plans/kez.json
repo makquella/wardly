@@ -10,7 +10,7 @@
     "games": "666 league games since 7.41 (data/heroes/item_stats), win 54.1%. Reproduce: python scripts/hero_item_stats.py kez.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Desolator, Mage Slayer.",
     "hero": "Valve /datafeed/herodata hero_id 145, 7.41f.",
-    "skills": "Kez switches between two weapon stances that share his skill points, so a skill order cannot be read from the high-rank games (scripts/hero_item_stats.py: no ability is maxed first)."
+    "player": "Player review, 2026-10-19: the skill build from Satanic's and Yatoro's games."
   },
   "rules": [
     {
@@ -133,5 +133,50 @@
   "suppress": {
     "illusions": "Valve 7.41f Echo Slash: an 800 line attacks every enemy in it twice. High-rank Kez players do not buy Maelstrom against illusion heroes (55 games: it is not among the items they buy more often there).",
     "break": "High-rank Kez players rarely buy Silver Edge against Bristleback, Spectre or Huskar: 11% of 36 games against them (2% otherwise), won 0% against 53% (a thin sample); Desolator and Mage Slayer are in his build."
+  },
+  "skills": {
+    "order": [
+      "kez_kazurai_katana",
+      "kez_echo_slash",
+      "kez_grappling_claw"
+    ],
+    "games": 34,
+    "first_agree": 33,
+    "opening": {
+      "name": "kez_echo_slash",
+      "agree": 27
+    },
+    "names": {
+      "kez_kazurai_katana": "Kazurai Katana / Shodo Sai",
+      "kez_echo_slash": "Echo Slash / Falcon Rush",
+      "kez_grappling_claw": "Grappling Claw / Talon Toss"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_kez_raptor_dance_radius",
+        "label": "+50 Raptor Dance Radius",
+        "picked": 28,
+        "games": 34
+      },
+      "15": {
+        "name": "special_bonus_unique_kez_raptor_dance_strikes",
+        "label": "+1 Raptor Dance Strike",
+        "picked": 29,
+        "games": 34
+      },
+      "20": {
+        "name": "special_bonus_unique_kez_falcon_rush_attack_speed",
+        "label": "Bonus Attack Speed During Falcon Rush",
+        "picked": 26,
+        "games": 29
+      },
+      "25": {
+        "name": "special_bonus_unique_kez_echo_slash_strike_count",
+        "label": "+1 Echo Slash Attack",
+        "picked": 16,
+        "games": 17
+      }
+    },
+    "basis": "Pro games, not the high-rank pool (the player review: «look for Satanic's or Yatoro's games»): OpenDota /players/{id}/matches?hero_id=145 for Yatoro (Team Spirit, 321580662) and Satanic (PARIVISION, 1044002267), league and ranked games since 7.41 (2026-03-24): 34 games, won 26. The paired abilities of his two stances share their levels (Valve 7.41f: Echo Slash/Falcon Rush, Grappling Claw/Talon Toss, Kazurai Katana/Shodo Sai), so each pair counts as one: maxed Kazurai Katana/Shodo Sai > Echo Slash/Falcon Rush > Grappling Claw/Talon Toss in 33 of 34 games; first point Echo Slash/Falcon Rush in 27. The order names the Katana stance's abilities (in the Sai stance the tip waits). Talents, the first pick of each row: 10 +50 Raptor Dance Radius 28/34 (else +6% Switch Discipline Swap Bonuses); 15 +1 Raptor Dance Strike 29/34 (else +2s Falcon Rush Duration); 20 Bonus Attack Speed During Falcon Rush 26/29 (else +3.5% Kazurai Katana Damage Per Second); 25 +1 Echo Slash Attack 16/17."
   }
 }

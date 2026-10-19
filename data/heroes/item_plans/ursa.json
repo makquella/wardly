@@ -9,7 +9,8 @@
   "sources": {
     "games": "660 league games since 7.41 (data/heroes/item_stats), win 44.8%. Reproduce: python scripts/hero_item_stats.py ursa.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Abyssal Blade, Battle Fury.",
-    "hero": "Valve /datafeed/herodata hero_id 70, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 70, 7.41f.",
+    "player": "Player review, 2026-10-19: Abyssal Blade over Silver Edge; what matters is stacking Fury Swipes on the target."
   },
   "rules": [
     {

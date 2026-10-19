@@ -8,8 +8,9 @@
   "checked": "2026-10-19",
   "sources": {
     "games": "741 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 47.8%. Reproduce: python scripts/hero_item_stats.py morphling.",
-    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Daedalus.",
-    "hero": "Valve /datafeed/herodata hero_id 10, 7.41f."
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Butterfly, Hydra's Breath, Daedalus.",
+    "hero": "Valve /datafeed/herodata hero_id 10, 7.41f.",
+    "player": "Player review, 2026-10-19: against illusion heroes Hydra's Breath after Butterfly."
   },
   "rules": [
     {
@@ -39,6 +40,34 @@
         "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
       },
       "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Morphling players against Bristleback, Spectre or Huskar: 17% of 47 games against them (3% otherwise), won 62% against 54%."
+    },
+    {
+      "id": "illusion_evasion",
+      "why": "illusion_evasion",
+      "family": "illusions",
+      "item": "butterfly",
+      "name": "Butterfly",
+      "enemy": "illusions",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} fights with illusions: with the 35% evasion of {item} about a third of their attacks miss you",
+        "uk": "{enemy} б'ється ілюзіями: з 35 % ухилення від {item} приблизно третина їхніх атак по вас промахується"
+      },
+      "basis": "Valve 7.41f Butterfly: +35% evasion, so about a third of the illusions' attacks miss; it is in his build (~25 min). High-rank Morphlings against illusion heroes: 57% of 49 games against them (56% otherwise), won 71% against 14%. The player review: Butterfly first, then Hydra's Breath."
+    },
+    {
+      "id": "illusion_splash",
+      "why": "illusion_splash",
+      "family": "lance",
+      "item": "hydras_breath",
+      "name": "Hydra's Breath",
+      "enemy": "illusions",
+      "minute": 22,
+      "reason": {
+        "en": "{enemy} fights with illusions: after Butterfly, upgrade your Dragon Lance into {item}; 30% of your attacks also hit up to 3 more enemies and poison them",
+        "uk": "{enemy} б'ється ілюзіями: після Butterfly збирайте Dragon Lance в {item}; 30 % атак б'ють ще до 3 ворогів поруч і отруюють їх"
+      },
+      "basis": "Valve 7.41f Hydra's Breath (Dragon Lance + Specialist's Array + Orb of Venom): 30% of ranged attacks also fire at up to 3 nearby enemies, and Miasma poisons each one hit for 2.5% of max HP per second. Dragon Lance is in his build. High-rank Morphlings against illusion heroes: 14% of 49 games against them (5% otherwise), won 29% against 50% (a thin sample). The player review: Hydra's Breath against illusion heroes after Butterfly."
     }
   ],
   "build": [
@@ -118,9 +147,6 @@
       "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
       "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
     }
-  },
-  "suppress": {
-    "illusions": "Morphling turns agility into his attack and Adaptive Strike; Manta Style is in his build. High-rank Morphling players do not buy Maelstrom against illusion heroes (49 games: it is not among the items they buy more often there)."
   },
   "skills": {
     "order": [

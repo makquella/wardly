@@ -8,8 +8,9 @@
   "checked": "2026-10-19",
   "sources": {
     "games": "667 league games since 7.41 (data/heroes/item_stats), win 49.5%. Reproduce: python scripts/hero_item_stats.py drow_ranger.",
-    "items": "Valve /datafeed/itemdata, 7.41f: Silver Edge, Hurricane Pike, Linken's Sphere, Aghanim's Scepter.",
-    "hero": "Valve /datafeed/herodata hero_id 6, 7.41f."
+    "items": "Valve /datafeed/itemdata, 7.41f: Silver Edge, Hurricane Pike, Monkey King Bar; herodata: Marksmanship (true strike on procs).",
+    "hero": "Valve /datafeed/herodata hero_id 6, 7.41f.",
+    "player": "Player review, 2026-10-19: Marksmanship pierces the misses (no Monkey King Bar); Hurricane Pike always, Linken's by the situation; no Aghanim's Scepter."
   },
   "rules": [
     {
@@ -45,10 +46,6 @@
       "name": "Manta Style"
     },
     {
-      "item": "ultimate_scepter",
-      "name": "Aghanim's Scepter"
-    },
-    {
       "item": "hurricane_pike",
       "name": "Hurricane Pike"
     },
@@ -73,7 +70,7 @@
       "name": "Daedalus"
     }
   ],
-  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 88% (-2), wraith_band 22% (2), power_treads 100% (6), falcon_blade 84% (7), yasha 88% (14), dragon_lance 98% (14), manta 75% (20), ultimate_scepter 41% (20), force_staff 85% (22), hurricane_pike 85% (22), invis_sword 36% (27), black_king_bar 45% (29), silver_edge 32% (30), butterfly 46% (32), aghanims_shard 48% (33), lesser_crit 30% (34), greater_crit 21% (38), satanic 22% (41).",
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 88% (-2), wraith_band 22% (2), power_treads 100% (6), falcon_blade 84% (7), yasha 88% (14), dragon_lance 98% (14), manta 75% (20), ultimate_scepter 41% (20), force_staff 85% (22), hurricane_pike 85% (22), invis_sword 36% (27), black_king_bar 45% (29), silver_edge 32% (30), butterfly 46% (32), aghanims_shard 48% (33), lesser_crit 30% (34), greater_crit 21% (38), satanic 22% (41). The player review: Hurricane Pike is always bought (it follows Manta Style), Linken's Sphere only by the situation (a death to a single-target disable brings it, situational_items.py), Aghanim's Scepter is not advised after its 7.41 cuts.",
   "tempo": {
     "net_worth": [
       [
@@ -103,10 +100,6 @@
         "name": "Manta Style"
       },
       {
-        "item": "ultimate_scepter",
-        "name": "Aghanim's Scepter"
-      },
-      {
         "item": "hurricane_pike",
         "name": "Hurricane Pike"
       },
@@ -123,10 +116,6 @@
         "name": "Silver Edge"
       },
       {
-        "item": "sphere",
-        "name": "Linken's Sphere"
-      },
-      {
         "item": "greater_crit",
         "name": "Daedalus"
       }
@@ -138,7 +127,8 @@
     }
   },
   "suppress": {
-    "illusions": "Valve 7.41f Multishot: 3 waves of 4 arrows in a 50° cone, each applying Frost Arrows, so the illusions in front of her are hit together. High-rank Drow Ranger players do not buy Maelstrom against illusion heroes (62 games: it is not among the items they buy more often there)."
+    "illusions": "Valve 7.41f Multishot: 3 waves of 4 arrows in a 50° cone, each applying Frost Arrows, so the illusions in front of her are hit together. High-rank Drow Ranger players do not buy Maelstrom against illusion heroes (62 games: it is not among the items they buy more often there).",
+    "evasion": "Valve 7.41f Marksmanship: 30/35/40% of her attacks proc, and «Marksmanship procs have true strike». High-rank Drows against Phantom Assassin or Windranger: Monkey King Bar not among the 12 items bought more often in 81 games against them. The player review: the ultimate pierces the misses, no Monkey King Bar."
   },
   "skills": {
     "order": [
