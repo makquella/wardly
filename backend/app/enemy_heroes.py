@@ -3,9 +3,13 @@ enemy_heroes.py - the enemy heroes of the live match, for counter items.
 
 A player's GSI has no draft (that block is for spectators), but its `minimap`
 block lists the units on the player's minimap — the enemy heroes the team can
-see among them (`unitname` npc_dota_hero_*, `team` 2 Radiant / 3 Dire). Every
-enemy hero seen once is remembered for the match (MatchMemory resets it), so
-the list fills up as the enemies show themselves. No minimap block (an older
+see among them (`unitname` npc_dota_hero_*, `team` 2 Radiant / 3 Dire, `image`
+minimap_enemyicon). Only that icon counts: from the strategy time on, GSI also
+sends `minimap_plaincircle` heroes at (0, 0) for both teams' picks and heroes
+not in the match at all, with an enemy team number; read as enemies, they
+named the player's own allies and the player's hero. Every enemy hero seen once
+is remembered for the match (MatchMemory resets it), so the list fills up as
+the enemies show themselves. No minimap block (an older
 GSI config, or a client that does not send it) → nothing is known and no
 counter advice is given.
 """
@@ -19,8 +23,22 @@ from typing import Any
 TEAMS = {"radiant": 2, "dire": 3}
 MAX_ENEMIES = 5
 HERO_PREFIX = "npc_dota_hero_"
+ENEMY_ICON = "minimap_enemyicon"
 # World coordinates run about ±8200; anything far outside is a broken value.
 MAX_COORDINATE = 12000
+
+
+def _enemy_hero(unit: Any, own: int, normalize: Callable[[Any], str]) -> str:
+    """The hero's name when `unit` is a visible enemy hero, else ""."""
+    if not isinstance(unit, dict) or unit.get("image") != ENEMY_ICON:
+        return ""
+    raw = unit.get("unitname")
+    team = unit.get("team")
+    if not isinstance(raw, str) or not raw.lower().startswith(HERO_PREFIX):
+        return ""
+    if isinstance(team, bool) or team not in (2, 3) or team == own:
+        return ""
+    return normalize(raw) or ""
 
 
 def visible_enemy_units(
@@ -36,18 +54,12 @@ def visible_enemy_units(
         return None
     units: list[dict[str, Any]] = []
     for unit in minimap.values():
-        if not isinstance(unit, dict):
-            continue
-        raw = unit.get("unitname")
-        team = unit.get("team")
-        if not isinstance(raw, str) or not raw.lower().startswith(HERO_PREFIX):
-            continue
-        if isinstance(team, bool) or team not in (2, 3) or team == own:
-            continue
-        name = normalize(raw)
+        name = _enemy_hero(unit, own, normalize)
         if not name or any(u["hero"] == name for u in units):
             continue
         x, y = _coordinate(unit.get("xpos")), _coordinate(unit.get("ypos"))
+        if x == 0 and y == 0:  # an icon not placed on the map yet: says nothing
+            continue
         units.append(
             {
                 "hero": name,
@@ -75,17 +87,13 @@ def visible_enemy_heroes(
         return None
     names: list[str] = []
     for unit in minimap.values():
-        if not isinstance(unit, dict):
+        name = _enemy_hero(unit, own, normalize)
+        if not name or name in names:
             continue
-        raw = unit.get("unitname")
-        team = unit.get("team")
-        if not isinstance(raw, str) or not raw.lower().startswith(HERO_PREFIX):
+        x, y = _coordinate(unit.get("xpos")), _coordinate(unit.get("ypos"))
+        if x == 0 and y == 0:  # an icon not placed on the map yet: says nothing
             continue
-        if isinstance(team, bool) or team not in (2, 3) or team == own:
-            continue
-        name = normalize(raw)
-        if name and name not in names:
-            names.append(name)
+        names.append(name)
     return names
 
 

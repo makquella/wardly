@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "hero": "Luna",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-17",
+  "sources": {
+    "games": "1129 league games since 7.41 (data/heroes/item_stats), win 48.4%. Reproduce: python scripts/hero_item_stats.py luna.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 48, 7.41f.",
+    "player": "Player review, 2026-10-18: the 80% tempo line; Monkey King Bar against evasion stays: her low win rate there comes from the carry matchup, not the item."
+  },
+  "rules": [
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Lunas buy it against Bristleback, Spectre or Huskar: 39% of 84 games against them (7% otherwise), won 61% against 41%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "mask_of_madness",
+      "name": "Mask of Madness"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "dragon_lance",
+      "name": "Dragon Lance"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "satanic",
+      "name": "Satanic"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 76% (-1), wraith_band 22% (2), power_treads 100% (6), mask_of_madness 94% (10), yasha 99% (13), manta 98% (17), dragon_lance 59% (19), force_staff 32% (25), black_king_bar 56% (26), hurricane_pike 32% (26), butterfly 71% (26), lesser_crit 26% (29), aghanims_shard 39% (31), greater_crit 21% (32), satanic 40% (34).",
+  "skills": {
+    "order": [
+      "luna_moon_glaive",
+      "luna_lucent_beam",
+      "luna_lunar_orbit"
+    ],
+    "games": 1129,
+    "first_agree": 800,
+    "opening": {
+      "name": "luna_lucent_beam",
+      "agree": 963
+    },
+    "names": {
+      "luna_moon_glaive": "Moon Glaives",
+      "luna_lucent_beam": "Lucent Beam",
+      "luna_lunar_orbit": "Lunar Orbit"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_luna_7",
+        "label": "Moon Glaives Damage Reduction",
+        "picked": 997,
+        "games": 1125
+      },
+      "15": {
+        "name": "special_bonus_unique_luna_lunar_orbit_glaive_count",
+        "label": "Lunar Orbit Glaive",
+        "picked": 682,
+        "games": 1106
+      },
+      "20": {
+        "name": "special_bonus_unique_luna_lunar_orbit_speed_damage",
+        "label": "Lunar Orbit Damage / Speed",
+        "picked": 577,
+        "games": 832
+      },
+      "25": {
+        "name": "special_bonus_unique_luna_3",
+        "label": "/ Lunar Blessing Allied/Self Damage",
+        "picked": 312,
+        "games": 325
+      }
+    },
+    "basis": "1129 games: maxed luna_moon_glaive > luna_lucent_beam > luna_lunar_orbit 602 (win 50.3%), luna_lucent_beam > luna_moon_glaive > luna_lunar_orbit 318 (win 47.2%), luna_moon_glaive > luna_lunar_orbit > luna_lucent_beam 184 (win 47.8%); talents 10: Moon Glaives Damage Reduction 997/1125 (48.4%), Lucent Beam Ministun 128/1125 (48.4%); 15: Lunar Orbit Glaive 682/1106 (51.3%), Lucent Beam Damage 424/1106 (45.8%); 20: Lunar Orbit Damage / Speed 577/832 (58.8%), Eclipse Cooldown 255/832 (52.5%); 25: / Lunar Blessing Allied/Self Damage 312/325 (65.1%), Lucent Beam Hits An Additional Target 13/325 (38.5%)."
+  },
+  "suppress": {
+    "illusions": "Moon Glaives already bounce each attack to up to 6 enemies within 500 (Valve 7.41f) and Lunar Orbit hits all around her; high-rank Lunas do not add Maelstrom against illusion heroes."
+  },
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        22100
+      ]
+    ],
+    "items": [
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "hurricane_pike",
+        "name": "Hurricane Pike"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      }
+    ],
+    "basis": "Gold lines where he wins 80.0%+: 25:00 20500 (15 games, 80.0%), 30:00 23000 (99 games, 80.8%); net worth ~0.96 of that gold. No 85% line for this hero (two of the three minutes needed), so the hero's own 80% line (scripts/hero_item_stats.py WIN_TARGETS), per the player review of 2026-10-18. The 25:00 point rests on under 20 games, so it is left out (PLAN_POINT_GAMES).",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  }
+}

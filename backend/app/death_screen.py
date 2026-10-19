@@ -6,8 +6,14 @@ last seconds) and the live state, in the request language, only facts:
 - how the death happened: a burst from high HP (last_moments `burst_s`);
 - a rescue item or ability that was ready and not pressed (`usable`);
 - the same place again (PlayerService._death_place: 2+ deaths there lately);
+- no buyback: the gold left after the death is under its cost (from minute 20,
+  or earlier with the game on the line: the enemy's Aegis, an own tier 3 or
+  barracks down; match_memory.base_danger);
+- the other option when the item was chosen by the situation (Linken's against
+  a Hex, Black King Bar against stuns: situational_items `alternative`);
 - what to buy now: the next build item when its missing parts fit the gold,
-  else "buy parts of it", keeping the buyback cost after minute 30.
+  else "buy parts of it", keeping the buyback cost after minute 30 (or with
+  the game on the line).
 Title: «Відродження через 23 с». Nothing to say → no card.
 """
 
@@ -20,6 +26,8 @@ from app.last_moments import saver_label
 from app.live_tools import MATCH_PLACE_MIN
 
 BUYBACK_RESERVE_MINUTE = 30
+# From this minute (or with the game on the line) a missing buyback is said.
+NO_BUYBACK_MINUTE = 20
 SPEND_MIN_GOLD = 500
 
 TEXT = {
@@ -34,14 +42,19 @@ TEXT = {
         "buy_parts": "Купіть частини {item}: бракує {need} золота.",
         "spend": "Витратьте {gold} золота на наступний предмет — біля фонтана це швидше.",
         "reserve": " Залиште {cost} на байбек.",
+        "no_buyback": "Байбек коштує {cost}, а після смерті у вас {gold}: не вистачає {need}.",
+        "next_item": "Наступний предмет — {item}, коли золото на байбек буде.",
         "why_disabled": "Чому {item}: смертей під контролем — {n}, з ним контроль вас не втримає.",
         "why_burst": "Чому {item}: смертей за пару секунд із високого здоров'я — {n}, він дасть час.",
         "why_targeted": "Чому {item}: смертей під контролем проти {enemy} — {n}, він блокує {spell}.",
-        "why_evasion": "Чому {item}: {enemy} ухиляється від атак, а він б'є без промаху.",
+        "why_evasion": "Чому {item}: {enemy} ухиляється від атак, а з ним більшість атак пробиває ухилення.",
         "why_healing": "Чому {item}: {enemy} багато лікується, а він ріже лікування.",
         "why_illusions": "Чому {item}: {enemy} б'ється ілюзіями, а він б'є їх усіх одразу.",
         "why_magic": "Чому {item}: героїв ворога з магічною шкодою — {n}, він захистить від неї.",
         "why_break": "Чому {item}: {enemy} тримається на {spell}, а він це вимикає.",
+        "why_reason": "Чому {item}: {reason}.",
+        "alt_targeted": "Інший варіант — {item}: блокує {spell} ({enemy}), якщо ловлять саме ним.",
+        "alt_disabled": "Інший варіант — {item}: проти оглушень, якщо тримають ними, а не Hex.",
     },
     "en": {
         "title": "Respawn in {s} s",
@@ -54,14 +67,19 @@ TEXT = {
         "buy_parts": "Buy parts of {item}: {need} gold to go.",
         "spend": "Spend {gold} gold on your next item: at the fountain it is quicker.",
         "reserve": " Keep {cost} for buyback.",
+        "no_buyback": "Buyback costs {cost} and you have {gold} after the death: {need} short.",
+        "next_item": "Next item: {item}, once your buyback gold is there.",
         "why_disabled": "Why {item}: {n} deaths under stuns, and with it no disable holds you.",
         "why_burst": "Why {item}: {n} deaths in seconds from high health, and it buys you time.",
         "why_targeted": "Why {item}: {n} deaths under stuns against {enemy}, and it blocks {spell}.",
-        "why_evasion": "Why {item}: {enemy} dodges attacks, and it never misses.",
+        "why_evasion": "Why {item}: {enemy} dodges attacks, and with it most attacks go through.",
         "why_healing": "Why {item}: {enemy} heals a lot, and it cuts the healing.",
         "why_illusions": "Why {item}: {enemy} fights with illusions, and it hits them all.",
         "why_magic": "Why {item}: {n} enemy heroes deal magic damage, and it protects you.",
         "why_break": "Why {item}: {enemy} relies on {spell}, and it turns that off.",
+        "why_reason": "Why {item}: {reason}.",
+        "alt_targeted": "The other option is {item}: it blocks {enemy}'s {spell} if that is what catches you.",
+        "alt_disabled": "The other option is {item}: against the stuns, if they hold you rather than the Hex.",
     },
 }
 
@@ -94,6 +112,8 @@ def build_death_screen(
     minute: Any,
     next_item: dict[str, Any] | None,
     lang: str,
+    buyback_cooldown: Any = None,
+    danger: Any = None,
 ) -> dict[str, Any] | None:
     lang = "uk" if lang == "uk" else "en"
     text = TEXT[lang]
@@ -112,13 +132,26 @@ def build_death_screen(
         lines.append(text["place"].format(n=count, place=where, m=minutes))
     elif where and (_int((place or {}).get("in_match")) or 0) >= MATCH_PLACE_MIN:
         lines.append(text["place_match"].format(n=_int((place or {}).get("in_match")), place=where))
-    buy = _buy_line(text, gold, buyback_cost, minute, next_item)
+    short = _no_buyback(gold, buyback_cost, buyback_cooldown, minute, danger)
+    if short is not None:
+        lines.append(text["no_buyback"].format(**short))
+    # Short of the buyback: the gold is kept for it, whatever the minute.
+    keep = bool(danger) or short is not None
+    buy = _buy_line(text, gold, buyback_cost, minute, next_item, keep_buyback=keep)
+    if not buy and keep and isinstance(next_item, dict) and next_item.get("why"):
+        # The gold goes to the buyback first; the item chosen by the deaths or
+        # the lineup is still named, with its reason.
+        buy = text["next_item"].format(item=next_item.get("name"))
     if buy:
         lines.append(buy)
         why = (next_item or {}).get("why")
         enemy = (next_item or {}).get("enemy")
         count = _int((next_item or {}).get("count"))
-        if (why in ("disabled", "burst", "magic") and count) or (
+        reason = (next_item or {}).get("reason")
+        if isinstance(next_item, dict) and isinstance(reason, dict) and reason.get(lang):
+            # A hero plan's own reason (hero_items.py).
+            lines.append(text["why_reason"].format(item=next_item["name"], reason=reason[lang]))
+        elif (why in ("disabled", "burst", "magic") and count) or (
             why == "targeted" and count and enemy and next_item.get("spell")
         ):
             lines.append(
@@ -134,6 +167,16 @@ def build_death_screen(
                     item=next_item["name"], enemy=enemy, spell=next_item["spell"]
                 )
             )
+        alternative = (next_item or {}).get("alternative")
+        if isinstance(alternative, dict) and f"alt_{alternative.get('why')}" in text:
+            # By the situation (situational_items): Linken's for a Hex, BKB for stuns.
+            lines.append(
+                text[f"alt_{alternative['why']}"].format(
+                    item=alternative.get("name"),
+                    enemy=alternative.get("enemy") or "",
+                    spell=alternative.get("spell") or "",
+                )
+            )
     if not lines:
         return None
     seconds = _int(respawn)
@@ -145,14 +188,32 @@ def build_death_screen(
     return card
 
 
+def _no_buyback(
+    gold: Any, cost: Any, cooldown: Any, minute: Any, danger: Any
+) -> dict[str, int] | None:
+    """{cost, gold, need} when buyback is off cooldown but the gold is short."""
+    gold, cost = _int(gold), _int(cost)
+    if gold is None or not cost or gold >= cost or _int(cooldown) not in (0, None):
+        return None
+    if not danger and (_int(minute) or 0) < NO_BUYBACK_MINUTE:
+        return None
+    return {"cost": cost, "gold": gold, "need": cost - gold}
+
+
 def _buy_line(
-    text: dict[str, str], gold: Any, buyback_cost: Any, minute: Any, next_item: Any
+    text: dict[str, str],
+    gold: Any,
+    buyback_cost: Any,
+    minute: Any,
+    next_item: Any,
+    *,
+    keep_buyback: bool = False,
 ) -> str | None:
     gold = _int(gold)
     if gold is None:
         return None
     reserve = 0
-    if (_int(minute) or 0) >= BUYBACK_RESERVE_MINUTE:
+    if keep_buyback or (_int(minute) or 0) >= BUYBACK_RESERVE_MINUTE:
         reserve = _int(buyback_cost)
         if reserve is None:
             return None  # can't tell what to keep for buyback

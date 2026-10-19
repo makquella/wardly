@@ -34,6 +34,23 @@ def has_teleport(items: Any) -> bool | None:
     return False
 
 
+def teleport_cooldown(items: Any) -> int | None:
+    """Seconds until the TP scroll (or Boots of Travel) can be used: 0 ready;
+    None when there is none or the block says nothing."""
+    if not isinstance(items, dict):
+        return None
+    for slot, item in items.items():
+        if not isinstance(item, dict) or not str(slot).startswith(("slot", "teleport")):
+            continue
+        if str(item.get("name") or "") not in TP_ITEMS:
+            continue
+        cooldown = item.get("cooldown")
+        if isinstance(cooldown, bool) or not isinstance(cooldown, (int, float)):
+            return None
+        return max(0, int(cooldown))
+    return None
+
+
 class TpTracker:
     def __init__(self) -> None:
         self.reset()

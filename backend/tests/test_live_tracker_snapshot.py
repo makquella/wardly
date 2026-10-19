@@ -24,7 +24,13 @@ def _seen_packet(hero: str = "juggernaut", enemy: str = "axe", clock: int = 200)
     packet["hero"].update({"alive": True, "xpos": 5000, "ypos": -6200})
     packet["player"]["team_name"] = "radiant"
     packet["minimap"] = {
-        "enemy": {"unitname": f"npc_dota_hero_{enemy}", "team": 3, "xpos": 5000, "ypos": -6200}
+        "enemy": {
+            "image": "minimap_enemyicon",
+            "unitname": f"npc_dota_hero_{enemy}",
+            "team": 3,
+            "xpos": 5000,
+            "ypos": -6200,
+        }
     }
     return packet
 

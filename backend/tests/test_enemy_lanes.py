@@ -10,6 +10,7 @@ from app.gsi_state import _normalize_hero_name
 from app.map_hints import MISSING_GAP, MISSING_SHOW, RoleTips
 
 C = 16384  # MAP_CENTER
+ENEMY = {"image": "minimap_enemyicon"}
 MID = {"hero": "Lina", "x": C, "y": C}
 BOT = {"hero": "Axe", "x": C + 5000, "y": C - 6200}
 
@@ -23,13 +24,40 @@ def _laned(until=200, units=(MID, BOT)):
 
 def test_the_minimap_gives_positions_in_replay_units():
     minimap = {
-        "o1": {"unitname": "npc_dota_hero_lina", "team": 3, "xpos": 0, "ypos": 0},
-        "o2": {"unitname": "npc_dota_hero_axe", "team": 3, "xpos": "x", "ypos": 5},
-        "o3": {"unitname": "npc_dota_hero_lion", "team": 2, "xpos": 0, "ypos": 0},
+        "o1": {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_lina",
+            "team": 3,
+            "xpos": 40,
+            "ypos": -40,
+        },
+        "o2": {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_axe",
+            "team": 3,
+            "xpos": "x",
+            "ypos": 5,
+        },
+        "o3": {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_lion",
+            "team": 2,
+            "xpos": 0,
+            "ypos": 0,
+        },
+        # An icon not placed yet, and a pick-screen phantom: no sighting.
+        "o4": {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_zuus",
+            "team": 3,
+            "xpos": 0,
+            "ypos": 0,
+        },
+        "o5": {"image": "minimap_plaincircle", "unitname": "npc_dota_hero_pudge", "team": 3},
     }
     units = visible_enemy_units(minimap, "radiant", _normalize_hero_name)
     assert units == [
-        {"hero": "Lina", "x": C, "y": C},
+        {"hero": "Lina", "x": C + 40, "y": C - 40},
         {"hero": "Axe", "x": None, "y": None},
     ]
     assert visible_enemy_units(minimap, None, _normalize_hero_name) is None
@@ -85,8 +113,20 @@ def test_the_call_reaches_the_overlay(client):
         if 60 <= clock <= 200:
             x, y = payload["hero"]["xpos"], payload["hero"]["ypos"]
             payload["minimap"] = {
-                "o1": {"unitname": "npc_dota_hero_axe", "team": 3, "xpos": x + 300, "ypos": y},
-                "o2": {"unitname": "npc_dota_hero_lina", "team": 3, "xpos": 0, "ypos": 0},
+                "o1": {
+                    **ENEMY,
+                    "unitname": "npc_dota_hero_axe",
+                    "team": 3,
+                    "xpos": x + 300,
+                    "ypos": y,
+                },
+                "o2": {
+                    **ENEMY,
+                    "unitname": "npc_dota_hero_lina",
+                    "team": 3,
+                    "xpos": 40,
+                    "ypos": -40,
+                },
             }
         else:
             payload["minimap"] = {}
@@ -119,7 +159,7 @@ def test_the_past_lane_record_reaches_the_overlay(client, monkeypatch):
         clock = payload["map"]["clock_time"]
         x, y = payload["hero"]["xpos"], payload["hero"]["ypos"]
         payload["minimap"] = {
-            "o1": {"unitname": "npc_dota_hero_axe", "team": 3, "xpos": x + 300, "ypos": y}
+            "o1": {**ENEMY, "unitname": "npc_dota_hero_axe", "team": 3, "xpos": x + 300, "ypos": y}
         }
         client.post("/gsi", json=payload)
         if clock == 95:

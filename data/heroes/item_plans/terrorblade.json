@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "hero": "Terrorblade",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41f",
+  "checked": "2026-10-17",
+  "sources": {
+    "build": "STRATZ Divine-Immortal pos1, 2026-10-13 (data/meta/stratz_builds.json): Falcon Blade ~7 min, Manta Style ~17, Eye of Skadi ~28, Hurricane Pike ~29.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar (135), Bloodthorn (250), Eye of Skadi (160), Butterfly (139), Hurricane Pike (263), Hydra's Breath (1858), Daedalus (141). Recipes: OpenDota constants (Hydra's Breath and Hurricane Pike are both built from Dragon Lance).",
+    "hero": "Valve /datafeed/herodata hero_id 109: melee (150 range); Conjure Image and Metamorphosis illusions are Terrorblade's controlled units.",
+    "player": "Player review, 2026-10-17: against illusions Butterfly, and Dragon Lance goes into Hydra's Breath instead of Hurricane Pike; Pike against heroes who jump on him; far ahead, the tempo build Manta, Skadi, Butterfly, Daedalus, then Aegis and the throne.",
+    "games": "OpenDota Explorer, 617 league games with Terrorblade in patch 7.41 (2026-03-24..2026-10-17), gold timelines: he wins 86-100% with 12.5k+ gold by 20:00 (52-56% at 10-12k), 94% with 17.5k+ by 25:00 (84.7% at 17k), 85% with 22k+ by 30:00; net worth is ~0.96 of that gold. Dragon Lance is his third item in 87% of games. Against Phantom Assassin or Windranger, Monkey King Bar in 45% (12% otherwise); with an escape hero too, Bloodthorn 12% (5%), won 67% against 50%. Against illusion heroes Butterfly 51% (38%), Hurricane Pike 18% (44%), Maelstrom 0%. Against healing heroes Eye of Skadi 70% (61%) at the same ~27 min. Against Bristleback, Spectre or Huskar Silver Edge 42% (7%), won 70% against 43%. Reproduce: python scripts/hero_item_stats.py terrorblade."
+  },
+  "rules": [
+    {
+      "id": "evasion_escape",
+      "why": "evasion_escape",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "also": "escape",
+      "minute": 15,
+      "basis": "Soul Rend silences for 5 s (no Blink, Ball Lightning...) and gives True Strike to your attacks and your controlled units' attacks on the silenced target; its passive pierces evasion on 40% of attacks. One item answers both heroes.",
+      "reason": {
+        "en": "{enemy} dodges attacks and {escape} escapes with {spell}: {item} silences the escape, and your attacks and illusions never miss the silenced target",
+        "uk": "{enemy} ухиляється від атак, а {escape} тікає через {spell}: {item} накладає тишу, і по цілі під тишею ваші атаки й ілюзії не промахуються"
+      }
+    },
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "basis": "Pierce: 80% of attacks go through evasion with 70 magic damage, nothing to cast. Against evasion alone it is cheaper (5000 against 6400) and always on.",
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      }
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "basis": "Eye of Skadi is in Terrorblade's usual build and its attacks cut health restoration by 50% for 3 s: against heavy healing keep it in the build (high-rank players buy it more often, at the same ~27 min) rather than an off-build Spirit Vessel.",
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      }
+    },
+    {
+      "id": "illusion_evasion",
+      "why": "illusion_evasion",
+      "family": "illusions",
+      "item": "butterfly",
+      "name": "Butterfly",
+      "enemy": "illusions",
+      "minute": 20,
+      "basis": "Butterfly: 35% evasion, so about a third of the illusions' attacks miss him; it is also in his tempo build.",
+      "reason": {
+        "en": "{enemy} fights with illusions: with the 35% evasion of {item} about a third of their attacks miss you",
+        "uk": "{enemy} б'ється ілюзіями: з 35 % ухилення від {item} приблизно третина їхніх атак по вас промахується"
+      }
+    },
+    {
+      "id": "illusion_splash",
+      "why": "illusion_splash",
+      "family": "lance",
+      "item": "hydras_breath",
+      "name": "Hydra's Breath",
+      "enemy": "illusions",
+      "minute": 20,
+      "basis": "Hydra's Breath (Dragon Lance + Specialist's Array + Orb of Venom): 30% of ranged attacks also fire at up to 3 nearby enemies, and Miasma poisons each one hit for 2.5% of max HP per second. Terrorblade attacks from range in Metamorphosis, so the Dragon Lance goes into it instead of Hurricane Pike.",
+      "reason": {
+        "en": "{enemy} fights with illusions: upgrade your Dragon Lance into {item}, not Hurricane Pike; in Metamorphosis 30% of your attacks also hit up to 3 more enemies and poison them",
+        "uk": "{enemy} б'ється ілюзіями: Dragon Lance збирайте в {item}, а не в Hurricane Pike; у Metamorphosis 30 % атак б'ють ще до 3 ворогів поруч і отруюють їх"
+      }
+    },
+    {
+      "id": "jumper",
+      "why": "jumper",
+      "family": "lance",
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike",
+      "enemy": "jumpers",
+      "minute": 20,
+      "basis": "Hurricane Thrust: pushes him and the target 425 apart, then 5 attacks on it from any range with +100 attack speed for 5 s. In his STRATZ build at ~29 min.",
+      "reason": {
+        "en": "{enemy} jumps on you with {spell}: {item} pushes you both apart, and for 5 seconds you keep hitting from range",
+        "uk": "{enemy} стрибає на вас через {spell}: {item} розкидає вас, і 5 секунд ви б'єте ціль здалеку"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "falcon_blade",
+      "name": "Falcon Blade"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "dragon_lance",
+      "name": "Dragon Lance"
+    },
+    {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    },
+    {
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike",
+      "unless": [
+        "hydras_breath"
+      ]
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    }
+  ],
+  "build_basis": "The order of all 325 won Terrorblade games in the 7.41 league games above (share of games, median minute): Power Treads 100% (6), Falcon Blade 84% (8), Manta Style 100% (16), Aghanim's Shard 83% (17), Dragon Lance 92% (19), Eye of Skadi 70% (27), Hurricane Pike 44% (27), Butterfly 48% (29), Black King Bar 37% (33), Daedalus 28% (35). It replaces the all-ranks OpenDota popularity (Manta Style, Eye of Skadi, Hurricane Pike, Butterfly, then BKB, Crystalys, Daedalus) for him. Pike is skipped once the Dragon Lance went into Hydra's Breath. Reproduce: python scripts/hero_item_stats.py terrorblade.",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12000
+      ],
+      [
+        25,
+        16800
+      ],
+      [
+        30,
+        21100
+      ]
+    ],
+    "items": [
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "dragon_lance",
+        "name": "Dragon Lance"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      }
+    ],
+    "basis": "His own net worth over this curve (12.5k, 17.5k and 22k gold by 20, 25 and 30 min in the games above, ~0.96 of it as net worth): he wins ~85% of those games. A player's GSI shows no enemy net worth, so his own farm stands for «their carry is poor». Then the counters wait: the tempo build, the Aegis and the throne.",
+    "order": "The order of the 72 won games with 12.5k+ gold by 20:00 (share of games, median minute): Manta Style 100% (15), Aghanim's Shard 78% (16), Dragon Lance 93% (18), Eye of Skadi 62% (25), Butterfly 50% (24), Daedalus 25% (30).",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "terrorblade_conjure_image",
+      "terrorblade_metamorphosis",
+      "terrorblade_reflection"
+    ],
+    "games": 634,
+    "first_agree": 560,
+    "opening": {
+      "name": "terrorblade_conjure_image",
+      "agree": 463
+    },
+    "names": {
+      "terrorblade_conjure_image": "Conjure Image",
+      "terrorblade_metamorphosis": "Metamorphosis",
+      "terrorblade_reflection": "Reflection"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_terrorblade_4",
+        "label": "Conjure Image Cooldown",
+        "picked": 623,
+        "games": 632
+      },
+      "15": {
+        "name": "special_bonus_unique_terrorblade_metamorphosis_cooldown",
+        "label": "Metamorphosis Cooldown",
+        "picked": 409,
+        "games": 584,
+        "never": {
+          "name": "special_bonus_unique_terrorblade_sunder_hp_threshold",
+          "label": "Sunder Minimum HP Swap",
+          "basis": "Player review 2026-10-17: never take it (175 of 584 games did, won 62%, a confounded minority)."
+        }
+      },
+      "20": {
+        "name": "special_bonus_unique_terrorblade_5",
+        "label": "Conjure Image Duration",
+        "picked": 347,
+        "games": 445,
+        "instead": {
+          "name": "special_bonus_all_stats_10",
+          "label": "+10 All Attributes",
+          "enemy": "illusion_clearers",
+          "min": 2,
+          "basis": "Player review 2026-10-17: +10 All Attributes when illusions die easily. In the same games the share of +10 All Attributes rises with the enemy heroes whose area damage or Hex clears illusions: 11% with none (237 games), 31% with one (158), 44% with two or more (50)."
+        }
+      },
+      "25": {
+        "name": "special_bonus_unique_terrorblade_3",
+        "label": "Metamorphosis Duration",
+        "picked": 40,
+        "games": 63
+      }
+    },
+    "basis": "634 Terrorblade games of the 7.41 league data (OpenDota Explorer ability_upgrades_arr), instead of the 3-5 recent pro games: maxed Conjure Image → Metamorphosis → Reflection in 62% (won 56%), Conjure Image maxed first in 560; first point Conjure Image in 463 (Metamorphosis at level 2 in 82%). Sunder at 6 in 49% and at 7-9 in 45%, won 53% and 52%: the level-6 ultimate tip stays. Talents: 10 Conjure Image Cooldown 99%; 15 Metamorphosis Cooldown 70% (Sunder HP 30%); 20 Conjure Image Duration 78% (+10 All Attributes 22%); 25 Metamorphosis Duration 63% of 63 games. The order does not change against illusion heroes (Conjure Image first in 87% of those games, 88% of the rest). Reproduce: python scripts/hero_item_stats.py terrorblade."
+  },
+  "fight": [
+    "terrorblade_metamorphosis"
+  ]
+}

@@ -27,6 +27,7 @@ events carry both languages.
 from __future__ import annotations
 
 import json
+import math
 from functools import lru_cache
 from typing import Any
 
@@ -138,6 +139,21 @@ PACE_MARGIN = 3
 # in this window, for DRAFT_SHOW seconds.
 DRAFT_FROM, DRAFT_UNTIL = 3 * 60, 10 * 60
 DRAFT_SHOW = 20
+# A hero plan's note: once per match, this long.
+PLAN_NOTE_SHOW = 20
+# Enemies seen together far from the player (enemy_group): GROUP_MIN heroes
+# within GROUP_RADIUS of one another, GROUP_FAR or more from the player, from
+# GROUP_FROM on; shown GROUP_SHOW seconds, at most once per GROUP_EVERY.
+GROUP_MIN = 4
+GROUP_RADIUS = 2500
+GROUP_FAR = 4000
+GROUP_FROM = 10 * 60
+GROUP_SHOW = 15
+GROUP_EVERY = 180
+# A fight the player is not in (fight_summary.py): shown FIGHT_SHOW seconds, at
+# most once per FIGHT_EVERY.
+FIGHT_SHOW = 12
+FIGHT_EVERY = 60
 DENY_MIN_LAST_HITS = 8
 # A power rune kept in the Bottle this long (clock seconds, alive) → use it.
 BOTTLE_RUNE_HELD = 30
@@ -439,12 +455,44 @@ TIPS = {
     "draft_evasion": {
         "en": (
             "Against their draft: {item}",
-            "{enemy} dodges attacks: plan {item} after your first big item, it never misses.",
+            "{enemy} dodges attacks: plan {item} after your first big item, most of your attacks go through.",
         ),
         "uk": (
             "Проти їхнього драфту: {item}",
-            "{enemy} ухиляється від атак: заплануйте {item} після першого великого предмета, він б'є без промаху.",
+            "{enemy} ухиляється від атак: заплануйте {item} після першого великого предмета, більшість ваших атак пробиватиме ухилення.",
         ),
+    },
+    # A fight elsewhere (fight_summary.py): the facts, the decision stays the player's.
+    "fight": {
+        "en": (
+            "Fight {place}: {a} allies, {e} enemies",
+            "{status}Whether to go is your call with the team.",
+        ),
+        "uk": (
+            "Бійка {place}: союзників {a}, ворогів {e}",
+            "{status}Іти чи ні — вирішуйте з командою.",
+        ),
+    },
+    # Enemies seen together far away (enemy_group): no one goes there alone.
+    "enemy_group": {
+        "en": (
+            "{n} enemies together {place}",
+            "Do not go there alone: farm or push the other side of the map, with your TP ready for your team.",
+        ),
+        "uk": (
+            "Ворогів разом — {n}, {place}",
+            "Туди один не йдіть: фарміть чи штовхайте іншу сторону мапи, а ТП тримайте для команди.",
+        ),
+    },
+    # A hero plan's note (hero_items.plan_note): advice with no item, its own words.
+    "plan_note": {
+        "en": ("Against {enemy}", "{reason}."),
+        "uk": ("Проти {enemy}", "{reason}."),
+    },
+    # A hero plan's rule (hero_items.py) brings its own reason, both languages.
+    "draft_reason": {
+        "en": ("Against their draft: {item}", "{reason}."),
+        "uk": ("Проти їхнього драфту: {item}", "{reason}."),
     },
     "draft_illusions": {
         "en": (
@@ -611,7 +659,135 @@ STRIP_LABELS = {
     "roshan": ("Рошан", "Roshan"),
     "roshan_maybe": ("Рошан?", "Roshan?"),
     "aegis": ("Аегіс", "Aegis"),
+    "enemy_aegis": ("Аегіс ворогів", "Enemy Aegis"),
 }
+
+
+def enemy_group(
+    units: list[dict[str, Any]] | None, x: Any, y: Any, team: Any
+) -> dict[str, Any] | None:
+    """The largest group of visible enemy heroes (enemy_heroes.visible_enemy_units,
+    absolute coordinates) when it has GROUP_MIN+ heroes and is GROUP_FAR or more
+    from the player at (x, y): {count, heroes, zone, side}; None otherwise."""
+    from app.map_analysis import map_side, zone
+
+    if (
+        not isinstance(x, (int, float))
+        or not isinstance(y, (int, float))
+        or team
+        not in (
+            "radiant",
+            "dire",
+        )
+    ):
+        return None
+    points = [
+        (u["hero"], float(u["x"]), float(u["y"]))
+        for u in units or []
+        if isinstance(u, dict)
+        and isinstance(u.get("x"), (int, float))
+        and isinstance(u.get("y"), (int, float))
+    ]
+    best: list[tuple[str, float, float]] = []
+    for _, px, py in points:
+        near = [p for p in points if math.hypot(p[1] - px, p[2] - py) <= GROUP_RADIUS]
+        if len(near) > len(best):
+            best = near
+    if len(best) < GROUP_MIN:
+        return None
+    cx, cy = sum(p[1] for p in best) / len(best), sum(p[2] for p in best) / len(best)
+    if math.hypot(cx - x, cy - y) < GROUP_FAR:
+        return None
+    return {
+        "count": len(best),
+        "heroes": [p[0] for p in best],
+        "zone": zone(cx, cy),
+        "side": map_side(cx, cy, team == "radiant"),
+    }
+
+
+def group_place(group: dict[str, Any], lang: str) -> str:
+    """Where a group is, as in the death screen: «на нижній лінії на своїй половині»."""
+    from app.analysis_texts import PLACE_SIDES, PLACE_ZONES
+
+    zone_id, side = str(group.get("zone")), str(group.get("side"))
+    sides = PLACE_SIDES[lang]
+    if lang == "uk":
+        zones = PLACE_ZONES["uk"]["in"]
+        return f"{zones.get(zone_id, '')} {sides.get(side, '')}".strip()
+    names = PLACE_ZONES["en"]["name"]
+    return f"in the {names.get(zone_id, 'map')} {sides.get(side, '')}".strip()
+
+
+FIGHT_WORDS = {
+    "uk": {
+        "own": "біля вашої T{tier} {lane}",
+        "enemy": "біля їхньої T{tier} {lane}",
+        "tp_ready": "ТП — готово",
+        "tp_in": "ТП — через {s} с",
+        "no_tp": "ТП немає",
+        "ready": "{name} — готово",
+        "in": "{name} — через {s} с",
+        "not_ready": "{name} — не готово",
+    },
+    "en": {
+        "own": "at your T{tier} {lane}",
+        "enemy": "at their T{tier} {lane}",
+        "tp_ready": "TP ready",
+        "tp_in": "TP in {s} s",
+        "no_tp": "no TP",
+        "ready": "{name} ready",
+        "in": "{name} in {s} s",
+        "not_ready": "{name} not ready",
+    },
+}
+
+
+def fight_params(fight: dict[str, Any], lang: str) -> dict[str, Any]:
+    """{place, a, e, status} for the fight card in `lang`."""
+    from app.analysis_texts import PLACE_ZONES
+    from app.map_analysis import map_side, zone
+
+    words = FIGHT_WORDS[lang]
+    tower = fight.get("tower")
+    team = fight.get("team")
+    if isinstance(tower, dict) and team in ("radiant", "dire"):
+        lane = str(tower.get("lane") or "base")
+        lane_text = (
+            PLACE_ZONES["uk"]["in"].get(lane, "")
+            if lang == "uk"
+            else f"in the {PLACE_ZONES['en']['name'].get(lane, lane)}"
+        )
+        side = "own" if tower.get("team") == team else "enemy"
+        place = words[side].format(tier=tower.get("tier"), lane=lane_text)
+    else:
+        group = {
+            "zone": zone(fight["x"], fight["y"]),
+            "side": map_side(fight["x"], fight["y"], team == "radiant"),
+        }
+        place = group_place(group, lang)
+    parts: list[str] = []
+    cooldown = fight.get("tp_cooldown")
+    if fight.get("has_tp") is False:
+        parts.append(words["no_tp"])
+    elif isinstance(cooldown, int):
+        parts.append(words["tp_ready"] if cooldown == 0 else words["tp_in"].format(s=cooldown))
+    for ability in fight.get("abilities") or []:
+        if ability.get("ready"):
+            parts.append(words["ready"].format(name=ability["name"]))
+        elif ability.get("cooldown"):
+            parts.append(words["in"].format(name=ability["name"], s=ability["cooldown"]))
+        else:
+            parts.append(words["not_ready"].format(name=ability["name"]))
+    status = ", ".join(parts)
+    if status:
+        status = status[0].upper() + status[1:] + ". "
+    return {
+        "place": place,
+        "a": len(fight.get("allies") or []),
+        "e": len(fight.get("enemies") or []),
+        "status": status,
+    }
 
 
 def strip_item(kind: str, at: int, clock: int, lang: str, **extra: Any) -> dict[str, Any]:
@@ -768,6 +944,8 @@ class RoleTips:
         self._shown: dict[str, int] = {}
         self._shown_record: dict[str, Any] = {}
         self._shown_draft: dict[str, Any] = {}
+        self._shown_group: dict[str, dict[str, Any]] = {}
+        self._shown_fight: dict[str, dict[str, Any]] = {}
         # (observer wards carried, the clock since when none was placed).
         self._ward_held: tuple[int, int] | None = None
         # The clock of the last observer ward placed (the carried count went down).
@@ -838,6 +1016,38 @@ class RoleTips:
             games=shown["games"],
         )
 
+    def fight(self, clock: int, lang: str, fight: dict[str, Any] | None) -> dict[str, Any] | None:
+        """«Fight at your T2: 3 allies, 2 enemies» (fight_summary.py): FIGHT_SHOW
+        seconds, at most once per FIGHT_EVERY; the words stay while it is up."""
+        start = self._shown.get("fight")
+        if start is not None and 0 <= clock - start <= FIGHT_SHOW:
+            return _tip("fight", f"fight@{start}", lang, **self._shown_fight[lang])
+        if not fight or (start is not None and 0 <= clock - start < FIGHT_EVERY):
+            return None
+        self._shown["fight"] = clock
+        self._shown_fight = {key: fight_params(fight, key) for key in ("en", "uk")}
+        return _tip("fight", f"fight@{clock}", lang, **self._shown_fight[lang])
+
+    def enemy_group(
+        self, clock: int, lang: str, group: dict[str, Any] | None
+    ) -> dict[str, Any] | None:
+        """«N enemies together …» (enemy_group): GROUP_SHOW seconds, at most
+        once per GROUP_EVERY; the card already up stays while it lasts."""
+        start = self._shown.get("enemy_group")
+        if start is not None and 0 <= clock - start <= GROUP_SHOW:
+            shown = self._shown_group
+            return _tip("enemy_group", f"enemy_group@{start}", lang, **shown[lang])
+        if not group or clock < GROUP_FROM:
+            return None
+        if start is not None and 0 <= clock - start < GROUP_EVERY:
+            return None
+        self._shown["enemy_group"] = clock
+        self._shown_group = {
+            lang_key: {"n": group["count"], "place": group_place(group, lang_key)}
+            for lang_key in ("en", "uk")
+        }
+        return _tip("enemy_group", f"enemy_group@{clock}", lang, **self._shown_group[lang])
+
     def missing(
         self, clock: int, lang: str, missing: dict[str, Any] | None
     ) -> dict[str, Any] | None:
@@ -895,6 +1105,7 @@ class RoleTips:
         regen: list[str] | None = None,
         lane_record: dict[str, Any] | None = None,
         draft_item: dict[str, Any] | None = None,
+        plan_note: dict[str, Any] | None = None,
     ) -> dict[str, Any] | None:
         held_for = self._observe_wards(ward_charges, clock)
         if not alive or role is None:
@@ -924,6 +1135,10 @@ class RoleTips:
                 planned = self._draft_item(clock, lang, draft_item)
                 if planned is not None:
                     return planned
+            if plan_note is not None:
+                noted = self._plan_note(clock, lang, plan_note)
+                if noted is not None:
+                    return noted
             pace = (lane_record or {}).get("pace")
             if role in ("carry", "mid") and pace is not None:
                 behind = self._lane_pace(clock, lang, pace, last_hits)
@@ -1051,13 +1266,25 @@ class RoleTips:
         """Once per match in the draft window: the item first named against the
         enemy lineup, kept while the card is up."""
         if "draft_item" not in self._shown:
-            if not DRAFT_FROM <= clock <= DRAFT_UNTIL or f"draft_{item.get('why')}" not in TIPS:
+            known = isinstance(item.get("reason"), dict) or f"draft_{item.get('why')}" in TIPS
+            if not DRAFT_FROM <= clock <= DRAFT_UNTIL or not known:
                 return None
             self._shown_draft = dict(item)
         start = self._once("draft_item", clock, DRAFT_SHOW)
         if start is None:
             return None
         shown = self._shown_draft
+        reason = shown.get("reason")
+        if isinstance(reason, dict):
+            tip = _tip(
+                "draft_reason",
+                f"draft_item@{start}",
+                lang,
+                item=shown["name"],
+                reason=reason.get(lang) or reason["en"],
+            )
+            tip["items"] = [{"key": shown["key"], "name": shown["name"]}]
+            return tip
         tip = _tip(
             f"draft_{shown['why']}",
             f"draft_item@{start}",
@@ -1069,6 +1296,21 @@ class RoleTips:
         )
         tip["items"] = [{"key": shown["key"], "name": shown["name"]}]
         return tip
+
+    def _plan_note(self, clock: int, lang: str, note: dict[str, Any]) -> dict[str, Any] | None:
+        """Once per match per note: a hero plan's advice with no item."""
+        key = f"note_{note['id']}"
+        start = self._once(key, clock, PLAN_NOTE_SHOW)
+        if start is None:
+            return None
+        reason = note["reason"]
+        return _tip(
+            "plan_note",
+            f"{key}@{start}",
+            lang,
+            enemy=note["enemy"],
+            reason=reason.get(lang) or reason["en"],
+        )
 
     def _lane_pace(
         self, clock: int, lang: str, pace: dict[str, Any], last_hits: int | None
@@ -1322,6 +1564,9 @@ def map_hint(
     missing: dict[str, Any] | None = None,
     lane_record: dict[str, Any] | None = None,
     draft_item: dict[str, Any] | None = None,
+    plan_note: dict[str, Any] | None = None,
+    enemy_group: dict[str, Any] | None = None,
+    fight: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """A timer, but a role tip over a minor one (runes, lotus); None before the
     horn or without a role. `objective`: a Roshan / Aegis timer (roshan_timer.py),
@@ -1340,9 +1585,19 @@ def map_hint(
     called = tips.missing(clock, lang, missing if alive else None)
     if called is not None:
         return called
+    # A fight elsewhere, then enemies grouped far away (over scheduled timers).
+    fought = tips.fight(clock, lang, fight if alive else None)
+    if fought is not None:
+        return fought
+    grouped = tips.enemy_group(clock, lang, enemy_group if alive else None)
+    if grouped is not None:
+        return grouped
     timer = next_timer(clock, role, lang)
     if objective is not None and (
-        timer is None or timer["minor"] or objective["in_seconds"] <= timer["in_seconds"]
+        timer is None
+        or timer["minor"]
+        or objective.get("urgent")
+        or objective["in_seconds"] <= timer["in_seconds"]
     ):
         timer = objective
     if (
@@ -1395,5 +1650,6 @@ def map_hint(
         regen=regen,
         lane_record=lane_record,
         draft_item=draft_item,
+        plan_note=plan_note,
     )
     return tip or timer

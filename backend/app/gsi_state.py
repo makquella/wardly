@@ -28,9 +28,10 @@ from app.item_timing import normalize_item_name
 from app.last_moments import active_slot, ready_savers
 from app.live_tools import bottle_rune, regen_items, wand_charges
 from app.map_hints import has_observer_ward, item_names, observer_charges, timers
+from app.minimap_units import towers, visible_ally_units
 from app.signal_capabilities import capability_summary, live_gsi_observed_capabilities
 from app.skill_tips import read_skills
-from app.tp_tracker import has_teleport
+from app.tp_tracker import has_teleport, teleport_cooldown
 
 _GSI = GSIRegister()
 
@@ -443,6 +444,8 @@ def _normalize_extra_context(
         "has_buildings": has_buildings,
         # TP scroll in its slot or Boots of Travel (None: no items block).
         "has_tp": has_teleport(payload.get("items")),
+        # Seconds until it can be used (0 ready; None: none or unknown).
+        "tp_cooldown": teleport_cooldown(payload.get("items")),
         # Observer ward in the inventory (support tip; None: no items block).
         "has_observer": has_observer_ward(payload.get("items")),
         # How many observer wards are carried (a ward kept in the bag: support tip).
@@ -460,7 +463,14 @@ def _normalize_extra_context(
         "enemy_units": visible_enemy_units(
             payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
         ),
+        # Allied heroes and the towers on the minimap (fight_summary.py).
+        "ally_units": visible_ally_units(
+            payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
+        ),
+        "towers": towers(payload.get("minimap")),
         "has_aegis": _has_aegis(hero_block, payload.get("items")),
+        # The player's tier-3 towers and barracks still standing (None: no block).
+        "own_base": _own_base(payload.get("buildings"), player_block.get("team_name")),
         # What can be pressed right now (live_tools.py: the survival advice names it).
         "ready_savers": _ready_savers(payload.get("items")),
         "own_castable_items": _own_castable_items(payload.get("items")),
@@ -494,7 +504,8 @@ OBJECTIVE_EVENTS = {"roshan_killed", "aegis_picked_up", "aegis_denied"}
 
 
 def _objective_events(value: Any) -> list[dict[str, Any]] | None:
-    """GSI `events` of Roshan and the Aegis: [{type, game_time}] (None without any)."""
+    """GSI `events` of Roshan and the Aegis: [{type, game_time}, with the
+    killer's `team` and the picker's `player_id` when given] (None without any)."""
     if not isinstance(value, list):
         return None
     events = []
@@ -504,9 +515,32 @@ def _objective_events(value: Any) -> list[dict[str, Any]] | None:
         if not isinstance(event, dict) or event.get("event_type") not in OBJECTIVE_EVENTS:
             continue
         game_time = _optional_int(event.get("game_time"))
-        if game_time is not None:
-            events.append({"type": event["event_type"], "game_time": game_time})
+        if game_time is None:
+            continue
+        row: dict[str, Any] = {"type": event["event_type"], "game_time": game_time}
+        team = event.get("killed_by_team")
+        if team in ("radiant", "dire"):
+            row["team"] = team
+        player_id = _optional_int(event.get("player_id"))
+        if player_id is not None:
+            row["player_id"] = player_id
+        events.append(row)
     return events or None
+
+
+def _own_base(buildings: Any, team: Any) -> dict[str, int] | None:
+    """How many of the player's own tier-3 towers (of 3) and barracks (of 6)
+    still stand: GSI lists the team's buildings and drops a destroyed one."""
+    block = (
+        buildings.get(team) if isinstance(buildings, dict) and team in ("radiant", "dire") else None
+    )
+    if not isinstance(block, dict) or not block:
+        return None
+    names = [name for name in block if isinstance(name, str)]
+    return {
+        "tower3": sum(1 for name in names if "_tower3_" in name),
+        "barracks": sum(1 for name in names if "_rax_" in name),
+    }
 
 
 def _has_aegis(hero_block: dict[str, Any], items: Any) -> bool | None:

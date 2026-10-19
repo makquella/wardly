@@ -194,3 +194,15 @@ def test_without_a_browser_there_is_no_card(monkeypatch, tmp_path):
     monkeypatch.setattr(cards, "find_chrome", lambda: None)
     assert not cards.render("<html>", tmp_path / "card.png")
     assert not (tmp_path / "card.png").exists()
+
+
+def test_a_release_with_a_news_post_links_to_it():
+    import news_release
+
+    post = news_release.find("0.57.0")
+    assert post and len(post["heroes"]) == 20
+    caption = cards.release_caption("0.57.0", [], post)
+    assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
+    assert "<b>Свій план для 20 керрі</b>" in caption
+    assert "/news/2026-10-19-release-0-57-0.html?ref=tg" in caption
+    assert "✅ Коли гра вирішується" in caption and "Ursa" in caption

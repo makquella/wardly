@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "hero": "Juggernaut",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-17",
+  "sources": {
+    "games": "314 league games since 7.41 (data/heroes/item_stats), win 56.7%. Reproduce: python scripts/hero_item_stats.py juggernaut.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 8, 7.41f.",
+    "player": "Player review, 2026-10-18: no Black King Bar against magic (Blade Fury)."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast; high-rank Juggernauts buy it against Phantom Assassin or Windranger: 43% of 30 games against them (13% otherwise), won 62% against 47%."
+    },
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. Against Bristleback, Spectre or Huskar: 14% of 21 games against them (2% otherwise), won 67% against 56% (a thin sample)."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "bfury",
+      "name": "Battle Fury"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: wraith_band 23% (3), magic_wand 82% (4), power_treads 89% (6), pers 92% (10), bfury 93% (13), yasha 98% (17), manta 83% (20), sange 24% (22), butterfly 68% (26), ultimate_scepter 46% (30).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        11000
+      ],
+      [
+        30,
+        21100
+      ]
+    ],
+    "items": [
+      {
+        "item": "bfury",
+        "name": "Battle Fury"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      }
+    ],
+    "basis": "Gold lines where he wins 85.0%+: 20:00 11500 (66 games, 86.4%), 25:00 18000 (11 games, 90.9%), 30:00 22000 (36 games, 86.1%); net worth ~0.96 of that gold. The 25:00 point (18k gold, 11 games) is too thin and is left out: the line is linear from 20 to 30 min.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "juggernaut_blade_fury",
+      "juggernaut_blade_dance",
+      "juggernaut_healing_ward"
+    ],
+    "games": 314,
+    "first_agree": 256,
+    "opening": {
+      "name": "juggernaut_blade_fury",
+      "agree": 293
+    },
+    "names": {
+      "juggernaut_blade_fury": "Blade Fury",
+      "juggernaut_blade_dance": "Blade Dance",
+      "juggernaut_healing_ward": "Healing Ward"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_juggernaut_3",
+        "label": "-1.0s Bladeform Stack Gain Interval",
+        "picked": 258,
+        "games": 314
+      },
+      "15": {
+        "name": "special_bonus_unique_juggernaut_omnislash_cooldown",
+        "label": "Omnislash Cooldown",
+        "picked": 221,
+        "games": 299
+      },
+      "20": {
+        "name": "special_bonus_unique_juggernaut_4",
+        "label": "+15% Blade Dance Crit Damage",
+        "picked": 182,
+        "games": 212
+      },
+      "25": {
+        "name": "special_bonus_unique_juggernaut_blade_dance_lifesteal",
+        "label": "+40% Blade Dance Lifesteal",
+        "picked": 58,
+        "games": 81
+      }
+    },
+    "basis": "314 games: maxed juggernaut_blade_fury > juggernaut_blade_dance > juggernaut_healing_ward 206 (win 56.8%), juggernaut_blade_fury > juggernaut_healing_ward > juggernaut_blade_dance 31 (win 74.2%), juggernaut_blade_dance > juggernaut_healing_ward > juggernaut_blade_fury 25 (win 72.0%); talents 10: -1.0s Bladeform Stack Gain Interval 258/314 (57.4%), -12s Healing Ward Cooldown 56/314 (53.6%); 15: Omnislash Cooldown 221/299 (58.4%), 45 Movement Speed During Blade Fury 78/299 (59.0%); 20: +15% Blade Dance Crit Damage 182/212 (68.7%), Blade Fury DPS 30/212 (60.0%); 25: +40% Blade Dance Lifesteal 58/81 (72.4%), +1s Omnislash Duration 23/81 (43.5%)."
+  },
+  "suppress": {
+    "illusions": "Battle Fury (93% of his won games, ~13 min) already cleaves the illusions around his target; high-rank Juggernauts never add Maelstrom against illusion heroes.",
+    "magic": "Blade Fury makes him debuff immune with 80% magic resistance for 5 s (Valve 7.41f) and the strong dispel at its end removes what landed; against 3+ magic damage heroes his players buy Black King Bar no more often than otherwise."
+  }
+}

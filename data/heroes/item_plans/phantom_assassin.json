@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "hero": "Phantom Assassin",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.40",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "505 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 45.9%. Reproduce: python scripts/hero_item_stats.py phantom_assassin.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 44, 7.41f.",
+    "player": "Player review, 2026-10-19: Aghanim's Scepter (Fan of Knives) against break heroes; Nullifier at times more universal than MKB; Stifling Dagger first unless the lane is hard."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion; Nullifier is the wider answer when they save with Ghost Scepter, Glimmer Cape or Force Staff",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення; Nullifier універсальніший, коли вас рятують Ghost Scepter, Glimmer Cape чи Force Staff"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Phantom Assassins against Phantom Assassin or Windranger: 22% of 27 games against them (7% otherwise), won 33% against 43%; Nullifier 18% of 27 games against them (6% otherwise), won 80% against 32% (27 games). Valve 7.41f Nullifier: Nullify dispels the target (basic dispel: Ghost Scepter, Glimmer Cape, a Force Staff push) and keeps dispelling and slowing for 4 s. The player review: Nullifier is sometimes the more universal item."
+    },
+    {
+      "id": "break",
+      "why": "break_fan_of_knives",
+      "family": "break",
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: {item} gives you Fan of Knives, which breaks it in an area",
+        "uk": "{enemy} тримається на здатності {spell}: {item} дає Fan of Knives, яка вимикає її по площі"
+      },
+      "basis": "Valve 7.41f: Fan of Knives is granted by Aghanim's Scepter; it deals 30% of each victim's max health in 550 radius and applies Break for 4 s. High-rank Phantom Assassins against Bristleback, Spectre or Huskar: 21% of 28 games against them (7% otherwise), won 33% against 41% (28 games)."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "bfury",
+      "name": "Battle Fury"
+    },
+    {
+      "item": "desolator",
+      "name": "Desolator"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "satanic",
+      "name": "Satanic"
+    },
+    {
+      "item": "abyssal_blade",
+      "name": "Abyssal Blade"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 87% (3), power_treads 99% (6), pers 36% (10), bfury 99% (14), yasha 38% (19), desolator 67% (20), manta 23% (22), black_king_bar 68% (24), basher 65% (27), sange 40% (28), satanic 36% (31), aghanims_shard 24% (32), abyssal_blade 26% (32).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        17300
+      ],
+      [
+        30,
+        19700
+      ]
+    ],
+    "items": [
+      {
+        "item": "bfury",
+        "name": "Battle Fury"
+      },
+      {
+        "item": "desolator",
+        "name": "Desolator"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "satanic",
+        "name": "Satanic"
+      },
+      {
+        "item": "abyssal_blade",
+        "name": "Abyssal Blade"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 25:00 18000 (20 games, 85.0%), 30:00 20500 (49 games, 87.8%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "suppress": {
+    "illusions": "Battle Fury (99% of his won games, ~14 min) already cleaves the illusions around his target; high-rank Phantom Assassin players do not add Maelstrom against illusion heroes."
+  },
+  "skills": {
+    "order": [
+      "phantom_assassin_stifling_dagger",
+      "phantom_assassin_phantom_strike",
+      "phantom_assassin_immaterial"
+    ],
+    "games": 505,
+    "first_agree": 219,
+    "opening": {
+      "name": "phantom_assassin_stifling_dagger",
+      "agree": 494
+    },
+    "names": {
+      "phantom_assassin_phantom_strike": "Phantom Strike",
+      "phantom_assassin_stifling_dagger": "Stifling Dagger",
+      "phantom_assassin_immaterial": "Immaterial"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_phantom_assassin_4",
+        "label": "Phantom Strike Duration",
+        "picked": 342,
+        "games": 499
+      },
+      "15": {
+        "name": "special_bonus_unique_phantom_assassin_3",
+        "label": "Immaterial Evasion",
+        "picked": 276,
+        "games": 460
+      },
+      "20": {
+        "name": "special_bonus_unique_phantom_assassin_strike_aspd",
+        "label": "Phantom Strike Attack Speed",
+        "picked": 170,
+        "games": 292
+      },
+      "25": {
+        "name": "special_bonus_unique_phantom_assassin",
+        "label": "Triple Strike Stifling Dagger",
+        "picked": 64,
+        "games": 95
+      }
+    },
+    "basis": "505 games: maxed Stifling Dagger > Phantom Strike > Immaterial 208 (win 51.9%), Phantom Strike > Stifling Dagger > Immaterial 238 (win 45.8%). The player review: Stifling Dagger first; with a hard lane and an early move to the jungle, Phantom Strike first (the lane-pressure tip names it, skill_tips). Talents 10: Phantom Strike Duration 342/499 (49.7%), Stifling Dagger Cooldown 157/499 (39.5%); 15: Immaterial Evasion 276/460 (50.0%), Stifling Dagger Damage 184/460 (48.9%); 20: Phantom Strike Attack Speed 170/292 (64.7%), Phantom Strike Cast Range 122/292 (54.1%); 25: Triple Strike Stifling Dagger 64/95 (70.3%), Coup de Grace chance 31/95 (67.7%)."
+  },
+  "fight": [
+    "phantom_assassin_blur"
+  ]
+}

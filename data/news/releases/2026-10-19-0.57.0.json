@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-19",
+  "version": "0.57.0",
+  "heroes": [
+    "Anti-Mage",
+    "Drow Ranger",
+    "Gyrocopter",
+    "Juggernaut",
+    "Kez",
+    "Lifestealer",
+    "Luna",
+    "Medusa",
+    "Monkey King",
+    "Morphling",
+    "Muerta",
+    "Naga Siren",
+    "Phantom Assassin",
+    "Phantom Lancer",
+    "Slark",
+    "Sniper",
+    "Spectre",
+    "Sven",
+    "Terrorblade",
+    "Ursa"
+  ],
+  "games": 10451,
+  "uk": {
+    "title": "Wardly 0.57: свій план для 20 керрі",
+    "lead": "Предмети проти драфту тепер залежать від вашого героя, а збірка, темп і прокачка — з лігових матчів на цьому герої. І підказки на момент, коли гра вирішується.",
+    "tiles": {
+      "heroes": "Керрі з власним планом",
+      "games": "Лігових матчів у розрахунку",
+      "patch": "Механіки предметів"
+    },
+    "sections": [
+      {
+        "heading": "Предмети проти драфту — під вашого героя",
+        "hint": "Раніше будь-який керрі проти Phantom Assassin отримував Monkey King Bar. Тепер відповідь залежить від того, на кому граєте ви.",
+        "items": [
+          "Проти ухилення: Naga Siren — Bloodthorn, бо по цілі під тишею не промахуються і її ілюзії; Slark і Spectre — спершу Eye of Skadi; Drow Ranger — нічого, спрацювання Marksmanship і так не промахуються.",
+          "Проти ілюзій: Medusa — Maelstrom, Mjollnir, потім Aghanim's Scepter; Terrorblade і Morphling — Butterfly, далі Dragon Lance у Hydra's Breath; Juggernaut, Anti-Mage, Ursa — без Maelstrom, Battle Fury і так б'є по площі.",
+          "Проти Bristleback, Spectre чи Huskar — Silver Edge; Phantom Assassin — Aghanim's Scepter заради Fan of Knives; Sven, Ursa й Anti-Mage обходяться без нього.",
+          "Проти сильного лікування (Huskar, Alchemist, Necrophos…) — Eye of Skadi в усіх керрі, у чиїй збірці він є.",
+          "Кожна порада пояснює, чому саме цей предмет, українською й англійською."
+        ]
+      },
+      {
+        "heading": "Збірка, темп і прокачка",
+        "hint": "Числа — з лігових матчів OpenDota в поточному патчі, механіки — з даних Valve 7.41f.",
+        "items": [
+          "Звичайна збірка — у порядку виграних ігор на цьому герої.",
+          "Темп: коли ваш нетворс вище порога, з яким на герої виграють близько 85 % ігор (Terrorblade — 12 тис. на 20-й хвилині), поради проти драфту чекають, а Wardly веде темпову збірку.",
+          "Прокачка й таланти — з тих самих ігор; у Kez — з 34 ігор Yatoro і Satanic, бо дві його стійки ділять очки навичок."
+        ]
+      },
+      {
+        "heading": "Коли гра вирішується",
+        "hint": "Лише те, що видно в грі; рішення — за вами й командою.",
+        "items": [
+          "«Аегіс у ворогів до 30:03», коли вони забрали Рошана, і нагадування тримати золото на байбек — з 20-ї хвилини з ворожим Аегісом чи відкритою базою.",
+          "Екран смерті каже, скільки не вистачило на байбек, а Linken's чи BKB — за тим, чи вас тримали в Hex, чи в оглушеннях.",
+          "«Бійка біля вашої T2: союзників 3, ворогів 2 — ТП готово» і «Ворогів разом — 5: туди один не йдіть»."
+        ]
+      }
+    ],
+    "heroes_title": "Керрі з власним планом",
+    "heroes_hint": "Ember Spirit отримає план разом із мідерами — наступною хвилею.",
+    "changelog": "Усі зміни 0.57 у «Що нового» →",
+    "share_text": "Скиньте тіммейту-керрі: тепер Wardly знає його героя.",
+    "badge": "Wardly"
+  },
+  "en": {
+    "title": "Wardly 0.57: a plan of their own for 20 carries",
+    "lead": "Items against the enemy draft now depend on your hero, and the build, tempo and skill build come from league matches on that hero. Plus tips for the moments that decide the game.",
+    "tiles": {
+      "heroes": "Carries with their own plan",
+      "games": "League matches behind them",
+      "patch": "Item mechanics"
+    },
+    "sections": [
+      {
+        "heading": "Counter items for your hero",
+        "hint": "Any carry against Phantom Assassin used to get Monkey King Bar. Now the answer depends on the hero you play.",
+        "items": [
+          "Against evasion: Naga Siren takes Bloodthorn, since her illusions never miss the silenced target either; Slark and Spectre take Eye of Skadi first; Drow Ranger needs nothing, as Marksmanship procs never miss.",
+          "Against illusions: Medusa goes Maelstrom, Mjollnir, then Aghanim's Scepter; Terrorblade and Morphling take Butterfly, then turn the Dragon Lance into Hydra's Breath; Juggernaut, Anti-Mage and Ursa skip Maelstrom, Battle Fury already cleaves.",
+          "Against Bristleback, Spectre or Huskar: Silver Edge; Phantom Assassin takes Aghanim's Scepter for Fan of Knives; Sven, Ursa and Anti-Mage do without it.",
+          "Against heavy healing (Huskar, Alchemist, Necrophos…): Eye of Skadi for every carry who has it in the build.",
+          "Every tip says why that item, in English and Ukrainian."
+        ]
+      },
+      {
+        "heading": "Build, tempo and skills",
+        "hint": "Numbers from OpenDota league matches of the current patch, mechanics from Valve's 7.41f data.",
+        "items": [
+          "The usual build follows the order of the won games on that hero.",
+          "Tempo: when your net worth is over the line where the hero wins about 85% of games (Terrorblade: 12k at minute 20), the counters wait and Wardly follows the tempo build.",
+          "Skill builds and talents come from the same games; Kez's from 34 games of Yatoro and Satanic, since his two stances share the skill points."
+        ]
+      },
+      {
+        "heading": "When the game is on the line",
+        "hint": "Only what the game shows; the call is yours and your team's.",
+        "items": [
+          "«Enemy Aegis until 30:03» when they take Roshan, and keep your buyback gold from minute 20 with their Aegis or your base open.",
+          "The death screen says how much the buyback was short, and Linken's or BKB by whether you were held in a Hex or in stuns.",
+          "«Fight at your T2: 3 allies, 2 enemies — TP ready» and «5 enemies together: do not go there alone»."
+        ]
+      }
+    ],
+    "heroes_title": "Carries with their own plan",
+    "heroes_hint": "Ember Spirit gets his with the mid heroes, the next wave.",
+    "changelog": "Everything in 0.57 under «What's new» →",
+    "share_text": "Send it to your carry teammate: Wardly now knows their hero.",
+    "badge": "Wardly"
+  }
+}

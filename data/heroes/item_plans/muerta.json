@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "hero": "Muerta",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "562 league games since 7.41 (data/heroes/item_stats), win 51.4%. Reproduce: python scripts/hero_item_stats.py muerta.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir.",
+    "hero": "Valve /datafeed/herodata hero_id 138, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Muerta players against Phantom Assassin or Windranger: 29% of 34 games against them (6% otherwise), won 60% against 38%."
+    },
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Muerta players against Bristleback, Spectre or Huskar: 61% of 61 games against them (37% otherwise), won 70% against 38%. Silver Edge is in her build (~30 min)."
+    }
+  ],
+  "build": [
+    {
+      "item": "falcon_blade",
+      "name": "Falcon Blade"
+    },
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "maelstrom",
+      "name": "Maelstrom"
+    },
+    {
+      "item": "mask_of_madness",
+      "name": "Mask of Madness"
+    },
+    {
+      "item": "dragon_lance",
+      "name": "Dragon Lance"
+    },
+    {
+      "item": "mjollnir",
+      "name": "Mjollnir"
+    },
+    {
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "silver_edge",
+      "name": "Silver Edge"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    },
+    {
+      "item": "satanic",
+      "name": "Satanic"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 76% (-2), falcon_blade 80% (5), power_treads 99% (8), maelstrom 96% (14), mask_of_madness 37% (14), dragon_lance 92% (20), mjollnir 86% (22), invis_sword 53% (25), force_staff 69% (26), hurricane_pike 68% (26), black_king_bar 66% (27), silver_edge 50% (28), lesser_crit 51% (32), greater_crit 40% (35), satanic 28% (38), swift_blink 22% (44).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        16300
+      ],
+      [
+        30,
+        19200
+      ]
+    ],
+    "items": [
+      {
+        "item": "falcon_blade",
+        "name": "Falcon Blade"
+      },
+      {
+        "item": "maelstrom",
+        "name": "Maelstrom"
+      },
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "mjollnir",
+        "name": "Mjollnir"
+      },
+      {
+        "item": "hurricane_pike",
+        "name": "Hurricane Pike"
+      },
+      {
+        "item": "silver_edge",
+        "name": "Silver Edge"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 25:00 17000 (42 games, 85.7%), 30:00 20000 (107 games, 86.9%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "muerta_dead_shot",
+      "muerta_gunslinger",
+      "muerta_the_calling"
+    ],
+    "games": 562,
+    "first_agree": 475,
+    "opening": {
+      "name": "muerta_dead_shot",
+      "agree": 547
+    },
+    "names": {
+      "muerta_dead_shot": "Dead Shot",
+      "muerta_gunslinger": "Gunslinger",
+      "muerta_the_calling": "The Calling"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_attack_speed_20",
+        "label": "+20 Attack Speed",
+        "picked": 491,
+        "games": 561
+      },
+      "15": {
+        "name": "special_bonus_intelligence_15",
+        "label": "+15 Intelligence",
+        "picked": 507,
+        "games": 536
+      },
+      "20": {
+        "name": "special_bonus_unique_muerta_pierce_the_veil_duration",
+        "label": "special_bonus_unique_muerta_pierce_the_veil_duration",
+        "picked": 411,
+        "games": 417
+      },
+      "25": {
+        "name": "special_bonus_unique_muerta_gunslinger_double_shot_chance",
+        "label": "special_bonus_unique_muerta_gunslinger_double_shot_chance",
+        "picked": 137,
+        "games": 147
+      }
+    },
+    "basis": "562 games: maxed muerta_dead_shot > muerta_gunslinger > muerta_the_calling 402 (win 56.2%), muerta_dead_shot > muerta_gunslinger 69 (win 24.6%), muerta_gunslinger > muerta_dead_shot > muerta_the_calling 67 (win 55.2%); talents 10: +20 Attack Speed 491/561 (51.1%), Dead Shot Cast Range 70/561 (54.3%); 15: +15 Intelligence 507/536 (53.1%), Max HP Regen while inside The Calling 29/536 (55.2%); 20: special_bonus_unique_muerta_pierce_the_veil_duration 411/417 (60.6%), The Calling summons additional revenants 6/417 (66.7%); 25: special_bonus_unique_muerta_gunslinger_double_shot_chance 137/147 (70.1%), special_bonus_unique_muerta_dead_shot_charges 10/147 (60.0%)."
+  }
+}

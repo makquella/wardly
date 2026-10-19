@@ -196,7 +196,8 @@ def test_the_first_point_is_called_before_the_horn(client):
         client.post("/gsi", json=payload)
         if clock == -60 + UNSPENT_WAIT:
             hint = client.get("/overlay/recommendation?lang=en").json().get("map_hint")
-            assert hint and hint["title"] == "Unspent skill point"
+            # The stream's Juggernaut has an item plan: its first point by name.
+            assert hint and hint["title"] == "First point: Blade Fury"
             return
     raise AssertionError("the stream never reached the check")
 
@@ -213,7 +214,7 @@ def test_the_skill_tip_stays_with_map_timers_off(client):
         client.post("/gsi", json=payload)
         if clock == -60 + UNSPENT_WAIT:
             answer = client.get("/overlay/recommendation?lang=en").json()
-            assert answer["map_hint"]["title"] == "Unspent skill point"
+            assert answer["map_hint"]["title"] == "First point: Blade Fury"
             assert "timer_strip" not in answer
             return
     raise AssertionError("the stream never reached the check")

@@ -1,0 +1,198 @@
+{
+  "schema": 1,
+  "hero": "Spectre",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.40",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "236 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 44.9%. Reproduce: python scripts/hero_item_stats.py spectre.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 67, 7.41f.",
+    "player": "Player review, 2026-10-19: against evasion Eye of Skadi first, then Monkey King Bar; Bloodthorn also works. Eye of Skadi against heavy healing (it is in the build). no generic Black King Bar or Silver Edge (audit)."
+  },
+  "rules": [
+    {
+      "id": "evasion_skadi",
+      "why": "evasion_skadi",
+      "family": "skadi",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "evasion",
+      "minute": 18,
+      "basis": "Valve 7.41f Eye of Skadi: +35 all attributes; attacks slow movement by 25% and attack speed by 25% and cut health restoration by 50% for 3 s. It is in her build (~32 min); high-rank Spectres against Phantom Assassin or Windranger: 56% of 27 games against them (32% otherwise), won 67% against 50% (27 games).",
+      "reason": {
+        "en": "{enemy} dodges attacks: take {item} first, its attributes and slow keep you alive while attacks miss, then answer the evasion",
+        "uk": "{enemy} ухиляється від атак: спершу візьміть {item} — його атрибути й уповільнення допоможуть вижити, поки атаки промахуються, а потім відповідайте на ухилення"
+      }
+    },
+    {
+      "id": "evasion_escape",
+      "why": "evasion_escape",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "also": "escape",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} dodges attacks and {escape} escapes with {spell}: {item} silences the escape, and your attacks never miss the silenced target",
+        "uk": "{enemy} ухиляється від атак, а {escape} тікає через {spell}: {item} накладає тишу, і по цілі під тишею ваші атаки не промахуються"
+      },
+      "basis": "Valve 7.41f Bloodthorn: Soul Rend silences for 5 s and gives True Strike against the silenced target; the passive pierces evasion on 40% of attacks. Orchid is in her build (26%, ~29 min). The player review: Skadi first, Bloodthorn also works."
+    },
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast; without an escape hero beside the evasion it is the cheaper answer (5000 against 6400). The player review: Skadi first, then Monkey King Bar."
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in the build (47% of the won games, ~32 min); high-rank Spectres against heavy healers: not among the 12 items bought more often in 41 games against them. The player review: Skadi against healing for every carry who has it in the build."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "radiance",
+      "name": "Radiance"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "orchid",
+      "name": "Orchid Malevolence"
+    },
+    {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "abyssal_blade",
+      "name": "Abyssal Blade"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 91% (2), urn_of_shadows 39% (4), pers 23% (6), power_treads 100% (7), radiance 85% (18), yasha 97% (21), manta 94% (24), oblivion_staff 27% (27), orchid 26% (29), skadi 47% (32), basher 38% (36), black_king_bar 21% (36), butterfly 31% (39), sange 26% (40), abyssal_blade 26% (41).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        13900
+      ],
+      [
+        30,
+        17300
+      ]
+    ],
+    "items": [
+      {
+        "item": "radiance",
+        "name": "Radiance"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "orchid",
+        "name": "Orchid Malevolence"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "abyssal_blade",
+        "name": "Abyssal Blade"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 80.0%+: 20:00 11000 (16 games, 81.2%), 25:00 14500 (31 games, 80.6%), 30:00 18000 (38 games, 81.6%); net worth ~0.96 of that gold. The farmed games are few (16 by 20:00), so the tempo items follow the usual build. No 85% line for this hero (two of the three minutes needed): the hero's own 80% line (scripts/hero_item_stats.py WIN_TARGETS). The 20:00 point rests on under 20 games, so it is left out (PLAN_POINT_GAMES).",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "spectre_spectral_dagger",
+      "spectre_dispersion",
+      "spectre_shadow_step"
+    ],
+    "games": 236,
+    "first_agree": 221,
+    "opening": {
+      "name": "spectre_spectral_dagger",
+      "agree": 230
+    },
+    "names": {
+      "spectre_spectral_dagger": "Spectral Dagger",
+      "spectre_dispersion": "Dispersion",
+      "spectre_shadow_step": "Shadow Step"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_spectre_2",
+        "label": "Desolate Damage",
+        "picked": 204,
+        "games": 234
+      },
+      "15": {
+        "name": "special_bonus_unique_spectre_shadow_step_duration",
+        "label": "Shadow Step Duration",
+        "picked": 139,
+        "games": 211
+      },
+      "20": {
+        "name": "special_bonus_unique_spectre_3",
+        "label": "Spectral Dagger Slow/Bonus",
+        "picked": 54,
+        "games": 65
+      },
+      "25": {
+        "name": "special_bonus_unique_spectre_4",
+        "label": "All Spectre Illusion Damage",
+        "picked": 58,
+        "games": 73
+      }
+    },
+    "basis": "236 games: maxed spectre_spectral_dagger > spectre_dispersion > spectre_shadow_step 171 (win 49.1%), spectre_spectral_dagger > spectre_shadow_step > spectre_dispersion 36 (win 44.4%), spectre_dispersion > spectre_spectral_dagger > spectre_shadow_step 10 (win 50.0%); talents 10: Desolate Damage 204/234 (45.1%), Spectral Dagger Cooldown 30/234 (43.3%); 15: Shadow Step Duration 139/211 (47.5%), Spectral Dagger Damage 72/211 (52.8%); 20: Spectral Dagger Slow/Bonus 54/65 (48.1%), +325 Health 11/65 (81.8%); 25: All Spectre Illusion Damage 58/73 (65.5%), Dispersion 15/73 (60.0%)."
+  },
+  "suppress": {
+    "illusions": "Radiance (85% of her won games, ~18 min) burns the illusions around her and Dispersion reflects their damage; high-rank Spectres do not add Maelstrom against illusion heroes.",
+    "magic": "Black King Bar is not in her build; high-rank Spectres against 3+ magic damage heroes: not among the 12 items bought more often in 29 games against them. BKB still comes after two deaths under stuns (situational_items.py).",
+    "break": "High-rank Spectres against Bristleback, Spectre or Huskar: Silver Edge not among the 12 items bought more often in 8 games against them; Radiance, Skadi and Abyssal are her build."
+  }
+}

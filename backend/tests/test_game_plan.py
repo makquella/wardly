@@ -51,7 +51,10 @@ def test_plan_names_the_farm_target_key_item_and_recurring_mistake(client, tmp_p
     assert lh.startswith("До 10:00 — 55 добивань (ваш середній: ")
     # The key item comes from the cached OpenDota build with its typical timing.
     assert " до " in item and "перемог" in item and "%" in item
-    assert all(line.startswith("Часта помилка: ") for line in rest)
+    # Juggernaut's item plan (data/heroes/item_plans) brings its own skill order, by name.
+    skills, *mistakes = rest
+    assert skills == "Прокачка в про: спершу Blade Fury, потім Blade Dance"
+    assert all(line.startswith("Часта помилка: ") for line in mistakes)
 
     english = service.game_plan("Juggernaut", "en")
     assert english["lines"][0].startswith("55 last hits by 10:00 (your average: ")

@@ -144,6 +144,20 @@ Kyiv). Receipts: Actions run 38781318750. That one-off tool was removed after
 it ran; the Worker keeps the generic `publish_at` support in `src/social.js`.
 Every other release goes through the Telegram buttons as above.
 
+### Release pair 0.57 (20 carries)
+
+`beta_campaign=release`, `send=false` builds a Ukrainian/English pair about the
+0.57 carry plans with the same engine (`scripts/promo/release_carry.py`, creative
+`carry-plans-0.57`, visual revision 7): one continuous Alex take per language,
+phrase captions, the layout and Whisper speech checks, Valve's idle renders of
+Phantom Assassin, Naga Siren and Terrorblade and Valve item icons. Before
+building, `release_carry.verify()` checks every claim against the shipped data:
+20 carry plans, over 10,000 league games, Naga Siren's Bloodthorn rule, Drow
+Ranger without Monkey King Bar (Marksmanship), Terrorblade's 12,000 at 20:00.
+After reviewing its artifact, `beta_campaign=shorts` with that run's ID sends both
+videos to the private chat with the YouTube-only button; the titles and
+descriptions (`release_carry.metadata`) link the release news post.
+
 ### Reach audit and acquisition materials
 
 `beta_campaign=audit`, `send=false` runs `youtube_audit.mjs` with the existing

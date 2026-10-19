@@ -101,6 +101,52 @@ TARGETED_DISABLES = {
     "Spirit Breaker": "Charge of Darkness",
     "Winter Wyvern": "Winter's Curse",
 }
+# Heroes who get away with a spell, which a silence (Bloodthorn, Orchid) stops
+# (hero_items.py). Names from Valve's /herodata, patch 7.41f. Not here:
+# Anti-Mage (Counterspell turns a targeted silence back) and Slark (Shadow
+# Dance is no escape a silence answers).
+ESCAPES = {
+    "Queen of Pain": "Blink",
+    "Storm Spirit": "Ball Lightning",
+    "Puck": "Phase Shift",
+    "Ember Spirit": "Fire Remnant",
+    "Void Spirit": "Astral Step",
+    "Weaver": "Shukuchi",
+    "Mirana": "Leap",
+    "Morphling": "Waveform",
+    "Faceless Void": "Time Walk",
+}
+# Heroes whose evasion is a passive that break (Silver Edge) turns off; not
+# Windranger, whose Windrun is cast (hero_items.py). Valve /herodata, 7.41f.
+EVASION_PASSIVES = {
+    "Phantom Assassin": "Immaterial",
+}
+# Heroes who jump onto a carry: Hurricane Pike pushes them away and keeps the
+# attacks going (hero_items.py). Not Legion Commander: Pike does not work in a
+# Duel. Names from Valve's /herodata, patch 7.41f.
+JUMPERS = {
+    "Slark": "Pounce",
+    "Phantom Assassin": "Phantom Strike",
+    "Spirit Breaker": "Charge of Darkness",
+}
+# Heroes whose area damage or Hex clears illusions fast (hero_items.py: a
+# Terrorblade's level-20 talent). From his 7.41 league games: with 2+ of them
+# in the enemy lineup he takes +10 All Attributes in 44% of games, with none in
+# 11%; heroes without area damage that read high there are left out.
+ILLUSION_CLEARERS = {
+    "Invoker",
+    "Mars",
+    "Disruptor",
+    "Dawnbreaker",
+    "Dark Seer",
+    "Venomancer",
+    "Lion",
+    "Alchemist",
+    "Lina",
+    "Lich",
+    "Luna",
+    "Phoenix",
+}
 # Lineups (live advice only): heroes whose damage is mostly magic, and
 # right-click carries. LINEUP_MIN of one kind among the enemies seen asks for
 # the item against it (situational_items.py, the support's save item tip).

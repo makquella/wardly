@@ -19,6 +19,7 @@ fails on any visible text without a translation.
 from __future__ import annotations
 
 import re
+import string
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import lru_cache, partial
@@ -532,6 +533,20 @@ _UK_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     ),
     (
         re.compile(
+            r"^You have (?P<gold>\d+) gold and buyback costs (?P<cost>\d+); "
+            r"the enemy holds the Aegis: one death without buyback can decide the game\.$"
+        ),
+        "Золота {gold}, байбек коштує {cost}. Аегіс у ворогів: одна смерть без байбеку може вирішити гру.",
+    ),
+    (
+        re.compile(
+            r"^You have (?P<gold>\d+) gold and buyback costs (?P<cost>\d+); "
+            r"your base is open: one death without buyback can decide the game\.$"
+        ),
+        "Золота {gold}, байбек коштує {cost}. Ваша база відкрита: одна смерть без байбеку може вирішити гру.",
+    ),
+    (
+        re.compile(
             r"^Recover farm: (?P<lh>\d+) last hits at minute (?P<m>\d+), a good pace is "
             r"(?P<low>\d+)\+\.$"
         ),
@@ -809,7 +824,7 @@ def _counter_reason(groups: dict[str, str]) -> str:
         count = int(groups["count"])
         head = f"{count} {_deaths_word(count)} під контролем проти {groups['enemy']} — {groups['name']} блокує {groups['spell']}"
     elif groups.get("kind") == "dodges your attacks":
-        head = f"{groups['enemy']} ухиляється від атак — {groups['name']} б'є без промаху"
+        head = f"{groups['enemy']} ухиляється від атак — {groups['name']} пробиває ухилення більшістю атак"
     elif groups.get("kind") == "fights with illusions":
         head = f"{groups['enemy']} б'ється ілюзіями — {groups['name']} б'є їх усіх одразу"
     elif groups.get("passive"):
@@ -894,7 +909,7 @@ _UK_FUNCTIONS: tuple[tuple[re.Pattern[str], Callable[[dict[str, str]], str]], ..
     (
         re.compile(
             r"^(?P<enemy>.+?) (?P<kind>dodges your attacks|heals a lot|fights with illusions), "
-            r"and (?P<name>.+?) (?:never misses|cuts the healing|hits them all)"
+            r"and (?P<name>.+?) (?:pierces it on most attacks|cuts the healing|hits them all)"
             + _SITUATIONAL_TAIL_RE
         ),
         _counter_reason,
@@ -1165,6 +1180,38 @@ for _source, _ukrainian in _UK_EXACT.items():
     _MESSAGE_RENDERERS[_id] = partial(_render_exact, text=_ukrainian)
 
 _PATTERN_MESSAGE_IDS: list[tuple[re.Pattern[str], str]] = []
+
+
+def _plan_reason(
+    english: str, ukrainian: str
+) -> tuple[re.Pattern[str], Callable[[dict[str, str]], str]]:
+    """A hero plan's reason (hero_items.reason_templates) as the farm advice says
+    it: the clause, then its gold tail; placeholders match any text."""
+    parts: list[str] = []
+    seen: set[str] = set()
+    for literal, name, _, _ in string.Formatter().parse(english):
+        parts.append(re.escape(literal))
+        if name is not None:
+            parts.append(f"(?P={name})" if name in seen else f"(?P<{name}>.+?)")
+            seen.add(name)
+    pattern = re.compile("^" + "".join(parts) + _SITUATIONAL_TAIL_RE)
+
+    def render(groups: dict[str, str]) -> str:
+        tail = _situational_tail(groups["tail"])
+        values = {k: v for k, v in groups.items() if k != "tail"}
+        return ukrainian.format(**values) + tail if tail is not None else ""
+
+    return pattern, render
+
+
+def _plan_reasons() -> tuple[tuple[re.Pattern[str], Callable[[dict[str, str]], str]], ...]:
+    from app.hero_items import reason_templates
+
+    return tuple(_plan_reason(en, uk) for en, uk in reason_templates())
+
+
+_UK_FUNCTIONS += _plan_reasons()
+
 for _pattern, _template in _UK_PATTERNS:
     _id = _message_id("pattern", f"{_pattern.flags}:{_pattern.pattern}")
     _PATTERN_MESSAGE_IDS.append((_pattern, _id))

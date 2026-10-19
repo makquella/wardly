@@ -137,7 +137,8 @@ def test_the_death_screen_says_why(monkeypatch):
 
 def test_the_service_puts_the_situational_item_first(monkeypatch):
     monkeypatch.setattr(PLAYER_SERVICE, "_live_meta", lambda hero_id: META)
-    assert PLAYER_SERVICE.next_item("Juggernaut", [])["key"] == "black_king_bar"  # the build
+    # A hero without an item plan (data/heroes/item_plans): the popular build.
+    assert PLAYER_SERVICE.next_item("Wraith King", [])["key"] == "black_king_bar"  # the build
     monkeypatch.setattr(PLAYER_SERVICE.tracker, "death_moments", lambda: [_burst(600), _burst(900)])
-    assert PLAYER_SERVICE.next_item("Juggernaut", [])["key"] == "aeon_disk"
+    assert PLAYER_SERVICE.next_item("Wraith King", [])["key"] == "aeon_disk"
     assert CONSTANTS["items"].get("aeon_disk") is None  # named without a price

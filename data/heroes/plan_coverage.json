@@ -1,0 +1,57 @@
+{
+  "about": "Supported heroes still without a plan in data/heroes/item_plans, by position (tests/test_hero_plans.py: every supported hero has a plan or is listed here; remove a hero when its plan lands).",
+  "pending": {
+    "carry": [
+      "Ember Spirit"
+    ],
+    "mid": [
+      "Dragon Knight",
+      "Outworld Destroyer",
+      "Puck",
+      "Queen of Pain",
+      "Shadow Fiend",
+      "Storm Spirit",
+      "Templar Assassin",
+      "Void Spirit"
+    ],
+    "offlane": [
+      "Axe",
+      "Bristleback",
+      "Centaur Warrunner",
+      "Legion Commander",
+      "Mars",
+      "Pangolier",
+      "Primal Beast",
+      "Slardar",
+      "Tidehunter",
+      "Timbersaw"
+    ],
+    "support": [
+      "Bounty Hunter",
+      "Clockwerk",
+      "Crystal Maiden",
+      "Dazzle",
+      "Disruptor",
+      "Earth Spirit",
+      "Earthshaker",
+      "Hoodwink",
+      "Jakiro",
+      "Lich",
+      "Lion",
+      "Mirana",
+      "Nyx Assassin",
+      "Ogre Magi",
+      "Oracle",
+      "Rubick",
+      "Shadow Shaman",
+      "Skywrath Mage",
+      "Snapfire",
+      "Spirit Breaker",
+      "Treant Protector",
+      "Tusk",
+      "Vengeful Spirit",
+      "Warlock",
+      "Witch Doctor"
+    ]
+  }
+}

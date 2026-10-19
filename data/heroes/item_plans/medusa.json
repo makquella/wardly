@@ -1,0 +1,219 @@
+{
+  "schema": 1,
+  "hero": "Medusa",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.40",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "480 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 44.6%. Reproduce: python scripts/hero_item_stats.py medusa.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 94, 7.41f.",
+    "player": "Player review, 2026-10-19: against illusions Maelstrom, then Mjollnir, and Aghanim's Scepter; Mana Shield instead of BKB. Eye of Skadi against heavy healing (it is in the build)."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Medusas: 28% of 51 games against them (9% otherwise), won 50% against 40%."
+    },
+    {
+      "id": "illusions",
+      "why": "illusions_maelstrom",
+      "family": "illusions",
+      "item": "maelstrom",
+      "name": "Maelstrom",
+      "enemy": "illusions",
+      "minute": 12,
+      "reason": {
+        "en": "{enemy} fights with illusions: start with {item}, its chain lightning on your attacks hits them in groups, then Mjollnir",
+        "uk": "{enemy} б'ється ілюзіями: почніть із {item} — його ланцюгова блискавка з ваших атак б'є їх групами, — потім Mjollnir"
+      },
+      "basis": "Valve 7.41f: Maelstrom's Chain Lightning procs on attacks and jumps between enemies; it upgrades into Mjollnir. High-rank Medusas against illusion heroes: Maelstrom 45% of 31 games against them (5% otherwise), won 43% against 29%. The player review: Maelstrom, then Mjollnir, and Aghanim's Scepter too."
+    },
+    {
+      "id": "illusions_mjollnir",
+      "why": "illusions_mjollnir",
+      "family": "illusions_mjollnir",
+      "item": "mjollnir",
+      "name": "Mjollnir",
+      "enemy": "illusions",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} fights with illusions: upgrade your Maelstrom into {item}, its lightning hits them more often",
+        "uk": "{enemy} б'ється ілюзіями: Maelstrom зберіть у {item} — блискавка б'є їх частіше"
+      },
+      "basis": "Valve 7.41f: Mjollnir's Chain Lightning procs on attacks and jumps between enemies (Split Shot's extra arrows carry no attack effects, the main target's does). High-rank Medusas against illusion heroes: Mjollnir 36% of 31 games against them (3% otherwise), won 46% against 30%; Maelstrom 45% of 31 games against them (5% otherwise), won 43% against 29%."
+    },
+    {
+      "id": "illusions_aghs",
+      "why": "illusions_split_shot",
+      "family": "illusions_aghs",
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter",
+      "enemy": "illusions",
+      "minute": 25,
+      "reason": {
+        "en": "{enemy} fights with illusions: {item} lets every Split Shot arrow carry your Mjollnir and attack effects, and adds arrows",
+        "uk": "{enemy} б'ється ілюзіями: з {item} кожна стріла Split Shot несе Mjollnir та інші ефекти атаки, і стріл більше"
+      },
+      "basis": "Valve 7.41f Medusa's Aghanim's Scepter: on-hit effects apply to the secondary attacks of Split Shot and the arrow count grows. High-rank Medusas against illusion heroes: Aghanim's Scepter 36% of 31 games against them (13% otherwise), won 54% against 25%."
+    },
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Medusas against Bristleback, Spectre or Huskar: 44% of 39 games against them (8% otherwise), won 41% against 32%."
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in the build (64% of the won games, ~28 min); high-rank Medusas against heavy healers: 53% of 62 games against them (47% otherwise), won 58% against 31%. The player review: Skadi against healing for every carry who has it in the build."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 94% (-1), null_talisman 65% (2), power_treads 99% (6), yasha 99% (11), manta 99% (15), butterfly 90% (22), skadi 64% (28), diffusal_blade 21% (28), lesser_crit 53% (30), aghanims_shard 42% (32), greater_crit 36% (32), ultimate_scepter 20% (39).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12500
+      ],
+      [
+        25,
+        16800
+      ]
+    ],
+    "items": [
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "diffusal_blade",
+        "name": "Diffusal Blade"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 20:00 13000 (31 games, 77.4%), 25:00 17500 (60 games, 76.7%); net worth ~0.96 of that gold. No 85% line for this hero (two of the three minutes needed): the hero's own 75% line (scripts/hero_item_stats.py WIN_TARGETS).",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "medusa_mystic_snake",
+      "medusa_split_shot",
+      "medusa_gorgon_grasp"
+    ],
+    "games": 480,
+    "first_agree": 329,
+    "opening": {
+      "name": "medusa_mystic_snake",
+      "agree": 475
+    },
+    "names": {
+      "medusa_mystic_snake": "Mystic Snake",
+      "medusa_split_shot": "Split Shot",
+      "medusa_gorgon_grasp": "Gorgon's Grasp"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_medusa_8",
+        "label": "Stone Gaze Bonus Physical Damage",
+        "picked": 428,
+        "games": 479
+      },
+      "15": {
+        "name": "special_bonus_unique_medusa_5",
+        "label": "Mystic Snake Cooldown",
+        "picked": 155,
+        "games": 224
+      },
+      "20": {
+        "name": "special_bonus_unique_medusa_2",
+        "label": "Split Shot Outgoing Damage",
+        "picked": 399,
+        "games": 408
+      },
+      "25": {
+        "name": "special_bonus_intelligence_40",
+        "label": "+40 Intelligence",
+        "picked": 34,
+        "games": 42
+      }
+    },
+    "basis": "480 games: maxed medusa_mystic_snake > medusa_split_shot > medusa_gorgon_grasp 234 (win 51.3%), medusa_mystic_snake > medusa_split_shot 93 (win 26.9%), medusa_split_shot > medusa_mystic_snake > medusa_gorgon_grasp 90 (win 48.9%); talents 10: Stone Gaze Bonus Physical Damage 428/479 (44.6%), Gorgon's Grasp Radius 51/479 (43.1%); 15: Mystic Snake Cooldown 155/224 (44.5%), Gorgon's Grasp Volley 69/224 (50.7%); 20: Split Shot Outgoing Damage 399/408 (48.9%), Mystic Snake Damage / Mana Gain 9/408 (55.6%); 25: +40 Intelligence 34/42 (58.8%), Stone Gaze Duration 8/42 (75.0%)."
+  },
+  "suppress": {
+    "magic": "Mana Shield absorbs 98% of the damage taken for her mana (2 damage per point, Valve 7.41f); the player review: Mana Shield is enough, no Black King Bar against magic damage."
+  }
+}

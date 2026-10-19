@@ -75,6 +75,7 @@ from app.finding_history import finding_history
 from app.focus_goal import can_focus, focus_summary, match_result, new_focus, played_after
 from app.friend_compare import compare
 from app.game_plan import build_game_plan, key_item
+from app.hero_items import plan_fight, plan_for, plan_note, plan_skills
 from app.hero_meta import item_key, start_items
 from app.hero_profiles import get_hero_position
 from app.history_backup import export_backup, import_backup, preview_backup
@@ -86,7 +87,15 @@ from app.map_hints import SAVE_ITEMS
 from app.match_facts import facts_from_opendota, facts_from_timeline, merge_facts
 from app.match_records import MATCH_RECORDS
 from app.match_tracker import MatchTracker, account_from_gsi
-from app.next_item import buy_now, has_components, next_build_item, save_build_item
+from app.next_item import (
+    buy_now,
+    has_components,
+    net_worth,
+    next_build_item,
+    next_listed_item,
+    owned_items,
+    save_build_item,
+)
 from app.opendota import (
     TRIM_VERSION,
     OpenDotaClient,
@@ -443,10 +452,12 @@ class PlayerService:
         *,
         next_item_for_hero: bool,
         within: int = DEATH_SCREEN_WINDOW,
+        role: str | None = None,
     ) -> dict[str, Any] | None:
         """The overlay card while the player waits to respawn (death_screen.py),
         from the death just recorded and the live state."""
-        extra = state.get("extra_context") if isinstance(state.get("extra_context"), dict) else {}
+        raw = state.get("extra_context")
+        extra: dict[str, Any] = raw if isinstance(raw, dict) else {}
         clock = extra.get("clock_time")
         death = self.tracker.last_death()
         if (
@@ -456,15 +467,16 @@ class PlayerService:
             or not 0 <= clock - death["t"] <= within
         ):
             return None
-        names = extra.get("item_names")
         item = (
             self.next_item(
                 str(state.get("hero") or ""),
-                names if isinstance(names, list) else None,
+                owned_items(extra),
                 enemies=extra.get("enemy_heroes")
                 if isinstance(extra.get("enemy_heroes"), list)
                 else None,
                 minute=state.get("minute"),
+                gold=state.get("gold"),
+                role=role,
             )
             if next_item_for_hero
             else None
@@ -475,6 +487,8 @@ class PlayerService:
             "respawn": extra.get("respawn_seconds"),
             "gold": extra.get("available_gold", state.get("gold")),
             "buyback_cost": extra.get("buyback_cost"),
+            "buyback_cooldown": extra.get("buyback_cooldown"),
+            "danger": extra.get("base_danger"),
             "minute": state.get("minute"),
             "next_item": item,
         }
@@ -554,7 +568,7 @@ class PlayerService:
         self._plans[key] = (now, result)
         return result
 
-    def skill_build(self, hero: str) -> dict[str, Any] | None:
+    def skill_build(self, hero: str, enemies: list[str] | None = None) -> dict[str, Any] | None:
         """How pro players level the hero (app/skill_build.skill_order) for the live
         skill tip and the game plan; read once a minute, fetched on the job thread
         when missing or a week old (stale data is used meanwhile)."""
@@ -565,7 +579,7 @@ class PlayerService:
         cached = self._plans.get(key)
         now = time.monotonic()
         if cached is not None and now - cached[0] < GAME_PLAN_CACHE_SECONDS:
-            return cached[1]
+            return self._planned_skills(hero, cached[1], enemies)
         store_key = f"{SKILLS_KEY}:{hero_id}"
         client = self.client
         stored = self.store.cache_get(store_key)
@@ -585,7 +599,20 @@ class PlayerService:
             )
         build = skill_order(stored)
         self._plans[key] = (now, build)
-        return build
+        return self._planned_skills(hero, build, enemies)
+
+    @staticmethod
+    def _planned_skills(
+        hero: str, build: dict[str, Any] | None, enemies: list[str] | None
+    ) -> dict[str, Any] | None:
+        """A hero plan's skill build (high-rank games, its talents for the enemy
+        lineup) over the few pro games; their ability names stay for the texts
+        (the ultimate's too), with the plan's own names over them."""
+        planned = plan_skills(plan_for(hero, get_hero_position(hero)), enemies)
+        if planned is None:
+            return build
+        # The pro games also name the ultimate; the plan names its own order.
+        return {**planned, "names": {**((build or {}).get("names") or {}), **planned["names"]}}
 
     def next_item(
         self,
@@ -594,13 +621,19 @@ class PlayerService:
         *,
         enemies: list[str] | None = None,
         minute: Any = None,
+        gold: Any = None,
+        role: str | None = None,
     ) -> dict[str, Any] | None:
         """The next item of the hero's usual build and the gold its missing parts
-        cost (app/next_item.py) for a core's live farm advice; None when unknown."""
+        cost (app/next_item.py) for a core's live farm advice; None when unknown.
+        `gold`: the gold carried, for the net worth a hero plan's tempo build
+        reads (next_item.net_worth). `role`: the live role (live_role.py); a hero
+        plan applies only in its own position, else the hero's usual one."""
         hero_id = hero_id_from_name(hero)
         if hero_id is None or owned is None:
             return None
         meta = self._live_meta(hero_id)
+        position = role or get_hero_position(hero)
         # How this match's deaths went and the enemy heroes seen pick the item
         # first (BKB after deaths under stuns, Linken's against Primal Roar),
         # then the hero's usual build.
@@ -609,10 +642,19 @@ class PlayerService:
             owned,
             meta,
             enemies=enemies,
-            position=get_hero_position(hero),
+            position=position,
             minute=minute if isinstance(minute, int) else None,
+            hero=hero,
+            net_worth=net_worth(owned, gold, (meta or {}).get("constants")),
         )
-        return situational or next_build_item(meta, owned)
+        if situational is not None:
+            return situational
+        # The hero plan's usual order (high-rank won games), else the popular build.
+        plan = plan_for(hero, position)
+        listed = (
+            next_listed_item(plan["build"], meta, owned) if plan and plan.get("build") else None
+        )
+        return listed or next_build_item(meta, owned)
 
     def buy_now(
         self, hero: str, item_key: str, owned: list[str] | None, gold: int | None
@@ -641,7 +683,18 @@ class PlayerService:
         if hero_id is None or owned is None:
             return None
         position = position or get_hero_position(hero)
-        return draft_counter_item(enemies, owned, self._live_meta(hero_id), position)
+        return draft_counter_item(enemies, owned, self._live_meta(hero_id), position, hero)
+
+    def fight_abilities(self, hero: str, position: str | None) -> dict[str, Any] | None:
+        """The hero plan's abilities for the fight summary (hero_items.plan_fight)."""
+        return plan_fight(plan_for(hero, position or get_hero_position(hero)))
+
+    def plan_note(
+        self, hero: str, enemies: list[str] | None, minute: int | None, position: str | None
+    ) -> dict[str, Any] | None:
+        """The hero plan's advice with no item for the enemy lineup seen
+        (hero_items.plan_note): {id, enemy, reason}; None otherwise."""
+        return plan_note(plan_for(hero, position or get_hero_position(hero)), enemies, minute)
 
     def save_item(
         self, hero: str, owned: list[str] | None, enemies: list[str] | None = None

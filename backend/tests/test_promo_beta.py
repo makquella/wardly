@@ -319,3 +319,24 @@ def test_worker_must_preserve_metadata_before_a_publication_button_is_sent(monke
         with pytest.raises(SystemExit, match="preserve youtube_tags"):
             beta.deliver(tmp_path, shorts=True)
         assert not any(route.endswith("sendVideo") for route, _ in calls)
+
+
+def test_the_release_pair_claims_match_the_shipped_plans():
+    from scripts.promo import release_carry
+
+    claims = release_carry.verify()
+    assert claims["carries"] == 20 and claims["league_games"] > 10000
+    story = release_carry.profile()
+    for language in beta.LANGUAGES:
+        voice = story.COPY[language]["voice"]
+        assert len(voice) == 7
+        joined = " ".join(voice)
+        assert "Bloodthorn" in joined and "Windows" in joined
+        package = beta_shorts.package(
+            language,
+            {"sha256": "0" * 64, "visual_revision": 7, "creative": release_carry.CREATIVE},
+        )
+        assert package["topic"] == f"release-0.57-carries-{language}"
+        assert "20" in package["youtube_title"] and len(package["youtube_title"]) <= 100
+        assert f"ref=shorts-carry-{language}" in package["caption"]
+        assert "release-0-57-0" in package["caption"]

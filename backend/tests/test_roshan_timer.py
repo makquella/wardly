@@ -98,7 +98,7 @@ def test_gsi_events_and_the_aegis_flag_are_read():
             aegis=True,
         )
     )["extra_context"]
-    assert extra["gsi_events"] == [{"type": "roshan_killed", "game_time": 1400}]
+    assert extra["gsi_events"] == [{"type": "roshan_killed", "game_time": 1400, "team": "dire"}]
     assert extra["has_aegis"] is True
 
 

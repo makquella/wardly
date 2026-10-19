@@ -557,13 +557,28 @@ def release_card(version: str, points: list[tuple[str, str]]) -> str:
     return page(body, RELEASE_CSS).replace("{pill}", _pill("spark", "Оновлення"))
 
 
-def release_caption(version: str, points: list[tuple[str, str]]) -> str:
+def release_caption(
+    version: str, points: list[tuple[str, str]], post: dict[str, Any] | None = None
+) -> str:
+    """The release card's caption: the notes' headlines, or with a release news
+    post (news_release.py) its title, lead, sections and heroes, linking to it."""
     e = escape
     lines = [f"🚀 <b>Wardly {e(version)} вже тут</b>", ""]
-    lines += [f"✅ {e(head)}" for head, _ in points]
+    more = ""
+    if post:
+        import news_release
+
+        uk = post["uk"]
+        title = uk["title"].split(": ", 1)[-1]
+        lines += [f"<b>{e(title[:1].upper() + title[1:])}</b>", e(uk["lead"]), ""]
+        lines += [f"✅ {e(section['heading'])}" for section in uk["sections"]]
+        lines += ["", f"🦸 {e(', '.join(post['heroes']))}"]
+        more = f' · 📰 <a href="{news_release.page_url(post)}?ref=tg">Докладніше</a>'
+    else:
+        lines += [f"✅ {e(head)}" for head, _ in points]
     lines += [
         "",
-        f'⬇️ <a href="{news.BASE}/?ref=tg">Завантажити</a> · 📝 <a href="{news.BASE}/changelog.html?ref=tg#v{e(version)}">Подробиці в «Що нового»</a>',
+        f'⬇️ <a href="{news.BASE}/?ref=tg">Завантажити</a>{more} · 📝 <a href="{news.BASE}/changelog.html?ref=tg#v{e(version)}">Усі зміни</a>',
         "Встановлена версія оновиться сама, коли Дота буде закрита.",
     ]
     return fit("\n".join(lines), keep_tail=3)

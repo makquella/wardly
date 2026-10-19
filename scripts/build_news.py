@@ -44,6 +44,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import news  # noqa: E402 - after the scripts path
 import news_cards as cards  # noqa: E402
+import news_release  # noqa: E402
 
 HERO_WEEK = news.ROOT / "data" / "news" / "hero-week.json"
 
@@ -413,9 +414,15 @@ def main() -> int:
                 raise SystemExit(f"no release notes: {notes.relative_to(news.ROOT)}")
             text = notes.read_text(encoding="utf-8")
             points = cards.release_points(text)
+            post = news_release.find(args.version)
+            if post:
+                # The card lists the release post's sections, the caption links to it.
+                title = post["uk"]["title"].split(": ", 1)[-1]
+                points = [(title[:1].upper() + title[1:], "")]
+                points += [(s["heading"], "") for s in post["uk"]["sections"]]
             publish(
                 cards.release_card(args.version, points),
-                cards.release_caption(args.version, points),
+                cards.release_caption(args.version, points, post),
                 news.telegram_release(args.version, text),
                 args.send,
                 args.out,

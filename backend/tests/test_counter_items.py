@@ -21,16 +21,46 @@ def _minimap(*units):
 
 def test_the_minimap_shows_the_enemy_heroes_the_team_can_see():
     minimap = _minimap(
-        {"unitname": "npc_dota_hero_beastmaster", "team": 3},
-        {"unitname": "npc_dota_hero_queenofpain", "team": 2},  # own team
+        {"image": "minimap_enemyicon", "unitname": "npc_dota_hero_beastmaster", "team": 3},
+        {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_queenofpain",
+            "team": 2,
+        },  # own team
+        # From the strategy time on, GSI also sends every pick (and heroes not
+        # in the match) as plain circles at (0, 0) with an enemy team number.
+        {"image": "minimap_plaincircle", "unitname": "npc_dota_hero_axe", "team": 3},
+        {"unitname": "npc_dota_hero_lion", "team": 3},  # no icon: not an enemy
         {"unitname": "npc_dota_creep_badguys_melee", "team": 3},  # not a hero
-        {"unitname": "npc_dota_hero_nevermore", "team": "3"},  # a broken team
+        {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_nevermore",
+            "team": "3",
+        },  # a broken team
         {"unitname": 12, "team": 3},
         "junk",
     )
     assert visible_enemy_heroes(minimap, "radiant", _normalize_hero_name) == ["Beastmaster"]
     assert visible_enemy_heroes(minimap, None, _normalize_hero_name) is None  # team unknown
     assert visible_enemy_heroes(None, "radiant", _normalize_hero_name) is None  # no block
+    # An enemy icon at (0, 0) is not placed on the map yet: not remembered.
+    unplaced = _minimap(
+        {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_axe",
+            "team": 3,
+            "xpos": 0,
+            "ypos": 0,
+        },
+        {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_lion",
+            "team": 3,
+            "xpos": 1200,
+            "ypos": -300,
+        },
+    )
+    assert visible_enemy_heroes(unplaced, "radiant", _normalize_hero_name) == ["Lion"]
     seen = EnemyHeroes()
     seen.observe(["Beastmaster"])
     seen.observe(["Lion", "Beastmaster", 3])
@@ -43,8 +73,20 @@ def test_the_minimap_shows_the_enemy_heroes_the_team_can_see():
 
 def test_live_gsi_remembers_the_enemies_for_the_match(client):
     for payload in gsi_match_stream(minutes=8, death_minutes=()):
+        if payload["map"]["clock_time"] <= 60:
+            # The whole lineup as plain circles at (0, 0), the player's own
+            # hero and allies included (a real 2026-10 recording: they filled
+            # the list and the counter items answered an ally's hero).
+            payload["minimap"] = _minimap(
+                *(
+                    {"image": "minimap_plaincircle", "unitname": name, "team": 3}
+                    for name in ("npc_dota_hero_juggernaut", "npc_dota_hero_bristleback")
+                )
+            )
         if payload["map"]["clock_time"] == 300:
-            payload["minimap"] = _minimap({"unitname": "npc_dota_hero_beastmaster", "team": 3})
+            payload["minimap"] = _minimap(
+                {"image": "minimap_enemyicon", "unitname": "npc_dota_hero_beastmaster", "team": 3}
+            )
         client.post("/gsi", json=payload)
     # Seen once at 5:00, still known later in the match.
     assert MATCH_MEMORY.enemies.heroes() == ["Beastmaster"]
@@ -122,7 +164,7 @@ def test_the_card_and_the_death_screen_say_why():
     state = {"minute": 20, "gold": 900, "extra_context": {"next_item": mkb, "gpm": 520}}
     _, reason = _next_item_copy(state, state["extra_context"])
     assert translate_uk(reason).startswith(
-        "Phantom Assassin ухиляється від атак — Monkey King Bar б'є без промаху"
+        "Phantom Assassin ухиляється від атак — Monkey King Bar пробиває ухилення більшістю атак"
     )
     card = build_death_screen(
         death={"t": 1200, "usable": []},
@@ -292,7 +334,7 @@ def test_the_draft_read_reaches_the_overlay(client):
     set_role_setting("carry")
     lineup = _minimap(
         *(
-            {"unitname": f"npc_dota_hero_{name}", "team": 3}
+            {"image": "minimap_enemyicon", "unitname": f"npc_dota_hero_{name}", "team": 3}
             for name in ("phantom_assassin", "lion", "axe", "crystal_maiden")
         )
     )

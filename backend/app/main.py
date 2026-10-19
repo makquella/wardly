@@ -74,6 +74,7 @@ from app.logger import log_recommendation, prune_logs
 from app.map_hints import DRAFT_UNTIL, timers
 from app.match_memory import MATCH_MEMORY
 from app.match_records import KEEP_DAYS, MATCH_RECORDS
+from app.next_item import owned_items
 from app.player_api import PLAYER_SERVICE, refresh_quieter_advice
 from app.player_api import router as player_router
 from app.rag import KNOWLEDGE_BASE, retrieve_context
@@ -124,7 +125,7 @@ app = LocalApiApp(
     lifespan=_lifespan,
     title="Wardly",
     description="MVP-1: rule-based carry coach with local knowledge-base RAG.",
-    version="0.56.5",
+    version="0.57.0",
 )
 app.include_router(player_router)
 
@@ -160,7 +161,7 @@ if _DEBUG_PAGES is not None:
 @app.get("/", summary="Health check")
 def root():
     """Simple health-check endpoint."""
-    return {"status": "ok", "service": "Wardly", "version": "0.56.5"}
+    return {"status": "ok", "service": "Wardly", "version": "0.57.0"}
 
 
 @app.get("/health", summary="Health check")
@@ -526,6 +527,11 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         and clock <= DRAFT_UNTIL
         else None
     )
+    note = (
+        PLAYER_SERVICE.plan_note(hero, trackers.enemies or None, clock // 60, role.get("role"))
+        if map_enabled and role and role.get("role") != "support" and isinstance(clock, int)
+        else None
+    )
     inputs = LiveHintInputs(
         role=role,
         gold=gold,
@@ -535,7 +541,11 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         save_item=save_item,
         lane_record=lane_record,
         draft_item=draft,
-        skill_build=PLAYER_SERVICE.skill_build(hero),
+        plan_note=note,
+        fight_abilities=PLAYER_SERVICE.fight_abilities(hero, (role or {}).get("role"))
+        if map_enabled
+        else None,
+        skill_build=PLAYER_SERVICE.skill_build(hero, trackers.enemies or None),
     )
     return MATCH_MEMORY.live_hints(state, extra, trackers, inputs, lang)
 
@@ -548,13 +558,12 @@ def _gold_hint_inputs(
     gold = state.get("gold")
     role_name = role.get("role") if role else None
     hero = str(state.get("hero") or "")
-    raw_names = extra.get("item_names")
-    names = raw_names if isinstance(raw_names, list) else None
+    names = owned_items(extra)
     next_item = None
     part = None
     if role_name != "support" and isinstance(clock, int) and clock >= 3 * 60:
         try:
-            item = PLAYER_SERVICE.next_item(hero, names, minute=state.get("minute"))
+            item = PLAYER_SERVICE.next_item(hero, names, minute=state.get("minute"), role=role_name)
             if isinstance(item, dict) and isinstance(item.get("key"), str):
                 next_item = item
                 # The quick-buy step: the part the gold already buys.
@@ -626,7 +635,12 @@ def _death_screen_for_overlay(response: dict[str, object], lang: str) -> dict[st
         return None
     carry = hero_coverage(str(state.get("hero") or "")) == "full" and not _plays_support(state)
     try:
-        return PLAYER_SERVICE.death_screen(_with_enemies(state), lang, next_item_for_hero=carry)
+        return PLAYER_SERVICE.death_screen(
+            _with_enemies(state),
+            lang,
+            next_item_for_hero=carry,
+            role=(_live_role(state) or {}).get("role"),
+        )
     except Exception as error:  # noqa: BLE001 - never breaks the live path
         record_error("death-screen", error)
         return None
@@ -1189,14 +1203,17 @@ def _with_next_item(
         or _plays_support(state)
     ):
         return state
-    names = raw_extra.get("item_names")
+    # Aghanim's Shard is consumed on purchase: GSI says so on the hero instead.
+    owned = owned_items(raw_extra)
     try:
         enemies = raw_extra.get("enemy_heroes")
         item = PLAYER_SERVICE.next_item(
             str(state.get("hero") or ""),
-            names if isinstance(names, list) else None,
+            owned,
             enemies=enemies if isinstance(enemies, list) else None,
             minute=state.get("minute"),
+            gold=state.get("gold"),
+            role=(_live_role(state) or {}).get("role"),
         )
     except Exception as error:  # noqa: BLE001 - never breaks the live path
         record_error("next-item", error)
