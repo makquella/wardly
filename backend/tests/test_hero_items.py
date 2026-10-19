@@ -738,7 +738,8 @@ def test_plan_notes_name_no_item():
     [
         ("Anti-Mage", ["Windranger", "Axe"], "monkey_king_bar", "evasion"),
         ("Medusa", ["Phantom Assassin", "Axe"], "monkey_king_bar", "evasion"),
-        ("Medusa", ["Naga Siren", "Axe"], "mjollnir", "illusions_mjollnir"),
+        ("Medusa", ["Naga Siren", "Axe"], "maelstrom", "illusions_maelstrom"),
+        ("Anti-Mage", ["Huskar", "Axe"], "skadi", "healing"),
         ("Medusa", ["Bristleback", "Axe"], "silver_edge", "break"),
         ("Phantom Assassin", ["Windranger", "Axe"], "monkey_king_bar", "evasion"),
         ("Phantom Assassin", ["Spectre", "Axe"], "ultimate_scepter", "break_fan_of_knives"),
@@ -762,6 +763,11 @@ def test_wave_two_counters_come_with_the_plans_reason(hero, enemies, key, why):
         ("Spectre", ["Chaos Knight", "Axe"]),
         ("Sven", ["Naga Siren", "Axe"]),
         ("Anti-Mage", ["Bristleback", "Axe"]),
+        # Counterspell and Mana Shield: no BKB for 3+ magic damage heroes.
+        ("Anti-Mage", MAGIC_LINEUP),
+        ("Medusa", MAGIC_LINEUP),
+        # Blink after Mask of Madness and Echo Sabre: no Silver Edge for Sven.
+        ("Sven", ["Bristleback", "Axe"]),
     ],
 )
 def test_wave_two_suppressed_generic_counters(hero, enemies):
@@ -777,3 +783,60 @@ def test_spectre_keeps_the_generic_monkey_king_bar_after_her_skadi():
 def test_passive_ultimates_name_an_active_fight_ability():
     assert plan_for("Phantom Assassin", "carry")["fight"] == ["phantom_assassin_blur"]
     assert plan_for("Phantom Lancer", "carry")["fight"] == ["phantom_lancer_doppelwalk"]
+
+
+MEDUSA_META = {
+    "constants": {
+        "items": {
+            "maelstrom": {"name": "Maelstrom", "cost": 2950, "components": ["gauntlets"]},
+            "mjollnir": {"name": "Mjollnir", "cost": 5500, "components": ["maelstrom"]},
+            "ultimate_scepter": {"name": "Aghanim's Scepter", "cost": 4200, "components": []},
+        },
+        "by_id": {},
+    },
+    "popularity": {},
+}
+
+
+def test_medusa_against_illusions_maelstrom_then_mjollnir_then_aghanims():
+    lineup = ["Naga Siren", "Axe"]
+
+    def medusa(owned=(), minute=20):
+        return situational_item(
+            [],
+            list(owned),
+            MEDUSA_META,
+            enemies=lineup,
+            position="carry",
+            minute=minute,
+            hero="Medusa",
+        )
+
+    assert medusa(minute=19)["key"] == "maelstrom"
+    assert medusa(["item_maelstrom"], minute=19) is None  # Mjollnir from 20:00
+    item = medusa(["item_maelstrom"])
+    assert (item["key"], item["why"]) == ("mjollnir", "illusions_mjollnir")
+    # Mjollnir is built from Maelstrom: both answered; Aghanim's from 25:00.
+    assert medusa(["item_mjollnir"], minute=24) is None
+    aghs = medusa(["item_mjollnir"], minute=25)
+    assert (aghs["key"], aghs["why"]) == ("ultimate_scepter", "illusions_split_shot")
+    assert "Split Shot" in aghs["reason"]["en"]
+
+
+def test_spectre_after_skadi_bloodthorn_with_an_escape_else_monkey_king_bar():
+    escape = _carry("Spectre", ["Phantom Assassin", "Queen of Pain"], ["item_skadi"])
+    assert (escape["key"], escape["why"], escape["escape"]) == (
+        "bloodthorn",
+        "evasion_escape",
+        "Queen of Pain",
+    )
+    plain = _carry("Spectre", ["Windranger", "Axe"], ["item_skadi"])
+    assert plain["key"] == "monkey_king_bar"
+
+
+def test_phantom_assassin_names_nullifier_and_maxes_the_dagger_first():
+    item = _carry("Phantom Assassin", ["Windranger", "Axe"])
+    assert "Nullifier" in item["reason"]["en"] and "Nullifier" in item["reason"]["uk"]
+    skills = plan_skills(plan_for("Phantom Assassin", "carry"))
+    assert skills["order"][0] == "phantom_assassin_stifling_dagger"
+    assert skills["first_agree"] == 219

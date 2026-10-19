@@ -9,7 +9,8 @@
   "sources": {
     "games": "445 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 48.5%. Reproduce: python scripts/hero_item_stats.py anti_mage.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
-    "hero": "Valve /datafeed/herodata hero_id 1, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 1, 7.41f.",
+    "player": "Player review, 2026-10-19: BKB only with a lot of control; Abyssal over Silver Edge; Skadi against Huskar at times."
   },
   "rules": [
     {
@@ -25,6 +26,20 @@
         "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
       },
       "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Anti-Mages against Phantom Assassin or Windranger: 12% of 43 games against them (5% otherwise), won 40% against 45% (a thin sample)."
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in his build (35%, ~28 min). The player review: Skadi against Huskar at times; it answers every heavy healer the same way."
     }
   ],
   "build": [
@@ -144,6 +159,7 @@
   },
   "suppress": {
     "illusions": "Battle Fury (100% of his won games, ~14 min) already cleaves the illusions around his target; high-rank Anti-Mage players do not add Maelstrom against illusion heroes.",
-    "break": "Abyssal Blade is in his build (~34 min) and high-rank Anti-Mages do not buy Silver Edge against Bristleback, Spectre or Huskar (23 games, it is not among the items they buy more often there)."
+    "break": "Abyssal Blade is in his build (~34 min); the player review: Abyssal is fine against Bristleback, Spectre or Huskar, and Silver Edge is not bought by high-rank Anti-Mages there.",
+    "magic": "Counterspell gives 35% magic resistance and reflects targeted spells (Valve 7.41f). The player review: BKB when there is a lot of control; that is read from the match itself (two deaths under stuns or a Hex bring Black King Bar for every hero), not from 3+ magic damage heroes in the lineup."
   }
 }

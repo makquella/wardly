@@ -9,7 +9,8 @@
   "sources": {
     "games": "236 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 44.9%. Reproduce: python scripts/hero_item_stats.py spectre.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
-    "hero": "Valve /datafeed/herodata hero_id 67, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 67, 7.41f.",
+    "player": "Player review, 2026-10-19: against evasion Eye of Skadi first, then Monkey King Bar; Bloodthorn also works."
   },
   "rules": [
     {
@@ -25,6 +26,35 @@
         "en": "{enemy} dodges attacks: take {item} first, its attributes and slow keep you alive while attacks miss, then answer the evasion",
         "uk": "{enemy} ухиляється від атак: спершу візьміть {item} — його атрибути й уповільнення допоможуть вижити, поки атаки промахуються, а потім відповідайте на ухилення"
       }
+    },
+    {
+      "id": "evasion_escape",
+      "why": "evasion_escape",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "also": "escape",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} dodges attacks and {escape} escapes with {spell}: {item} silences the escape, and your attacks never miss the silenced target",
+        "uk": "{enemy} ухиляється від атак, а {escape} тікає через {spell}: {item} накладає тишу, і по цілі під тишею ваші атаки не промахуються"
+      },
+      "basis": "Valve 7.41f Bloodthorn: Soul Rend silences for 5 s and gives True Strike against the silenced target; the passive pierces evasion on 40% of attacks. Orchid is in her build (26%, ~29 min). The player review: Skadi first, Bloodthorn also works."
+    },
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast; without an escape hero beside the evasion it is the cheaper answer (5000 against 6400). The player review: Skadi first, then Monkey King Bar."
     }
   ],
   "build": [

@@ -9,7 +9,8 @@
   "sources": {
     "games": "505 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 45.9%. Reproduce: python scripts/hero_item_stats.py phantom_assassin.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
-    "hero": "Valve /datafeed/herodata hero_id 44, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 44, 7.41f.",
+    "player": "Player review, 2026-10-19: Aghanim's Scepter (Fan of Knives) against break heroes; Nullifier at times more universal than MKB; Stifling Dagger first unless the lane is hard."
   },
   "rules": [
     {
@@ -21,10 +22,10 @@
       "enemy": "evasion",
       "minute": 15,
       "reason": {
-        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
-        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion; Nullifier is the wider answer when they save with Ghost Scepter, Glimmer Cape or Force Staff",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення; Nullifier універсальніший, коли вас рятують Ghost Scepter, Glimmer Cape чи Force Staff"
       },
-      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Phantom Assassins against Phantom Assassin or Windranger: 22% of 27 games against them (7% otherwise), won 33% against 43%; Nullifier 18% of 27 games against them (6% otherwise), won 80% against 32% (27 games)."
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Phantom Assassins against Phantom Assassin or Windranger: 22% of 27 games against them (7% otherwise), won 33% against 43%; Nullifier 18% of 27 games against them (6% otherwise), won 80% against 32% (27 games). Valve 7.41f Nullifier: Nullify dispels the target (basic dispel: Ghost Scepter, Glimmer Cape, a Force Staff push) and keeps dispelling and slowing for 4 s. The player review: Nullifier is sometimes the more universal item."
     },
     {
       "id": "break",
@@ -116,12 +117,12 @@
   },
   "skills": {
     "order": [
-      "phantom_assassin_phantom_strike",
       "phantom_assassin_stifling_dagger",
+      "phantom_assassin_phantom_strike",
       "phantom_assassin_immaterial"
     ],
     "games": 505,
-    "first_agree": 276,
+    "first_agree": 219,
     "opening": {
       "name": "phantom_assassin_stifling_dagger",
       "agree": 494
@@ -157,7 +158,7 @@
         "games": 95
       }
     },
-    "basis": "505 games: maxed phantom_assassin_phantom_strike > phantom_assassin_stifling_dagger > phantom_assassin_immaterial 238 (win 45.8%), phantom_assassin_stifling_dagger > phantom_assassin_phantom_strike > phantom_assassin_immaterial 208 (win 51.9%), phantom_assassin_phantom_strike > phantom_assassin_immaterial > phantom_assassin_stifling_dagger 30 (win 43.3%); talents 10: Phantom Strike Duration 342/499 (49.7%), Stifling Dagger Cooldown 157/499 (39.5%); 15: Immaterial Evasion 276/460 (50.0%), Stifling Dagger Damage 184/460 (48.9%); 20: Phantom Strike Attack Speed 170/292 (64.7%), Phantom Strike Cast Range 122/292 (54.1%); 25: Triple Strike Stifling Dagger 64/95 (70.3%), Coup de Grace chance 31/95 (67.7%)."
+    "basis": "505 games: maxed Stifling Dagger > Phantom Strike > Immaterial 208 (win 51.9%), Phantom Strike > Stifling Dagger > Immaterial 238 (win 45.8%). The player review: Stifling Dagger first; with a hard lane and an early move to the jungle, Phantom Strike first (the lane-pressure tip names it, skill_tips). Talents 10: Phantom Strike Duration 342/499 (49.7%), Stifling Dagger Cooldown 157/499 (39.5%); 15: Immaterial Evasion 276/460 (50.0%), Stifling Dagger Damage 184/460 (48.9%); 20: Phantom Strike Attack Speed 170/292 (64.7%), Phantom Strike Cast Range 122/292 (54.1%); 25: Triple Strike Stifling Dagger 64/95 (70.3%), Coup de Grace chance 31/95 (67.7%)."
   },
   "fight": [
     "phantom_assassin_blur"

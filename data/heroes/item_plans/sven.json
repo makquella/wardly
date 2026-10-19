@@ -9,7 +9,8 @@
   "sources": {
     "games": "431 league games since 7.41 (data/heroes/item_stats), win 52.0%. Reproduce: python scripts/hero_item_stats.py sven.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
-    "hero": "Valve /datafeed/herodata hero_id 18, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 18, 7.41f.",
+    "player": "Player review, 2026-10-19: no Silver Edge against break heroes, Blink after Mask of Madness and Echo Sabre."
   },
   "rules": [
     {
@@ -167,6 +168,7 @@
     "basis": "431 games: maxed sven_great_cleave > sven_storm_bolt > sven_warcry 343 (win 52.5%), sven_great_cleave > sven_warcry > sven_storm_bolt 72 (win 52.8%), sven_great_cleave > sven_storm_bolt 9 (win 22.2%); talents 10: Warcry Duration 266/430 (56.0%), God's Strength Slow Resistance 164/430 (45.1%); 15: God's Strength Cooldown 250/417 (54.4%), Great Cleave Damage 167/417 (51.5%); 20: Warcry Armor 252/322 (60.7%), Storm Hammer Cooldown and Mana Cost 70/322 (65.7%); 25: God's Strength Damage 125/167 (65.6%), Storm Hammer Stun Duration 42/167 (66.7%)."
   },
   "suppress": {
-    "illusions": "Great Cleave (maxed first in 343 of 431 games) hits 90% of his attack damage in a 700 cone, so illusions around the target fall with it; high-rank Svens do not buy Maelstrom against illusion heroes."
+    "illusions": "Great Cleave (maxed first in 343 of 431 games) hits 90% of his attack damage in a 700 cone, so illusions around the target fall with it; high-rank Svens do not buy Maelstrom against illusion heroes.",
+    "break": "The player review: Sven's damage goes through any passive; Silver Edge is decent for positioning, but Blink after Mask of Madness and Echo Sabre is much better and Silver Edge hardly fits his build (high-rank Svens: not among the 12 items bought most more often in 19 games against them)."
   }
 }
