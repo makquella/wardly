@@ -1,0 +1,1329 @@
+{
+ "hero": "medusa",
+ "hero_id": 94,
+ "position": "carry",
+ "lane_role": 1,
+ "since_patch": "7.40",
+ "generated": "2026-10-19",
+ "source": "OpenDota Explorer: league games with parsed gold timelines",
+ "games": 480,
+ "win": 44.6,
+ "tempo_line": {
+  "20": {
+   "gold": 13000,
+   "net_worth": 12500,
+   "games": 31,
+   "win": 77.4
+  },
+  "25": {
+   "gold": 17500,
+   "net_worth": 16800,
+   "games": 60,
+   "win": 76.7
+  }
+ },
+ "tempo_win_target": 75.0,
+ "usual_build": [
+  {
+   "item": "magic_wand",
+   "share": 0.944,
+   "minute": -1.0
+  },
+  {
+   "item": "null_talisman",
+   "share": 0.65,
+   "minute": 2.0
+  },
+  {
+   "item": "power_treads",
+   "share": 0.986,
+   "minute": 6.4
+  },
+  {
+   "item": "yasha",
+   "share": 0.986,
+   "minute": 10.7
+  },
+  {
+   "item": "manta",
+   "share": 0.986,
+   "minute": 14.6
+  },
+  {
+   "item": "butterfly",
+   "share": 0.902,
+   "minute": 21.7
+  },
+  {
+   "item": "skadi",
+   "share": 0.636,
+   "minute": 28.0
+  },
+  {
+   "item": "diffusal_blade",
+   "share": 0.206,
+   "minute": 28.0
+  },
+  {
+   "item": "lesser_crit",
+   "share": 0.533,
+   "minute": 29.5
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.421,
+   "minute": 31.8
+  },
+  {
+   "item": "greater_crit",
+   "share": 0.36,
+   "minute": 32.3
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.201,
+   "minute": 38.9
+  }
+ ],
+ "tempo_build": [
+  {
+   "item": "null_talisman",
+   "share": 0.583,
+   "minute": 1.9
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.958,
+   "minute": 2.5
+  },
+  {
+   "item": "power_treads",
+   "share": 1.0,
+   "minute": 5.7
+  },
+  {
+   "item": "yasha",
+   "share": 1.0,
+   "minute": 9.8
+  },
+  {
+   "item": "manta",
+   "share": 1.0,
+   "minute": 13.2
+  },
+  {
+   "item": "butterfly",
+   "share": 0.958,
+   "minute": 19.1
+  },
+  {
+   "item": "diffusal_blade",
+   "share": 0.25,
+   "minute": 21.6
+  },
+  {
+   "item": "lesser_crit",
+   "share": 0.375,
+   "minute": 24.6
+  },
+  {
+   "item": "skadi",
+   "share": 0.583,
+   "minute": 25.3
+  },
+  {
+   "item": "invis_sword",
+   "share": 0.208,
+   "minute": 25.9
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.292,
+   "minute": 26.8
+  },
+  {
+   "item": "greater_crit",
+   "share": 0.375,
+   "minute": 28.2
+  }
+ ],
+ "skills": {
+  "games": 480,
+  "orders": [
+   {
+    "order": [
+     "medusa_mystic_snake",
+     "medusa_split_shot",
+     "medusa_gorgon_grasp"
+    ],
+    "games": 234,
+    "win": 51.3
+   },
+   {
+    "order": [
+     "medusa_mystic_snake",
+     "medusa_split_shot"
+    ],
+    "games": 93,
+    "win": 26.9
+   },
+   {
+    "order": [
+     "medusa_split_shot",
+     "medusa_mystic_snake",
+     "medusa_gorgon_grasp"
+    ],
+    "games": 90,
+    "win": 48.9
+   },
+   {
+    "order": [
+     "medusa_split_shot",
+     "medusa_mystic_snake"
+    ],
+    "games": 58,
+    "win": 39.7
+   },
+   {
+    "order": [
+     "medusa_mystic_snake",
+     "medusa_gorgon_grasp",
+     "medusa_split_shot"
+    ],
+    "games": 2,
+    "win": 0.0
+   }
+  ],
+  "openings": [
+   {
+    "name": "medusa_mystic_snake",
+    "games": 475,
+    "win": 44.2
+   },
+   {
+    "name": "medusa_split_shot",
+    "games": 3,
+    "win": 100.0
+   },
+   {
+    "name": "medusa_gorgon_grasp",
+    "games": 2,
+    "win": 50.0
+   }
+  ],
+  "talents": {
+   "10": [
+    {
+     "name": "special_bonus_unique_medusa_8",
+     "label": "Stone Gaze Bonus Physical Damage",
+     "picked": 428,
+     "games": 479,
+     "win": 44.6
+    },
+    {
+     "name": "special_bonus_unique_medusa_gorgons_grasp_radius",
+     "label": "Gorgon's Grasp Radius",
+     "picked": 51,
+     "games": 479,
+     "win": 43.1
+    }
+   ],
+   "15": [
+    {
+     "name": "special_bonus_unique_medusa_5",
+     "label": "Mystic Snake Cooldown",
+     "picked": 155,
+     "games": 224,
+     "win": 44.5
+    },
+    {
+     "name": "special_bonus_unique_medusa_gorgons_grasp_volleys",
+     "label": "Gorgon's Grasp Volley",
+     "picked": 69,
+     "games": 224,
+     "win": 50.7
+    }
+   ],
+   "20": [
+    {
+     "name": "special_bonus_unique_medusa_2",
+     "label": "Split Shot Outgoing Damage",
+     "picked": 399,
+     "games": 408,
+     "win": 48.9
+    },
+    {
+     "name": "special_bonus_unique_medusa_snake_damage",
+     "label": "Mystic Snake Damage / Mana Gain",
+     "picked": 9,
+     "games": 408,
+     "win": 55.6
+    }
+   ],
+   "25": [
+    {
+     "name": "special_bonus_intelligence_40",
+     "label": "+40 Intelligence",
+     "picked": 34,
+     "games": 42,
+     "win": 58.8
+    },
+    {
+     "name": "special_bonus_unique_medusa",
+     "label": "Stone Gaze Duration",
+     "picked": 8,
+     "games": 42,
+     "win": 75.0
+    }
+   ]
+  }
+ },
+ "counters": {
+  "evasion": {
+   "games": 51,
+   "win": 43.1,
+   "items": [
+    {
+     "item": "monkey_king_bar",
+     "share": 0.275,
+     "elsewhere": 0.089,
+     "lift": 3.1,
+     "win_with": 50.0,
+     "win_without": 40.5
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.706,
+     "elsewhere": 0.625,
+     "lift": 1.13,
+     "win_with": 41.7,
+     "win_without": 46.7
+    },
+    {
+     "item": "butterfly",
+     "share": 0.824,
+     "elsewhere": 0.779,
+     "lift": 1.06,
+     "win_with": 50.0,
+     "win_without": 11.1
+    },
+    {
+     "item": "falcon_blade",
+     "share": 0.137,
+     "elsewhere": 0.131,
+     "lift": 1.05,
+     "win_with": 28.6,
+     "win_without": 45.5
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.98,
+     "elsewhere": 0.93,
+     "lift": 1.05,
+     "win_with": 42.0,
+     "win_without": 100.0
+    },
+    {
+     "item": "yasha",
+     "share": 1.0,
+     "elsewhere": 0.988,
+     "lift": 1.01,
+     "win_with": 43.1,
+     "win_without": null
+    },
+    {
+     "item": "manta",
+     "share": 0.98,
+     "elsewhere": 0.984,
+     "lift": 1.0,
+     "win_with": 44.0,
+     "win_without": 0.0
+    },
+    {
+     "item": "disperser",
+     "share": 0.118,
+     "elsewhere": 0.119,
+     "lift": 0.99,
+     "win_with": 66.7,
+     "win_without": 40.0
+    },
+    {
+     "item": "power_treads",
+     "share": 0.961,
+     "elsewhere": 0.986,
+     "lift": 0.97,
+     "win_with": 42.9,
+     "win_without": 50.0
+    },
+    {
+     "item": "diffusal_blade",
+     "share": 0.157,
+     "elsewhere": 0.168,
+     "lift": 0.93,
+     "win_with": 62.5,
+     "win_without": 39.5
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.294,
+     "elsewhere": 0.326,
+     "lift": 0.9,
+     "win_with": 53.3,
+     "win_without": 38.9
+    },
+    {
+     "item": "skadi",
+     "share": 0.373,
+     "elsewhere": 0.49,
+     "lift": 0.76,
+     "win_with": 57.9,
+     "win_without": 34.4
+    }
+   ]
+  },
+  "evasion_break": {
+   "games": 11,
+   "win": 36.4,
+   "items": [
+    {
+     "item": "great_famango",
+     "share": 0.182,
+     "elsewhere": 0.111,
+     "lift": 1.64,
+     "win_with": 50.0,
+     "win_without": 33.3
+    },
+    {
+     "item": "falcon_blade",
+     "share": 0.182,
+     "elsewhere": 0.13,
+     "lift": 1.4,
+     "win_with": 50.0,
+     "win_without": 33.3
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.727,
+     "elsewhere": 0.631,
+     "lift": 1.15,
+     "win_with": 37.5,
+     "win_without": 33.3
+    },
+    {
+     "item": "magic_wand",
+     "share": 1.0,
+     "elsewhere": 0.934,
+     "lift": 1.07,
+     "win_with": 36.4,
+     "win_without": null
+    },
+    {
+     "item": "butterfly",
+     "share": 0.818,
+     "elsewhere": 0.783,
+     "lift": 1.05,
+     "win_with": 44.4,
+     "win_without": 0.0
+    },
+    {
+     "item": "manta",
+     "share": 1.0,
+     "elsewhere": 0.983,
+     "lift": 1.02,
+     "win_with": 36.4,
+     "win_without": null
+    },
+    {
+     "item": "yasha",
+     "share": 1.0,
+     "elsewhere": 0.989,
+     "lift": 1.01,
+     "win_with": 36.4,
+     "win_without": null
+    },
+    {
+     "item": "power_treads",
+     "share": 0.909,
+     "elsewhere": 0.985,
+     "lift": 0.92,
+     "win_with": 30.0,
+     "win_without": 100.0
+    },
+    {
+     "item": "skadi",
+     "share": 0.364,
+     "elsewhere": 0.48,
+     "lift": 0.76,
+     "win_with": 75.0,
+     "win_without": 14.3
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.273,
+     "elsewhere": 0.458,
+     "lift": 0.59,
+     "win_with": 33.3,
+     "win_without": 37.5
+    }
+   ]
+  },
+  "illusions": {
+   "games": 31,
+   "win": 35.5,
+   "items": [
+    {
+     "item": "mjollnir",
+     "share": 0.355,
+     "elsewhere": 0.033,
+     "lift": 10.62,
+     "win_with": 45.5,
+     "win_without": 30.0
+    },
+    {
+     "item": "maelstrom",
+     "share": 0.452,
+     "elsewhere": 0.051,
+     "lift": 8.82,
+     "win_with": 42.9,
+     "win_without": 29.4
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.355,
+     "elsewhere": 0.134,
+     "lift": 2.66,
+     "win_with": 54.5,
+     "win_without": 25.0
+    },
+    {
+     "item": "falcon_blade",
+     "share": 0.258,
+     "elsewhere": 0.122,
+     "lift": 2.11,
+     "win_with": 37.5,
+     "win_without": 34.8
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.419,
+     "elsewhere": 0.316,
+     "lift": 1.33,
+     "win_with": 38.5,
+     "win_without": 33.3
+    },
+    {
+     "item": "disperser",
+     "share": 0.129,
+     "elsewhere": 0.118,
+     "lift": 1.09,
+     "win_with": 25.0,
+     "win_without": 37.0
+    },
+    {
+     "item": "yasha",
+     "share": 0.968,
+     "elsewhere": 0.991,
+     "lift": 0.98,
+     "win_with": 33.3,
+     "win_without": 100.0
+    },
+    {
+     "item": "power_treads",
+     "share": 0.968,
+     "elsewhere": 0.984,
+     "lift": 0.98,
+     "win_with": 36.7,
+     "win_without": 0.0
+    },
+    {
+     "item": "diffusal_blade",
+     "share": 0.161,
+     "elsewhere": 0.167,
+     "lift": 0.97,
+     "win_with": 20.0,
+     "win_without": 38.5
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.903,
+     "elsewhere": 0.938,
+     "lift": 0.96,
+     "win_with": 35.7,
+     "win_without": 33.3
+    },
+    {
+     "item": "manta",
+     "share": 0.935,
+     "elsewhere": 0.987,
+     "lift": 0.95,
+     "win_with": 34.5,
+     "win_without": 50.0
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.548,
+     "elsewhere": 0.639,
+     "lift": 0.86,
+     "win_with": 41.2,
+     "win_without": 28.6
+    }
+   ]
+  },
+  "invisibility": {
+   "games": 113,
+   "win": 54.0,
+   "items": [
+    {
+     "item": "disperser",
+     "share": 0.168,
+     "elsewhere": 0.104,
+     "lift": 1.62,
+     "win_with": 63.2,
+     "win_without": 52.1
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.142,
+     "elsewhere": 0.095,
+     "lift": 1.48,
+     "win_with": 62.5,
+     "win_without": 52.6
+    },
+    {
+     "item": "diffusal_blade",
+     "share": 0.195,
+     "elsewhere": 0.158,
+     "lift": 1.23,
+     "win_with": 59.1,
+     "win_without": 52.7
+    },
+    {
+     "item": "dragon_lance",
+     "share": 0.142,
+     "elsewhere": 0.117,
+     "lift": 1.21,
+     "win_with": 56.2,
+     "win_without": 53.6
+    },
+    {
+     "item": "greater_crit",
+     "share": 0.319,
+     "elsewhere": 0.275,
+     "lift": 1.16,
+     "win_with": 58.3,
+     "win_without": 51.9
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.699,
+     "elsewhere": 0.613,
+     "lift": 1.14,
+     "win_with": 55.7,
+     "win_without": 50.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.345,
+     "elsewhere": 0.316,
+     "lift": 1.09,
+     "win_with": 61.5,
+     "win_without": 50.0
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.469,
+     "elsewhere": 0.45,
+     "lift": 1.04,
+     "win_with": 58.5,
+     "win_without": 50.0
+    },
+    {
+     "item": "butterfly",
+     "share": 0.805,
+     "elsewhere": 0.777,
+     "lift": 1.04,
+     "win_with": 61.5,
+     "win_without": 22.7
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.956,
+     "elsewhere": 0.929,
+     "lift": 1.03,
+     "win_with": 51.9,
+     "win_without": 100.0
+    },
+    {
+     "item": "skadi",
+     "share": 0.478,
+     "elsewhere": 0.477,
+     "lift": 1.0,
+     "win_with": 70.4,
+     "win_without": 39.0
+    },
+    {
+     "item": "yasha",
+     "share": 0.991,
+     "elsewhere": 0.989,
+     "lift": 1.0,
+     "win_with": 53.6,
+     "win_without": 100.0
+    }
+   ]
+  },
+  "healing": {
+   "games": 62,
+   "win": 45.2,
+   "items": [
+    {
+     "item": "ultimate_scepter_2",
+     "share": 0.129,
+     "elsewhere": 0.069,
+     "lift": 1.86,
+     "win_with": 87.5,
+     "win_without": 38.9
+    },
+    {
+     "item": "monkey_king_bar",
+     "share": 0.177,
+     "elsewhere": 0.098,
+     "lift": 1.81,
+     "win_with": 63.6,
+     "win_without": 41.2
+    },
+    {
+     "item": "great_famango",
+     "share": 0.145,
+     "elsewhere": 0.108,
+     "lift": 1.35,
+     "win_with": 33.3,
+     "win_without": 47.2
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.177,
+     "elsewhere": 0.144,
+     "lift": 1.24,
+     "win_with": 72.7,
+     "win_without": 39.2
+    },
+    {
+     "item": "skadi",
+     "share": 0.532,
+     "elsewhere": 0.469,
+     "lift": 1.14,
+     "win_with": 57.6,
+     "win_without": 31.0
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.71,
+     "elsewhere": 0.622,
+     "lift": 1.14,
+     "win_with": 40.9,
+     "win_without": 55.6
+    },
+    {
+     "item": "falcon_blade",
+     "share": 0.145,
+     "elsewhere": 0.129,
+     "lift": 1.12,
+     "win_with": 44.4,
+     "win_without": 45.3
+    },
+    {
+     "item": "greater_crit",
+     "share": 0.306,
+     "elsewhere": 0.282,
+     "lift": 1.09,
+     "win_with": 52.6,
+     "win_without": 41.9
+    },
+    {
+     "item": "butterfly",
+     "share": 0.823,
+     "elsewhere": 0.778,
+     "lift": 1.06,
+     "win_with": 47.1,
+     "win_without": 36.4
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.984,
+     "elsewhere": 0.928,
+     "lift": 1.06,
+     "win_with": 45.9,
+     "win_without": 0.0
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.468,
+     "elsewhere": 0.452,
+     "lift": 1.03,
+     "win_with": 55.2,
+     "win_without": 36.4
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.323,
+     "elsewhere": 0.323,
+     "lift": 1.0,
+     "win_with": 65.0,
+     "win_without": 35.7
+    }
+   ]
+  },
+  "escape": {
+   "games": 181,
+   "win": 46.4,
+   "items": [
+    {
+     "item": "monkey_king_bar",
+     "share": 0.149,
+     "elsewhere": 0.084,
+     "lift": 1.78,
+     "win_with": 59.3,
+     "win_without": 44.2
+    },
+    {
+     "item": "disperser",
+     "share": 0.144,
+     "elsewhere": 0.104,
+     "lift": 1.39,
+     "win_with": 61.5,
+     "win_without": 43.9
+    },
+    {
+     "item": "diffusal_blade",
+     "share": 0.193,
+     "elsewhere": 0.151,
+     "lift": 1.28,
+     "win_with": 57.1,
+     "win_without": 43.8
+    },
+    {
+     "item": "silver_edge",
+     "share": 0.116,
+     "elsewhere": 0.097,
+     "lift": 1.2,
+     "win_with": 52.4,
+     "win_without": 45.6
+    },
+    {
+     "item": "skadi",
+     "share": 0.53,
+     "elsewhere": 0.445,
+     "lift": 1.19,
+     "win_with": 54.2,
+     "win_without": 37.6
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.702,
+     "elsewhere": 0.592,
+     "lift": 1.19,
+     "win_with": 48.8,
+     "win_without": 40.7
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.155,
+     "elsewhere": 0.13,
+     "lift": 1.19,
+     "win_with": 39.3,
+     "win_without": 47.7
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.16,
+     "elsewhere": 0.14,
+     "lift": 1.14,
+     "win_with": 58.6,
+     "win_without": 44.1
+    },
+    {
+     "item": "butterfly",
+     "share": 0.845,
+     "elsewhere": 0.746,
+     "lift": 1.13,
+     "win_with": 51.6,
+     "win_without": 17.9
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.337,
+     "elsewhere": 0.314,
+     "lift": 1.07,
+     "win_with": 63.9,
+     "win_without": 37.5
+    },
+    {
+     "item": "manta",
+     "share": 0.994,
+     "elsewhere": 0.977,
+     "lift": 1.02,
+     "win_with": 46.1,
+     "win_without": 100.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.945,
+     "elsewhere": 0.93,
+     "lift": 1.02,
+     "win_with": 47.4,
+     "win_without": 30.0
+    }
+   ]
+  },
+  "break": {
+   "games": 39,
+   "win": 35.9,
+   "items": [
+    {
+     "item": "silver_edge",
+     "share": 0.436,
+     "elsewhere": 0.075,
+     "lift": 5.83,
+     "win_with": 41.2,
+     "win_without": 31.8
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.487,
+     "elsewhere": 0.109,
+     "lift": 4.48,
+     "win_with": 42.1,
+     "win_without": 30.0
+    },
+    {
+     "item": "skadi",
+     "share": 0.538,
+     "elsewhere": 0.472,
+     "lift": 1.14,
+     "win_with": 47.6,
+     "win_without": 22.2
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.667,
+     "elsewhere": 0.63,
+     "lift": 1.06,
+     "win_with": 26.9,
+     "win_without": 53.8
+    },
+    {
+     "item": "manta",
+     "share": 1.0,
+     "elsewhere": 0.982,
+     "lift": 1.02,
+     "win_with": 35.9,
+     "win_without": null
+    },
+    {
+     "item": "butterfly",
+     "share": 0.795,
+     "elsewhere": 0.782,
+     "lift": 1.02,
+     "win_with": 45.2,
+     "win_without": 0.0
+    },
+    {
+     "item": "yasha",
+     "share": 1.0,
+     "elsewhere": 0.989,
+     "lift": 1.01,
+     "win_with": 35.9,
+     "win_without": null
+    },
+    {
+     "item": "power_treads",
+     "share": 0.974,
+     "elsewhere": 0.984,
+     "lift": 0.99,
+     "win_with": 36.8,
+     "win_without": 0.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.923,
+     "elsewhere": 0.937,
+     "lift": 0.99,
+     "win_with": 38.9,
+     "win_without": 0.0
+    },
+    {
+     "item": "falcon_blade",
+     "share": 0.128,
+     "elsewhere": 0.132,
+     "lift": 0.97,
+     "win_with": 20.0,
+     "win_without": 38.2
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.103,
+     "elsewhere": 0.107,
+     "lift": 0.96,
+     "win_with": 50.0,
+     "win_without": 34.3
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.308,
+     "elsewhere": 0.324,
+     "lift": 0.95,
+     "win_with": 66.7,
+     "win_without": 22.2
+    }
+   ]
+  },
+  "jumpers": {
+   "games": 58,
+   "win": 46.6,
+   "items": [
+    {
+     "item": "hurricane_pike",
+     "share": 0.121,
+     "elsewhere": 0.066,
+     "lift": 1.82,
+     "win_with": 28.6,
+     "win_without": 49.0
+    },
+    {
+     "item": "force_staff",
+     "share": 0.121,
+     "elsewhere": 0.071,
+     "lift": 1.7,
+     "win_with": 28.6,
+     "win_without": 49.0
+    },
+    {
+     "item": "greater_crit",
+     "share": 0.379,
+     "elsewhere": 0.273,
+     "lift": 1.39,
+     "win_with": 54.5,
+     "win_without": 41.7
+    },
+    {
+     "item": "dragon_lance",
+     "share": 0.155,
+     "elsewhere": 0.118,
+     "lift": 1.31,
+     "win_with": 44.4,
+     "win_without": 46.9
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.172,
+     "elsewhere": 0.135,
+     "lift": 1.28,
+     "win_with": 50.0,
+     "win_without": 45.8
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.741,
+     "elsewhere": 0.618,
+     "lift": 1.2,
+     "win_with": 48.8,
+     "win_without": 40.0
+    },
+    {
+     "item": "silver_edge",
+     "share": 0.121,
+     "elsewhere": 0.102,
+     "lift": 1.18,
+     "win_with": 57.1,
+     "win_without": 45.1
+    },
+    {
+     "item": "great_famango",
+     "share": 0.121,
+     "elsewhere": 0.111,
+     "lift": 1.08,
+     "win_with": 57.1,
+     "win_without": 45.1
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.483,
+     "elsewhere": 0.45,
+     "lift": 1.07,
+     "win_with": 57.1,
+     "win_without": 36.7
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.155,
+     "elsewhere": 0.147,
+     "lift": 1.06,
+     "win_with": 55.6,
+     "win_without": 44.9
+    },
+    {
+     "item": "butterfly",
+     "share": 0.828,
+     "elsewhere": 0.777,
+     "lift": 1.06,
+     "win_with": 52.1,
+     "win_without": 20.0
+    },
+    {
+     "item": "manta",
+     "share": 0.983,
+     "elsewhere": 0.983,
+     "lift": 1.0,
+     "win_with": 45.6,
+     "win_without": 100.0
+    }
+   ]
+  },
+  "illusion_clearers": {
+   "games": 219,
+   "win": 49.8,
+   "items": [
+    {
+     "item": "force_staff",
+     "share": 0.1,
+     "elsewhere": 0.057,
+     "lift": 1.75,
+     "win_with": 59.1,
+     "win_without": 48.7
+    },
+    {
+     "item": "swift_blink",
+     "share": 0.1,
+     "elsewhere": 0.065,
+     "lift": 1.54,
+     "win_with": 68.2,
+     "win_without": 47.7
+    },
+    {
+     "item": "dragon_lance",
+     "share": 0.142,
+     "elsewhere": 0.107,
+     "lift": 1.32,
+     "win_with": 58.1,
+     "win_without": 48.4
+    },
+    {
+     "item": "silver_edge",
+     "share": 0.119,
+     "elsewhere": 0.092,
+     "lift": 1.29,
+     "win_with": 61.5,
+     "win_without": 48.2
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.151,
+     "elsewhere": 0.13,
+     "lift": 1.16,
+     "win_with": 57.6,
+     "win_without": 48.4
+    },
+    {
+     "item": "butterfly",
+     "share": 0.799,
+     "elsewhere": 0.77,
+     "lift": 1.04,
+     "win_with": 54.9,
+     "win_without": 29.5
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.329,
+     "elsewhere": 0.318,
+     "lift": 1.03,
+     "win_with": 58.3,
+     "win_without": 45.6
+    },
+    {
+     "item": "great_famango",
+     "share": 0.114,
+     "elsewhere": 0.111,
+     "lift": 1.03,
+     "win_with": 56.0,
+     "win_without": 49.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.945,
+     "elsewhere": 0.927,
+     "lift": 1.02,
+     "win_with": 50.7,
+     "win_without": 33.3
+    },
+    {
+     "item": "disperser",
+     "share": 0.119,
+     "elsewhere": 0.119,
+     "lift": 1.0,
+     "win_with": 57.7,
+     "win_without": 48.7
+    },
+    {
+     "item": "power_treads",
+     "share": 0.982,
+     "elsewhere": 0.985,
+     "lift": 1.0,
+     "win_with": 50.2,
+     "win_without": 25.0
+    },
+    {
+     "item": "yasha",
+     "share": 0.982,
+     "elsewhere": 0.996,
+     "lift": 0.99,
+     "win_with": 49.8,
+     "win_without": 50.0
+    }
+   ]
+  },
+  "magic_lineup": {
+   "games": 54,
+   "win": 48.1,
+   "items": [
+    {
+     "item": "ward_dispenser",
+     "share": 0.111,
+     "elsewhere": 0.045,
+     "lift": 2.49,
+     "win_with": 50.0,
+     "win_without": 47.9
+    },
+    {
+     "item": "ultimate_scepter_2",
+     "share": 0.13,
+     "elsewhere": 0.07,
+     "lift": 1.84,
+     "win_with": 42.9,
+     "win_without": 48.9
+    },
+    {
+     "item": "silver_edge",
+     "share": 0.167,
+     "elsewhere": 0.096,
+     "lift": 1.73,
+     "win_with": 55.6,
+     "win_without": 46.7
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.204,
+     "elsewhere": 0.131,
+     "lift": 1.55,
+     "win_with": 54.5,
+     "win_without": 46.5
+    },
+    {
+     "item": "maelstrom",
+     "share": 0.111,
+     "elsewhere": 0.073,
+     "lift": 1.53,
+     "win_with": 33.3,
+     "win_without": 50.0
+    },
+    {
+     "item": "disperser",
+     "share": 0.148,
+     "elsewhere": 0.115,
+     "lift": 1.29,
+     "win_with": 75.0,
+     "win_without": 43.5
+    },
+    {
+     "item": "diffusal_blade",
+     "share": 0.204,
+     "elsewhere": 0.162,
+     "lift": 1.26,
+     "win_with": 81.8,
+     "win_without": 39.5
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.37,
+     "elsewhere": 0.317,
+     "lift": 1.17,
+     "win_with": 75.0,
+     "win_without": 32.4
+    },
+    {
+     "item": "great_famango",
+     "share": 0.13,
+     "elsewhere": 0.11,
+     "lift": 1.17,
+     "win_with": 57.1,
+     "win_without": 46.8
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.667,
+     "elsewhere": 0.629,
+     "lift": 1.06,
+     "win_with": 47.2,
+     "win_without": 50.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.981,
+     "elsewhere": 0.93,
+     "lift": 1.06,
+     "win_with": 49.1,
+     "win_without": 0.0
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.111,
+     "elsewhere": 0.106,
+     "lift": 1.05,
+     "win_with": 66.7,
+     "win_without": 45.8
+    }
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "group": "illusions",
+   "games": 31,
+   "item": "mjollnir",
+   "share": 0.355,
+   "elsewhere": 0.033,
+   "lift": 10.62,
+   "win_with": 45.5,
+   "win_without": 30.0
+  },
+  {
+   "group": "break",
+   "games": 39,
+   "item": "silver_edge",
+   "share": 0.436,
+   "elsewhere": 0.075,
+   "lift": 5.83,
+   "win_with": 41.2,
+   "win_without": 31.8
+  },
+  {
+   "group": "evasion",
+   "games": 51,
+   "item": "monkey_king_bar",
+   "share": 0.275,
+   "elsewhere": 0.089,
+   "lift": 3.1,
+   "win_with": 50.0,
+   "win_without": 40.5
+  },
+  {
+   "group": "illusions",
+   "games": 31,
+   "item": "ultimate_scepter",
+   "share": 0.355,
+   "elsewhere": 0.134,
+   "lift": 2.66,
+   "win_with": 54.5,
+   "win_without": 25.0
+  }
+ ]
+}

@@ -200,3 +200,21 @@ settled with the player's answers (2026-10-18).
 
 Builds: Lifestealer takes Sange and Yasha or Manta Style, not both; Luna's
 Crystalys step is the Daedalus it is built into.
+
+## Wave 2: Anti-Mage, Medusa, Phantom Assassin, Spectre, Sven (7.41f, drafted 2026-10-19)
+
+Drafted from `--draft` and `data/heroes/item_stats/` (Anti-Mage, Medusa,
+Phantom Assassin and Spectre from 7.40 on: 7.41 alone had under 300 games of
+them); the open questions went to the player.
+
+| Hero | Rules | Suppressed generic | Tempo |
+|---|---|---|---|
+| Anti-Mage | evasion: Monkey King Bar (12% vs 5%, thin) | illusions (Battle Fury), break (Abyssal in his build, no Silver Edge bought) | his 80%: 12.0k / 16.3k / 21.6k at 20/25/30 |
+| Medusa | evasion: Monkey King Bar (28% vs 9%); illusions: Mjollnir (36% vs 3%; Maelstrom 45% vs 5%); break: Silver Edge (44% vs 8%) | — | her 75%: 12.5k at 20:00, 16.8k at 25:00 |
+| Phantom Assassin | evasion: Monkey King Bar (22% vs 7%); break: Aghanim's Scepter (Fan of Knives applies Break; 21% vs 7%, 28 games) | illusions (Battle Fury) | 85%: 17.3k at 25:00, 19.7k at 30:00 |
+| Spectre | evasion: Eye of Skadi first (56% vs 33%, 27 games), the generic Monkey King Bar after | illusions (Radiance, Dispersion) | her 80%: 10.6k / 13.9k / 17.3k (tempo items follow the usual build: 16 farmed games) |
+| Sven | evasion: Monkey King Bar (26% vs 15%, won 67% vs 38%) | illusions (Great Cleave) | 85%: 12.0k / 17.3k / 20.6k |
+
+`fight` (fight_summary.py): Phantom Assassin's Blur and Phantom Lancer's
+Doppelganger, since their ultimates are passive (a passive ultimate is never
+named).

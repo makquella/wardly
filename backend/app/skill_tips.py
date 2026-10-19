@@ -148,6 +148,8 @@ def read_skills(payload: Any) -> dict[str, Any] | None:
                 levels.setdefault(raw_name, ability_level)
         if ability.get("ultimate") is True and ultimate is None:
             ultimate = {"raw_name": str(ability.get("name") or ""), "level": ability_level}
+            if ability.get("passive") is True:
+                ultimate["passive"] = True  # Coup de Grace, Juxtapose: nothing to press
     talent_keys = [key for key in hero if str(key).startswith("talent_")]
     talents = sum(1 for key in talent_keys if hero.get(key) is True)
     attributes = _int(hero.get("attributes_level")) or 0

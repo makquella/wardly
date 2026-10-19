@@ -143,9 +143,7 @@ def test_against_illusions_butterfly_then_the_dragon_lance_into_hydras_breath():
     assert (second["key"], second["why"]) == ("hydras_breath", "illusion_splash")
     # No Maelstrom for him; other carries keep the generic counter.
     assert _tb(lineup, ["item_butterfly", "item_hydras_breath"]) is None
-    other = situational_item(
-        [], [], META, enemies=lineup, position="carry", minute=20, hero="Medusa"
-    )
+    other = situational_item([], [], META, enemies=lineup, position="carry", minute=20, hero="Ursa")
     assert other["key"] == "maelstrom"
 
 
@@ -296,10 +294,8 @@ def test_a_consumed_shard_counts_as_owned(monkeypatch):
 
 def test_other_heroes_and_other_positions_keep_the_generic_counters():
     lineup = ["Phantom Assassin", "Queen of Pain", "Lion", "Axe"]
-    medusa = situational_item(
-        [], [], META, enemies=lineup, position="carry", minute=20, hero="Medusa"
-    )
-    assert medusa["key"] == "monkey_king_bar"
+    ursa = situational_item([], [], META, enemies=lineup, position="carry", minute=20, hero="Ursa")
+    assert ursa["key"] == "monkey_king_bar"
     assert plan_for("Terrorblade", "mid") is None
     generic_mid = situational_item([], [], META, enemies=lineup, position="mid", minute=20)
     assert _tb(lineup, position="mid") == generic_mid
@@ -523,7 +519,7 @@ def test_the_first_point_and_the_talents_name_the_high_rank_choice():
 def test_other_heroes_keep_the_pro_games_skill_build():
     from app.player_api import PLAYER_SERVICE
 
-    assert PLAYER_SERVICE.skill_build("Medusa") is None  # nothing cached in the tests
+    assert PLAYER_SERVICE.skill_build("Ursa") is None  # nothing cached in the tests
 
 
 def test_a_broken_skill_plan_is_refused():
@@ -633,7 +629,7 @@ def test_wave_one_counters_come_with_the_plans_reason(hero, enemies, key, why):
 def test_wave_one_suppressed_generic_counters(hero, enemies):
     assert _carry(hero, enemies) is None
     # A hero without a plan keeps the generic counter.
-    assert _carry("Medusa", enemies) is not None
+    assert _carry("Ursa", enemies) is not None
 
 
 def test_lifestealer_takes_manta_or_sange_and_yasha_not_both():
@@ -705,7 +701,7 @@ def test_slark_against_evasion_skadi_then_silver_edge_or_bloodthorn(
         # One answer to the evasion owned: the family is done.
         assert _carry("Slark", enemies, ["item_skadi", f"item_{key}"]) is None
     # Other carries keep the generic Monkey King Bar.
-    assert _carry("Medusa", enemies)["key"] == "monkey_king_bar"
+    assert _carry("Ursa", enemies)["key"] == "monkey_king_bar"
 
 
 def test_plan_notes_name_no_item():
@@ -732,3 +728,52 @@ def test_plan_notes_name_no_item():
     assert first["hint"] == note["reason"]["en"] + "."
     assert shown(15 * 60 + 10, "uk")["hint"] == note["reason"]["uk"] + "."
     assert shown(15 * 60 + 30) is None  # once per match
+
+
+# --- wave 2: Anti-Mage, Medusa, Phantom Assassin, Spectre, Sven -----------------------
+
+
+@pytest.mark.parametrize(
+    ("hero", "enemies", "key", "why"),
+    [
+        ("Anti-Mage", ["Windranger", "Axe"], "monkey_king_bar", "evasion"),
+        ("Medusa", ["Phantom Assassin", "Axe"], "monkey_king_bar", "evasion"),
+        ("Medusa", ["Naga Siren", "Axe"], "mjollnir", "illusions_mjollnir"),
+        ("Medusa", ["Bristleback", "Axe"], "silver_edge", "break"),
+        ("Phantom Assassin", ["Windranger", "Axe"], "monkey_king_bar", "evasion"),
+        ("Phantom Assassin", ["Spectre", "Axe"], "ultimate_scepter", "break_fan_of_knives"),
+        ("Spectre", ["Phantom Assassin", "Axe"], "skadi", "evasion_skadi"),
+        ("Sven", ["Phantom Assassin", "Axe"], "monkey_king_bar", "evasion"),
+    ],
+)
+def test_wave_two_counters_come_with_the_plans_reason(hero, enemies, key, why):
+    item = _carry(hero, enemies)
+    assert (item["key"], item["why"], item["enemy"]) == (key, why, enemies[0])
+    assert item["reason"]["en"].startswith(enemies[0])
+    assert item["reason"]["uk"].startswith(enemies[0])
+
+
+@pytest.mark.parametrize(
+    ("hero", "enemies"),
+    [
+        # Battle Fury, Radiance and Great Cleave answer illusions; Abyssal for AM.
+        ("Anti-Mage", ["Naga Siren", "Axe"]),
+        ("Phantom Assassin", ["Phantom Lancer", "Axe"]),
+        ("Spectre", ["Chaos Knight", "Axe"]),
+        ("Sven", ["Naga Siren", "Axe"]),
+        ("Anti-Mage", ["Bristleback", "Axe"]),
+    ],
+)
+def test_wave_two_suppressed_generic_counters(hero, enemies):
+    assert _carry(hero, enemies) is None
+    assert _carry("Ursa", enemies) is not None
+
+
+def test_spectre_keeps_the_generic_monkey_king_bar_after_her_skadi():
+    item = _carry("Spectre", ["Windranger", "Axe"], ["item_skadi"])
+    assert (item["key"], item["why"]) == ("monkey_king_bar", "evasion")
+
+
+def test_passive_ultimates_name_an_active_fight_ability():
+    assert plan_for("Phantom Assassin", "carry")["fight"] == ["phantom_assassin_blur"]
+    assert plan_for("Phantom Lancer", "carry")["fight"] == ["phantom_lancer_doppelwalk"]

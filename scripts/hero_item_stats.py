@@ -331,7 +331,7 @@ def counters(
 
     def part_of_another(row: dict) -> bool:
         return any(
-            row["item"] in (items.get(other["item"]) or {}).get("components") or []
+            row["item"] in ((items.get(other["item"]) or {}).get("components") or [])
             for other in candidates
             if other["group"] == row["group"] and other is not row
         )
@@ -562,7 +562,11 @@ def main() -> int:
 
         heroes = sorted(set(_SUPPORTED_HERO_LOOKUP.values()))
     elif args.hero:
-        heroes = [args.hero.replace("_", " ")]
+        from app.dota_constants import hero_id_from_name
+
+        # «anti_mage» → «Anti-Mage»: the name as typed, else with spaces or hyphens.
+        typed = [args.hero, args.hero.replace("_", " "), args.hero.replace("_", "-")]
+        heroes = [next((h for h in typed if hero_id_from_name(h) is not None), typed[1])]
     else:
         parser.error("name a hero or pass --all")
     for hero in heroes:

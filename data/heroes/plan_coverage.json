@@ -2,20 +2,15 @@
   "about": "Supported heroes still without a plan in data/heroes/item_plans, by position (tests/test_hero_plans.py: every supported hero has a plan or is listed here; remove a hero when its plan lands).",
   "pending": {
     "carry": [
-      "Anti-Mage",
       "Drow Ranger",
       "Ember Spirit",
       "Gyrocopter",
       "Kez",
-      "Medusa",
       "Monkey King",
       "Morphling",
       "Muerta",
       "Naga Siren",
-      "Phantom Assassin",
       "Sniper",
-      "Spectre",
-      "Sven",
       "Ursa"
     ],
     "mid": [

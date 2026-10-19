@@ -287,3 +287,25 @@ def test_the_fight_reaches_the_overlay(client):
     hint = answer["map_hint"]
     assert hint["title"] == "Бійка біля вашої T2 на нижній лінії: союзників 3, ворогів 2"
     assert hint["hint"].startswith("ТП — готово")
+
+
+def test_a_passive_ultimate_is_marked():
+    from app.skill_tips import read_skills
+
+    payload = {
+        "hero": {"level": 6},
+        "abilities": {
+            "ability0": {"name": "phantom_assassin_blur", "level": 1, "ultimate": False},
+            "ability1": {
+                "name": "phantom_assassin_coup_de_grace",
+                "level": 1,
+                "ultimate": True,
+                "passive": True,
+            },
+        },
+    }
+    assert read_skills(payload)["ultimate"] == {
+        "raw_name": "phantom_assassin_coup_de_grace",
+        "level": 1,
+        "passive": True,
+    }

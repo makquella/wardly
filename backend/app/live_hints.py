@@ -204,7 +204,7 @@ def _fight(
     if not names:
         skills = extra.get("skills") if isinstance(extra.get("skills"), dict) else {}
         ultimate = (skills or {}).get("ultimate") or {}
-        if ultimate.get("raw_name"):
+        if ultimate.get("raw_name") and not ultimate.get("passive"):
             names = [str(ultimate["raw_name"])]
     for name in names:
         labels.setdefault(name, label(name))

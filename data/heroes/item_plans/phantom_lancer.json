@@ -168,6 +168,9 @@
     },
     "basis": "317 games: maxed phantom_lancer_spirit_lance > phantom_lancer_phantom_edge > phantom_lancer_doppelwalk 241 (win 55.2%), phantom_lancer_phantom_edge > phantom_lancer_spirit_lance > phantom_lancer_doppelwalk 34 (win 32.4%), phantom_lancer_spirit_lance > phantom_lancer_doppelwalk > phantom_lancer_phantom_edge 18 (win 38.9%); talents 10: Juxtapose Illusion Trigger Chance 284/316 (50.4%), Spirit Lance Slow Duration 32/316 (53.1%); 15: Illusion Spirit Lance Damage 219/297 (49.8%), Doppelganger Cast Range 78/297 (65.4%); 20: Juxtapose Illusion Damage Taken 139/214 (59.0%), Spirit Lance Damage 75/214 (66.7%); 25: Doppelganger Cooldown 92/95 (65.2%), Illusory Armaments Duration 3/95 (33.3%)."
   },
+  "fight": [
+    "phantom_lancer_doppelwalk"
+  ],
   "suppress": {
     "break": "Only his own attack out of Shadow Walk breaks (Valve 7.41f), his illusions do not, and 5700 gold comes off his Manta-Aghanim's-Skadi core; high-rank Phantom Lancers never bought Silver Edge against Bristleback, Spectre or Huskar."
   }

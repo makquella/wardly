@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "hero": "Sven",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "431 league games since 7.41 (data/heroes/item_stats), win 52.0%. Reproduce: python scripts/hero_item_stats.py sven.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 18, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Svens against Phantom Assassin or Windranger: 26% of 46 games against them (15% otherwise), won 67% against 38%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "mask_of_madness",
+      "name": "Mask of Madness"
+    },
+    {
+      "item": "echo_sabre",
+      "name": "Echo Sabre"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    },
+    {
+      "item": "harpoon",
+      "name": "Harpoon"
+    },
+    {
+      "item": "satanic",
+      "name": "Satanic"
+    },
+    {
+      "item": "swift_blink",
+      "name": "Swift Blink"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 25% (2), magic_wand 57% (4), power_treads 100% (6), mask_of_madness 100% (10), echo_sabre 98% (14), black_king_bar 75% (22), lesser_crit 89% (23), greater_crit 80% (26), harpoon 74% (26), satanic 42% (34), swift_blink 43% (35), aghanims_shard 33% (36).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12000
+      ],
+      [
+        25,
+        17300
+      ],
+      [
+        30,
+        20600
+      ]
+    ],
+    "items": [
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "echo_sabre",
+        "name": "Echo Sabre"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "harpoon",
+        "name": "Harpoon"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "swift_blink",
+        "name": "Swift Blink"
+      },
+      {
+        "item": "satanic",
+        "name": "Satanic"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 12500 (81 games, 85.2%), 25:00 18000 (44 games, 90.9%), 30:00 21500 (79 games, 86.1%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "sven_great_cleave",
+      "sven_storm_bolt",
+      "sven_warcry"
+    ],
+    "games": 431,
+    "first_agree": 427,
+    "opening": {
+      "name": "sven_storm_bolt",
+      "agree": 396
+    },
+    "names": {
+      "sven_great_cleave": "Great Cleave",
+      "sven_storm_bolt": "Storm Hammer",
+      "sven_warcry": "Warcry"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_sven_5",
+        "label": "Warcry Duration",
+        "picked": 266,
+        "games": 430
+      },
+      "15": {
+        "name": "special_bonus_unique_sven_3",
+        "label": "God's Strength Cooldown",
+        "picked": 250,
+        "games": 417
+      },
+      "20": {
+        "name": "special_bonus_unique_sven_7",
+        "label": "Warcry Armor",
+        "picked": 252,
+        "games": 322
+      },
+      "25": {
+        "name": "special_bonus_unique_sven_2",
+        "label": "God's Strength Damage",
+        "picked": 125,
+        "games": 167
+      }
+    },
+    "basis": "431 games: maxed sven_great_cleave > sven_storm_bolt > sven_warcry 343 (win 52.5%), sven_great_cleave > sven_warcry > sven_storm_bolt 72 (win 52.8%), sven_great_cleave > sven_storm_bolt 9 (win 22.2%); talents 10: Warcry Duration 266/430 (56.0%), God's Strength Slow Resistance 164/430 (45.1%); 15: God's Strength Cooldown 250/417 (54.4%), Great Cleave Damage 167/417 (51.5%); 20: Warcry Armor 252/322 (60.7%), Storm Hammer Cooldown and Mana Cost 70/322 (65.7%); 25: God's Strength Damage 125/167 (65.6%), Storm Hammer Stun Duration 42/167 (66.7%)."
+  },
+  "suppress": {
+    "illusions": "Great Cleave (maxed first in 343 of 431 games) hits 90% of his attack damage in a 700 cone, so illusions around the target fall with it; high-rank Svens do not buy Maelstrom against illusion heroes."
+  }
+}
