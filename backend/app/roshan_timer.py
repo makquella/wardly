@@ -13,8 +13,9 @@ Hints, in the shape of map_hints timers (kind "timer", never minor):
 - «Рошан точно живий» when the window closes;
 - «Аегіс згорить через 60 с» a minute before the player's Aegis expires;
 - «Аегіс у ворогів до 30:03» when an enemy picks it up (the pickup event names
-  the player: ids 0-4 are Radiant, 5-9 Dire; else the team that killed
-  Roshan), and a minute before it can expire. An Aegis spent on a death earlier
+  the player: ids 0-4 are Radiant, 5-9 Dire; without the id the holder stays
+  unknown, since a snatch puts it with the other team), and a minute before it
+  can expire. An Aegis spent on a death earlier
   is not seen, so the time is the latest it can last.
 Nothing is guessed: without a kill event there is no Roshan hint.
 """
@@ -114,7 +115,6 @@ class RoshanTimer:
         self.aegis_at: int | None = None  # match clock the player got the Aegis
         self._picked_up_at: int | None = None  # match clock of the last Aegis pickup event
         self.enemy_aegis_at: int | None = None  # match clock an enemy picked the Aegis up
-        self._killer_team: str | None = None  # the team of the last Roshan kill
         self._seen_without_aegis = False  # the hero was seen without it this match
         self._seen: set[tuple[str, int]] = set()
 
@@ -134,11 +134,9 @@ class RoshanTimer:
             self._seen.add((kind, at))
             if kind == "roshan_killed":
                 self.killed_at = at - offset
-                team = event.get("team")
-                self._killer_team = team if team in ("radiant", "dire") else None
             else:
                 self._picked_up_at = at - offset
-                holder = _team_of(event.get("player_id")) or self._killer_team
+                holder = _team_of(event.get("player_id"))
                 own = extra.get("team_name")
                 if holder is not None and own in ("radiant", "dire") and holder != own:
                     self.enemy_aegis_at = at - offset

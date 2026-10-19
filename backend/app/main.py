@@ -563,7 +563,7 @@ def _gold_hint_inputs(
     part = None
     if role_name != "support" and isinstance(clock, int) and clock >= 3 * 60:
         try:
-            item = PLAYER_SERVICE.next_item(hero, names, minute=state.get("minute"))
+            item = PLAYER_SERVICE.next_item(hero, names, minute=state.get("minute"), role=role_name)
             if isinstance(item, dict) and isinstance(item.get("key"), str):
                 next_item = item
                 # The quick-buy step: the part the gold already buys.
@@ -635,7 +635,12 @@ def _death_screen_for_overlay(response: dict[str, object], lang: str) -> dict[st
         return None
     carry = hero_coverage(str(state.get("hero") or "")) == "full" and not _plays_support(state)
     try:
-        return PLAYER_SERVICE.death_screen(_with_enemies(state), lang, next_item_for_hero=carry)
+        return PLAYER_SERVICE.death_screen(
+            _with_enemies(state),
+            lang,
+            next_item_for_hero=carry,
+            role=(_live_role(state) or {}).get("role"),
+        )
     except Exception as error:  # noqa: BLE001 - never breaks the live path
         record_error("death-screen", error)
         return None
@@ -1208,6 +1213,7 @@ def _with_next_item(
             enemies=enemies if isinstance(enemies, list) else None,
             minute=state.get("minute"),
             gold=state.get("gold"),
+            role=(_live_role(state) or {}).get("role"),
         )
     except Exception as error:  # noqa: BLE001 - never breaks the live path
         record_error("next-item", error)

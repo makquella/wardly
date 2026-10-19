@@ -452,6 +452,7 @@ class PlayerService:
         *,
         next_item_for_hero: bool,
         within: int = DEATH_SCREEN_WINDOW,
+        role: str | None = None,
     ) -> dict[str, Any] | None:
         """The overlay card while the player waits to respawn (death_screen.py),
         from the death just recorded and the live state."""
@@ -475,6 +476,7 @@ class PlayerService:
                 else None,
                 minute=state.get("minute"),
                 gold=state.get("gold"),
+                role=role,
             )
             if next_item_for_hero
             else None
@@ -620,15 +622,18 @@ class PlayerService:
         enemies: list[str] | None = None,
         minute: Any = None,
         gold: Any = None,
+        role: str | None = None,
     ) -> dict[str, Any] | None:
         """The next item of the hero's usual build and the gold its missing parts
         cost (app/next_item.py) for a core's live farm advice; None when unknown.
         `gold`: the gold carried, for the net worth a hero plan's tempo build
-        reads (next_item.net_worth)."""
+        reads (next_item.net_worth). `role`: the live role (live_role.py); a hero
+        plan applies only in its own position, else the hero's usual one."""
         hero_id = hero_id_from_name(hero)
         if hero_id is None or owned is None:
             return None
         meta = self._live_meta(hero_id)
+        position = role or get_hero_position(hero)
         # How this match's deaths went and the enemy heroes seen pick the item
         # first (BKB after deaths under stuns, Linken's against Primal Roar),
         # then the hero's usual build.
@@ -637,7 +642,7 @@ class PlayerService:
             owned,
             meta,
             enemies=enemies,
-            position=get_hero_position(hero),
+            position=position,
             minute=minute if isinstance(minute, int) else None,
             hero=hero,
             net_worth=net_worth(owned, gold, (meta or {}).get("constants")),
@@ -645,7 +650,7 @@ class PlayerService:
         if situational is not None:
             return situational
         # The hero plan's usual order (high-rank won games), else the popular build.
-        plan = plan_for(hero, get_hero_position(hero))
+        plan = plan_for(hero, position)
         listed = (
             next_listed_item(plan["build"], meta, owned) if plan and plan.get("build") else None
         )

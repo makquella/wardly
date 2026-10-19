@@ -133,12 +133,18 @@ def owned_items(extra: Any) -> list[str] | None:
     return owned
 
 
+# A listed item cheaper than this, missing while a later one of the list is owned,
+# was sold for the slot (Falcon Blade, Mask of Madness): it is not named again.
+EARLY_ITEM_COST = 2000
+
+
 def next_listed_item(
     entries: list[dict[str, Any]], meta: dict[str, Any] | None, owned_names: list[str] | None
 ) -> dict[str, Any] | None:
     """{key, name, cost, gold_left} of the first of `entries` ({item or key,
     name, unless: [keys]}) the player neither owns nor has built into something
-    bigger, nor answered with an `unless` item; None when unknown."""
+    bigger, nor answered with an `unless` item, nor an early one (under EARLY_ITEM_COST)
+    sold once a later entry is owned; None when unknown."""
     if not meta or owned_names is None:
         return None
     constants = meta.get("constants") or {}
@@ -148,17 +154,26 @@ def next_listed_item(
         return None
     owned = [item_key(name) for name in owned_names]
     known = constants.get("items") or {}
-    for entry in entries:
-        key = entry.get("item") or entry.get("key")
+
+    def has(key: str) -> bool:
+        return key in owned or any(_contains(have, key, constants) for have in owned)
+
+    keys = [e.get("item") or e.get("key") for e in entries]
+    for index, entry in enumerate(entries):
+        key = keys[index]
         if not isinstance(key, str):
             continue
-        if key in owned or any(_contains(have, key, constants) for have in owned):
+        if has(key):
             continue
         if any(other in owned for other in entry.get("unless") or []):
             continue
         cost = _cost(key, constants)
         if cost <= 0:
             continue
+        if cost < EARLY_ITEM_COST and any(
+            isinstance(later, str) and has(later) for later in keys[index + 1 :]
+        ):
+            continue  # an early item sold for a slot once later ones are bought
         return {
             "key": key,
             "name": item_name(key, constants) if key in known else entry.get("name") or key,

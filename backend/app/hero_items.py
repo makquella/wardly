@@ -348,9 +348,16 @@ def hero_rows(plan: dict[str, Any], enemies: list[str], minute: int | None) -> l
     return rows
 
 
+# A one-point curve has no slope: its line holds only this many minutes after
+# the point, then the tempo threshold is unknown (a 16.8k Sniper at minute 50
+# is not ahead).
+SINGLE_POINT_MINUTES = 2
+
+
 def tempo_threshold(plan: dict[str, Any], minute: int | None) -> int | None:
     """The plan's tempo net worth for `minute`: linear between the curve's
-    points, the last segment's slope after them; None before the first point."""
+    points, the last segment's slope after them; None before the first point,
+    and with a single point None after SINGLE_POINT_MINUTES."""
     tempo = plan.get("tempo")
     if not tempo or not isinstance(minute, int):
         return None
@@ -361,7 +368,7 @@ def tempo_threshold(plan: dict[str, Any], minute: int | None) -> int | None:
         if m0 <= minute <= m1:
             return round(g0 + (g1 - g0) * (minute - m0) / (m1 - m0))
     if len(points) == 1:
-        return points[0][1]
+        return points[0][1] if minute <= points[0][0] + SINGLE_POINT_MINUTES else None
     (m0, g0), (m1, g1) = points[-2], points[-1]
     return round(g1 + (g1 - g0) * (minute - m1) / (m1 - m0))
 

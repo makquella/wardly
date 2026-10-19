@@ -88,8 +88,12 @@ def visible_enemy_heroes(
     names: list[str] = []
     for unit in minimap.values():
         name = _enemy_hero(unit, own, normalize)
-        if name and name not in names:
-            names.append(name)
+        if not name or name in names:
+            continue
+        x, y = _coordinate(unit.get("xpos")), _coordinate(unit.get("ypos"))
+        if x == 0 and y == 0:  # an icon not placed on the map yet: says nothing
+            continue
+        names.append(name)
     return names
 
 

@@ -43,6 +43,24 @@ def test_the_minimap_shows_the_enemy_heroes_the_team_can_see():
     assert visible_enemy_heroes(minimap, "radiant", _normalize_hero_name) == ["Beastmaster"]
     assert visible_enemy_heroes(minimap, None, _normalize_hero_name) is None  # team unknown
     assert visible_enemy_heroes(None, "radiant", _normalize_hero_name) is None  # no block
+    # An enemy icon at (0, 0) is not placed on the map yet: not remembered.
+    unplaced = _minimap(
+        {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_axe",
+            "team": 3,
+            "xpos": 0,
+            "ypos": 0,
+        },
+        {
+            "image": "minimap_enemyicon",
+            "unitname": "npc_dota_hero_lion",
+            "team": 3,
+            "xpos": 1200,
+            "ypos": -300,
+        },
+    )
+    assert visible_enemy_heroes(unplaced, "radiant", _normalize_hero_name) == ["Lion"]
     seen = EnemyHeroes()
     seen.observe(["Beastmaster"])
     seen.observe(["Lion", "Beastmaster", 3])

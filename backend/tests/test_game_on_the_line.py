@@ -75,10 +75,9 @@ def test_an_enemy_pickup_names_the_latest_the_aegis_can_last():
         # The picker's id names the team: 0-4 Radiant, 5-9 Dire.
         ([_pickup(1500, player_id=7)], False),
         ([_pickup(1500, player_id=2)], True),
-        # No id: the team that killed Roshan (a snatch can fool it; nothing better).
+        # No id: unknown, even after the enemy's Roshan kill (a snatch moves it).
         ([_kill(1500, "dire"), _pickup(1500)], False),
-        ([_kill(1500, "radiant"), _pickup(1500)], True),
-        # Neither: nothing is claimed.
+        ([_kill(1500, "radiant"), _pickup(1500)], False),
         ([_pickup(1500)], False),
     ],
 )

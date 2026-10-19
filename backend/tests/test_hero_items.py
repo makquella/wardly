@@ -435,6 +435,9 @@ def test_his_usual_build_comes_from_high_rank_won_games(monkeypatch):
     lineup = ["Phantom Assassin", "Lion", "Axe", "Crystal Maiden"]
     counter = PLAYER_SERVICE.next_item("Terrorblade", [], enemies=lineup, minute=20, gold=0)
     assert counter["why"] == "evasion"
+    # Played mid, the carry plan does not apply (the live role picks the plan).
+    mid = PLAYER_SERVICE.next_item("Terrorblade", [], enemies=lineup, minute=20, gold=0, role="mid")
+    assert mid is None or mid.get("why") not in ("evasion", "evasion_escape")
 
 
 def test_a_broken_build_is_refused():
@@ -912,9 +915,16 @@ def test_sniper_takes_hydras_breath_or_hurricane_pike_and_keeps_the_30_minute_li
     owned = ["item_power_treads", "item_mask_of_madness", "item_mjollnir"]
     assert next_listed_item(build, meta, owned)["key"] == "hurricane_pike"
     assert next_listed_item(build, meta, [*owned, "item_hydras_breath"])["key"] == "greater_crit"
-    # 25:00 rested on 12 games and sat above 30:00: one point, flat after it.
+    # 25:00 rested on 12 games and sat above 30:00: one point.
     assert plan["tempo"]["net_worth"] == [[30, 16800]]
-    assert [tempo_threshold(plan, m) for m in (29, 30, 35)] == [None, 16800, 16800]
+    # No slope from one point: the line holds two minutes, then it is unknown.
+    assert [tempo_threshold(plan, m) for m in (29, 30, 32, 33, 50)] == [
+        None,
+        16800,
+        16800,
+        None,
+        None,
+    ]
 
 
 def test_wave_three_fight_abilities_and_skills():
@@ -988,3 +998,18 @@ def test_lifestealer_names_rage_and_thin_tempo_points_are_left_out():
     assert plan_for("Spectre", "carry")["tempo"]["net_worth"][0][0] == 25
     # Windranger too: Marksmanship, no Monkey King Bar.
     assert _carry("Drow Ranger", ["Windranger", "Axe"]) is None
+
+
+def test_an_early_item_sold_for_a_slot_is_not_named_again():
+    from app.next_item import next_listed_item
+
+    build = plan_for("Terrorblade", "carry")["build"]
+    items = {e["item"]: {"name": e["name"], "cost": 4000, "components": []} for e in build}
+    items["falcon_blade"]["cost"] = 1125
+    items["power_treads"]["cost"] = 1400
+    meta = {"constants": {"items": items, "by_id": {}}, "popularity": {}}
+    # Early on, Falcon Blade is next.
+    assert next_listed_item(build, meta, ["item_power_treads"])["key"] == "falcon_blade"
+    # Sold later for a slot (Manta and Skadi owned): the build goes on.
+    late = ["item_manta", "item_aghanims_shard", "item_dragon_lance", "item_skadi"]
+    assert next_listed_item(build, meta, late)["key"] == "hurricane_pike"
