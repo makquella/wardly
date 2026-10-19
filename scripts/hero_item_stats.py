@@ -55,6 +55,9 @@ PAUSE = 2  # seconds between Explorer queries (a shared free service)
 # OpenDota lane_role of a hero's usual position; supports are not filtered.
 LANE_ROLE = {"carry": 1, "mid": 2, "offlane": 3}
 MIN_LINE_GAMES = 10
+# A draft plan's tempo curve keeps the points of this many games or more (a thinner
+# point stays in the stats file, not in the plan).
+PLAN_POINT_GAMES = 20
 BUILD_SHARE = 0.2
 CANDIDATE_LIFT = 2.0
 CANDIDATE_MIN_GAMES = 20
@@ -468,7 +471,7 @@ def draft(stats: dict[str, Any]) -> dict[str, Any]:
         )
         + ".",
     }
-    line = stats["tempo_line"]
+    line = {m: r for m, r in stats["tempo_line"].items() if r["games"] >= PLAN_POINT_GAMES}
     if line:
         plan["tempo"] = {
             "net_worth": [
@@ -479,9 +482,10 @@ def draft(stats: dict[str, Any]) -> dict[str, Any]:
             "basis": "Gold lines where the hero wins "
             f"{stats['tempo_win_target']}%+: "
             + ", ".join(
-                f"{m}:00 {r['gold']} ({r['games']} games, {r['win']}%)" for m, r in line.items()
+                f"{m}:00 {r['gold']} ({r['games']} games, {r['win']}%)"
+                for m, r in stats["tempo_line"].items()
             )
-            + "; net worth ~0.96 of that gold.",
+            + f"; net worth ~0.96 of that gold; points under {PLAN_POINT_GAMES} games left out.",
             "reason": {"en": "", "uk": ""},
         }
     if top and opening:

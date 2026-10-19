@@ -10,7 +10,7 @@
     "games": "480 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 44.6%. Reproduce: python scripts/hero_item_stats.py medusa.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Mjollnir, Eye of Skadi, Aghanim's Scepter.",
     "hero": "Valve /datafeed/herodata hero_id 94, 7.41f.",
-    "player": "Player review, 2026-10-19: against illusions Maelstrom, then Mjollnir, and Aghanim's Scepter; Mana Shield instead of BKB."
+    "player": "Player review, 2026-10-19: against illusions Maelstrom, then Mjollnir, and Aghanim's Scepter; Mana Shield instead of BKB. Eye of Skadi against heavy healing (it is in the build)."
   },
   "rules": [
     {
@@ -82,6 +82,20 @@
         "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
       },
       "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Medusas against Bristleback, Spectre or Huskar: 44% of 39 games against them (8% otherwise), won 41% against 32%."
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in the build (64% of the won games, ~28 min); high-rank Medusas against heavy healers: 53% of 62 games against them (47% otherwise), won 58% against 31%. The player review: Skadi against healing for every carry who has it in the build."
     }
   ],
   "build": [

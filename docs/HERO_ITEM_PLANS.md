@@ -256,3 +256,27 @@ the levels of paired abilities, so a pair counts as one: Kazurai Katana/Shodo
 Sai, then Echo Slash/Falcon Rush, then Grappling Claw/Talon Toss in 33 of 34;
 the order names the Katana stance's abilities and the in-game names show both
 («Kazurai Katana / Shodo Sai»); in the Sai stance the skill tip waits.
+
+## Carry audit (2026-10-19)
+
+All 20 carry plans run against ten typical drafts (evasion, illusions, healing,
+break, magic, jumpers, invisibility, escape) at 20:00 and 30:00, with the
+generic counters still applying checked against each hero's high-rank games.
+Settled with the player:
+
+- Heavy healing (Huskar, Alchemist, Necrophos, Oracle, Lifestealer…): Eye of
+  Skadi from 20:00 for every carry with it in the build (Anti-Mage, Medusa,
+  Monkey King, Naga Siren, Phantom Lancer, Slark, Spectre, Terrorblade).
+- Naga Siren and Spectre: no generic BKB for a magic lineup (not in their
+  builds; Naga won 33% with it), Spectre no generic Silver Edge; BKB still
+  comes after two deaths under stuns.
+- Lifestealer's fight card names Rage instead of Infest.
+- Tempo points resting on under 20 games are left out (`PLAN_POINT_GAMES` in
+  `scripts/hero_item_stats.py`, also for new drafts): Drow Ranger, Gyrocopter
+  and Spectre from 25:00 or 30:00, Luna from 30:00.
+- Kept as they are: no Monkey King Bar for Drow against Windranger either;
+  Sniper's tempo build keeps Silver Edge and Monkey King Bar.
+
+Open: jumpers, invisibility and escape heroes get no item for most carries (the
+high-rank games barely change items there); a carry hero played mid gets the
+generic counters until the mid wave.

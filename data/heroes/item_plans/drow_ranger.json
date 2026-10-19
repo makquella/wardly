@@ -74,10 +74,6 @@
   "tempo": {
     "net_worth": [
       [
-        20,
-        12500
-      ],
-      [
         25,
         15400
       ],
@@ -120,7 +116,7 @@
         "name": "Daedalus"
       }
     ],
-    "basis": "Gold lines where the hero wins 85.0%+: 20:00 13000 (16 games, 93.8%), 25:00 16000 (74 games, 87.8%), 30:00 20500 (65 games, 86.2%); net worth ~0.96 of that gold.",
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 13000 (16 games, 93.8%), 25:00 16000 (74 games, 87.8%), 30:00 20500 (65 games, 86.2%); net worth ~0.96 of that gold. The 20:00 point rests on under 20 games, so it is left out (PLAN_POINT_GAMES).",
     "reason": {
       "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
       "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
@@ -128,7 +124,7 @@
   },
   "suppress": {
     "illusions": "Valve 7.41f Multishot: 3 waves of 4 arrows in a 50° cone, each applying Frost Arrows, so the illusions in front of her are hit together. High-rank Drow Ranger players do not buy Maelstrom against illusion heroes (62 games: it is not among the items they buy more often there).",
-    "evasion": "Valve 7.41f Marksmanship: 30/35/40% of her attacks proc, and «Marksmanship procs have true strike». High-rank Drows against Phantom Assassin or Windranger: Monkey King Bar not among the 12 items bought more often in 81 games against them. The player review: the ultimate pierces the misses, no Monkey King Bar."
+    "evasion": "Valve 7.41f Marksmanship: 30/35/40% of her attacks proc, and «Marksmanship procs have true strike». High-rank Drows against Phantom Assassin or Windranger: Monkey King Bar not among the 12 items bought more often in 81 games against them. The player review: the ultimate pierces the misses, no Monkey King Bar. The player review: no Monkey King Bar against Windranger either (Windrun: 100% evasion from physical attacks for 3-6 s)."
   },
   "skills": {
     "order": [

@@ -9,7 +9,8 @@
   "sources": {
     "games": "288 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 54.9%. Reproduce: python scripts/hero_item_stats.py naga_siren.",
     "items": "Valve /datafeed/itemdata, 7.41f: Bloodthorn, Orchid Malevolence, Silver Edge.",
-    "hero": "Valve /datafeed/herodata hero_id 89, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 89, 7.41f.",
+    "player": "Player review, 2026-10-19: Eye of Skadi against heavy healing (it is in the build). no Black King Bar for a magic lineup alone (audit)."
   },
   "rules": [
     {
@@ -25,6 +26,20 @@
         "uk": "{enemy} ухиляється від атак: заглушіть ціль через {item} — 5 секунд ваші атаки й атаки ваших ілюзій по ній не промахуються"
       },
       "basis": "Valve 7.41f Bloodthorn, Soul Rend: silences for 5 s and gives True Strike to your attacks and your controlled units' attacks on the silenced target; Pierce: 40% of attacks pierce evasion. It is in her build (Orchid at ~17 min); Monkey King Bar works on her attacks only, not on her illusions'. High-rank Nagas against Phantom Assassin or Windranger: 55% of 29 games against them (52% otherwise), won 69% against 38%."
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in the build (34% of the won games, ~30 min); high-rank Nagas against heavy healers: 21% of 33 games against them (27% otherwise), won 57% against 54%. The player review: Skadi against healing for every carry who has it in the build."
     }
   ],
   "build": [
@@ -114,7 +129,8 @@
     }
   },
   "suppress": {
-    "illusions": "Mirror Image gives her 3 illusions and Rip Tide (Valve 7.41f) hits every enemy within 300 with her and her illusions' attacks. High-rank Naga Siren players do not buy Maelstrom against illusion heroes (22 games: it is not among the items they buy more often there)."
+    "illusions": "Mirror Image gives her 3 illusions and Rip Tide (Valve 7.41f) hits every enemy within 300 with her and her illusions' attacks. High-rank Naga Siren players do not buy Maelstrom against illusion heroes (22 games: it is not among the items they buy more often there).",
+    "magic": "Black King Bar is not in her build; high-rank Nagas against 3+ magic damage heroes: 14% of 22 games against them (13% otherwise), won 33% against 58%. BKB still comes after two deaths under stuns (situational_items.py)."
   },
   "skills": {
     "order": [

@@ -9,7 +9,8 @@
   "sources": {
     "games": "317 league games since 7.41 (data/heroes/item_stats), win 50.5%. Reproduce: python scripts/hero_item_stats.py phantom_lancer.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Bloodthorn, Butterfly, Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 12, 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 12, 7.41f.",
+    "player": "Player review, 2026-10-19: Eye of Skadi against heavy healing (it is in the build)."
   },
   "rules": [
     {
@@ -39,6 +40,20 @@
         "en": "{enemy} fights with illusions: with the 35% evasion of {item} about a third of their attacks miss you",
         "uk": "{enemy} б'ється ілюзіями: з 35 % ухилення від {item} приблизно третина їхніх атак по вас промахується"
       }
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in the build (66% of the won games, ~29 min); high-rank Phantom Lancers against heavy healers: 51% of 55 games against them (54% otherwise), won 64% against 37%. The player review: Skadi against healing for every carry who has it in the build."
     }
   ],
   "build": [

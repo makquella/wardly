@@ -10,7 +10,7 @@
     "games": "370 league games since 7.41 (data/heroes/item_stats), win 50.0%. Reproduce: python scripts/hero_item_stats.py slark.",
     "items": "Valve /datafeed/itemdata, 7.41f: Eye of Skadi, Bloodthorn, Silver Edge, Monkey King Bar.",
     "hero": "Valve /datafeed/herodata hero_id 93 (Essence Shift, Shadow Dance), 44 (Phantom Assassin: Immaterial is her passive evasion) and 21 (Windranger: Windrun is cast), 7.41f.",
-    "player": "Player review, 2026-10-18: against evasion Eye of Skadi first for the bulk, then Silver Edge or Bloodthorn by the enemy draft (Monkey King Bar is much cheaper but answers less, e.g. Windranger); against illusions no item: find the real hero, stack Essence Shift, call the team; his own 80% tempo line."
+    "player": "Player review, 2026-10-18: against evasion Eye of Skadi first for the bulk, then Silver Edge or Bloodthorn by the enemy draft (Monkey King Bar is much cheaper but answers less, e.g. Windranger); against illusions no item: find the real hero, stack Essence Shift, call the team; his own 80% tempo line. Eye of Skadi against heavy healing (it is in the build)."
   },
   "rules": [
     {
@@ -83,6 +83,20 @@
         "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
       },
       "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. Shadow Blade is in his build (35%, ~23 min): against Bristleback, Spectre or Huskar finish it into Silver Edge, 36% of 44 games against them (12% otherwise), won 75% against 50%."
+    },
+    {
+      "id": "healing",
+      "why": "healing",
+      "family": "healing",
+      "item": "skadi",
+      "name": "Eye of Skadi",
+      "enemy": "healing",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} halves their health restoration, so keep it in the build",
+        "uk": "{enemy} багато лікується: ваш {item} удвічі ріже відновлення здоров'я, тож не пропускайте його"
+      },
+      "basis": "Valve 7.41f Eye of Skadi: attacks cut health restoration by 50% for 3 s (+35 all attributes, the slow). It is in the build (25% of the won games, ~35 min); high-rank Slarks against heavy healers: not among the 12 items bought more often in 50 games against them. The player review: Skadi against healing for every carry who has it in the build."
     }
   ],
   "build": [

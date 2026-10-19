@@ -658,7 +658,8 @@ def test_juggernaut_tempo_line_is_straight_from_20_to_30():
 def test_luna_and_slark_take_their_own_80_percent_tempo_line():
     # No 85% line in their high-rank games: the hero's own 80% one (player review).
     luna, slark = plan_for("Luna", "carry"), plan_for("Slark", "carry")
-    assert [tempo_threshold(luna, m) for m in (24, 25, 30)] == [None, 19700, 22100]
+    # Luna's 25:00 point rested on 15 games: from 30:00 only (PLAN_POINT_GAMES).
+    assert [tempo_threshold(luna, m) for m in (25, 29, 30)] == [None, None, 22100]
     assert [tempo_threshold(slark, m) for m in (20, 30)] == [11000, 16300]
     item = situational_item(
         [],
@@ -957,3 +958,33 @@ def test_monkey_king_names_battle_fury_against_illusions_as_a_note():
     note = plan_note(mk, ["Phantom Lancer"], 12)
     assert "Battle Fury" in note["reason"]["en"] and "Battle Fury" in note["reason"]["uk"]
     assert _carry("Monkey King", ["Phantom Lancer", "Axe"]) is None  # no item pushed
+
+
+# --- the carry audit (2026-10-19) ------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "hero", ["Spectre", "Monkey King", "Phantom Lancer", "Medusa", "Slark", "Naga Siren"]
+)
+def test_carries_with_skadi_in_the_build_take_it_against_heavy_healing(hero):
+    item = _carry(hero, ["Alchemist", "Crystal Maiden", "Axe"])
+    assert (item["key"], item["why"], item["enemy"]) == ("skadi", "healing", "Alchemist")
+    assert item["reason"]["uk"].startswith("Alchemist багато лікується")
+    assert _carry(hero, ["Alchemist", "Crystal Maiden", "Axe"], ["item_skadi"]) is None
+    assert _carry("Wraith King", ["Alchemist", "Crystal Maiden", "Axe"]) is None
+
+
+def test_naga_and_spectre_get_no_generic_bkb_or_silver_edge():
+    for hero in ("Naga Siren", "Spectre"):
+        assert _carry(hero, MAGIC_LINEUP) is None
+    assert _carry("Spectre", ["Bristleback", "Axe"]) is None
+    assert _carry("Wraith King", MAGIC_LINEUP)["key"] == "black_king_bar"
+
+
+def test_lifestealer_names_rage_and_thin_tempo_points_are_left_out():
+    assert plan_for("Lifestealer", "carry")["fight"] == ["life_stealer_rage"]
+    assert plan_for("Gyrocopter", "carry")["tempo"]["net_worth"] == [[30, 19700]]
+    assert plan_for("Drow Ranger", "carry")["tempo"]["net_worth"][0][0] == 25
+    assert plan_for("Spectre", "carry")["tempo"]["net_worth"][0][0] == 25
+    # Windranger too: Marksmanship, no Monkey King Bar.
+    assert _carry("Drow Ranger", ["Windranger", "Axe"]) is None
