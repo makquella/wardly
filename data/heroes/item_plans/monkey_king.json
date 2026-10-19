@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "hero": "Monkey King",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "530 league games since 7.41 (data/heroes/item_stats), win 55.3%. Reproduce: python scripts/hero_item_stats.py monkey_king.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Maelstrom, Mjollnir.",
+    "hero": "Valve /datafeed/herodata hero_id 114, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Monkey King players against Phantom Assassin or Windranger: 33% of 39 games against them (9% otherwise), won 77% against 46%."
+    },
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Monkey King players against Bristleback, Spectre or Huskar: 31% of 68 games against them (7% otherwise), won 67% against 45%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "echo_sabre",
+      "name": "Echo Sabre"
+    },
+    {
+      "item": "desolator",
+      "name": "Desolator"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "harpoon",
+      "name": "Harpoon"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: wraith_band 42% (2), magic_wand 87% (4), power_treads 94% (6), pers 36% (10), mage_slayer 20% (13), echo_sabre 57% (13), desolator 71% (18), great_famango 22% (21), yasha 28% (21), black_king_bar 68% (25), harpoon 42% (27), aghanims_shard 58% (27), skadi 32% (33), butterfly 22% (38).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        10600
+      ],
+      [
+        25,
+        14400
+      ],
+      [
+        30,
+        17800
+      ]
+    ],
+    "items": [
+      {
+        "item": "echo_sabre",
+        "name": "Echo Sabre"
+      },
+      {
+        "item": "desolator",
+        "name": "Desolator"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "harpoon",
+        "name": "Harpoon"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 11000 (75 games, 85.3%), 25:00 15000 (74 games, 86.5%), 30:00 18500 (85 games, 87.1%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "suppress": {
+    "illusions": "Wukong's Command soldiers (Valve 7.41f: 14 s, they attack heroes only) and Jingu Mastery carry his fights. High-rank Monkey Kings against illusion heroes: Maelstrom 17% of 47 games against them (5% otherwise), won 25% against 56%; Mjollnir 15% of 47 games against them (4% otherwise), won 14% against 58%, so it is not advised for him."
+  },
+  "skills": {
+    "order": [
+      "monkey_king_tree_dance",
+      "monkey_king_boundless_strike",
+      "monkey_king_jingu_mastery"
+    ],
+    "games": 530,
+    "first_agree": 357,
+    "opening": {
+      "name": "monkey_king_boundless_strike",
+      "agree": 461
+    },
+    "names": {
+      "monkey_king_tree_dance": "Tree Dance",
+      "monkey_king_boundless_strike": "Boundless Strike",
+      "monkey_king_jingu_mastery": "Jingu Mastery"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_monkey_king_7",
+        "label": "Tree Dance Cast Range",
+        "picked": 435,
+        "games": 529
+      },
+      "15": {
+        "name": "special_bonus_unique_monkey_king_2",
+        "label": "Jingu Mastery Damage",
+        "picked": 488,
+        "games": 500
+      },
+      "20": {
+        "name": "special_bonus_unique_monkey_king_10",
+        "label": "Boundless Strike Critical Damage",
+        "picked": 338,
+        "games": 366
+      },
+      "25": {
+        "name": "special_bonus_unique_monkey_king_6",
+        "label": "Additional Wukong's Command Ring",
+        "picked": 170,
+        "games": 177
+      }
+    },
+    "basis": "530 games: maxed monkey_king_tree_dance > monkey_king_boundless_strike > monkey_king_jingu_mastery 291 (win 56.4%), monkey_king_jingu_mastery > monkey_king_boundless_strike > monkey_king_tree_dance 102 (win 52.9%), monkey_king_tree_dance > monkey_king_jingu_mastery > monkey_king_boundless_strike 66 (win 50.0%); talents 10: Tree Dance Cast Range 435/529 (56.3%), Boundless Strike Stun Duration 94/529 (51.1%); 15: Jingu Mastery Damage 488/500 (57.2%), 0 Cooldown Primal Spring 12/500 (50.0%); 20: Boundless Strike Critical Damage 338/366 (62.7%), Jingu Mastery Undispellable 28/366 (67.9%); 25: Additional Wukong's Command Ring 170/177 (66.5%), Jingu Mastery Required Hits 7/177 (57.1%)."
+  }
+}

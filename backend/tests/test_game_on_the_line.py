@@ -278,7 +278,7 @@ LINEUP = ["Shadow Shaman", "Tidehunter", "Pudge", "Clinkz", "Techies"]
 
 def _after(deaths, enemies=LINEUP):
     return situational_item(
-        deaths, [], META, enemies=enemies, position="carry", minute=28, hero="Ursa"
+        deaths, [], META, enemies=enemies, position="carry", minute=28, hero="Wraith King"
     )
 
 

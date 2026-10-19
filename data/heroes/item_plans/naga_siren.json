@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "hero": "Naga Siren",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.40",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "288 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 54.9%. Reproduce: python scripts/hero_item_stats.py naga_siren.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Bloodthorn, Orchid Malevolence, Silver Edge.",
+    "hero": "Valve /datafeed/herodata hero_id 89, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion_bloodthorn",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "minute": 22,
+      "reason": {
+        "en": "{enemy} dodges attacks: silence them with {item}, for 5 seconds your attacks and your illusions' attacks on them never miss",
+        "uk": "{enemy} ухиляється від атак: заглушіть ціль через {item} — 5 секунд ваші атаки й атаки ваших ілюзій по ній не промахуються"
+      },
+      "basis": "Valve 7.41f Bloodthorn, Soul Rend: silences for 5 s and gives True Strike to your attacks and your controlled units' attacks on the silenced target; Pierce: 40% of attacks pierce evasion. It is in her build (Orchid at ~17 min); Monkey King Bar works on her attacks only, not on her illusions'. High-rank Nagas against Phantom Assassin or Windranger: 55% of 29 games against them (52% otherwise), won 69% against 38%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "orchid",
+      "name": "Orchid Malevolence"
+    },
+    {
+      "item": "heart",
+      "name": "Heart of Tarrasque"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "bloodthorn",
+      "name": "Bloodthorn"
+    },
+    {
+      "item": "skadi",
+      "name": "Eye of Skadi"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: wraith_band 56% (2), magic_wand 41% (4), power_treads 87% (6), yasha 87% (11), manta 87% (14), oblivion_staff 82% (16), orchid 82% (18), heart 67% (24), butterfly 56% (28), bloodthorn 59% (28), skadi 34% (30), aghanims_shard 33% (36).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12500
+      ],
+      [
+        25,
+        17300
+      ],
+      [
+        30,
+        22600
+      ]
+    ],
+    "items": [
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "orchid",
+        "name": "Orchid Malevolence"
+      },
+      {
+        "item": "heart",
+        "name": "Heart of Tarrasque"
+      },
+      {
+        "item": "bloodthorn",
+        "name": "Bloodthorn"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 13000 (51 games, 86.3%), 25:00 18000 (54 games, 85.2%), 30:00 23500 (50 games, 86.0%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "suppress": {
+    "illusions": "Mirror Image gives her 3 illusions and Rip Tide (Valve 7.41f) hits every enemy within 300 with her and her illusions' attacks. High-rank Naga Siren players do not buy Maelstrom against illusion heroes (22 games: it is not among the items they buy more often there)."
+  },
+  "skills": {
+    "order": [
+      "naga_siren_mirror_image",
+      "naga_siren_rip_tide",
+      "naga_siren_ensnare"
+    ],
+    "games": 288,
+    "first_agree": 237,
+    "opening": {
+      "name": "naga_siren_mirror_image",
+      "agree": 274
+    },
+    "names": {
+      "naga_siren_mirror_image": "Mirror Image",
+      "naga_siren_rip_tide": "Rip Tide",
+      "naga_siren_ensnare": "Ensnare"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_naga_siren_2",
+        "label": "Rip Tide Damage",
+        "picked": 280,
+        "games": 286
+      },
+      "15": {
+        "name": "special_bonus_unique_naga_siren_4",
+        "label": "Mirror Image Damage",
+        "picked": 156,
+        "games": 254
+      },
+      "20": {
+        "name": "special_bonus_unique_naga_siren",
+        "label": "Mirror Image Illusion",
+        "picked": 146,
+        "games": 156
+      },
+      "25": {
+        "name": "special_bonus_unique_naga_siren_6",
+        "label": "Mirror Image Cooldown",
+        "picked": 39,
+        "games": 45
+      }
+    },
+    "basis": "288 games: maxed naga_siren_mirror_image > naga_siren_rip_tide > naga_siren_ensnare 230 (win 57.8%), naga_siren_deluge > naga_siren_mirror_image > naga_siren_ensnare 25 (win 60.0%), naga_siren_deluge > naga_siren_mirror_image 11 (win 18.2%); talents 10: Rip Tide Damage 280/286 (55.7%), Reel In Pull Speed 6/286 (33.3%); 15: Mirror Image Damage 156/254 (62.2%), Mirror Image Illusion Damage Taken 98/254 (55.1%); 20: Mirror Image Illusion 146/156 (69.9%), Song of the Siren Cooldown 10/156 (80.0%); 25: Mirror Image Cooldown 39/45 (79.5%), +25 Agility 6/45 (83.3%)."
+  }
+}

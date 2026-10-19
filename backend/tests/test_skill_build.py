@@ -184,13 +184,13 @@ def test_the_service_fetches_once_and_reads_the_cache(monkeypatch):
 
     # A hero without an item plan (data/heroes/item_plans): the pro games.
     monkeypatch.setattr(service, "client", _Client())
-    assert service.skill_build("Ursa") is None  # nothing cached yet: fetched
+    assert service.skill_build("Wraith King") is None  # nothing cached yet: fetched
     service.jobs.run_pending(until=float("inf"))
-    assert calls == [70]
+    assert calls == [42]
     service._plans.clear()
-    assert service.skill_build("Ursa")["order"] == [FURY, DANCE, WARD]
+    assert service.skill_build("Wraith King")["order"] == [FURY, DANCE, WARD]
     service.jobs.run_pending(until=float("inf"))
-    assert calls == [70]  # fresh: not fetched again
+    assert calls == [42]  # fresh: not fetched again
     assert service.skill_build("Not A Hero") is None
 
 

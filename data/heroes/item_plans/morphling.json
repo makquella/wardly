@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "hero": "Morphling",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.40",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "741 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 47.8%. Reproduce: python scripts/hero_item_stats.py morphling.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Daedalus.",
+    "hero": "Valve /datafeed/herodata hero_id 10, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Morphling players against Phantom Assassin or Windranger: 19% of 64 games against them (3% otherwise), won 67% against 42%."
+    },
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Morphling players against Bristleback, Spectre or Huskar: 17% of 47 games against them (3% otherwise), won 62% against 54%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "vladmir",
+      "name": "Vladmir's Offering"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "dragon_lance",
+      "name": "Dragon Lance"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 95% (-2), power_treads 100% (6), ring_of_basilius 89% (8), buckler 88% (9), vladmir 88% (10), yasha 98% (14), manta 98% (18), dragon_lance 38% (21), butterfly 76% (25), black_king_bar 43% (30), skadi 24% (30), lesser_crit 29% (31), greater_crit 24% (34), aghanims_shard 21% (35).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        15800
+      ],
+      [
+        30,
+        19700
+      ]
+    ],
+    "items": [
+      {
+        "item": "vladmir",
+        "name": "Vladmir's Offering"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "dragon_lance",
+        "name": "Dragon Lance"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "skadi",
+        "name": "Eye of Skadi"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 25:00 16500 (78 games, 88.5%), 30:00 20500 (93 games, 86.0%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "suppress": {
+    "illusions": "Morphling turns agility into his attack and Adaptive Strike; Manta Style is in his build. High-rank Morphling players do not buy Maelstrom against illusion heroes (49 games: it is not among the items they buy more often there)."
+  },
+  "skills": {
+    "order": [
+      "morphling_waveform",
+      "morphling_morph_agi",
+      "morphling_adaptive_strike_agi"
+    ],
+    "games": 741,
+    "first_agree": 680,
+    "opening": {
+      "name": "morphling_morph_agi",
+      "agree": 713
+    },
+    "names": {
+      "morphling_waveform": "Waveform",
+      "morphling_morph_agi": "Attribute Shift (Agility Gain)",
+      "morphling_adaptive_strike_agi": "Adaptive Strike"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_morphling_8",
+        "label": "Morph Duration",
+        "picked": 403,
+        "games": 740
+      },
+      "15": {
+        "name": "special_bonus_unique_morphling_1",
+        "label": "Waveform Range",
+        "picked": 633,
+        "games": 680
+      },
+      "20": {
+        "name": "special_bonus_agility_15",
+        "label": "+15 Agility",
+        "picked": 434,
+        "games": 451
+      },
+      "25": {
+        "name": "special_bonus_unique_morphling_waveform_cooldown",
+        "label": "Waveform Cooldown",
+        "picked": 32,
+        "games": 37
+      }
+    },
+    "basis": "741 games: maxed morphling_waveform > morphling_morph_agi > morphling_adaptive_strike_agi 176 (win 63.1%), morphling_waveform > morphling_adaptive_strike_agi > morphling_morph_agi 164 (win 53.0%), morphling_waveform > morphling_adaptive_strike_agi 142 (win 52.1%); talents 10: Morph Duration 403/740 (47.9%), +15% Magic Resistance 337/740 (47.8%); 15: Waveform Range 633/680 (52.4%), +75 Attack Range 47/680 (44.7%); 20: +15 Agility 434/451 (62.2%), Adaptive Strike Cooldown 17/451 (64.7%); 25: Waveform Cooldown 32/37 (84.4%), +35 Strength 5/37 (60.0%)."
+  }
+}

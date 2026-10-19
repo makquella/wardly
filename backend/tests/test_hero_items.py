@@ -143,7 +143,9 @@ def test_against_illusions_butterfly_then_the_dragon_lance_into_hydras_breath():
     assert (second["key"], second["why"]) == ("hydras_breath", "illusion_splash")
     # No Maelstrom for him; other carries keep the generic counter.
     assert _tb(lineup, ["item_butterfly", "item_hydras_breath"]) is None
-    other = situational_item([], [], META, enemies=lineup, position="carry", minute=20, hero="Ursa")
+    other = situational_item(
+        [], [], META, enemies=lineup, position="carry", minute=20, hero="Wraith King"
+    )
     assert other["key"] == "maelstrom"
 
 
@@ -294,8 +296,10 @@ def test_a_consumed_shard_counts_as_owned(monkeypatch):
 
 def test_other_heroes_and_other_positions_keep_the_generic_counters():
     lineup = ["Phantom Assassin", "Queen of Pain", "Lion", "Axe"]
-    ursa = situational_item([], [], META, enemies=lineup, position="carry", minute=20, hero="Ursa")
-    assert ursa["key"] == "monkey_king_bar"
+    generic = situational_item(
+        [], [], META, enemies=lineup, position="carry", minute=20, hero="Wraith King"
+    )
+    assert generic["key"] == "monkey_king_bar"
     assert plan_for("Terrorblade", "mid") is None
     generic_mid = situational_item([], [], META, enemies=lineup, position="mid", minute=20)
     assert _tb(lineup, position="mid") == generic_mid
@@ -519,7 +523,7 @@ def test_the_first_point_and_the_talents_name_the_high_rank_choice():
 def test_other_heroes_keep_the_pro_games_skill_build():
     from app.player_api import PLAYER_SERVICE
 
-    assert PLAYER_SERVICE.skill_build("Ursa") is None  # nothing cached in the tests
+    assert PLAYER_SERVICE.skill_build("Wraith King") is None  # nothing cached in the tests
 
 
 def test_a_broken_skill_plan_is_refused():
@@ -629,7 +633,7 @@ def test_wave_one_counters_come_with_the_plans_reason(hero, enemies, key, why):
 def test_wave_one_suppressed_generic_counters(hero, enemies):
     assert _carry(hero, enemies) is None
     # A hero without a plan keeps the generic counter.
-    assert _carry("Ursa", enemies) is not None
+    assert _carry("Wraith King", enemies) is not None
 
 
 def test_lifestealer_takes_manta_or_sange_and_yasha_not_both():
@@ -701,7 +705,7 @@ def test_slark_against_evasion_skadi_then_silver_edge_or_bloodthorn(
         # One answer to the evasion owned: the family is done.
         assert _carry("Slark", enemies, ["item_skadi", f"item_{key}"]) is None
     # Other carries keep the generic Monkey King Bar.
-    assert _carry("Ursa", enemies)["key"] == "monkey_king_bar"
+    assert _carry("Wraith King", enemies)["key"] == "monkey_king_bar"
 
 
 def test_plan_notes_name_no_item():
@@ -772,7 +776,7 @@ def test_wave_two_counters_come_with_the_plans_reason(hero, enemies, key, why):
 )
 def test_wave_two_suppressed_generic_counters(hero, enemies):
     assert _carry(hero, enemies) is None
-    assert _carry("Ursa", enemies) is not None
+    assert _carry("Wraith King", enemies) is not None
 
 
 def test_spectre_keeps_the_generic_monkey_king_bar_after_her_skadi():
@@ -840,3 +844,84 @@ def test_phantom_assassin_names_nullifier_and_maxes_the_dagger_first():
     skills = plan_skills(plan_for("Phantom Assassin", "carry"))
     assert skills["order"][0] == "phantom_assassin_stifling_dagger"
     assert skills["first_agree"] == 219
+
+
+# --- wave 3: Drow Ranger, Gyrocopter, Kez, Monkey King, Morphling, Muerta, Naga Siren,
+# Sniper, Ursa -----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("hero", "enemies", "key", "why", "minute"),
+    [
+        ("Drow Ranger", ["Bristleback", "Axe"], "silver_edge", "break", 20),
+        ("Gyrocopter", ["Windranger", "Axe"], "monkey_king_bar", "evasion", 20),
+        ("Gyrocopter", ["Huskar", "Axe"], "silver_edge", "break", 20),
+        ("Kez", ["Phantom Assassin", "Axe"], "monkey_king_bar", "evasion", 20),
+        ("Monkey King", ["Spectre", "Axe"], "silver_edge", "break", 20),
+        ("Morphling", ["Windranger", "Axe"], "monkey_king_bar", "evasion", 20),
+        ("Muerta", ["Bristleback", "Axe"], "silver_edge", "break", 20),
+        ("Naga Siren", ["Phantom Assassin", "Axe"], "bloodthorn", "evasion_bloodthorn", 22),
+        ("Sniper", ["Phantom Lancer", "Axe"], "hydras_breath", "illusion_splash", 20),
+        ("Ursa", ["Phantom Assassin", "Axe"], "monkey_king_bar", "evasion", 15),
+    ],
+)
+def test_wave_three_counters_come_with_the_plans_reason(hero, enemies, key, why, minute):
+    item = _carry(hero, enemies, minute=minute)
+    assert (item["key"], item["why"], item["enemy"]) == (key, why, enemies[0])
+    assert item["reason"]["en"].startswith(enemies[0])
+    assert item["reason"]["uk"].startswith(enemies[0])
+
+
+@pytest.mark.parametrize(
+    ("hero", "enemies"),
+    [
+        # Multishot, Flak Cannon, Echo Slash, Rip Tide, Battle Fury: no Maelstrom.
+        ("Drow Ranger", ["Naga Siren", "Axe"]),
+        ("Gyrocopter", ["Phantom Lancer", "Axe"]),
+        ("Kez", ["Naga Siren", "Axe"]),
+        ("Monkey King", ["Phantom Lancer", "Axe"]),
+        ("Morphling", ["Naga Siren", "Axe"]),
+        ("Naga Siren", ["Phantom Lancer", "Axe"]),
+        ("Ursa", ["Chaos Knight", "Axe"]),
+        # Abyssal Blade for Ursa; Kez's high-rank games skip Silver Edge.
+        ("Ursa", ["Bristleback", "Axe"]),
+        ("Kez", ["Huskar", "Axe"]),
+    ],
+)
+def test_wave_three_suppressed_generic_counters(hero, enemies):
+    assert _carry(hero, enemies) is None
+    assert _carry("Wraith King", enemies) is not None
+
+
+def test_naga_answers_evasion_once_with_bloodthorn():
+    lineup = ["Phantom Assassin", "Axe"]
+    assert _carry("Naga Siren", lineup, ["item_bloodthorn"], minute=22) is None
+    assert _carry("Wraith King", lineup, ["item_bloodthorn"])["key"] == "monkey_king_bar"
+
+
+def test_sniper_takes_hydras_breath_or_hurricane_pike_and_keeps_the_30_minute_line():
+    from app.next_item import next_listed_item
+
+    plan = plan_for("Sniper", "carry")
+    build = plan["build"]
+    items = {e["item"]: {"name": e["name"], "cost": 4000, "components": []} for e in build}
+    items["mjollnir"]["components"] = ["maelstrom"]
+    meta = {"constants": {"items": items, "by_id": {}}, "popularity": {}}
+    owned = ["item_power_treads", "item_mask_of_madness", "item_mjollnir"]
+    assert next_listed_item(build, meta, owned)["key"] == "hurricane_pike"
+    assert next_listed_item(build, meta, [*owned, "item_hydras_breath"])["key"] == "greater_crit"
+    # 25:00 rested on 12 games and sat above 30:00: one point, flat after it.
+    assert plan["tempo"]["net_worth"] == [[30, 16800]]
+    assert [tempo_threshold(plan, m) for m in (29, 30, 35)] == [None, 16800, 16800]
+
+
+def test_wave_three_fight_abilities_and_skills():
+    # Marksmanship is passive: Gust is the fight ability Drow keeps ready.
+    assert plan_for("Drow Ranger", "carry")["fight"] == ["drow_ranger_wave_of_silence"]
+    # Kez's stances share skill points: no skill order from the high-rank games.
+    assert plan_skills(plan_for("Kez", "carry")) is None
+    assert plan_skills(plan_for("Ursa", "carry"))["order"][0] == "ursa_fury_swipes"
+    # Crystalys goes on into Daedalus in the build.
+    for hero in ("Drow Ranger", "Morphling"):
+        build = [e["item"] for e in plan_for(hero, "carry")["build"]]
+        assert "greater_crit" in build and "lesser_crit" not in build

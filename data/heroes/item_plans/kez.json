@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "hero": "Kez",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "666 league games since 7.41 (data/heroes/item_stats), win 54.1%. Reproduce: python scripts/hero_item_stats.py kez.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Desolator, Mage Slayer.",
+    "hero": "Valve /datafeed/herodata hero_id 145, 7.41f.",
+    "skills": "Kez switches between two weapon stances that share his skill points, so a skill order cannot be read from the high-rank games (scripts/hero_item_stats.py: no ability is maxed first)."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Kez players against Phantom Assassin or Windranger: 36% of 89 games against them (10% otherwise), won 59% against 42%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "mage_slayer",
+      "name": "Mage Slayer"
+    },
+    {
+      "item": "desolator",
+      "name": "Desolator"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    },
+    {
+      "item": "satanic",
+      "name": "Satanic"
+    },
+    {
+      "item": "swift_blink",
+      "name": "Swift Blink"
+    },
+    {
+      "item": "ultimate_scepter_2",
+      "name": "Aghanim's Blessing"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 90% (2), power_treads 98% (6), pers 88% (10), mage_slayer 83% (12), yasha 36% (17), great_famango 22% (17), desolator 82% (17), manta 32% (20), black_king_bar 72% (24), ultimate_scepter 79% (26), lesser_crit 35% (31), butterfly 28% (31), greater_crit 29% (33), satanic 27% (38), swift_blink 26% (40), ultimate_scepter_2 27% (42).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        11000
+      ],
+      [
+        25,
+        14900
+      ],
+      [
+        30,
+        18700
+      ]
+    ],
+    "items": [
+      {
+        "item": "mage_slayer",
+        "name": "Mage Slayer"
+      },
+      {
+        "item": "desolator",
+        "name": "Desolator"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "lesser_crit",
+        "name": "Crystalys"
+      },
+      {
+        "item": "satanic",
+        "name": "Satanic"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 11500 (139 games, 89.2%), 25:00 15500 (154 games, 88.3%), 30:00 19500 (155 games, 85.2%); net worth ~0.96 of that gold.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "suppress": {
+    "illusions": "Valve 7.41f Echo Slash: an 800 line attacks every enemy in it twice. High-rank Kez players do not buy Maelstrom against illusion heroes (55 games: it is not among the items they buy more often there).",
+    "break": "High-rank Kez players rarely buy Silver Edge against Bristleback, Spectre or Huskar: 11% of 36 games against them (2% otherwise), won 0% against 53% (a thin sample); Desolator and Mage Slayer are in his build."
+  }
+}

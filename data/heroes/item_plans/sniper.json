@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "hero": "Sniper",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.40",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "290 league games since 7.40 (7.41 alone had under 300) (data/heroes/item_stats), win 59.3%. Reproduce: python scripts/hero_item_stats.py sniper.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge, Hydra's Breath, Hurricane Pike.",
+    "hero": "Valve /datafeed/herodata hero_id 35, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Sniper players against Phantom Assassin or Windranger: 29% of 24 games against them (5% otherwise), won 57% against 41%."
+    },
+    {
+      "id": "break",
+      "why": "break",
+      "family": "break",
+      "item": "silver_edge",
+      "name": "Silver Edge",
+      "enemy": "break",
+      "minute": 18,
+      "reason": {
+        "en": "{enemy} relies on {spell}: the hit out of the invisibility of {item} turns it off for 5 seconds",
+        "uk": "{enemy} тримається на здатності {spell}: удар із невидимості {item} вимикає її на 5 секунд"
+      },
+      "basis": "Valve 7.41f: Shadow Walk, the attack that ends the invisibility disables the target's passive abilities for 5 s, +300 physical damage and caps its movement speed at 200. High-rank Sniper players against Bristleback, Spectre or Huskar: 33% of 24 games against them (7% otherwise), won 75% against 44%."
+    },
+    {
+      "id": "illusion_splash",
+      "why": "illusion_splash",
+      "family": "lance",
+      "item": "hydras_breath",
+      "name": "Hydra's Breath",
+      "enemy": "illusions",
+      "minute": 20,
+      "reason": {
+        "en": "{enemy} fights with illusions: upgrade your Dragon Lance into {item}, not Hurricane Pike; 30% of your attacks also hit up to 3 more enemies and poison them",
+        "uk": "{enemy} б'ється ілюзіями: Dragon Lance збирайте в {item}, а не в Hurricane Pike; 30 % атак б'ють ще до 3 ворогів поруч і отруюють їх"
+      },
+      "basis": "Valve 7.41f Hydra's Breath (Dragon Lance + Specialist's Array + Orb of Venom): 30% of ranged attacks also fire at up to 3 nearby enemies, and Miasma poisons each one hit for 2.5% of max HP per second. High-rank Snipers against illusion heroes: 34% of 38 games against them (16% otherwise), won 85% against 72%."
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "mask_of_madness",
+      "name": "Mask of Madness"
+    },
+    {
+      "item": "maelstrom",
+      "name": "Maelstrom"
+    },
+    {
+      "item": "mjollnir",
+      "name": "Mjollnir"
+    },
+    {
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike",
+      "unless": [
+        "hydras_breath"
+      ]
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: wraith_band 84% (2), magic_wand 48% (3), power_treads 98% (6), mask_of_madness 49% (12), maelstrom 79% (14), dragon_lance 87% (18), specialists_array 22% (19), mjollnir 72% (20), force_staff 42% (23), hydras_breath 21% (23), hurricane_pike 40% (24), aghanims_shard 23% (25), lesser_crit 53% (26), greater_crit 26% (29).",
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        16800
+      ]
+    ],
+    "items": [
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "mjollnir",
+        "name": "Mjollnir"
+      },
+      {
+        "item": "hurricane_pike",
+        "name": "Hurricane Pike",
+        "unless": [
+          "hydras_breath"
+        ]
+      },
+      {
+        "item": "silver_edge",
+        "name": "Silver Edge"
+      },
+      {
+        "item": "monkey_king_bar",
+        "name": "Monkey King Bar"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 25:00 18000 (12 games, 91.7%), 30:00 17500 (56 games, 85.7%); net worth ~0.96 of that gold. The 25:00 line rests on 12 games and lies above the 30:00 one, so only 30:00 is used.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "sniper_shrapnel",
+      "sniper_headshot",
+      "sniper_take_aim"
+    ],
+    "games": 290,
+    "first_agree": 151,
+    "opening": {
+      "name": "sniper_headshot",
+      "agree": 147
+    },
+    "names": {
+      "sniper_shrapnel": "Shrapnel",
+      "sniper_headshot": "Headshot",
+      "sniper_take_aim": "Take Aim"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_sniper_headshot_damage",
+        "label": "Headshot Damage",
+        "picked": 263,
+        "games": 290
+      },
+      "15": {
+        "name": "special_bonus_unique_sniper_6",
+        "label": "Attack Speed During Take Aim",
+        "picked": 158,
+        "games": 254
+      },
+      "20": {
+        "name": "special_bonus_unique_sniper_4",
+        "label": "Take Aim Duration",
+        "picked": 103,
+        "games": 115
+      },
+      "25": {
+        "name": "special_bonus_unique_sniper_3",
+        "label": "Max Headshot Knockback Distance",
+        "picked": 9,
+        "games": 13
+      }
+    },
+    "basis": "290 games: maxed sniper_shrapnel > sniper_headshot > sniper_take_aim 136 (win 58.1%), sniper_headshot > sniper_take_aim > sniper_shrapnel 61 (win 63.9%), sniper_headshot > sniper_shrapnel > sniper_take_aim 43 (win 69.8%); talents 10: Headshot Damage 263/290 (59.3%), Take Aim Passive Attack Range 27/290 (59.3%); 15: Attack Speed During Take Aim 158/254 (63.3%), Assassinate Damage 96/254 (63.5%); 20: Take Aim Duration 103/115 (73.8%), Shrapnel Damage 12/115 (58.3%); 25: Max Headshot Knockback Distance 9/13 (88.9%), Shrapnel Charge Restore Time 4/13 (75.0%)."
+  }
+}

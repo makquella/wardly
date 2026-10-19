@@ -193,12 +193,12 @@ def test_a_hero_with_nothing_cached_gets_its_build_fetched(client, tmp_path):
     fake = _synced(client, tmp_path)
     fake.calls.clear()
     # A hero without an item plan (data/heroes/item_plans): nothing cached, nothing said.
-    assert PLAYER_SERVICE.next_item("Ursa", []) is None
+    assert PLAYER_SERVICE.next_item("Wraith King", []) is None
     PLAYER_SERVICE.jobs.run_pending(until=float("inf"))
-    assert "popularity:70" in fake.calls and "timings:70" in fake.calls
+    assert "popularity:42" in fake.calls and "timings:42" in fake.calls
     # Asked once a minute at most, not on every poll.
     fake.calls.clear()
-    PLAYER_SERVICE.next_item("Ursa", [])
+    PLAYER_SERVICE.next_item("Wraith King", [])
     PLAYER_SERVICE.jobs.run_pending(until=float("inf"))
     assert fake.calls == []
 

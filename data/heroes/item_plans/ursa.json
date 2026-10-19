@@ -1,0 +1,169 @@
+{
+  "schema": 1,
+  "hero": "Ursa",
+  "positions": [
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-19",
+  "sources": {
+    "games": "660 league games since 7.41 (data/heroes/item_stats), win 44.8%. Reproduce: python scripts/hero_item_stats.py ursa.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Abyssal Blade, Battle Fury.",
+    "hero": "Valve /datafeed/herodata hero_id 70, 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 15,
+      "reason": {
+        "en": "{enemy} dodges attacks: with {item} most of your attacks go through the evasion",
+        "uk": "{enemy} ухиляється від атак: з {item} більшість ваших атак пробиває ухилення"
+      },
+      "basis": "Monkey King Bar pierces evasion on 80% of attacks, nothing to cast. High-rank Ursa players against Phantom Assassin or Windranger: 34% of 55 games against them (20% otherwise), won 63% against 31%."
+    }
+  ],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "bfury",
+      "name": "Battle Fury"
+    },
+    {
+      "item": "basher",
+      "name": "Skull Basher"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "abyssal_blade",
+      "name": "Abyssal Blade"
+    },
+    {
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar"
+    },
+    {
+      "item": "swift_blink",
+      "name": "Swift Blink"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 84% (4), phase_boots 76% (6), power_treads 24% (6), pers 97% (10), bfury 99% (14), basher 93% (22), black_king_bar 63% (25), aghanims_shard 63% (27), ultimate_scepter 29% (30), sange 61% (31), abyssal_blade 56% (33), monkey_king_bar 27% (33), swift_blink 30% (40).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        15400
+      ],
+      [
+        30,
+        19700
+      ]
+    ],
+    "items": [
+      {
+        "item": "bfury",
+        "name": "Battle Fury"
+      },
+      {
+        "item": "basher",
+        "name": "Skull Basher"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "abyssal_blade",
+        "name": "Abyssal Blade"
+      },
+      {
+        "item": "monkey_king_bar",
+        "name": "Monkey King Bar"
+      },
+      {
+        "item": "swift_blink",
+        "name": "Swift Blink"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 80.0%+: 25:00 16000 (102 games, 80.4%), 30:00 20500 (53 games, 84.9%); net worth ~0.96 of that gold. No 85% line for this hero (two of the three minutes needed): the hero's own 80% line (scripts/hero_item_stats.py WIN_TARGETS).",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "suppress": {
+    "illusions": "Battle Fury (in his build) cleaves the illusions around his target. High-rank Ursa players do not buy Maelstrom against illusion heroes (50 games: it is not among the items they buy more often there).",
+    "break": "Abyssal Blade is in his build; high-rank Ursas against Bristleback, Spectre or Huskar: Silver Edge not among the 12 items bought more often in 34 games against them, Abyssal Blade 50% of 34 games against them (38% otherwise), won 71% against 35%."
+  },
+  "skills": {
+    "order": [
+      "ursa_fury_swipes",
+      "ursa_overpower",
+      "ursa_earthshock"
+    ],
+    "games": 660,
+    "first_agree": 570,
+    "opening": {
+      "name": "ursa_fury_swipes",
+      "agree": 481
+    },
+    "names": {
+      "ursa_fury_swipes": "Fury Swipes",
+      "ursa_overpower": "Overpower",
+      "ursa_earthshock": "Earthshock"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_ursa_4",
+        "label": "Fury Swipes Reset Time",
+        "picked": 514,
+        "games": 660
+      },
+      "15": {
+        "name": "special_bonus_unique_ursa_8",
+        "label": "Enrage Status Resistance",
+        "picked": 466,
+        "games": 630
+      },
+      "20": {
+        "name": "special_bonus_unique_ursa",
+        "label": "Fury Swipes Damage",
+        "picked": 409,
+        "games": 447
+      },
+      "25": {
+        "name": "special_bonus_unique_ursa_7",
+        "label": "Overpower Attacks",
+        "picked": 182,
+        "games": 202
+      }
+    },
+    "basis": "660 games: maxed ursa_fury_swipes > ursa_overpower > ursa_earthshock 555 (win 45.2%), ursa_overpower > ursa_fury_swipes > ursa_earthshock 86 (win 52.3%), ursa_fury_swipes > ursa_overpower 15 (win 0.0%); talents 10: Fury Swipes Reset Time 514/660 (44.6%), +1.75 Mana Regen 146/660 (45.9%); 15: Enrage Status Resistance 466/630 (48.1%), Maul Health As Damage 164/630 (43.3%); 20: Fury Swipes Damage 409/447 (53.5%), Earthshock Radius 38/447 (57.9%); 25: Overpower Attacks 182/202 (68.7%), Earthshock has Charges 20/202 (45.0%)."
+  }
+}

@@ -223,3 +223,28 @@ when moving to the jungle early.
 `fight` (fight_summary.py): Phantom Assassin's Blur and Phantom Lancer's
 Doppelganger, since their ultimates are passive (a passive ultimate is never
 named).
+
+## Wave 3: Drow Ranger, Gyrocopter, Kez, Monkey King, Morphling, Muerta, Naga Siren, Sniper, Ursa (7.41f, 2026-10-19)
+
+From `--draft` and `data/heroes/item_stats/` (Morphling, Naga Siren and Sniper
+from 7.40 on: 7.41 alone had under 300 games of them). Drafts with the default
+rules below; the open points go to the player. Ember Spirit stays pending: 52
+high-rank games as a carry (mostly played mid).
+
+| Hero | Rules | Suppressed generic | Tempo |
+|---|---|---|---|
+| Drow Ranger | break: Silver Edge (52% vs 25%, won 71% vs 48%; Shadow Blade in her build) | illusions (Multishot: 12 arrows in a cone, no Maelstrom in her games) | 85%: 12.5k / 15.4k / 19.7k |
+| Gyrocopter | evasion: Monkey King Bar (33% vs 6%); break: Silver Edge (30% vs 2%, won 90% vs 35%) | illusions (Flak Cannon hits every enemy within 1250) | his 80%: 12.0k at 20:00, 19.7k at 30:00 |
+| Kez | evasion: Monkey King Bar (36% vs 10%, won 59% vs 42%) | illusions (Echo Slash), break (Silver Edge 11% of 36 games, none won) | 85%: 11.0k / 14.9k / 18.7k |
+| Monkey King | evasion: Monkey King Bar (33% vs 9%, won 77% vs 46%); break: Silver Edge (31% vs 7%) | illusions (Maelstrom 17%, won 25%; Mjollnir 15%, won 14%) | 85%: 10.6k / 14.4k / 17.8k |
+| Morphling | evasion: Monkey King Bar (19% vs 3%); break: Silver Edge (17% vs 3%) | illusions (no Maelstrom in his games) | 85%: 15.8k at 25:00, 19.7k at 30:00 |
+| Muerta | evasion: Monkey King Bar (29% vs 6%); break: Silver Edge (61% vs 37%, in her build) | — (Maelstrom → Mjollnir is her build) | 85%: 16.3k at 25:00, 19.2k at 30:00 |
+| Naga Siren | evasion: Bloodthorn from 22:00 (True Strike for her illusions on the silenced target; in her build) | illusions (Mirror Image, Rip Tide) | 85%: 12.5k / 17.3k / 22.6k |
+| Sniper | evasion: Monkey King Bar (29% vs 5%); break: Silver Edge (33% vs 7%); illusions: Hydra's Breath instead of Hurricane Pike (34% vs 16%) | — | 85%: 16.8k at 30:00 only (the 25:00 point had 12 games and lay above it) |
+| Ursa | evasion: Monkey King Bar from 15:00, earlier than in his build (34% vs 20%, won 63% vs 31%) | illusions (Battle Fury), break (Abyssal Blade in his build) | his 80%: 15.4k at 25:00, 19.7k at 30:00 |
+
+Builds: Drow's Yasha and Monkey King's Perseverance and Yasha are components
+of later items; Drow's and Morphling's Crystalys step is the Daedalus it is
+built into. Kez has no skill build: his two stances share the skill points, so
+no ability is maxed first in the high-rank games. `fight`: Drow Ranger's Gust,
+since Marksmanship is passive.
