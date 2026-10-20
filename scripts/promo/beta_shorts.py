@@ -144,7 +144,7 @@ def package(language: str, video: dict[str, Any]) -> dict[str, Any]:
         copy = {**copy, **release_metadata(language)}
         topic = f"release-0.57-carries-{language}"
     publish_at = None
-    if video.get("creative") in {"carry-beta-recruit", "carry-decisive-moments"}:
+    if video.get("creative") in {"carry-match-review", "carry-decisive-moments"}:
         from . import carry_beta
 
         copy = {**copy, **carry_beta.metadata(video["creative"], language)}

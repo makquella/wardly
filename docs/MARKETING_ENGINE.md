@@ -160,15 +160,17 @@ descriptions (`release_carry.metadata`) link the release news post.
 
 ### Scheduled carry-beta pairs
 
-`beta_campaign=carry-beta` and `beta_campaign=carry-moments` build two more
+`beta_campaign=carry-review` and `beta_campaign=carry-moments` build two more
 pairs with the same engine and layout (`scripts/promo/carry_beta.py`, creatives
-`carry-beta-recruit` and `carry-decisive-moments`, revisions 8 and 9): the call
-for carry players under 4K MMR (20 carry plans, three matches, the review's
-advice marks; every step on `site/beta.html`) and the cards for the moments that
-decide a game (enemy Aegis, a fight at your tower, buyback on the death screen).
-The cards' words come from the app's own texts (`roshan_timer`, `map_hints`,
-`death_screen`, `match-texts.js`); `carry_beta.verify()` fails the build when they
-or the beta page's three matches change.
+`carry-match-review` and `carry-decisive-moments`, revisions 8 and 9): the
+review after a match (a 0–100 score the result does not change, last hits by
+10:00 against the other carry of the match, one thing to fix next game) and the
+cards for the moments that decide a game (enemy Aegis, a fight at your tower,
+buyback on the death screen). Neither repeats the recruitment or 0.57 pairs; the
+descriptions invite carry players under 4K MMR to the beta page. The screens'
+words come from the app's own texts (`post_match_analysis._grade`,
+`analysis_texts`, `roshan_timer`, `map_hints`, `death_screen`, `match-texts.js`);
+`carry_beta.verify()` fails the build when they change.
 
 Each pair carries a YouTube time (`carry_beta.PUBLISH_AT`, 17:00 Kyiv on 21 and
 22 October). `beta_campaign=shorts` registers it as `youtube_publish_at`; the

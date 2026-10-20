@@ -1,13 +1,15 @@
 """Two scheduled Shorts pairs (Ukrainian, English) for the carry beta.
 
-- `carry-beta-recruit`: carry players under 4K MMR, the 20 carry plans, three
-  matches and the advice marks; every step is on site/beta.html.
+- `carry-match-review`: the review after a match (a score from 0 to 100 that
+  the result does not change, the last hits against the other carry of the
+  match, one thing to fix next game).
 - `carry-decisive-moments`: the cards for the moments that decide a game
   (enemy Aegis, a fight at your tower, buyback on the death screen).
 
 Built by the beta engine (beta.build, `--creative`) like the 0.57 release pair,
 on its layout (release_carry.css/js). The cards' words come from the app's own
-texts (roshan_timer, map_hints, death_screen, match-texts.js), so the video
+texts (post_match_analysis, analysis_texts, roshan_timer, map_hints,
+death_screen, match-texts.js), so the video
 and the app say the same thing. Each pair has a publish time (PUBLISH_AT): the
 Shorts button registers it with the Worker, and YouTube publishes the video
 itself at that time (services/api/src/social.js, private until then).
@@ -27,36 +29,38 @@ from zoneinfo import ZoneInfo
 from . import beta_scenes as base
 from . import release_carry
 
-RECRUIT = "carry-beta-recruit"
+REVIEW = "carry-match-review"
 MOMENTS = "carry-decisive-moments"
-CREATIVES = (RECRUIT, MOMENTS)
-REVISION = {RECRUIT: 8, MOMENTS: 9}
+CREATIVES = (REVIEW, MOMENTS)
+REVISION = {REVIEW: 8, MOMENTS: 9}
 # 17:00 in Kyiv (EEST, UTC+3 until 25 October).
-PUBLISH_AT = {RECRUIT: "2026-10-21T14:00:00Z", MOMENTS: "2026-10-22T14:00:00Z"}
+PUBLISH_AT = {REVIEW: "2026-10-21T14:00:00Z", MOMENTS: "2026-10-22T14:00:00Z"}
 HEROES = {
-    RECRUIT: ("juggernaut", "luna", "phantom_assassin"),
+    REVIEW: ("antimage",),
     MOMENTS: ("sven", "phantom_assassin"),
 }
 BACKEND = base.SITE.parent / "backend"
 RENDERER = base.SITE.parent / "frontend" / "launcher" / "renderer"
 
 PHRASES = {
-    RECRUIT: {
+    REVIEW: {
         "uk": [
-            "Граєш керрі|до чотирьох тисяч MMR?",
-            "Допоможи перевірити|Wardly.",
-            "У двадцяти керрі|свій план:|предмети проти драфту,|збірка й прокачка.",
-            "Зіграй три матчі|і познач поради:|корисно чи ні.",
+            "Програв|і не знаєш чому?",
+            "Після матчу Wardly|ставить оцінку|від нуля до ста.",
+            "Перемога чи поразка|на неї не впливає.",
+            "Порівнює тебе|з іншим керрі матчу:|добивання до десятої хвилини.",
+            "І дає одне головне|на наступну гру.",
             "Безкоштовно для Windows.",
-            "Усі кроки|за посиланням в описі.",
+            "Посилання в описі.",
         ],
         "en": [
-            "Play carry|under four thousand MMR?",
-            "Help us test|Wardly.",
-            "Twenty carries|have their own plan:|items against the draft,|builds and skills.",
-            "Play three matches|and mark the advice:|useful or not.",
+            "Lost|and not sure why?",
+            "After the match,|Wardly gives a score|from zero to a hundred.",
+            "Winning or losing|does not change it.",
+            "It compares you|with the other carry:|last hits by minute ten.",
+            "And gives you one thing|to fix next game.",
             "Free for Windows.",
-            "Every step|is in the description.",
+            "Link in the description.",
         ],
     },
     MOMENTS: {
@@ -81,7 +85,7 @@ PHRASES = {
     },
 }
 EMPHASIS = {
-    RECRUIT: "wardly|керрі|carry|двадцяти|twenty|три|three|windows|описі|description",
+    REVIEW: "wardly|оцінку|score|ста|hundred|впливає|change|керрі|carry|головне|thing|windows",
     MOMENTS: "wardly|рошана|roshan|аегіс|aegis|телепорт|teleport|байбек|buyback|тобою|yours|windows",
 }
 
@@ -103,6 +107,9 @@ FIGHT = {
     "has_tp": True,
 }
 DEATH = {"respawn": 42, "cost": 1650, "gold": 1120}
+# The example review: a C (62), a lost last-hit race against the other carry.
+SCORE = 62
+PEER = {"lh10": 31, "peer_lh10": 44, "heroes": "Phantom Assassin"}
 
 
 def kyiv(at: str) -> str:
@@ -138,15 +145,26 @@ def cards(language: str) -> dict[str, tuple[str, str]]:
     }
 
 
-def marks(language: str) -> tuple[str, ...]:
-    """The review's advice marks, from the launcher texts."""
-    text = (RENDERER / "match-texts.js").read_text(encoding="utf-8")
-    words = {
-        "uk": ("Корисно", "Не до речі", "Повторювалося"),
-        "en": ("Useful", "Not to the point", "Repeated"),
+def review(language: str) -> dict[str, tuple[str, ...]]:
+    """The review screens of the match-review video, as the app words them."""
+    _backend()
+    from app.analysis_texts import FINDINGS, PEER_ROLES
+    from app.post_match_analysis import _grade
+
+    texts = (RENDERER / "match-texts.js").read_text(encoding="utf-8")
+    labels = {
+        "uk": ("Оцінка", "Головне на наступну гру", "можна програти з 80 і виграти з 30"),
+        "en": ("Score", "Focus for the next game", "you can lose with 80 and win with 30"),
     }[language]
-    assert all(f'"{w}"' in text for w in words), "advice marks changed in match-texts.js"
-    return words
+    assert all(label in texts for label in labels), "review labels changed in match-texts.js"
+    finding = FINDINGS["peer_lh10_behind"][language]
+    body = finding["text"].format(role_label=PEER_ROLES["carry"][language], **PEER)
+    return {
+        "score": (str(SCORE), _grade(SCORE), labels[0]),
+        "result": (_grade(80), _grade(30)),
+        "finding": (finding["title"], body),
+        "focus": (labels[1], finding["title"], finding["drill"]),
+    }
 
 
 def verify(creative: str) -> dict:
@@ -154,15 +172,11 @@ def verify(creative: str) -> dict:
     _backend()
     from app import death_screen, fight_summary, roshan_timer
 
-    shipped = release_carry.plans()
-    assert len(shipped) == 20, f"{len(shipped)} carry plans, the video says twenty"
-    if creative == RECRUIT:
-        # The steps the video points to (scripts/beta_page.py, site/beta.html).
-        steps = (base.SITE.parent / "scripts" / "beta_page.py").read_text(encoding="utf-8")
-        assert "\nMATCHES = 3\n" in steps, "the beta page no longer asks for three matches"
+    if creative == REVIEW:
         for language in ("uk", "en"):
-            marks(language)
-        return {"carries": len(shipped), "matches": 3}
+            screens = review(language)
+        assert screens["score"][1] == "C" and screens["result"] == ("A", "D")
+        return {"score": SCORE, "grade": screens["score"][1]}
     # The Aegis lasts 5 minutes: picked up at 25:03, it is gone by 30:03.
     assert roshan_timer._settings()["aegis"] == 300
     assert fight_summary.MIN_ALLIES >= 2 and fight_summary.MIN_ENEMIES >= 2
@@ -174,20 +188,19 @@ def verify(creative: str) -> dict:
 
 def metadata(creative: str, language: str) -> dict:
     uk = language == "uk"
-    short = "beta" if creative == RECRUIT else "moments"
+    short = "review" if creative == REVIEW else "moments"
     url = f"https://luhovyimvp.dev/{'' if uk else 'en/'}beta.html?ref=shorts-{short}-{language}"
-    if creative == RECRUIT:
+    if creative == REVIEW:
         if uk:
             return {
-                "title": "Граєш керрі до 4к MMR? Допоможи перевірити Wardly | Dota 2",
+                "title": "Програв і не знаєш чому? Розбір матчу з оцінкою | Dota 2",
                 "description": (
-                    "Шукаємо керрі-гравців до 4000 MMR для бета-тесту Wardly — "
-                    "безкоштовного Windows-тренера для Dota 2. У 20 керрі свій план: "
-                    "предмети проти ворожого драфту, збірка й прокачка з лігових матчів.\n\n"
-                    "Зіграй три матчі на керрі й познач поради в розборі: «Корисно», "
-                    "«Не до речі» чи «Повторювалося». Обіцянок приросту MMR немає — "
-                    "потрібна чесна оцінка.\n\n"
-                    f"Усі кроки: {url}\n\n"
+                    "Після кожного матчу Wardly ставить оцінку від 0 до 100: лінія, фарм, "
+                    "виживання, бійки, предмети. Перемога чи поразка на неї не впливають. "
+                    "Порівнює вас із гравцем вашої ролі в тому ж матчі — добивання до 10:00, "
+                    "золото за хвилину, смерті — і дає одне головне на наступну гру.\n\n"
+                    "Безкоштовний Windows-тренер для Dota 2. Шукаємо керрі до 4000 MMR "
+                    f"для бета-тесту: {url}\n\n"
                     "#Dota2 #ДотаУкраїнською #Wardly"
                 ),
                 "tags": [
@@ -195,22 +208,21 @@ def metadata(creative: str, language: str) -> dict:
                     "дота 2",
                     "Wardly",
                     "Dota 2 українською",
+                    "розбір матчу",
                     "керрі",
-                    "бета-тест",
+                    "добивання",
                     "тренер Dota 2",
-                    "низький MMR",
                 ],
             }
         return {
-            "title": "Carry under 4K MMR? Help us test Wardly | Dota 2",
+            "title": "Lost and not sure why? A match review with a score | Dota 2",
             "description": (
-                "We're looking for carry players under 4,000 MMR to test Wardly, a free "
-                "Windows coach for Dota 2. 20 carries have a plan of their own: items "
-                "against the enemy draft, builds and skills from league matches.\n\n"
-                "Play three carry matches and mark the advice in the review: “Useful”, "
-                "“Not to the point” or “Repeated”. No promises of MMR gains: we need an "
-                "honest verdict.\n\n"
-                f"Every step: {url}\n\n"
+                "After every match Wardly scores it from 0 to 100: lane, farm, survival, "
+                "fights, items. A win or a loss does not change it. It compares you with "
+                "the player of your role in the same match (last hits by 10:00, gold per "
+                "minute, deaths) and gives you one thing to fix next game.\n\n"
+                "A free Windows coach for Dota 2. Looking for carry players under 4,000 "
+                f"MMR for the beta: {url}\n\n"
                 "#Dota2 #Dota2Coach #Wardly"
             ),
             "tags": [
@@ -218,9 +230,9 @@ def metadata(creative: str, language: str) -> dict:
                 "dota2",
                 "Wardly",
                 "Dota 2 coach",
+                "match review",
                 "carry",
-                "beta test",
-                "low MMR",
+                "last hits",
                 "Dota 2 Windows app",
             ],
         }
@@ -318,49 +330,57 @@ def page(creative, language, timeline, captions, motion=None):
         sections.append(f'<section class="scene s{len(sections)}">{body}</section>')
 
     c = COPY[language]
-    if creative == RECRUIT:
-        grid = "".join(
-            f'<div class="cell" style="--i:{i}">{portrait(key)}</div>'
-            for i, key in enumerate(release_carry.CARRIES)
-        )
+    if creative == REVIEW:
+        screen = review(language)
+        number, grade, label = screen["score"]
         scene(
-            f'<div class="eyebrow enter" data-safe>DOTA 2 · {t("БЕТА-ТЕСТ", "BETA TEST")}</div>'
-            f'<h1 class="big-title enter" data-safe>{t("Керрі<br>до <em>4к</em> MMR?", "Carry under<br><em>4K</em> MMR?")}</h1>'
-            f'<div class="hook-hero">{hero("juggernaut", "hook-art")}</div>'
+            f'<div class="eyebrow enter" data-safe>DOTA 2 · {t("КЕРРІ", "CARRY")}</div>'
+            f'<h1 class="big-title enter" data-safe>{t("Програв?<br><em>Чому?</em>", "Lost?<br><em>Why?</em>")}</h1>'
+            f'<div class="hook-hero">{hero("antimage", "hook-art")}</div>'
         )
-        scene(
-            '<div class="eyebrow enter" data-safe>WARDLY</div>'
-            f'<h1 class="mid-title enter" data-safe>{t("Допоможи<br><em>перевірити</em>", "Help us<br><em>test it</em>")}</h1>'
-            f'<div class="tempo-hero">{hero("luna", "tempo-art")}</div>'
-        )
-        scene(
-            f'<div class="eyebrow enter" data-safe>WARDLY {release_carry.VERSION}</div>'
-            f'<h1 class="big-title enter" data-safe><em>20</em> {t("керрі", "carries")}</h1>'
-            f'<div class="carry-grid">{grid}</div>'
-            f'<div class="note enter" data-safe>{t("Предмети · збірка · прокачка", "Items · builds · skills")}</div>'
-        )
-        chips = "".join(
-            f'<div class="mark enter" style="--d:{0.5 + 0.25 * i}s" data-safe>{esc(word)}</div>'
-            for i, word in enumerate(marks(language))
+        scale = "".join(
+            f'<span class="grade-chip enter" style="--d:{0.6 + 0.15 * i}s" data-safe><b>{g}</b> {at}</span>'
+            for i, (g, at) in enumerate((("A", "80+"), ("B", "65+"), ("C", "50+"), ("D", "<50")))
         )
         scene(
             f'<div class="eyebrow enter" data-safe>{t("РОЗБІР МАТЧУ", "MATCH REVIEW")}</div>'
-            f'<h1 class="big-title enter" data-safe><em>3</em> {t("матчі", "matches")}</h1>'
-            f'<div class="marks">{chips}</div>'
+            f'<h1 class="mid-title enter" data-safe>{esc(label)}<br><em>0–100</em></h1>'
+            f'<div class="score-card enter" style="--d:.3s"><b data-safe>{number}</b>'
+            f'<span class="grade" data-safe>{grade}</span></div>'
+            f'<div class="grades">{scale}</div>'
+        )
+        won, lost = screen["result"]
+        rows = (
+            f'<div class="result-row enter" style="--d:.3s"><span data-safe>{t("Поразка", "Loss")}</span>'
+            f"<b data-safe>80 · {won}</b></div>"
+            f'<div class="result-row enter" style="--d:.7s"><span data-safe>{t("Перемога", "Win")}</span>'
+            f"<b data-safe>30 · {lost}</b></div>"
+        )
+        scene(
+            f'<div class="eyebrow enter" data-safe>{t("ОЦІНКА", "SCORE")}</div>'
+            f'<h1 class="mid-title enter" data-safe>{t("Не за<br><em>результатом</em>", "Not by<br><em>the result</em>")}</h1>'
+            f'<div class="results">{rows}</div>'
+        )
+        scene(
+            f'<div class="eyebrow enter" data-safe>{t("ІНШИЙ КЕРРІ МАТЧУ", "THE OTHER CARRY")}</div>'
+            f'<h1 class="mid-title enter" data-safe>{t("Добивання<br><em>до 10:00</em>", "Last hits<br><em>by 10:00</em>")}</h1>'
+            + advice(t("Розбір Wardly", "Wardly review"), *screen["finding"])
+        )
+        focus, title, drill = screen["focus"]
+        scene(
+            f'<div class="eyebrow enter" data-safe>{t("ОДНЕ ГОЛОВНЕ", "ONE THING")}</div>'
+            f'<h1 class="mid-title enter" data-safe>{t("На наступну<br><em>гру</em>", "For the next<br><em>game</em>")}</h1>'
+            + advice(focus, title, drill)
         )
         scene(
             '<div class="eyebrow enter" data-safe>WARDLY</div>'
             f'<h1 class="mid-title enter" data-safe>{t("Безкоштовно.<br><em>Для Windows.</em>", "Free.<br><em>For Windows.</em>")}</h1>'
             '<div class="window-art"><i></i><i></i><i></i><i></i></div>'
         )
-        steps = t(
-            "Завантаж → налаштуй<br>→ 3&nbsp;матчі → відгук",
-            "Download → set up<br>→ 3&nbsp;matches → feedback",
-        )
         scene(
             '<div class="end-orbit"></div>'
-            f'<div class="end-version enter" data-safe>{t("Бета", "Beta")}</div>'
-            f'<div class="end-line enter" style="--d:.2s" data-safe>{steps}</div>'
+            '<div class="end-version enter" data-safe>Wardly</div>'
+            f'<div class="end-line enter" style="--d:.2s" data-safe>{t("Розбір після кожного матчу", "A review after every match")}</div>'
             f'<div class="end-link enter" style="--d:.4s" data-safe>{t("Посилання в описі", "Link in the description")}</div>'
             f'<div class="address" data-safe>{c["site"]}</div>'
             f'<div class="free" data-safe><span class="windows" aria-hidden="true"><i></i><i></i><i></i><i></i></span>{c["free"]}</div>'

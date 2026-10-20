@@ -341,7 +341,7 @@ def test_the_release_pair_claims_match_the_shipped_plans():
         assert "release-0-57-0" in package["caption"]
 
 
-@pytest.mark.parametrize("creative", ["carry-beta-recruit", "carry-decisive-moments"])
+@pytest.mark.parametrize("creative", ["carry-match-review", "carry-decisive-moments"])
 def test_the_carry_beta_pairs_say_what_the_app_says(creative):
     from scripts.promo import carry_beta
 
@@ -364,6 +364,10 @@ def test_the_carry_beta_pairs_say_what_the_app_says(creative):
         assert len(package["youtube_title"]) <= 100
         assert "beta.html?ref=shorts-" in package["caption"]
         assert "MMR" in package["caption"]
+    screens = carry_beta.review("uk")
+    assert screens["score"] == ("62", "C", "Оцінка")
+    assert screens["finding"][1].startswith("31 добивань до 10:00 проти 44 у керрі")
+    assert screens["focus"][0] == "Головне на наступну гру"
     cards = carry_beta.cards("uk")
     assert cards["aegis"][0] == "Аегіс у ворогів до 30:03"
     assert "не вистачає 530" in cards["death"][1]
@@ -375,7 +379,7 @@ def test_a_scheduled_pair_registers_its_time_and_shows_it_in_kyiv(monkeypatch, t
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "1234")
     monkeypatch.setenv("API_ADMIN_TOKEN", "local-api-fixture")
     monkeypatch.setattr(beta, "media_check", lambda _path: {"ok": True})
-    pair(tmp_path, creative="carry-beta-recruit", visual_revision=8)
+    pair(tmp_path, creative="carry-match-review", visual_revision=8)
     with telegram() as (url, calls):
         monkeypatch.setattr(experiments, "TELEGRAM_API", url)
         monkeypatch.setenv("API_URL", url)

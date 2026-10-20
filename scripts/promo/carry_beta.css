@@ -1,6 +1,3 @@
-.marks { position:absolute; left:88px; top:660px; width:804px; display:flex; flex-direction:column; gap:28px; }
-.mark { padding:30px 36px; border-radius:24px; background:#15171cee; border:1px solid #ffffff2c; font:750 48px/1.25 Montserrat; letter-spacing:-1.5px; }
-.mark:first-child { border-color:#f0556099; box-shadow:0 0 40px #f0556033; }
 .advice { position:absolute; left:88px; top:690px; width:804px; padding:34px 38px; border-radius:28px; background:#15171cf2; border:1px solid #f0556066; box-shadow:0 26px 80px #000a; }
 .advice-kicker { font:800 26px/1.25 Montserrat; letter-spacing:2px; text-transform:uppercase; color:var(--coral); }
 .advice-row { display:flex; align-items:center; gap:22px; margin-top:16px; }
@@ -9,4 +6,13 @@
 .item.small { flex:none; width:110px; height:80px; }
 .item.small img { width:110px; height:80px; }
 html[lang=en] .end-line { font-size:44px; }
-[data-creative=carry-beta-recruit] .hook-hero { top:720px; }
+.score-card { position:absolute; left:88px; top:680px; width:804px; height:300px; display:flex; align-items:center; justify-content:center; gap:40px; border-radius:30px; background:#15171cf2; border:1px solid #f0556066; box-shadow:0 26px 80px #000a; }
+.score-card b { font:850 170px/1.3 Montserrat; letter-spacing:-6px; padding:0 8px; }
+.score-card .grade { width:130px; height:130px; display:grid; place-items:center; border-radius:50%; background:var(--coral); color:#151419; font:850 80px/1 Montserrat; }
+.grades { position:absolute; left:88px; top:1020px; width:804px; display:flex; justify-content:space-between; }
+.grade-chip { padding:16px 22px; border-radius:18px; background:#15171cee; border:1px solid #ffffff2c; font:700 32px/1.25 Montserrat; color:#c9ced6; white-space:nowrap; }
+.grade-chip b { color:var(--coral); }
+.results { position:absolute; left:88px; top:680px; width:804px; display:flex; flex-direction:column; gap:30px; }
+.result-row { display:flex; align-items:center; justify-content:space-between; padding:34px 40px; border-radius:26px; background:#15171cee; border:1px solid #ffffff2c; }
+.result-row span { font:700 46px/1.25 Montserrat; color:#c9ced6; }
+.result-row b { font:850 64px/1.25 Montserrat; letter-spacing:-2px; color:var(--coral); }
