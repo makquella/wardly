@@ -74,6 +74,11 @@ def redact(url: str) -> str:
     return re.sub(r"/bot[^/]+/", "/bot***/", url)
 
 
+# Per-video YouTube metadata the Worker must keep (services/api/src/promo.js);
+# youtube_publish_at schedules the video on YouTube itself.
+YOUTUBE_KEYS = ("youtube_tags", "youtube_language", "youtube_publish_at")
+
+
 def register(package: dict[str, Any], folder: Path, api: str, token: str) -> str:
     auth = {"Authorization": f"Bearer {token}"}
     meta = {
@@ -89,16 +94,14 @@ def register(package: dict[str, Any], folder: Path, api: str, token: str) -> str
             "telegram_caption",
         )
     }
-    meta.update(
-        {key: package[key] for key in ("youtube_tags", "youtube_language") if key in package}
-    )
+    meta.update({key: package[key] for key in YOUTUBE_KEYS if key in package})
     answer = _request(
         f"{api}/v1/admin/promo",
         data=json.dumps(meta, ensure_ascii=False).encode(),
         method="POST",
         headers={**auth, "Content-Type": "application/json"},
     )
-    for key in ("youtube_tags", "youtube_language"):
+    for key in YOUTUBE_KEYS:
         if key in meta and answer.get(key) != meta[key]:
             raise SystemExit(f"Worker did not preserve {key}; deploy the updated API first")
     if "youtube_language" in meta:

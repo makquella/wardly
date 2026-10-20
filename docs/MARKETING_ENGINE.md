@@ -158,6 +158,28 @@ After reviewing its artifact, `beta_campaign=shorts` with that run's ID sends bo
 videos to the private chat with the YouTube-only button; the titles and
 descriptions (`release_carry.metadata`) link the release news post.
 
+### Scheduled carry-beta pairs
+
+`beta_campaign=carry-review` and `beta_campaign=carry-moments` build two more
+pairs with the same engine and layout (`scripts/promo/carry_beta.py`, creatives
+`carry-match-review` and `carry-decisive-moments`, revisions 8 and 9): the
+review after a match (a 0–100 score the result does not change, last hits by
+10:00 against the other carry of the match, one thing to fix next game) and the
+cards for the moments that decide a game (enemy Aegis, a fight at your tower,
+buyback on the death screen). Neither repeats the recruitment or 0.57 pairs; the
+descriptions invite carry players under 4K MMR to the beta page. The screens'
+words come from the app's own texts (`post_match_analysis._grade`,
+`analysis_texts`, `roshan_timer`, `map_hints`, `death_screen`, `match-texts.js`);
+`carry_beta.verify()` fails the build when they change.
+
+Each pair carries a YouTube time (`carry_beta.PUBLISH_AT`, 17:00 Kyiv on 21 and
+22 October). `beta_campaign=shorts` registers it as `youtube_publish_at`; the
+Worker keeps it (`validatePromo`, echoed so an old deployment stops the send) and
+the approval caption and details show it in Kyiv time. «▶️ Опублікувати в Shorts»
+uploads the video private with `publishAt`, and YouTube opens it itself at that
+time. A button pressed less than 15 minutes before the time (`SCHEDULE_MARGIN`)
+publishes at once and the report says so. Nothing is uploaded without the button.
+
 ### Reach audit and acquisition materials
 
 `beta_campaign=audit`, `send=false` runs `youtube_audit.mjs` with the existing

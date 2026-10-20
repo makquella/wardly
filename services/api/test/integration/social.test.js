@@ -19,6 +19,7 @@ const ID = "fedcba9876543210";
 async function localWorker(t, extra = {}) {
   const calls = [];
   let igStatus = "IN_PROGRESS";
+  let ytStatus = null; // the status the upload session was opened with
   const paths = (await readdir(SOURCE, { recursive: true })).filter((name) => name.endsWith(".js") && name !== "index.js");
   const modules = ["index.js", ...paths].map((name) => ({ type: "ESModule", path: path.join(SOURCE, name) }));
   const mf = new Miniflare(
@@ -59,11 +60,12 @@ async function localWorker(t, extra = {}) {
           return Response.json({ items: [{ id: "UC1", snippet: { title: "Wardly" } }] });
         }
         if (route === "www.googleapis.com/upload/youtube/v3/videos") {
+          ytStatus = JSON.parse(body).status;
           return new Response("{}", { headers: { location: "https://upload.test/s1" } });
         }
         if (route === "upload.test/s1") {
           if (String(request.headers.get("content-range") || "").startsWith("bytes */")) return new Response(null, { status: 308 });
-          return Response.json({ id: "vid1", status: { privacyStatus: "public" } });
+          return Response.json({ id: "vid1", status: { privacyStatus: ytStatus?.privacyStatus || "public", ...(ytStatus?.publishAt ? { publishAt: ytStatus.publishAt } : {}) } });
         }
         if (route === "api.instagram.com/oauth/access_token") return Response.json({ access_token: "ig-short", user_id: 555 });
         if (route === "graph.instagram.com/access_token") return Response.json({ access_token: "ig-long-secret", expires_in: 5184000 });
@@ -269,4 +271,38 @@ test("«Лише YouTube» without YouTube connected publishes nothing and says 
   assert.equal(sent(calls, "sendVideo").length, 0);
   assert.match(sent(calls, "sendMessage").at(-1).text, /YouTube: не підключено/);
   assert.equal((await db.prepare("SELECT status FROM promo_posts WHERE id = ?").bind(ID).first()).status, "failed");
+});
+
+// A UTC minute `minutes` from now, as the packages carry it.
+const minuteFromNow = (minutes) => new Date(Math.ceil((Date.now() + minutes * 60_000) / 60_000) * 60_000).toISOString().replace(".000Z", "Z");
+
+async function scheduledYoutube(t, minutes) {
+  const { mf, db, calls } = await localWorker(t);
+  await connect(mf, calls, "youtube", "c1");
+  const at = minuteFromNow(minutes);
+  const metadata = { youtube_tags: ["Dota 2", "Wardly"], youtube_language: "uk", youtube_publish_at: at };
+  await approveAndRun(mf, db, calls, "yt", metadata);
+  const stored = JSON.parse((await db.prepare("SELECT body FROM promo_posts WHERE id = ?").bind(ID).first()).body);
+  assert.equal(stored.youtube_publish_at, at);
+  const worker = await mf.getWorker();
+  await worker.scheduled({ cron: "*/5 * * * *" });
+  await worker.scheduled({ cron: "*/5 * * * *" });
+  assert.deepEqual((await deliveries(db)).map((r) => `${r.network}:${r.status}`), ["youtube:published"]);
+  const init = JSON.parse(calls.find((c) => c.url.includes("upload/youtube/v3/videos")).body);
+  return { at, init, report: sent(calls, "sendMessage").at(-1).text };
+}
+
+test("a package with a YouTube time is uploaded private and scheduled by YouTube", async (t) => {
+  const { at, init, report } = await scheduledYoutube(t, 180);
+  assert.equal(init.status.privacyStatus, "private");
+  assert.equal(init.status.publishAt, at);
+  assert.match(report, /✅ YouTube: опубліковано — https:\/\/youtube.com\/shorts\/vid1 · заплановано на \d\d\.\d\d \d\d:\d\d \(Київ\)/);
+  assert.doesNotMatch(report, /зробив відео/);
+});
+
+test("a button pressed too close to the YouTube time publishes at once and says so", async (t) => {
+  const { init, report } = await scheduledYoutube(t, 5);
+  assert.equal(init.status.privacyStatus, "public");
+  assert.equal(init.status.publishAt, undefined);
+  assert.match(report, /час публікації вже минув — опубліковано одразу/);
 });

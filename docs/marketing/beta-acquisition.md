@@ -1,5 +1,7 @@
 # Wardly: запуск набора бета-тестеров, UK + EN
 
+**С 20.10.2026 набор — «керрі до 4к MMR»** вместо трёх героев: в 0.57 у 20 керри свой план. Все ссылки ведут на страницу беты [beta.html](https://luhovyimvp.dev/beta.html) / [en/beta.html](https://luhovyimvp.dev/en/beta.html) с путём «скачай → настрой → сыграй 3 матча → оставь отзыв»; закреплённое сообщение группы тестеров — [beta-pinned.md](beta-pinned.md).
+
 Основная работа сейчас — [улучшенная серия Shorts и конкретный план публикаций](shorts-plan.md). Сообщества — дополнительный бесплатный канал. Новая пара v4 заменяет приведённый ниже ранний черновик следующего Shorts; состояние готовых файлов фиксируется в плане и PR.
 
 ## Что проверено 15 октября 2026
@@ -29,8 +31,8 @@ YouTube Analytics API вернул `403 accessNotConfigured`: API не вклю�
 
 1. Сохранить текущие публикации и их исходные показатели. Не удалять и не перезаливать их ради «сброса алгоритма».
 2. Начать с адресного согласования одного прозрачного поста разработчика в подходящих сообществах. Внешние сообщения и посты пока **не отправлены**; доступ к чужим сообществам и разрешение модераторов не предполагаются.
-3. Вести игроков на страницу их языка и давать короткую инструкцию участия. Отвечать на «БЕТА» / BETA с этой инструкцией в день обращения.
-4. Подготовить следующий Shorts с конкретными героями и MMR уже в первом кадре. После появления данных сравнивать поведение зрителей, а не менять сразу язык, озвучку, монтаж и призыв.
+3. Вести игроков на страницу беты их языка (`beta.html` / `en/beta.html`) с инструкцией участия. Отвечать на «БЕТА» / BETA с этой инструкцией в день обращения.
+4. Подготовить следующий Shorts с ролью (керри) и MMR уже в первом кадре. После появления данных сравнивать поведение зрителей, а не менять сразу язык, озвучку, монтаж и призыв.
 5. Через 24 и 72 часа после каждого размещения записывать результат. При малой выборке фиксировать «данных мало», без выводов о победителе.
 
 Сам по себе внешний переход не гарантирует дальнейших рекомендаций Shorts. Польза размещения — доступ к подходящим игрокам и возможность получить реальных участников теста.
@@ -41,12 +43,12 @@ YouTube Analytics API вернул `403 accessNotConfigured`: API не вклю�
 
 | Приоритет | Аудитория / канал | Почему подходит | Подтверждение тематики | Ссылка кампании |
 |---|---|---|---|---|
-| 1 UK | [Krauch_V](https://www.youtube.com/channel/UCQut_NvqjmTcYjlAI6es80w), 9 530 | Украиноязычные Dota-стримы, небольшой тематический канал | [UA DOTA 2, 30.08](https://www.youtube.com/watch?v=hFHKjO-j6h0) | https://luhovyimvp.dev/?ref=beta-uk-krauch |
-| 1 UK | [Типовий Лс з Харди](https://www.youtube.com/channel/UCkei_sEPZde5SRYUxPWQ97Q), 3 900 | Украиноязычные игроки и обсуждение решений | [Dota 2 Українською, 28.07](https://www.youtube.com/watch?v=YYOCJgFf3Q8) | https://luhovyimvp.dev/?ref=beta-uk-hardy |
-| 2 UK | [Ghostik](https://www.youtube.com/channel/UCwqbubdeglCU60ntcz7A-7w), 41 400 | Украиноязычные разборы решений, можно запросить экспертный фидбек | [Разбор решений на Axe, 14.10](https://www.youtube.com/watch?v=QL_4xrLzPRc) | https://luhovyimvp.dev/?ref=beta-uk-ghostik |
-| 3 UK | [Dota 2 Maincast](https://www.youtube.com/channel/UCXjZjHhyrkODi2PBNvHrRvw), 35 300 | Украиноязычная Dota-аудитория; возможное партнёрское размещение | [UA трансляция, 23.08](https://www.youtube.com/watch?v=ggG8BLsFvV0) | https://luhovyimvp.dev/?ref=beta-uk-maincast |
-| 1 EN | [Qubi_Dota_Coaching](https://www.youtube.com/channel/UC4GP0zkMKGbXicHNx3UckSw), 428 | Очень узкое совпадение: Sven carry и 2–4k MMR | [Sven, 2–4k MMR, 06.09](https://www.youtube.com/watch?v=CvaGSR9ZfWw) | https://luhovyimvp.dev/en/?ref=beta-en-qubi |
-| 2 EN | [BalloonDota](https://www.youtube.com/channel/UCYldE7tGQHjNwIVHQ7bDNoA), 33 900 | Англоязычные carry/low-MMR разборы | [Low MMR Carry Guide, 05.08](https://www.youtube.com/watch?v=J6m5LDaP_B0) | https://luhovyimvp.dev/en/?ref=beta-en-balloon |
+| 1 UK | [Krauch_V](https://www.youtube.com/channel/UCQut_NvqjmTcYjlAI6es80w), 9 530 | Украиноязычные Dota-стримы, небольшой тематический канал | [UA DOTA 2, 30.08](https://www.youtube.com/watch?v=hFHKjO-j6h0) | https://luhovyimvp.dev/beta.html?ref=beta-uk-krauch |
+| 1 UK | [Типовий Лс з Харди](https://www.youtube.com/channel/UCkei_sEPZde5SRYUxPWQ97Q), 3 900 | Украиноязычные игроки и обсуждение решений | [Dota 2 Українською, 28.07](https://www.youtube.com/watch?v=YYOCJgFf3Q8) | https://luhovyimvp.dev/beta.html?ref=beta-uk-hardy |
+| 2 UK | [Ghostik](https://www.youtube.com/channel/UCwqbubdeglCU60ntcz7A-7w), 41 400 | Украиноязычные разборы решений, можно запросить экспертный фидбек | [Разбор решений на Axe, 14.10](https://www.youtube.com/watch?v=QL_4xrLzPRc) | https://luhovyimvp.dev/beta.html?ref=beta-uk-ghostik |
+| 3 UK | [Dota 2 Maincast](https://www.youtube.com/channel/UCXjZjHhyrkODi2PBNvHrRvw), 35 300 | Украиноязычная Dota-аудитория; возможное партнёрское размещение | [UA трансляция, 23.08](https://www.youtube.com/watch?v=ggG8BLsFvV0) | https://luhovyimvp.dev/beta.html?ref=beta-uk-maincast |
+| 1 EN | [Qubi_Dota_Coaching](https://www.youtube.com/channel/UC4GP0zkMKGbXicHNx3UckSw), 428 | Очень узкое совпадение: Sven carry и 2–4k MMR | [Sven, 2–4k MMR, 06.09](https://www.youtube.com/watch?v=CvaGSR9ZfWw) | https://luhovyimvp.dev/en/beta.html?ref=beta-en-qubi |
+| 2 EN | [BalloonDota](https://www.youtube.com/channel/UCYldE7tGQHjNwIVHQ7bDNoA), 33 900 | Англоязычные carry/low-MMR разборы | [Low MMR Carry Guide, 05.08](https://www.youtube.com/watch?v=J6m5LDaP_B0) | https://luhovyimvp.dev/en/beta.html?ref=beta-en-balloon |
 
 Цифры/обещания побед из названий чужих видео не являются обещаниями Wardly и не используются в объявлениях.
 
@@ -54,9 +56,9 @@ YouTube Analytics API вернул `403 accessNotConfigured`: API не вклю�
 
 ## Обращение к украинским модераторам / автору
 
-> Привіт! Розвиваємо Wardly — безкоштовний Windows-тренер для Dota 2 з підказками в матчі та розбором після гри. Шукаємо невелику групу добровольців приблизно 0–4к MMR, особливо на Свені, Джагернауті й Терорблейді, щоб покращити точність і своєчасність порад.
+> Привіт! Розвиваємо Wardly — безкоштовний Windows-тренер для Dota 2 з підказками в матчі та розбором після гри. Шукаємо невелику групу керрі-гравців приблизно до 4к MMR: у версії 0.57 у 20 керрі свій план — предмети проти ворожого драфту, збірка й прокачка з лігових матчів. Хочемо перевірити, чи поради точні й вчасні.
 >
-> Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Потрібні кілька матчів і чесний відгук: що допомогло, що відволікало, де порада була хибною. Будемо вдячні й за критику. Публічний приклад: https://www.youtube.com/shorts/Q8etsMs4470
+> Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Потрібні три матчі на керрі й чесний відгук: що допомогло, що відволікало, де порада була хибною. Будемо вдячні й за критику. Як долучитися: https://luhovyimvp.dev/beta.html. Публічний приклад: https://www.youtube.com/shorts/Q8etsMs4470
 >
 > Обіцянок приросту MMR немає. Можемо надіслати текст допису на перевірку й підлаштувати його під правила спільноти. Чи прийнятний у вас такий формат?
 
@@ -64,9 +66,9 @@ YouTube Analytics API вернул `403 accessNotConfigured`: API не вклю�
 
 ## Message to English-speaking moderators / creator
 
-> Hi! We're developing Wardly, a free Windows coach for Dota 2 with in-game tips and post-match reviews. We're looking for a small volunteer group around 0–4k MMR, especially Sven, Juggernaut and Terrorblade players, to improve the accuracy and timing of its advice.
+> Hi! We're developing Wardly, a free Windows coach for Dota 2 with in-game tips and post-match reviews. We're looking for a small group of carry players under about 4k MMR: in version 0.57, 20 carries have a plan of their own, with items against the enemy draft, builds and skills from league matches. We want to check whether the advice is accurate and on time.
 >
-> Would your moderators allow one transparent developer post in the community at no cost? Participation means a few matches and honest feedback: what helped, what distracted you, and which advice was wrong. Criticism is useful. Here's the public demo: https://www.youtube.com/shorts/KAwwovVUuMI
+> Would your moderators allow one transparent developer post in the community at no cost? Participation means three carry matches and honest feedback: what helped, what distracted you, and which advice was wrong. Criticism is useful. How to join: https://luhovyimvp.dev/en/beta.html. Public demo: https://www.youtube.com/shorts/KAwwovVUuMI
 >
 > We're not promising MMR gains or asking you to endorse the advice. We can send the post for review and follow your community rules. Would this format be appropriate?
 
@@ -74,59 +76,51 @@ For Qubi, the optional opening is: “Your channel has a Sven carry analysis for
 
 ## Готовый украинский пост после согласования
 
-**Свен, Джагернаут чи Терорблейд до 4к MMR? Допоможи покращити Wardly**
+**Граєте керрі до 4к MMR? Допоможіть перевірити Wardly**
 
-Розвиваємо безкоштовний Windows-тренер для Dota 2: підказки під час гри та розбір після матчу. Зараз важливо перевірити, які поради справді корисні, а які запізнюються чи відволікають.
+Wardly — безкоштовний Windows-тренер для Dota 2: підказки під час гри та розбір після матчу. У версії 0.57 у 20 керрі свій план: предмети проти ворожого драфту під вашого героя, звичайна й темпова збірка, прокачка з талантами — з лігових матчів поточного патча.
 
-Шукаємо добровольців приблизно 0–4к MMR. Потрібні кілька матчів і короткий чесний відгук:
+Шукаємо керрі-гравців приблизно до 4к MMR. Шлях простий:
 
-- що допомогло;
-- що запізнилося або відволікало;
-- де рекомендація була неправильною.
+1. Завантажте й налаштуйте — у застосунку є список «Перший запуск».
+2. Зіграйте три матчі на керрі.
+3. Позначте поради в розборі («Корисно», «Не до речі», «Повторювалося») і напишіть, що допомогло, що запізнилося чи відволікало, де порада була хибною.
 
-Готовий долучитися? Напиши «БЕТА» й основного героя у відповіді. Сайт із завантаженням: https://luhovyimvp.dev/?ref=beta-uk-community
+Усі кроки: https://luhovyimvp.dev/beta.html?ref=beta-uk-community
 
-Приклад роботи: https://www.youtube.com/shorts/Q8etsMs4470
+Хочете долучитися? Напишіть «БЕТА» й основного керрі у відповіді. Обіцянок приросту MMR немає — потрібна чесна оцінка.
 
 ## English post after moderator approval
 
-**Sven, Juggernaut or Terrorblade player around 0–4k MMR? Help improve Wardly**
+**Carry player under 4k MMR? Help us test Wardly**
 
-We're developing a free Windows coach for Dota 2: in-game tips and post-match reviews. We're looking for volunteers who will play a few matches and tell us what actually helps.
+Wardly is a free Windows coach for Dota 2: in-game tips and post-match reviews. In version 0.57, 20 carries have a plan of their own: items against the enemy draft for your hero, a usual and a tempo build, skills and talents, all from league matches of the current patch.
 
-Especially interested in Sven, Juggernaut and Terrorblade players around 0–4k MMR. We need honest feedback on:
+We're looking for carry players under about 4k MMR. The path is short:
 
-- advice that helped;
-- advice that came too late or distracted you;
-- recommendations that were wrong.
+1. Download and set up: the app has a “Getting started” list.
+2. Play three matches as a carry.
+3. Mark the advice in the review (“Useful”, “Not to the point”, “Repeated”) and tell us what helped, what came too late or distracted you, and which advice was wrong.
 
-Want to join? Reply BETA with your main hero. Download and details: https://luhovyimvp.dev/en/?ref=beta-en-community
+Every step: https://luhovyimvp.dev/en/beta.html?ref=beta-en-community
 
-Quick demo: https://www.youtube.com/shorts/KAwwovVUuMI
+Want to join? Reply BETA with your main carry. No MMR promises: we need an honest verdict.
 
 ## Ответ участнику
 
 UK:
 
-> Дякую! Wardly безкоштовний для Windows: https://luhovyimvp.dev/?ref=beta-uk-reply. Зіграй кілька матчів і напиши, що допомогло, що запізнилося чи відволікало, де порада була хибною. Відгук можна залишити тут; для помилки в застосунку є «Повідомити про проблему». Буде корисно вказати героя й приблизний момент матчу.
+> Дякую! Усі кроки тут: https://luhovyimvp.dev/beta.html?ref=beta-uk-reply. Зіграйте три матчі на керрі, позначте поради в розборі й напишіть, що допомогло, що запізнилося чи відволікало, де порада була хибною. Для помилки в застосунку є «Повідомити про проблему». Будь ласка, вкажіть героя й приблизну хвилину. І якщо не проти — увімкніть «Допомогти покращити підказки» в «Налаштування → Застосунок».
 
 EN:
 
-> Thanks! Wardly is free for Windows: https://luhovyimvp.dev/en/?ref=beta-en-reply. Play a few matches and tell us what helped, what came too late or distracted you, and which advice was wrong. You can leave feedback here; the app also has “Report a problem” for bugs. Your hero and the approximate match moment will help us investigate.
+> Thanks! Every step is here: https://luhovyimvp.dev/en/beta.html?ref=beta-en-reply. Play three carry matches, mark the advice in the review and tell us what helped, what came too late or distracted you, and which advice was wrong. The app also has “Report a problem” for bugs. Please add the hero and the rough minute. And if you don't mind, turn on “Help improve the advice” in Settings → App.
 
-## Следующий Shorts: конкретная аудитория с первого кадра
+## Следующий Shorts: роль и MMR с первого кадра
 
-Статус: **готовый сценарий для следующего теста, не опубликован и не отрендерен**. Первый кадр — три узнаваемых героя и крупное «0–4 000 MMR»; без вступления про бренд. На 2–6-й секунде показать реальный интерфейс Wardly. Далее — короткое приглашение и один финальный призыв. Ориентир 20–25 секунд проверяется по фактической непрерывной озвучке, без ускорения.
+Статус: заменён парой «керрі до 4к» из [shorts-plan.md](shorts-plan.md) (отложенная публикация в 17:00 по Киеву). Прежний черновик с тремя героями больше не используется.
 
-UK:
-
-> Граєш на Свені, Джагернауті чи Терорблейді? Допоможи покращити Wardly. Це безкоштовний Windows-тренер для Доти: підказки в матчі та розбір після гри. Шукаємо добровольців до чотирьох тисяч MMR. Кілька матчів, чесний відгук. Що допомогло? Що заважало? Де помилка? Напиши «БЕТА».
-
-EN:
-
-> Sven, Juggernaut or Terrorblade player? Help shape Wardly. It's a free Windows coach with in-game tips and post-match reviews. We're looking for volunteers around zero to four thousand MMR. A few matches, honest feedback: what helped, what distracted you, what was wrong? Comment BETA to join.
-
-Первая проверяемая гипотеза: узнаваемый герой и диапазон рейтинга раньше объясняют подходящему игроку, зачем смотреть дальше. Это гипотеза, а не объяснение текущих трёх просмотров. Второй тест менять только после данных первого; не объявлять победу по единичным просмотрам.
+Первая проверяемая гипотеза прежняя: роль и диапазон рейтинга в первом кадре раньше объясняют подходящему игроку, зачем смотреть дальше. Второй тест менять только после данных первого; не объявлять победу по единичным просмотрам.
 
 ## Учёт и решение после пилота
 

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  kyivTime,
   localDateTime,
   matchItem,
   metricoolPost,
@@ -9,7 +10,8 @@ import {
   promoNetworks,
   validatePromo,
   webhookSecret,
-  weeklyPromoText
+  weeklyPromoText,
+  youtubeSchedule
 } from "../src/promo.js";
 
 const PACKAGE = {
@@ -42,6 +44,22 @@ test("localized YouTube metadata is bounded and legacy packages retain their def
     assert.equal(validatePromo({ ...PACKAGE, youtube_tags: invalid }), null);
   }
   assert.equal(validatePromo({ ...PACKAGE, youtube_language: "invalid" }), null);
+});
+
+test("a YouTube publish time is a UTC minute, kept only when the button comes well before it", () => {
+  const at = "2026-10-21T14:00:00Z";
+  assert.equal(validatePromo(PACKAGE).body.youtube_publish_at, undefined);
+  assert.equal(validatePromo({ ...PACKAGE, youtube_publish_at: at }).body.youtube_publish_at, at);
+  for (const invalid of ["2026-10-21T14:00:00", "2026-10-21T14:00:30Z", "2026-10-21 14:00", "2026-13-40T14:00:00Z", 1761055200000, ""]) {
+    assert.equal(validatePromo({ ...PACKAGE, youtube_publish_at: invalid }), null, String(invalid));
+  }
+  assert.equal(youtubeSchedule({}, 0), null);
+  assert.equal(youtubeSchedule({ youtube_publish_at: at }, Date.parse(at) - 3_600_000), "scheduled");
+  assert.equal(youtubeSchedule({ youtube_publish_at: at }, Date.parse(at) - 10 * 60_000), "late");
+  assert.equal(youtubeSchedule({ youtube_publish_at: at }, Date.parse(at) + 60_000), "late");
+  // Kyiv is UTC+3 in summer time and UTC+2 after the last Sunday of October.
+  assert.equal(kyivTime(at), "21.10 17:00");
+  assert.equal(kyivTime("2026-10-27T14:00:00Z"), "27.10 16:00");
 });
 
 test("the webhook secret comes from the bot token and fits Telegram's charset", async () => {

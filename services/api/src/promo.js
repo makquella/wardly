@@ -97,6 +97,12 @@ export function validatePromo(data) {
     if (!["uk", "en"].includes(data.youtube_language)) return null;
     youtube.youtube_language = data.youtube_language;
   }
+  if (data.youtube_publish_at !== undefined) {
+    // A UTC minute: YouTube opens the video itself then (social.js, private until).
+    const at = data.youtube_publish_at;
+    if (typeof at !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00Z$/.test(at) || !Number.isFinite(Date.parse(at))) return null;
+    youtube.youtube_publish_at = at;
+  }
   return {
     id,
     format: data.format,
@@ -119,7 +125,7 @@ export async function registerPromo(request, env, now = Date.now()) {
   const existing = await env.DB.prepare("SELECT media_key, status, body FROM promo_posts WHERE id = ?1").bind(post.id).first();
   // Echo persisted metadata so a new publisher cannot silently use an older
   // deployment that discards per-video tags/language. Never return OAuth tokens.
-  const youtube = (body) => ({ youtube_tags: body.youtube_tags, youtube_language: body.youtube_language });
+  const youtube = (body) => ({ youtube_tags: body.youtube_tags, youtube_language: body.youtube_language, youtube_publish_at: body.youtube_publish_at });
   const ready = Boolean((await connectedNetworks(env)).youtube && socialConfigured(env, "youtube"));
   if (existing) {
     return json({ ok: true, id: post.id, media_key: existing.media_key, status: existing.status, youtube_ready: ready, ...youtube(JSON.parse(existing.body)) });
@@ -753,6 +759,25 @@ const DELIVERY_WORDS = {
   error: "помилка"
 };
 
+// A package's YouTube time is kept only when the button was pressed well before
+// it (the upload starts within a few cron runs); pressed later, the video goes
+// out at once. The decision time is fixed, so every step of one upload agrees.
+export const SCHEDULE_MARGIN = 15 * 60 * 1000;
+
+export function youtubeSchedule(body, decidedAt) {
+  if (!body?.youtube_publish_at) return null;
+  return Date.parse(body.youtube_publish_at) > decidedAt + SCHEDULE_MARGIN ? "scheduled" : "late";
+}
+
+export function kyivTime(at) {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Kyiv", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(new Date(at))
+      .map((p) => [p.type, p.value])
+  );
+  return `${parts.day}.${parts.month} ${parts.hour}:${parts.minute}`;
+}
+
 export async function promoPublish(env, now = Date.now()) {
   if (!env.REPORTS) return { worked: 0 };
   const origin = publicOrigin(env, null);
@@ -786,7 +811,14 @@ export async function promoPublish(env, now = Date.now()) {
       const head = await env.REPORTS.head(`promo/${row.media_key}/video.mp4`);
       if (!head) throw new Error("the video is gone from storage");
       const job = { body: JSON.parse(row.body), external_id: row.external_id, media: { ...media(env, row, origin), size: head.size } };
+      const late = row.network === "youtube" && youtubeSchedule(job.body, row.decided_at ?? now) === "late";
+      if (row.network === "youtube" && !late && job.body.youtube_publish_at) job.publish_at = job.body.youtube_publish_at;
       outcome = await client.step(env, account, job, now);
+      if (outcome.status === "published" && outcome.scheduled_publish_at) {
+        outcome.detail = [outcome.detail, `заплановано на ${kyivTime(outcome.scheduled_publish_at)} (Київ)`].filter(Boolean).join(" · ");
+      } else if (outcome.status === "published" && late) {
+        outcome.detail = [outcome.detail, "час публікації вже минув — опубліковано одразу"].filter(Boolean).join(" · ");
+      }
     } catch (error) {
       outcome = { status: "retry", detail: error.message };
     }

@@ -1896,6 +1896,47 @@ h2 {
   white-space: nowrap;
 }
 
+/* site/beta.html: the four steps of the beta test (scripts/beta_page.py). */
+.beta-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.beta-step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.beta-num {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 800;
+}
+.beta-step h3 {
+  margin: 8px 0 10px;
+}
+.beta-step p {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+.beta-step p:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 1080px) {
   .news-tiles {
     grid-template-columns: 1fr;
@@ -1907,6 +1948,19 @@ h2 {
   }
 }
 @media (max-width: 720px) {
+  .beta-steps {
+    grid-template-columns: 1fr;
+  }
+  .beta-step {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 12px;
+    padding: 18px;
+  }
+  .beta-num {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+  }
   .hero-row {
     grid-template-columns: 16px 40px minmax(0, 1fr) 70px;
     gap: 10px;
