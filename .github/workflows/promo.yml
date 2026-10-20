@@ -42,9 +42,9 @@ on:
         type: boolean
         default: true
       beta_campaign:
-        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair"
+        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-beta / carry-moments: the scheduled carry-beta pairs"
         type: choice
-        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release]
+        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-beta, carry-moments]
         default: "off"
       beta_run_id:
         description: "Reviewed artifact run ID (required for deliver/shorts/series)"
@@ -205,22 +205,29 @@ jobs:
             echo "::error title=Beta build::$(tail -n 1 beta-stderr.log)"
             exit "$status"
           fi
-      - name: Build the 0.57 release pair (20 carries)
-        # scripts/promo/release_carry.py: built and checked like a beta pair, then
-        # beta_campaign=shorts with this run's ID sends it with the YouTube button.
-        if: inputs.beta_campaign == 'release'
+      - name: Build a creative pair (0.57 release, carry beta)
+        # scripts/promo/release_carry.py, carry_beta.py: built and checked like a
+        # beta pair, then beta_campaign=shorts with this run's ID sends it with the
+        # YouTube button (the carry-beta pairs carry their own YouTube time).
+        if: inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-beta' || inputs.beta_campaign == 'carry-moments'
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          CAMPAIGN: ${{ inputs.beta_campaign }}
         run: |
+          case "$CAMPAIGN" in
+            release) creative=carry-plans-0.57 ;;
+            carry-beta) creative=carry-beta-recruit ;;
+            carry-moments) creative=carry-decisive-moments ;;
+          esac
           status=0
-          python -m scripts.promo.beta --out promo-out --creative carry-plans-0.57 2> release-stderr.log || status=$?
+          python -m scripts.promo.beta --out promo-out --creative "$creative" 2> release-stderr.log || status=$?
           cat release-stderr.log >&2
           if [ "$status" -ne 0 ]; then
             echo "::error title=Release build::$(tail -n 1 release-stderr.log)"
             exit "$status"
           fi
       - name: Check beta narration independently
-        if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release'
+        if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-beta' || inputs.beta_campaign == 'carry-moments'
         run: |
           python -m pip install faster-whisper==1.2.1
           python -m scripts.promo.beta --out promo-out --speech-check

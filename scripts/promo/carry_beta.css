@@ -1,0 +1,12 @@
+.marks { position:absolute; left:88px; top:660px; width:804px; display:flex; flex-direction:column; gap:28px; }
+.mark { padding:30px 36px; border-radius:24px; background:#15171cee; border:1px solid #ffffff2c; font:750 48px/1.25 Montserrat; letter-spacing:-1.5px; }
+.mark:first-child { border-color:#f0556099; box-shadow:0 0 40px #f0556033; }
+.advice { position:absolute; left:88px; top:690px; width:804px; padding:34px 38px; border-radius:28px; background:#15171cf2; border:1px solid #f0556066; box-shadow:0 26px 80px #000a; }
+.advice-kicker { font:800 26px/1.25 Montserrat; letter-spacing:2px; text-transform:uppercase; color:var(--coral); }
+.advice-row { display:flex; align-items:center; gap:22px; margin-top:16px; }
+.advice-row b { font:800 46px/1.25 Montserrat; letter-spacing:-1.5px; }
+.advice p { margin:20px 0 0; font:600 34px/1.35 Inter; color:#c9ced6; }
+.item.small { flex:none; width:110px; height:80px; }
+.item.small img { width:110px; height:80px; }
+html[lang=en] .end-line { font-size:44px; }
+[data-creative=carry-beta-recruit] .hook-hero { top:720px; }

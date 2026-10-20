@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from scripts.promo import beta, beta_scenes, beta_shorts, experiments, scenes  # noqa: E402
+from scripts.promo import beta, beta_scenes, beta_shorts, experiments, scenes, send  # noqa: E402
 
 
 def test_master_take_scene_cuts_have_no_inserted_pauses_and_keep_every_word():
@@ -112,7 +112,7 @@ def test_new_sven_metadata_keeps_legacy_approval_ids_stable():
 
 
 @contextmanager
-def telegram(chat_type="private", *, old_metadata_api=False):
+def telegram(chat_type="private", *, old_metadata_api=False, keeps=send.YOUTUBE_KEYS):
     calls = []
 
     class Handler(BaseHTTPRequestHandler):
@@ -129,9 +129,7 @@ def telegram(chat_type="private", *, old_metadata_api=False):
                     "youtube_ready": True,
                 }
                 if not old_metadata_api:
-                    response.update(
-                        {key: submitted[key] for key in ("youtube_tags", "youtube_language")}
-                    )
+                    response.update({key: submitted[key] for key in keeps if key in submitted})
                 encoded = json.dumps(response).encode()
                 self.send_response(200)
                 self.end_headers()
@@ -173,7 +171,7 @@ def telegram(chat_type="private", *, old_metadata_api=False):
         worker.join(3)
 
 
-def pair(folder):
+def pair(folder, **extra):
     for language in beta.LANGUAGES:
         target = folder / language
         target.mkdir()
@@ -194,6 +192,7 @@ def pair(folder):
                 "layout": {"ok": True},
                 "sha256": beta.digest(target / "video.mp4"),
                 "voice_config": {"name": "Alex Nekrasov", "model": "eleven_v4"},
+                **extra,
             },
         )
 
@@ -340,3 +339,67 @@ def test_the_release_pair_claims_match_the_shipped_plans():
         assert "20" in package["youtube_title"] and len(package["youtube_title"]) <= 100
         assert f"ref=shorts-carry-{language}" in package["caption"]
         assert "release-0-57-0" in package["caption"]
+
+
+@pytest.mark.parametrize("creative", ["carry-beta-recruit", "carry-decisive-moments"])
+def test_the_carry_beta_pairs_say_what_the_app_says(creative):
+    from scripts.promo import carry_beta
+
+    carry_beta.verify(creative)
+    story = carry_beta.profile(creative)
+    for language in beta.LANGUAGES:
+        voice = " ".join(story.COPY[language]["voice"])
+        assert "Windows" in voice
+        package = beta_shorts.package(
+            language,
+            {
+                "sha256": "0" * 64,
+                "visual_revision": carry_beta.REVISION[creative],
+                "creative": creative,
+            },
+        )
+        assert package["topic"] == f"{creative}-{language}"
+        assert package["youtube_publish_at"] == carry_beta.PUBLISH_AT[creative]
+        assert carry_beta.kyiv(package["youtube_publish_at"]).endswith(" 17:00")
+        assert len(package["youtube_title"]) <= 100
+        assert "beta.html?ref=shorts-" in package["caption"]
+        assert "MMR" in package["caption"]
+    cards = carry_beta.cards("uk")
+    assert cards["aegis"][0] == "Аегіс у ворогів до 30:03"
+    assert "не вистачає 530" in cards["death"][1]
+    assert cards["fight"][1].startswith("ТП — готово.")
+
+
+def test_a_scheduled_pair_registers_its_time_and_shows_it_in_kyiv(monkeypatch, tmp_path):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "local-fixture-token")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "1234")
+    monkeypatch.setenv("API_ADMIN_TOKEN", "local-api-fixture")
+    monkeypatch.setattr(beta, "media_check", lambda _path: {"ok": True})
+    pair(tmp_path, creative="carry-beta-recruit", visual_revision=8)
+    with telegram() as (url, calls):
+        monkeypatch.setattr(experiments, "TELEGRAM_API", url)
+        monkeypatch.setenv("API_URL", url)
+        beta.deliver(tmp_path, shorts=True)
+        registered = [json.loads(body) for route, body in calls if route == "/v1/admin/promo"]
+        assert [m["youtube_publish_at"] for m in registered] == ["2026-10-21T14:00:00Z"] * 2
+        videos = [body for route, body in calls if route.endswith("sendVideo")]
+        assert all(b"21.10.2026 17:00" in body for body in videos)
+        replies = [
+            json.loads(body)["text"] for route, body in calls if route.endswith("sendMessage")
+        ]
+        assert "Публікація: 21.10.2026 17:00 за Києвом" in replies[0]
+        assert "Publication: 21.10.2026 17:00 Kyiv time" in replies[1]
+
+
+def test_a_worker_that_drops_the_publish_time_gets_no_button(monkeypatch, tmp_path):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "local-fixture-token")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "1234")
+    monkeypatch.setenv("API_ADMIN_TOKEN", "local-api-fixture")
+    monkeypatch.setattr(beta, "media_check", lambda _path: {"ok": True})
+    pair(tmp_path, creative="carry-decisive-moments", visual_revision=9)
+    with telegram(keeps=("youtube_tags", "youtube_language")) as (url, calls):
+        monkeypatch.setattr(experiments, "TELEGRAM_API", url)
+        monkeypatch.setenv("API_URL", url)
+        with pytest.raises(SystemExit, match="preserve youtube_publish_at"):
+            beta.deliver(tmp_path, shorts=True)
+        assert not any(route.endswith("sendVideo") for route, _ in calls)

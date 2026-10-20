@@ -20,6 +20,7 @@ from zoneinfo import ZoneInfo
 from . import (
     beta_scenes,
     beta_shorts,
+    carry_beta,
     experiments,
     media,
     release_carry,
@@ -146,7 +147,10 @@ def storyboard(
     story: Any = beta_scenes,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], float]:
     texts = story.COPY[language]["voice"]
-    lengths = (3.2, 3.8, 3.5, 2.5, 4, 2.8, 3)
+    lengths: tuple[float, ...] = (3.2, 3.8, 3.5, 2.5, 4, 2.8, 3)
+    if len(texts) != len(lengths):
+        # Another scene count: about as long as the words take to say.
+        lengths = tuple(max(2.5, 0.45 * len(text.split()) + 1.0) for text in texts)
     words, at = [], 0.0
     for text, span in zip(texts, lengths, strict=True):
         words.extend(scenes.estimated_words(text, at + 0.05, at + span - 0.2))
@@ -333,6 +337,11 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
         story = release_carry.profile()
         revision = release_carry.REVISION
         claims["release"] = release_carry.verify()
+    elif creative in carry_beta.CREATIVES:
+        # The scheduled carry-beta pairs: claims from the app's own texts.
+        story = carry_beta.profile(creative)
+        revision = carry_beta.REVISION[creative]
+        claims["carry_beta"] = carry_beta.verify(creative)
     elif creative != "sven-under-4k":
         from . import beta_followups
 
@@ -524,6 +533,13 @@ def deliver(out: Path, *, shorts: bool = False) -> None:
                 f"{meta['youtube_title']}\n\n"
                 + copy["ready" if meta.get("youtube_ready") else "not_connected"]
             )
+            if meta.get("youtube_publish_at"):
+                when = carry_beta.kyiv(meta["youtube_publish_at"])
+                fields["caption"] += (
+                    f"\n🕔 YouTube: {when} (Київ)"
+                    if language == "uk"
+                    else f"\n🕔 YouTube: {when} (Kyiv)"
+                )
             fields["reply_markup"] = json.dumps(
                 beta_shorts.keyboard(language, meta["id"]), ensure_ascii=False
             )
@@ -683,8 +699,8 @@ def main() -> None:
     parser.add_argument(
         "--creative",
         default="sven-under-4k",
-        choices=("sven-under-4k", release_carry.CREATIVE),
-        help="which pair to build (the 0.57 release pair: release_carry.py)",
+        choices=("sven-under-4k", release_carry.CREATIVE, *carry_beta.CREATIVES),
+        help="which pair to build (0.57 release: release_carry.py; carry beta: carry_beta.py)",
     )
     args = parser.parse_args()
     if sum((args.draft, args.deliver_only, args.speech_check, args.shorts_approval)) > 1:

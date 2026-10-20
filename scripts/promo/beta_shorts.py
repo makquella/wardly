@@ -143,7 +143,16 @@ def package(language: str, video: dict[str, Any]) -> dict[str, Any]:
 
         copy = {**copy, **release_metadata(language)}
         topic = f"release-0.57-carries-{language}"
+    publish_at = None
+    if video.get("creative") in {"carry-beta-recruit", "carry-decisive-moments"}:
+        from . import carry_beta
+
+        copy = {**copy, **carry_beta.metadata(video["creative"], language)}
+        topic = f"{video['creative']}-{language}"
+        publish_at = carry_beta.PUBLISH_AT[video["creative"]]
     identity = {"video_sha256": video["sha256"], "language": language, "copy": copy}
+    if publish_at:
+        identity["publish_at"] = publish_at
     package_id = hashlib.sha256(
         json.dumps(identity, sort_keys=True, ensure_ascii=False).encode()
     ).hexdigest()[:16]
@@ -158,6 +167,8 @@ def package(language: str, video: dict[str, Any]) -> dict[str, Any]:
         "telegram_caption": copy["title"],
         "youtube_tags": copy["tags"],
         "youtube_language": language,
+        # YouTube publishes the video itself at this time (private until then).
+        **({"youtube_publish_at": publish_at} if publish_at else {}),
     }
 
 
@@ -181,6 +192,19 @@ def details(language: str, metadata: dict[str, Any]) -> str:
         f"{tags}: {', '.join(metadata['youtube_tags'])}\n"
         f"{locale}: {language}\n{category}: Gaming (20)"
     )
+    if metadata.get("youtube_publish_at"):
+        from .carry_beta import kyiv
+
+        when = kyiv(metadata["youtube_publish_at"])
+        message += (
+            f"\n\nПублікація: {when} за Києвом. Кнопка «Опублікувати в Shorts» "
+            "завантажує відео в YouTube як приватне з розкладом, і YouTube відкриває "
+            "його сам у цей час. Натисніть до нього; після цього часу відео вийде одразу."
+            if language == "uk"
+            else f"\n\nPublication: {when} Kyiv time. The Shorts button uploads the video "
+            "to YouTube as private with this schedule, and YouTube opens it itself at "
+            "that time. Press it before then; after that time the video goes out at once."
+        )
     if metadata.get("topic", "").endswith("-v4"):
         message += (
             "\n\nКнопка «Лише YouTube» одразу ставить відео в чергу на публікацію "

@@ -1,6 +1,6 @@
 const sections=[...document.querySelectorAll('.scene')];
 const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const emphasis=/wardly|двадцять|twenty|bloodthorn|windows|нічого|nothing|темпову|tempo/i;
+const main=document.querySelector('main'), emphasis=new RegExp(main.dataset.emphasis||'wardly|двадцять|twenty|bloodthorn|windows|нічого|nothing|темпову|tempo','i');
 const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
 window.renderAt=async t=>{
  const active=Math.max(0,timeline.findIndex(s=>t>=s.start&&t<s.end));
@@ -21,7 +21,7 @@ window.renderAt=async t=>{
   el.style.opacity=k; el.style.transform=`scale(${0.85+0.15*k})`;
  });
  const cue=captions.find(c=>t>=c.start&&t<c.end), box=document.querySelector('.captions');
- box.style.display=cue&&active!==6?'block':'none';
+ box.style.display=cue&&active!==sections.length-1?'block':'none';
  box.innerHTML=cue?cue.words.map(w=>`<span class="${emphasis.test(w.w)?'emphasis':''}">${escape(w.w)}</span>`).join(' '):'';
  await Promise.all(decoding);
 };
