@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "hero": "Outworld Destroyer",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "417 league games since 7.40 (data/heroes/item_stats), win 45.3%; skills from 228 games of 7.41. Reproduce: python scripts/hero_item_stats.py outworld_destroyer.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar (generic, in his build).",
+    "hero": "Valve /datafeed/herodata hero_id 76 (Arcane Orb: pure damage from mana; Astral Imprisonment; Objurgation), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "kaya",
+      "name": "Kaya"
+    },
+    {
+      "item": "witch_blade",
+      "name": "Witch Blade"
+    },
+    {
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "devastator",
+      "name": "Parasma"
+    },
+    {
+      "item": "sheepstick",
+      "name": "Scythe of Vyse"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: null_talisman 82% (2), magic_wand 60% (4), ward_dispenser 40% (5), power_treads 100% (7), oblivion_staff 80% (11), kaya 32% (13), witch_blade 79% (13), force_staff 83% (20), dragon_lance 80% (21), hurricane_pike 78% (24), ultimate_scepter 38% (29), black_king_bar 26% (31), devastator 35% (32), sheepstick 36% (36).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        14400
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "witch_blade",
+        "name": "Witch Blade"
+      },
+      {
+        "item": "kaya",
+        "name": "Kaya"
+      },
+      {
+        "item": "dragon_lance",
+        "name": "Dragon Lance"
+      },
+      {
+        "item": "moon_shard",
+        "name": "Moon Shard"
+      },
+      {
+        "item": "hurricane_pike",
+        "name": "Hurricane Pike"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "devastator",
+        "name": "Parasma"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 25:00 15000 (38 games, 76.3%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "obsidian_destroyer_astral_imprisonment",
+      "obsidian_destroyer_arcane_orb",
+      "obsidian_destroyer_objurgation"
+    ],
+    "games": 228,
+    "first_agree": 126,
+    "opening": {
+      "name": "obsidian_destroyer_astral_imprisonment",
+      "agree": 188
+    },
+    "names": {
+      "obsidian_destroyer_astral_imprisonment": "Astral Imprisonment",
+      "obsidian_destroyer_arcane_orb": "Arcane Orb",
+      "obsidian_destroyer_objurgation": "Objurgation"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_mp_200",
+        "label": "+200 Mana",
+        "picked": 126,
+        "games": 225
+      },
+      "15": {
+        "name": "special_bonus_unique_outworld_devourer_3",
+        "label": "of Current Mana as Movement Speed",
+        "picked": 160,
+        "games": 205
+      },
+      "20": {
+        "name": "special_bonus_unique_outworld_devourer_barrier",
+        "label": "Objurgation Cooldown",
+        "picked": 82,
+        "games": 149
+      },
+      "25": {
+        "name": "special_bonus_unique_outworld_devourer",
+        "label": "Arcane Orb Damage",
+        "picked": 43,
+        "games": 63
+      }
+    },
+    "basis": "228 games since 7.41: maxed obsidian_destroyer_astral_imprisonment > obsidian_destroyer_arcane_orb > obsidian_destroyer_objurgation 118 (win 51.7%), obsidian_destroyer_arcane_orb > obsidian_destroyer_astral_imprisonment > obsidian_destroyer_objurgation 63 (win 41.3%), obsidian_destroyer_arcane_orb > obsidian_destroyer_objurgation > obsidian_destroyer_astral_imprisonment 29 (win 51.7%); talents 10: +200 Mana 126/225 (45.2%), Astral Imprisonment Cast Range 99/225 (50.5%); 15: of Current Mana as Movement Speed 160/205 (53.1%), Essence Flux Mana Restored 45/205 (42.2%); 20: Objurgation Cooldown 82/149 (62.2%), Astral Imprisonment Mana Capacity Steal 67/149 (59.7%); 25: Arcane Orb Damage 43/63 (60.5%), Sanity's Eclipse Cooldown 20/63 (80.0%)."
+  },
+  "suppress": {
+    "break": "Silver Edge is not his item: Arcane Orb adds pure damage from his mana pool and his build is Witch Blade, Hurricane Pike and Parasma; no Silver Edge in 30 games against break heroes."
+  }
+}

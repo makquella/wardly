@@ -1,10 +1,10 @@
 {
- "hero": "spectre",
+ "hero": "Spectre",
  "hero_id": 67,
  "position": "carry",
  "lane_role": 1,
  "since_patch": "7.40",
- "generated": "2026-10-19",
+ "generated": "2026-10-20",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 236,
  "win": 44.9,
@@ -174,7 +174,7 @@
   }
  ],
  "skills": {
-  "games": 236,
+  "games": 177,
   "orders": [
    {
     "order": [
@@ -182,8 +182,8 @@
      "spectre_dispersion",
      "spectre_shadow_step"
     ],
-    "games": 171,
-    "win": 49.1
+    "games": 138,
+    "win": 50.0
    },
    {
     "order": [
@@ -191,8 +191,8 @@
      "spectre_shadow_step",
      "spectre_dispersion"
     ],
-    "games": 36,
-    "win": 44.4
+    "games": 20,
+    "win": 40.0
    },
    {
     "order": [
@@ -200,7 +200,7 @@
      "spectre_spectral_dagger",
      "spectre_shadow_step"
     ],
-    "games": 10,
+    "games": 8,
     "win": 50.0
    },
    {
@@ -208,7 +208,7 @@
      "spectre_spectral_dagger",
      "spectre_dispersion"
     ],
-    "games": 10,
+    "games": 5,
     "win": 0.0
    },
    {
@@ -216,15 +216,15 @@
      "spectre_spectral_dagger",
      "spectre_shadow_step"
     ],
-    "games": 4,
+    "games": 3,
     "win": 0.0
    }
   ],
   "openings": [
    {
     "name": "spectre_spectral_dagger",
-    "games": 230,
-    "win": 44.8
+    "games": 171,
+    "win": 45.6
    },
    {
     "name": "spectre_shadow_step",
@@ -242,67 +242,68 @@
     {
      "name": "special_bonus_unique_spectre_2",
      "label": "Desolate Damage",
-     "picked": 204,
-     "games": 234,
-     "win": 45.1
+     "picked": 155,
+     "games": 176,
+     "win": 47.1
     },
     {
      "name": "special_bonus_unique_spectre",
      "label": "Spectral Dagger Cooldown",
-     "picked": 30,
-     "games": 234,
-     "win": 43.3
+     "picked": 21,
+     "games": 176,
+     "win": 33.3
     }
    ],
    "15": [
     {
      "name": "special_bonus_unique_spectre_shadow_step_duration",
      "label": "Shadow Step Duration",
-     "picked": 139,
-     "games": 211,
-     "win": 47.5
+     "picked": 114,
+     "games": 163,
+     "win": 48.2
     },
     {
      "name": "special_bonus_unique_spectre_6",
      "label": "Spectral Dagger Damage",
-     "picked": 72,
-     "games": 211,
-     "win": 52.8
+     "picked": 49,
+     "games": 163,
+     "win": 51.0
     }
    ],
    "20": [
     {
      "name": "special_bonus_unique_spectre_3",
      "label": "Spectral Dagger Slow/Bonus",
-     "picked": 54,
-     "games": 65,
-     "win": 48.1
+     "picked": 46,
+     "games": 47,
+     "win": 50.0
     },
     {
      "name": "special_bonus_hp_325",
      "label": "+325 Health",
-     "picked": 11,
-     "games": 65,
-     "win": 81.8
+     "picked": 1,
+     "games": 47,
+     "win": 100.0
     }
    ],
    "25": [
     {
      "name": "special_bonus_unique_spectre_4",
      "label": "All Spectre Illusion Damage",
-     "picked": 58,
-     "games": 73,
-     "win": 65.5
+     "picked": 51,
+     "games": 64,
+     "win": 66.7
     },
     {
      "name": "special_bonus_unique_spectre_5",
      "label": "Dispersion",
-     "picked": 15,
-     "games": 73,
-     "win": 60.0
+     "picked": 13,
+     "games": 64,
+     "win": 61.5
     }
    ]
-  }
+  },
+  "since_patch": "7.41"
  },
  "counters": {
   "evasion": {
@@ -718,20 +719,20 @@
    "win": 43.9,
    "items": [
     {
-     "item": "nullifier",
-     "share": 0.195,
-     "elsewhere": 0.103,
-     "lift": 1.9,
-     "win_with": 37.5,
-     "win_without": 45.5
-    },
-    {
      "item": "bloodthorn",
      "share": 0.195,
      "elsewhere": 0.103,
      "lift": 1.9,
      "win_with": 50.0,
      "win_without": 42.4
+    },
+    {
+     "item": "nullifier",
+     "share": 0.195,
+     "elsewhere": 0.103,
+     "lift": 1.9,
+     "win_with": 37.5,
+     "win_without": 45.5
     },
     {
      "item": "sange",
@@ -1002,20 +1003,20 @@
      "win_without": null
     },
     {
-     "item": "yasha",
-     "share": 1.0,
-     "elsewhere": 0.877,
-     "lift": 1.14,
-     "win_with": 50.0,
-     "win_without": null
-    },
-    {
      "item": "pers",
      "share": 0.25,
      "elsewhere": 0.219,
      "lift": 1.14,
      "win_with": 50.0,
      "win_without": 50.0
+    },
+    {
+     "item": "yasha",
+     "share": 1.0,
+     "elsewhere": 0.877,
+     "lift": 1.14,
+     "win_with": 50.0,
+     "win_without": null
     }
    ]
   },
@@ -1096,20 +1097,20 @@
      "win_without": 0.0
     },
     {
-     "item": "radiance",
-     "share": 0.682,
-     "elsewhere": 0.799,
-     "lift": 0.85,
-     "win_with": 20.0,
-     "win_without": 42.9
-    },
-    {
      "item": "orchid",
      "share": 0.182,
      "elsewhere": 0.215,
      "lift": 0.85,
      "win_with": 50.0,
      "win_without": 22.2
+    },
+    {
+     "item": "radiance",
+     "share": 0.682,
+     "elsewhere": 0.799,
+     "lift": 0.85,
+     "win_with": 20.0,
+     "win_without": 42.9
     },
     {
      "item": "urn_of_shadows",
@@ -1198,20 +1199,20 @@
      "win_without": 44.3
     },
     {
-     "item": "radiance",
-     "share": 0.798,
-     "elsewhere": 0.78,
-     "lift": 1.02,
-     "win_with": 48.2,
-     "win_without": 42.9
-    },
-    {
      "item": "magic_wand",
      "share": 0.885,
      "elsewhere": 0.871,
      "lift": 1.02,
      "win_with": 48.9,
      "win_without": 33.3
+    },
+    {
+     "item": "radiance",
+     "share": 0.798,
+     "elsewhere": 0.78,
+     "lift": 1.02,
+     "win_with": 48.2,
+     "win_without": 42.9
     },
     {
      "item": "power_treads",
@@ -1276,20 +1277,20 @@
      "win_without": 100.0
     },
     {
-     "item": "radiance",
-     "share": 0.793,
-     "elsewhere": 0.787,
-     "lift": 1.01,
-     "win_with": 47.8,
-     "win_without": 50.0
-    },
-    {
      "item": "manta",
      "share": 0.828,
      "elsewhere": 0.816,
      "lift": 1.01,
      "win_with": 54.2,
      "win_without": 20.0
+    },
+    {
+     "item": "radiance",
+     "share": 0.793,
+     "elsewhere": 0.787,
+     "lift": 1.01,
+     "win_with": 47.8,
+     "win_without": 50.0
     },
     {
      "item": "power_treads",
@@ -1300,20 +1301,20 @@
      "win_without": null
     },
     {
-     "item": "aghanims_shard",
-     "share": 0.138,
-     "elsewhere": 0.14,
-     "lift": 0.98,
-     "win_with": 25.0,
-     "win_without": 52.0
-    },
-    {
      "item": "yasha",
      "share": 0.862,
      "elsewhere": 0.884,
      "lift": 0.98,
      "win_with": 52.0,
      "win_without": 25.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.138,
+     "elsewhere": 0.14,
+     "lift": 0.98,
+     "win_with": 25.0,
+     "win_without": 52.0
     },
     {
      "item": "urn_of_shadows",

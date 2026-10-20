@@ -126,8 +126,12 @@ def test_counters_to_the_enemy_heroes_seen():
         situational_item([], [], META, enemies=["Phantom Assassin"], position="mid", minute=20)
         is None
     )
-    offlane = situational_item([], [], META, enemies=["Huskar"], position="offlane", minute=14)
-    assert offlane["key"] == "spirit_vessel" and offlane["why"] == "healing"
+    # Heavy healing: no generic item, Spirit Vessel is a support's (the player's review).
+    for position in ("offlane", "mid", "carry"):
+        assert (
+            situational_item([], [], META, enemies=["Alchemist"], position=position, minute=30)
+            is None
+        )
 
 
 def test_the_card_and_the_death_screen_say_why():

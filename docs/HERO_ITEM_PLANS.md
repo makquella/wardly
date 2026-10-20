@@ -66,9 +66,13 @@ Three layers, so the same detail scales past one hero:
    that break turns off, Phantom Assassin's Immaterial), `escape`
    (`draft_analysis.ESCAPES`: escapes a silence stops, spell names from
    `/herodata`), `break` (`situational_items.BREAK_PASSIVES`), `jumpers`
-   (`draft_analysis.JUMPERS`: heroes who jump onto a carry), `invisibility`,
-   `illusion_clearers` (`draft_analysis.ILLUSION_CLEARERS`). A new group goes
-   into those tables with its own check, not into one plan.
+   (`draft_analysis.JUMPERS`: heroes who jump onto a carry), `targeted_jumpers`
+   (`draft_analysis.TARGETED_JUMPERS`: the jumps cast on the target, which
+   Linken's Sphere blocks), `invisibility`,
+   `illusion_clearers` (`draft_analysis.ILLUSION_CLEARERS`), `magic`
+   (`draft_analysis.MAGIC_DAMAGE`; a rule names it with `count: 3`, the lineup
+   the generic counter needs too). A new group goes into those tables with its
+   own check, not into one plan.
 4. **The rules**, in order; the first that holds wins its `family`:
    - `why` — a short id of the reason;
    - `reason` — `{en, uk}`: one clause each, no final period, with the
@@ -81,6 +85,7 @@ Three layers, so the same detail scales past one hero:
    - `enemy` (and `also`, a second group that must be seen too);
    - `minute` — from when the live farm advice may name it (the draft card
      early in the match ignores it);
+   - `count` (optional, default 1) — how many heroes of the group must be seen;
    - `basis` — the build line or the Valve fact behind it.
    Put the more specific rule first (Bloodthorn for evasion **and** an escape,
    then Monkey King Bar for evasion alone).
@@ -278,5 +283,54 @@ Settled with the player:
   Sniper's tempo build keeps Silver Edge and Monkey King Bar.
 
 Open: jumpers, invisibility and escape heroes get no item for most carries (the
-high-rank games barely change items there); a carry hero played mid gets the
-generic counters until the mid wave.
+high-rank games barely change items there).
+
+## Wave 4: mid and offlane (7.41f, 2026-10-20)
+
+Ember Spirit and the 8 mids from `--draft` and `data/heroes/item_stats/` read in
+lane_role 2, the 10 offlaners in lane_role 3 (`--position` reads a hero in
+another position; the stats default to the plan's first position, so the weekly
+refresh keeps Ember Spirit a mid). Dragon Knight, Outworld Destroyer and Templar
+Assassin had under 300 games in 7.41: their items come from 7.40 on, their skill
+builds from 7.41 alone (`SKILL_MIN_GAMES`), since 7.41 changed abilities
+(Wyrm's Wrath, Objurgation). Shadow Fiend's three Shadowraze ids count as one
+(`skill_build.ALIASES`).
+
+The generic counters by position: a mid gets Silver Edge against break heroes and
+Black King Bar against 3+ magic damage heroes; an offlaner Pipe of Insight
+against 3+ magic damage heroes. Heavy healing has no generic item any more: none
+of the 10 offlaners builds Spirit Vessel in high-rank games (a support's item;
+the player review), so the generic offlane Vessel and the post-match draft
+counter for an offlaner are gone. The plans keep what fits and replace the rest:
+
+| Hero | Rules | Suppressed generic | Tempo |
+|---|---|---|---|
+| Ember Spirit (mid, also carry) | healing: Spirit Vessel from 8:00 (in his build, 62%) | break (no Silver Edge in his games), illusions as a carry (Sleight of Fist, Flame Guard) | 85%: 12.0k / 14.9k / 17.8k |
+| Shadow Fiend | evasion: Monkey King Bar from 18:00 (26% vs 2%, won 67% vs 38%) | — (Silver Edge stays: won 64% vs 26%) | 85%: 18.2k at 25:00, 21.1k at 30:00 |
+| Queen of Pain | targeted jumpers: Linken's Sphere from 18:00 (17% vs 9%, won 59% vs 51%) | break | 85%: 16.3k at 25:00 |
+| Storm Spirit | targeted jumpers: Linken's Sphere from 18:00, earlier than in his build (20% vs 17%, won 61% vs 35%) | break | 85%: 14.9k / 16.8k at 25/30 |
+| Puck | targeted jumpers: Linken's Sphere from 18:00, earlier than in his build (31% vs 19%, won 67% vs 42%) | break | 85%: 10.6k / 13.9k / 16.8k |
+| Outworld Destroyer | — | break | his 75%: 14.4k at 25:00 |
+| Templar Assassin | evasion: Monkey King Bar from 18:00, earlier than in her build | — | her 80%: 20.6k at 30:00 |
+| Void Spirit | healing: Spirit Vessel from 8:00 (in his build, 57%); targeted jumpers: Linken's Sphere from 18:00 (21% vs 7%, won 63% vs 48%) | break | 85%: 10.6k / 13.9k / 18.2k |
+| Dragon Knight | evasion: Bloodthorn from 20:00 (22% vs 14%, won 65% vs 42%); escape: Bloodthorn with an evasion hero too, else Orchid Malevolence from 14:00 (43% vs 22%) | — (Silver Edge stays: won 71% vs 43%) | his 80%: 18.7k at 30:00 |
+| Axe, Legion Commander, Mars, Primal Beast, Slardar, Timbersaw | magic (3+ heroes): their own Black King Bar from 14:00 (in the build 50-86%), not the generic Pipe | — | Axe 16.8k / 19.7k; Mars 17.8k at 30; Primal Beast 13.4k / 15.8k; Slardar 10.6k at 20, 15.8k at 30; Timbersaw 12.0k / 16.3k / 20.6k; Legion Commander none (the 30:00 point had 13 games) |
+| Centaur Warrunner | magic: Pipe of Insight with its own reason (49% vs 27%, won 56% vs 34%) | — | 85%: 11.0k / 14.9k / 17.8k |
+| Pangolier | — | magic (Rolling Thunder and Roll Up: debuff immunity, 80% magic resistance) | his 75%: 15.4k at 30:00 |
+| Bristleback, Tidehunter | — (the generic Pipe stays) | — | Bristleback's 80%: 12.5k / 14.9k; Tidehunter's 75%: 18.7k at 30:00 |
+
+Linken's Sphere answers Phantom Assassin and Spirit Breaker only: Valve's
+/herodata gives Phantom Strike and Charge of Darkness the unit-target behavior,
+Slark's Pounce not. Axe levels Battle Hunger second (433 games, won 55%,
+against 550 and 49% with Berserker's Call second; the player's pick); Templar
+Assassin keeps Meld > Psi Blades > Refraction (33 of 99 games of 7.41).
+
+A plan may have no rules when the high-rank games change no item (Outworld
+Destroyer, Bristleback, Tidehunter, Pangolier): it still carries the build, the
+skills and the tempo line;
+`hero_items.validate` refuses a plan with nothing at all.
+
+Checked against Valve 7.41f: Shiva's Guard no longer cuts health restoration
+(Arctic Blast is damage and a slow), so no plan names it against healing; Spirit
+Vessel's Soul Release cuts it by 70% for 8 s. The Blink Dagger and other items
+bought whole are not in the assembled-item statistics, so no rule leans on them.

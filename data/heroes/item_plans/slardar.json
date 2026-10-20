@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "hero": "Slardar",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "829 league games since 7.41 (data/heroes/item_stats), win 49.5%. Reproduce: python scripts/hero_item_stats.py slardar.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 28 (Guardian Sprint, Slithereen Crush, Bash of the Deep, Corrosive Haze), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [
+    {
+      "id": "magic_bkb",
+      "why": "magic_bkb",
+      "family": "magic",
+      "item": "black_king_bar",
+      "name": "Black King Bar",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Black King Bar: Avatar applies a basic dispel, 60% magic resistance and makes negative effects of enemy spells do nothing for 9/8/7 s. It is in his build (78% of the won games, ~25 min); Pipe of Insight is not.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, so their spells cannot stop your Slithereen Crush",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, щоб їхні здібності не зупинили ваш Slithereen Crush"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "nullifier",
+      "name": "Nullifier"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 92% (2), magic_wand 85% (6), power_treads 97% (7), soul_ring 75% (10), aghanims_shard 97% (17), echo_sabre 24% (20), great_famango 22% (22), black_king_bar 78% (25), ultimate_scepter 52% (31), buckler 25% (35), nullifier 25% (36).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        10600
+      ],
+      [
+        30,
+        15800
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "echo_sabre",
+        "name": "Echo Sabre"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "moon_shard",
+        "name": "Moon Shard"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 80.0%+: 20:00 11000 (20 games, 80.0%), 30:00 16500 (46 games, 80.4%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "slardar_slithereen_crush",
+      "slardar_sprint",
+      "slardar_bash"
+    ],
+    "games": 829,
+    "first_agree": 779,
+    "opening": {
+      "name": "slardar_slithereen_crush",
+      "agree": 797
+    },
+    "names": {
+      "slardar_slithereen_crush": "Slithereen Crush",
+      "slardar_sprint": "Guardian Sprint",
+      "slardar_bash": "Bash of the Deep"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_slardar_7",
+        "label": "Guardian Sprint Duration",
+        "picked": 544,
+        "games": 821
+      },
+      "15": {
+        "name": "special_bonus_hp_250",
+        "label": "+250 Health",
+        "picked": 459,
+        "games": 747
+      },
+      "20": {
+        "name": "special_bonus_unique_slardar",
+        "label": "Slithereen Crush Damage",
+        "picked": 465,
+        "games": 487
+      },
+      "25": {
+        "name": "special_bonus_unique_slardar_3",
+        "label": "Corrosive Haze Undispellable",
+        "picked": 152,
+        "games": 166
+      }
+    },
+    "basis": "829 games since 7.41: maxed slardar_slithereen_crush > slardar_sprint > slardar_bash 518 (win 51.7%), slardar_slithereen_crush > slardar_bash > slardar_sprint 224 (win 54.9%), slardar_bash > slardar_slithereen_crush > slardar_sprint 29 (win 51.7%); talents 10: Guardian Sprint Duration 544/821 (50.2%), Bash of the Deep Damage 277/821 (49.1%); 15: +250 Health 459/747 (55.6%), Corrosive Haze Armor 288/747 (51.7%); 20: Slithereen Crush Damage 465/487 (61.7%), Seaborn Sentinel Bonus Attack Damage 22/487 (63.6%); 25: Corrosive Haze Undispellable 152/166 (62.5%), Slithereen Crush Cooldown 14/166 (71.4%)."
+  }
+}

@@ -1,0 +1,1233 @@
+{
+ "hero": "Legion Commander",
+ "hero_id": 104,
+ "position": "offlane",
+ "lane_role": 3,
+ "since_patch": "7.40",
+ "generated": "2026-10-20",
+ "source": "OpenDota Explorer: league games with parsed gold timelines",
+ "games": 542,
+ "win": 51.1,
+ "tempo_line": {
+  "30": {
+   "gold": 19000,
+   "net_worth": 18200,
+   "games": 13,
+   "win": 76.9
+  }
+ },
+ "tempo_win_target": 75.0,
+ "usual_build": [
+  {
+   "item": "bracer",
+   "share": 0.762,
+   "minute": 2.1
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.718,
+   "minute": 4.3
+  },
+  {
+   "item": "phase_boots",
+   "share": 0.953,
+   "minute": 6.6
+  },
+  {
+   "item": "blade_mail",
+   "share": 0.971,
+   "minute": 12.4
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.394,
+   "minute": 25.0
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.347,
+   "minute": 25.6
+  },
+  {
+   "item": "black_king_bar",
+   "share": 0.505,
+   "minute": 26.1
+  },
+  {
+   "item": "buckler",
+   "share": 0.206,
+   "minute": 32.5
+  }
+ ],
+ "tempo_build": [
+  {
+   "item": "bracer",
+   "share": 0.7,
+   "minute": 2.0
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.6,
+   "minute": 3.9
+  },
+  {
+   "item": "phase_boots",
+   "share": 1.0,
+   "minute": 5.7
+  },
+  {
+   "item": "blade_mail",
+   "share": 1.0,
+   "minute": 10.5
+  },
+  {
+   "item": "invis_sword",
+   "share": 0.4,
+   "minute": 19.1
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.2,
+   "minute": 21.6
+  },
+  {
+   "item": "black_king_bar",
+   "share": 0.6,
+   "minute": 21.6
+  },
+  {
+   "item": "silver_edge",
+   "share": 0.4,
+   "minute": 23.2
+  },
+  {
+   "item": "desolator",
+   "share": 0.5,
+   "minute": 25.4
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.3,
+   "minute": 25.9
+  },
+  {
+   "item": "lesser_crit",
+   "share": 0.2,
+   "minute": 26.0
+  },
+  {
+   "item": "buckler",
+   "share": 0.4,
+   "minute": 27.4
+  },
+  {
+   "item": "revenants_brooch",
+   "share": 0.2,
+   "minute": 27.7
+  },
+  {
+   "item": "assault",
+   "share": 0.4,
+   "minute": 30.4
+  },
+  {
+   "item": "pers",
+   "share": 0.2,
+   "minute": 31.3
+  },
+  {
+   "item": "sphere",
+   "share": 0.2,
+   "minute": 32.5
+  }
+ ],
+ "skills": {
+  "games": 542,
+  "orders": [
+   {
+    "order": [
+     "legion_commander_overwhelming_odds",
+     "legion_commander_moment_of_courage",
+     "legion_commander_press_the_attack"
+    ],
+    "games": 442,
+    "win": 53.8
+   },
+   {
+    "order": [
+     "legion_commander_overwhelming_odds",
+     "legion_commander_press_the_attack",
+     "legion_commander_moment_of_courage"
+    ],
+    "games": 43,
+    "win": 58.1
+   },
+   {
+    "order": [
+     "legion_commander_overwhelming_odds",
+     "legion_commander_moment_of_courage"
+    ],
+    "games": 24,
+    "win": 8.3
+   },
+   {
+    "order": [
+     "legion_commander_moment_of_courage",
+     "legion_commander_overwhelming_odds",
+     "legion_commander_press_the_attack"
+    ],
+    "games": 22,
+    "win": 45.5
+   },
+   {
+    "order": [
+     "legion_commander_overwhelming_odds"
+    ],
+    "games": 4,
+    "win": 0.0
+   }
+  ],
+  "openings": [
+   {
+    "name": "legion_commander_overwhelming_odds",
+    "games": 518,
+    "win": 51.4
+   },
+   {
+    "name": "legion_commander_press_the_attack",
+    "games": 16,
+    "win": 50.0
+   },
+   {
+    "name": "legion_commander_moment_of_courage",
+    "games": 8,
+    "win": 37.5
+   }
+  ],
+  "talents": {
+   "10": [
+    {
+     "name": "special_bonus_unique_legion_commander_9",
+     "label": "Overwhelming Odds Cooldown",
+     "picked": 303,
+     "games": 448,
+     "win": 52.1
+    },
+    {
+     "name": "special_bonus_unique_legion_commander_outfight_them_armor",
+     "label": "Outfight Them! Armor",
+     "picked": 145,
+     "games": 448,
+     "win": 50.3
+    }
+   ],
+   "15": [
+    {
+     "name": "special_bonus_unique_legion_commander_4",
+     "label": "Overwhelming Odds Damage per Hero",
+     "picked": 362,
+     "games": 489,
+     "win": 55.5
+    },
+    {
+     "name": "special_bonus_unique_legion_commander_6",
+     "label": "Press The Attack HP Regen",
+     "picked": 127,
+     "games": 489,
+     "win": 54.3
+    }
+   ],
+   "20": [
+    {
+     "name": "special_bonus_unique_legion_commander_duel_duration",
+     "label": "Duel Duration",
+     "picked": 111,
+     "games": 202,
+     "win": 58.6
+    },
+    {
+     "name": "special_bonus_unique_legion_commander_3",
+     "label": "Moment of Courage Attacks To Trigger",
+     "picked": 91,
+     "games": 202,
+     "win": 71.4
+    }
+   ],
+   "25": [
+    {
+     "name": "special_bonus_unique_legion_commander_duel_refresh_on_victory",
+     "label": "Duel Refreshes Cooldown On Victory",
+     "picked": 40,
+     "games": 42,
+     "win": 67.5
+    },
+    {
+     "name": "special_bonus_unique_legion_commander_7",
+     "label": "Moment of Courage Lifesteal",
+     "picked": 2,
+     "games": 42,
+     "win": 50.0
+    }
+   ]
+  }
+ },
+ "counters": {
+  "evasion": {
+   "games": 55,
+   "win": 54.5,
+   "items": [
+    {
+     "item": "soul_ring",
+     "share": 0.236,
+     "elsewhere": 0.181,
+     "lift": 1.31,
+     "win_with": 76.9,
+     "win_without": 47.6
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.4,
+     "elsewhere": 0.308,
+     "lift": 1.3,
+     "win_with": 72.7,
+     "win_without": 42.4
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.2,
+     "elsewhere": 0.179,
+     "lift": 1.12,
+     "win_with": 54.5,
+     "win_without": 54.5
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.327,
+     "elsewhere": 0.302,
+     "lift": 1.08,
+     "win_with": 50.0,
+     "win_without": 56.8
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.691,
+     "elsewhere": 0.684,
+     "lift": 1.01,
+     "win_with": 57.9,
+     "win_without": 47.1
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.945,
+     "elsewhere": 0.957,
+     "lift": 0.99,
+     "win_with": 55.8,
+     "win_without": 33.3
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.927,
+     "elsewhere": 0.938,
+     "lift": 0.99,
+     "win_with": 54.9,
+     "win_without": 50.0
+    },
+    {
+     "item": "bracer",
+     "share": 0.673,
+     "elsewhere": 0.778,
+     "lift": 0.86,
+     "win_with": 43.2,
+     "win_without": 77.8
+    },
+    {
+     "item": "great_famango",
+     "share": 0.109,
+     "elsewhere": 0.133,
+     "lift": 0.82,
+     "win_with": 66.7,
+     "win_without": 53.1
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.309,
+     "elsewhere": 0.448,
+     "lift": 0.69,
+     "win_with": 52.9,
+     "win_without": 55.3
+    }
+   ]
+  },
+  "evasion_break": {
+   "games": 13,
+   "win": 30.8,
+   "items": [
+    {
+     "item": "ultimate_scepter",
+     "share": 0.538,
+     "elsewhere": 0.312,
+     "lift": 1.73,
+     "win_with": 57.1,
+     "win_without": 0.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.769,
+     "elsewhere": 0.682,
+     "lift": 1.13,
+     "win_with": 30.0,
+     "win_without": 33.3
+    },
+    {
+     "item": "blade_mail",
+     "share": 1.0,
+     "elsewhere": 0.955,
+     "lift": 1.05,
+     "win_with": 30.8,
+     "win_without": null
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.923,
+     "elsewhere": 0.938,
+     "lift": 0.98,
+     "win_with": 33.3,
+     "win_without": 0.0
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.154,
+     "elsewhere": 0.181,
+     "lift": 0.85,
+     "win_with": 0.0,
+     "win_without": 36.4
+    },
+    {
+     "item": "bracer",
+     "share": 0.615,
+     "elsewhere": 0.771,
+     "lift": 0.8,
+     "win_with": 12.5,
+     "win_without": 60.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.231,
+     "elsewhere": 0.306,
+     "lift": 0.75,
+     "win_with": 100.0,
+     "win_without": 10.0
+    }
+   ]
+  },
+  "illusions": {
+   "games": 51,
+   "win": 52.9,
+   "items": [
+    {
+     "item": "ultimate_scepter",
+     "share": 0.431,
+     "elsewhere": 0.305,
+     "lift": 1.41,
+     "win_with": 54.5,
+     "win_without": 51.7
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.176,
+     "elsewhere": 0.143,
+     "lift": 1.24,
+     "win_with": 55.6,
+     "win_without": 52.4
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.216,
+     "elsewhere": 0.177,
+     "lift": 1.22,
+     "win_with": 45.5,
+     "win_without": 55.0
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.51,
+     "elsewhere": 0.426,
+     "lift": 1.2,
+     "win_with": 57.7,
+     "win_without": 48.0
+    },
+    {
+     "item": "bracer",
+     "share": 0.882,
+     "elsewhere": 0.756,
+     "lift": 1.17,
+     "win_with": 53.3,
+     "win_without": 50.0
+    },
+    {
+     "item": "blade_mail",
+     "share": 1.0,
+     "elsewhere": 0.951,
+     "lift": 1.05,
+     "win_with": 52.9,
+     "win_without": null
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.314,
+     "elsewhere": 0.303,
+     "lift": 1.03,
+     "win_with": 62.5,
+     "win_without": 48.6
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.961,
+     "elsewhere": 0.935,
+     "lift": 1.03,
+     "win_with": 51.0,
+     "win_without": 100.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.667,
+     "elsewhere": 0.686,
+     "lift": 0.97,
+     "win_with": 55.9,
+     "win_without": 47.1
+    },
+    {
+     "item": "great_famango",
+     "share": 0.118,
+     "elsewhere": 0.132,
+     "lift": 0.89,
+     "win_with": 83.3,
+     "win_without": 48.9
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.118,
+     "elsewhere": 0.193,
+     "lift": 0.61,
+     "win_with": 33.3,
+     "win_without": 55.6
+    }
+   ]
+  },
+  "invisibility": {
+   "games": 129,
+   "win": 58.1,
+   "items": [
+    {
+     "item": "soul_ring",
+     "share": 0.217,
+     "elsewhere": 0.177,
+     "lift": 1.23,
+     "win_with": 67.9,
+     "win_without": 55.4
+    },
+    {
+     "item": "great_famango",
+     "share": 0.147,
+     "elsewhere": 0.126,
+     "lift": 1.17,
+     "win_with": 73.7,
+     "win_without": 55.5
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.721,
+     "elsewhere": 0.673,
+     "lift": 1.07,
+     "win_with": 61.3,
+     "win_without": 50.0
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.434,
+     "elsewhere": 0.433,
+     "lift": 1.0,
+     "win_with": 69.6,
+     "win_without": 49.3
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.938,
+     "elsewhere": 0.937,
+     "lift": 1.0,
+     "win_with": 60.3,
+     "win_without": 25.0
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.946,
+     "elsewhere": 0.959,
+     "lift": 0.99,
+     "win_with": 59.0,
+     "win_without": 42.9
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.302,
+     "elsewhere": 0.305,
+     "lift": 0.99,
+     "win_with": 59.0,
+     "win_without": 57.8
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.14,
+     "elsewhere": 0.148,
+     "lift": 0.94,
+     "win_with": 66.7,
+     "win_without": 56.8
+    },
+    {
+     "item": "bracer",
+     "share": 0.729,
+     "elsewhere": 0.78,
+     "lift": 0.93,
+     "win_with": 58.5,
+     "win_without": 57.1
+    },
+    {
+     "item": "buckler",
+     "share": 0.14,
+     "elsewhere": 0.167,
+     "lift": 0.84,
+     "win_with": 66.7,
+     "win_without": 56.8
+    },
+    {
+     "item": "assault",
+     "share": 0.101,
+     "elsewhere": 0.123,
+     "lift": 0.82,
+     "win_with": 76.9,
+     "win_without": 56.0
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.147,
+     "elsewhere": 0.191,
+     "lift": 0.77,
+     "win_with": 52.6,
+     "win_without": 59.1
+    }
+   ]
+  },
+  "healing": {
+   "games": 75,
+   "win": 42.7,
+   "items": [
+    {
+     "item": "echo_sabre",
+     "share": 0.107,
+     "elsewhere": 0.032,
+     "lift": 3.32,
+     "win_with": 37.5,
+     "win_without": 43.3
+    },
+    {
+     "item": "assault",
+     "share": 0.16,
+     "elsewhere": 0.111,
+     "lift": 1.44,
+     "win_with": 50.0,
+     "win_without": 41.3
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.4,
+     "elsewhere": 0.289,
+     "lift": 1.38,
+     "win_with": 56.7,
+     "win_without": 33.3
+    },
+    {
+     "item": "buckler",
+     "share": 0.187,
+     "elsewhere": 0.156,
+     "lift": 1.19,
+     "win_with": 50.0,
+     "win_without": 41.0
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.16,
+     "elsewhere": 0.143,
+     "lift": 1.12,
+     "win_with": 75.0,
+     "win_without": 36.5
+    },
+    {
+     "item": "bracer",
+     "share": 0.84,
+     "elsewhere": 0.756,
+     "lift": 1.11,
+     "win_with": 39.7,
+     "win_without": 58.3
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.44,
+     "elsewhere": 0.433,
+     "lift": 1.02,
+     "win_with": 57.6,
+     "win_without": 31.0
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.933,
+     "elsewhere": 0.938,
+     "lift": 1.0,
+     "win_with": 40.0,
+     "win_without": 80.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.667,
+     "elsewhere": 0.687,
+     "lift": 0.97,
+     "win_with": 42.0,
+     "win_without": 44.0
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.173,
+     "elsewhere": 0.182,
+     "lift": 0.95,
+     "win_with": 38.5,
+     "win_without": 43.5
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.907,
+     "elsewhere": 0.964,
+     "lift": 0.94,
+     "win_with": 44.1,
+     "win_without": 28.6
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.16,
+     "elsewhere": 0.191,
+     "lift": 0.84,
+     "win_with": 33.3,
+     "win_without": 44.4
+    }
+   ]
+  },
+  "escape": {
+   "games": 175,
+   "win": 53.7,
+   "items": [
+    {
+     "item": "invis_sword",
+     "share": 0.183,
+     "elsewhere": 0.128,
+     "lift": 1.43,
+     "win_with": 62.5,
+     "win_without": 51.7
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.217,
+     "elsewhere": 0.172,
+     "lift": 1.26,
+     "win_with": 55.3,
+     "win_without": 53.3
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.486,
+     "elsewhere": 0.409,
+     "lift": 1.19,
+     "win_with": 61.2,
+     "win_without": 46.7
+    },
+    {
+     "item": "buckler",
+     "share": 0.177,
+     "elsewhere": 0.153,
+     "lift": 1.16,
+     "win_with": 64.5,
+     "win_without": 51.4
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.349,
+     "elsewhere": 0.302,
+     "lift": 1.15,
+     "win_with": 63.9,
+     "win_without": 48.2
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.726,
+     "elsewhere": 0.665,
+     "lift": 1.09,
+     "win_with": 52.8,
+     "win_without": 56.2
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.971,
+     "elsewhere": 0.921,
+     "lift": 1.05,
+     "win_with": 54.1,
+     "win_without": 40.0
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.971,
+     "elsewhere": 0.948,
+     "lift": 1.02,
+     "win_with": 53.5,
+     "win_without": 60.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.303,
+     "elsewhere": 0.305,
+     "lift": 0.99,
+     "win_with": 58.5,
+     "win_without": 51.6
+    },
+    {
+     "item": "bracer",
+     "share": 0.749,
+     "elsewhere": 0.777,
+     "lift": 0.96,
+     "win_with": 57.3,
+     "win_without": 43.2
+    },
+    {
+     "item": "assault",
+     "share": 0.114,
+     "elsewhere": 0.12,
+     "lift": 0.95,
+     "win_with": 65.0,
+     "win_without": 52.3
+    },
+    {
+     "item": "great_famango",
+     "share": 0.126,
+     "elsewhere": 0.134,
+     "lift": 0.94,
+     "win_with": 63.6,
+     "win_without": 52.3
+    }
+   ]
+  },
+  "break": {
+   "games": 62,
+   "win": 51.6,
+   "items": [
+    {
+     "item": "great_famango",
+     "share": 0.177,
+     "elsewhere": 0.125,
+     "lift": 1.42,
+     "win_with": 72.7,
+     "win_without": 47.1
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.226,
+     "elsewhere": 0.181,
+     "lift": 1.25,
+     "win_with": 42.9,
+     "win_without": 54.2
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.161,
+     "elsewhere": 0.144,
+     "lift": 1.12,
+     "win_with": 80.0,
+     "win_without": 46.2
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.742,
+     "elsewhere": 0.677,
+     "lift": 1.1,
+     "win_with": 56.5,
+     "win_without": 37.5
+    },
+    {
+     "item": "buckler",
+     "share": 0.161,
+     "elsewhere": 0.16,
+     "lift": 1.01,
+     "win_with": 40.0,
+     "win_without": 53.8
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.419,
+     "elsewhere": 0.435,
+     "lift": 0.96,
+     "win_with": 61.5,
+     "win_without": 44.4
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.903,
+     "elsewhere": 0.942,
+     "lift": 0.96,
+     "win_with": 53.6,
+     "win_without": 33.3
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.903,
+     "elsewhere": 0.963,
+     "lift": 0.94,
+     "win_with": 51.8,
+     "win_without": 50.0
+    },
+    {
+     "item": "bracer",
+     "share": 0.677,
+     "elsewhere": 0.779,
+     "lift": 0.87,
+     "win_with": 50.0,
+     "win_without": 55.0
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.274,
+     "elsewhere": 0.323,
+     "lift": 0.85,
+     "win_with": 76.5,
+     "win_without": 42.2
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.226,
+     "elsewhere": 0.315,
+     "lift": 0.72,
+     "win_with": 50.0,
+     "win_without": 52.1
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.113,
+     "elsewhere": 0.19,
+     "lift": 0.6,
+     "win_with": 42.9,
+     "win_without": 52.7
+    }
+   ]
+  },
+  "jumpers": {
+   "games": 66,
+   "win": 51.5,
+   "items": [
+    {
+     "item": "aghanims_shard",
+     "share": 0.409,
+     "elsewhere": 0.29,
+     "lift": 1.41,
+     "win_with": 70.4,
+     "win_without": 38.5
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.227,
+     "elsewhere": 0.181,
+     "lift": 1.26,
+     "win_with": 46.7,
+     "win_without": 52.9
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.212,
+     "elsewhere": 0.176,
+     "lift": 1.2,
+     "win_with": 57.1,
+     "win_without": 50.0
+    },
+    {
+     "item": "buckler",
+     "share": 0.182,
+     "elsewhere": 0.158,
+     "lift": 1.15,
+     "win_with": 100.0,
+     "win_without": 40.7
+    },
+    {
+     "item": "assault",
+     "share": 0.121,
+     "elsewhere": 0.118,
+     "lift": 1.03,
+     "win_with": 100.0,
+     "win_without": 44.8
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.97,
+     "elsewhere": 0.954,
+     "lift": 1.02,
+     "win_with": 53.1,
+     "win_without": 0.0
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.939,
+     "elsewhere": 0.937,
+     "lift": 1.0,
+     "win_with": 53.2,
+     "win_without": 25.0
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.303,
+     "elsewhere": 0.319,
+     "lift": 0.95,
+     "win_with": 65.0,
+     "win_without": 45.7
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.652,
+     "elsewhere": 0.689,
+     "lift": 0.95,
+     "win_with": 51.2,
+     "win_without": 52.2
+    },
+    {
+     "item": "bracer",
+     "share": 0.712,
+     "elsewhere": 0.775,
+     "lift": 0.92,
+     "win_with": 53.2,
+     "win_without": 47.4
+    },
+    {
+     "item": "great_famango",
+     "share": 0.106,
+     "elsewhere": 0.134,
+     "lift": 0.79,
+     "win_with": 57.1,
+     "win_without": 50.8
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.303,
+     "elsewhere": 0.452,
+     "lift": 0.67,
+     "win_with": 55.0,
+     "win_without": 50.0
+    }
+   ]
+  },
+  "illusion_clearers": {
+   "games": 290,
+   "win": 52.8,
+   "items": [
+    {
+     "item": "aghanims_shard",
+     "share": 0.345,
+     "elsewhere": 0.258,
+     "lift": 1.34,
+     "win_with": 60.0,
+     "win_without": 48.9
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.207,
+     "elsewhere": 0.163,
+     "lift": 1.27,
+     "win_with": 56.7,
+     "win_without": 51.7
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.159,
+     "elsewhere": 0.131,
+     "lift": 1.21,
+     "win_with": 63.0,
+     "win_without": 50.8
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.728,
+     "elsewhere": 0.635,
+     "lift": 1.15,
+     "win_with": 54.0,
+     "win_without": 49.4
+    },
+    {
+     "item": "great_famango",
+     "share": 0.138,
+     "elsewhere": 0.123,
+     "lift": 1.12,
+     "win_with": 57.5,
+     "win_without": 52.0
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.321,
+     "elsewhere": 0.313,
+     "lift": 1.02,
+     "win_with": 63.4,
+     "win_without": 47.7
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.952,
+     "elsewhere": 0.96,
+     "lift": 0.99,
+     "win_with": 54.0,
+     "win_without": 28.6
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.934,
+     "elsewhere": 0.94,
+     "lift": 0.99,
+     "win_with": 53.5,
+     "win_without": 42.1
+    },
+    {
+     "item": "bracer",
+     "share": 0.759,
+     "elsewhere": 0.778,
+     "lift": 0.98,
+     "win_with": 51.8,
+     "win_without": 55.7
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.424,
+     "elsewhere": 0.444,
+     "lift": 0.95,
+     "win_with": 59.3,
+     "win_without": 47.9
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.169,
+     "elsewhere": 0.194,
+     "lift": 0.87,
+     "win_with": 65.3,
+     "win_without": 50.2
+    },
+    {
+     "item": "buckler",
+     "share": 0.138,
+     "elsewhere": 0.187,
+     "lift": 0.74,
+     "win_with": 65.0,
+     "win_without": 50.8
+    }
+   ]
+  },
+  "magic_lineup": {
+   "games": 69,
+   "win": 58.0,
+   "items": [
+    {
+     "item": "ultimate_scepter",
+     "share": 0.377,
+     "elsewhere": 0.309,
+     "lift": 1.22,
+     "win_with": 76.9,
+     "win_without": 46.5
+    },
+    {
+     "item": "great_famango",
+     "share": 0.145,
+     "elsewhere": 0.129,
+     "lift": 1.12,
+     "win_with": 80.0,
+     "win_without": 54.2
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.319,
+     "elsewhere": 0.302,
+     "lift": 1.05,
+     "win_with": 68.2,
+     "win_without": 53.2
+    },
+    {
+     "item": "bracer",
+     "share": 0.797,
+     "elsewhere": 0.763,
+     "lift": 1.04,
+     "win_with": 50.9,
+     "win_without": 85.7
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.971,
+     "elsewhere": 0.953,
+     "lift": 1.02,
+     "win_with": 58.2,
+     "win_without": 50.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.681,
+     "elsewhere": 0.685,
+     "lift": 0.99,
+     "win_with": 59.6,
+     "win_without": 54.5
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.928,
+     "elsewhere": 0.939,
+     "lift": 0.99,
+     "win_with": 59.4,
+     "win_without": 40.0
+    },
+    {
+     "item": "assault",
+     "share": 0.116,
+     "elsewhere": 0.118,
+     "lift": 0.98,
+     "win_with": 87.5,
+     "win_without": 54.1
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.42,
+     "elsewhere": 0.436,
+     "lift": 0.97,
+     "win_with": 65.5,
+     "win_without": 52.5
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.13,
+     "elsewhere": 0.148,
+     "lift": 0.88,
+     "win_with": 55.6,
+     "win_without": 58.3
+    },
+    {
+     "item": "buckler",
+     "share": 0.13,
+     "elsewhere": 0.165,
+     "lift": 0.79,
+     "win_with": 77.8,
+     "win_without": 55.0
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.13,
+     "elsewhere": 0.195,
+     "lift": 0.67,
+     "win_with": 66.7,
+     "win_without": 56.7
+    }
+   ]
+  }
+ },
+ "candidates": []
+}

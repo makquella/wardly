@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "hero": "Templar Assassin",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "258 league games since 7.40 (data/heroes/item_stats), win 51.9%; skills from 99 games of 7.41. Reproduce: python scripts/hero_item_stats.py templar_assassin.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge.",
+    "hero": "Valve /datafeed/herodata hero_id 46 (Refraction, Meld, Psi Blades), 7.41f.",
+    "generic": "The generic Silver Edge against break heroes stays (a right-click core; 7 games against them, too few to say more).",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion_mkb",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 18,
+      "basis": "Valve 7.41f Monkey King Bar: each attack has an 80% chance to pierce evasion and deal 70 bonus magical damage (+50 damage, +50 attack speed). It is in her build (25% at ~26 min); against Phantom Assassin or Windranger 27% of 30 games (18% otherwise), won 50% against 41%: earlier.",
+      "reason": {
+        "en": "{enemy} dodges attacks: take {item} from your build earlier, 80% of your attacks with it go through the evasion",
+        "uk": "{enemy} ухиляється від атак: візьміть {item} зі своєї збірки раніше, з ним 80% ваших атак проходять крізь ухилення"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "desolator",
+      "name": "Desolator"
+    },
+    {
+      "item": "dragon_lance",
+      "name": "Dragon Lance"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "hurricane_pike",
+      "name": "Hurricane Pike"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: wraith_band 27% (1), null_talisman 54% (2), magic_wand 28% (3), power_treads 100% (6), desolator 93% (12), dragon_lance 81% (14), lesser_crit 79% (20), greater_crit 70% (24), aghanims_shard 25% (24), monkey_king_bar 25% (26), force_staff 42% (26), hurricane_pike 40% (26), black_king_bar 24% (28).",
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        20600
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "desolator",
+        "name": "Desolator"
+      },
+      {
+        "item": "dragon_lance",
+        "name": "Dragon Lance"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      },
+      {
+        "item": "hurricane_pike",
+        "name": "Hurricane Pike"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "monkey_king_bar",
+        "name": "Monkey King Bar"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "swift_blink",
+        "name": "Swift Blink"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 30:00 21500 (25 games, 80.0%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "templar_assassin_meld",
+      "templar_assassin_psi_blades",
+      "templar_assassin_refraction"
+    ],
+    "games": 99,
+    "first_agree": 35,
+    "opening": {
+      "name": "templar_assassin_psi_blades",
+      "agree": 43
+    },
+    "names": {
+      "templar_assassin_meld": "Meld",
+      "templar_assassin_psi_blades": "Psi Blades",
+      "templar_assassin_refraction": "Refraction"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_templar_assassin_meld_duration",
+        "label": "Meld Debuff Duration",
+        "picked": 76,
+        "games": 99
+      },
+      "15": {
+        "name": "special_bonus_unique_templar_assassin_meld_attack_range_bonus",
+        "label": "Meld Attack Range",
+        "picked": 96,
+        "games": 98
+      },
+      "20": {
+        "name": "special_bonus_unique_templar_assassin_8",
+        "label": "Meld Armor Reduction",
+        "picked": 60,
+        "games": 77
+      },
+      "25": {
+        "name": "special_bonus_unique_templar_assassin_7",
+        "label": "Meld Hit Bash",
+        "picked": 10,
+        "games": 14
+      }
+    },
+    "basis": "99 games since 7.41: maxed templar_assassin_meld > templar_assassin_psi_blades > templar_assassin_refraction 33 (win 57.6%), templar_assassin_psi_blades > templar_assassin_meld > templar_assassin_refraction 26 (win 61.5%), templar_assassin_refraction > templar_assassin_psi_blades > templar_assassin_meld 23 (win 43.5%); talents 10: Meld Debuff Duration 76/99 (53.9%), Psionic Trap Slow 23/99 (47.8%); 15: Meld Attack Range 96/98 (53.1%), Psionic Traps 2/98 (50.0%); 20: Meld Armor Reduction 60/77 (60.0%), Refraction Dispels 17/77 (76.5%); 25: Meld Hit Bash 10/14 (50.0%), Refraction Instances 4/14 (100.0%)."
+  }
+}

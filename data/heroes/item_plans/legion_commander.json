@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "hero": "Legion Commander",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "542 league games since 7.40 (data/heroes/item_stats), win 51.1%. Reproduce: python scripts/hero_item_stats.py legion_commander.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 104 (Overwhelming Odds, Press the Attack, Moment of Courage, Duel), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [
+    {
+      "id": "magic_bkb",
+      "why": "magic_bkb",
+      "family": "magic",
+      "item": "black_king_bar",
+      "name": "Black King Bar",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Black King Bar: Avatar applies a basic dispel, 60% magic resistance and makes negative effects of enemy spells do nothing for 9/8/7 s. It is in her build (50% of the won games, ~26 min); Pipe of Insight is not. Duel holds the target 4-5 s: nothing of theirs may stop her during it.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, so their spells cannot break your Duel",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, щоб їхні здібності не зірвали ваш Duel"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "blade_mail",
+      "name": "Blade Mail"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 76% (2), magic_wand 72% (4), phase_boots 95% (7), blade_mail 97% (12), ultimate_scepter 39% (25), aghanims_shard 35% (26), black_king_bar 50% (26), buckler 21% (32).",
+  "skills": {
+    "order": [
+      "legion_commander_overwhelming_odds",
+      "legion_commander_moment_of_courage",
+      "legion_commander_press_the_attack"
+    ],
+    "games": 542,
+    "first_agree": 513,
+    "opening": {
+      "name": "legion_commander_overwhelming_odds",
+      "agree": 518
+    },
+    "names": {
+      "legion_commander_overwhelming_odds": "Overwhelming Odds",
+      "legion_commander_moment_of_courage": "Moment of Courage",
+      "legion_commander_press_the_attack": "Press The Attack"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_legion_commander_9",
+        "label": "Overwhelming Odds Cooldown",
+        "picked": 303,
+        "games": 448
+      },
+      "15": {
+        "name": "special_bonus_unique_legion_commander_4",
+        "label": "Overwhelming Odds Damage per Hero",
+        "picked": 362,
+        "games": 489
+      },
+      "20": {
+        "name": "special_bonus_unique_legion_commander_duel_duration",
+        "label": "Duel Duration",
+        "picked": 111,
+        "games": 202
+      },
+      "25": {
+        "name": "special_bonus_unique_legion_commander_duel_refresh_on_victory",
+        "label": "Duel Refreshes Cooldown On Victory",
+        "picked": 40,
+        "games": 42
+      }
+    },
+    "basis": "542 games since 7.40: maxed legion_commander_overwhelming_odds > legion_commander_moment_of_courage > legion_commander_press_the_attack 442 (win 53.8%), legion_commander_overwhelming_odds > legion_commander_press_the_attack > legion_commander_moment_of_courage 43 (win 58.1%), legion_commander_overwhelming_odds > legion_commander_moment_of_courage 24 (win 8.3%); talents 10: Overwhelming Odds Cooldown 303/448 (52.1%), Outfight Them! Armor 145/448 (50.3%); 15: Overwhelming Odds Damage per Hero 362/489 (55.5%), Press The Attack HP Regen 127/489 (54.3%); 20: Duel Duration 111/202 (58.6%), Moment of Courage Attacks To Trigger 91/202 (71.4%); 25: Duel Refreshes Cooldown On Victory 40/42 (67.5%), Moment of Courage Lifesteal 2/42 (50.0%)."
+  }
+}

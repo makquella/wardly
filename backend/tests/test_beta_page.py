@@ -21,7 +21,7 @@ WINDOWS = {"Докладніше", "Однаково запустити", "More 
 def test_the_heroes_are_the_carry_plans():
     names = beta_page.carries()
     plans = [json.loads(p.read_text(encoding="utf-8")) for p in beta_page.PLANS.glob("*.json")]
-    assert names == sorted(p["hero"] for p in plans if "carry" in p.get("positions", []))
+    assert names == sorted(p["hero"] for p in plans if p["positions"][0] == "carry")
     assert len(names) >= 20
 
 

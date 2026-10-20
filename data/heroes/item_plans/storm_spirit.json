@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "hero": "Storm Spirit",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "1103 league games since 7.41 (data/heroes/item_stats), win 49.0%. Reproduce: python scripts/hero_item_stats.py storm_spirit.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Linken's Sphere, Black King Bar (generic, in his build).",
+    "hero": "Valve /datafeed/herodata hero_id 17 (Overload, Static Remnant, Ball Lightning), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [
+    {
+      "id": "jumpers",
+      "why": "jumper_linken",
+      "family": "linken",
+      "item": "sphere",
+      "name": "Linken's Sphere",
+      "enemy": "targeted_jumpers",
+      "minute": 18,
+      "basis": "Valve 7.41f Linken's Sphere: Spellblock blocks most targeted spells once every 14 s (+16 all attributes, +6.5 health and +4.25 mana regeneration). Valve /herodata: Phantom Strike and Charge of Darkness are cast on the target (unit-target behavior), Slark's Pounce is not. It is in his build (24%, ~32 min); against Slark, Phantom Assassin or Spirit Breaker 20% of 92 games (17% otherwise), won 61% against 35%: earlier. The player review (2026-10-20): Linken's against Phantom Assassin and Spirit Breaker, not against Slark.",
+      "reason": {
+        "en": "{enemy} jumps on you with {spell}: {item} blocks it, once every 14 seconds",
+        "uk": "{enemy} стрибає на вас через {spell}: {item} блокує цю здатність раз на 14 секунд"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "kaya",
+      "name": "Kaya"
+    },
+    {
+      "item": "kaya_and_sange",
+      "name": "Kaya and Sange"
+    },
+    {
+      "item": "witch_blade",
+      "name": "Witch Blade"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "pers",
+      "name": "Perseverance"
+    },
+    {
+      "item": "devastator",
+      "name": "Parasma"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 91% (4), ward_dispenser 26% (6), soul_ring 87% (6), power_treads 91% (9), kaya 100% (14), oblivion_staff 95% (20), sange 91% (20), kaya_and_sange 91% (20), witch_blade 87% (22), black_king_bar 65% (26), pers 28% (30), devastator 67% (32), sphere 24% (32), aghanims_shard 43% (37), ultimate_scepter 32% (39).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        14900
+      ],
+      [
+        30,
+        16800
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "witch_blade",
+        "name": "Witch Blade"
+      },
+      {
+        "item": "kaya_and_sange",
+        "name": "Kaya and Sange"
+      },
+      {
+        "item": "orchid",
+        "name": "Orchid Malevolence"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "devastator",
+        "name": "Parasma"
+      },
+      {
+        "item": "sphere",
+        "name": "Linken's Sphere"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 25:00 15500 (55 games, 87.3%), 30:00 17500 (195 games, 85.1%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "storm_spirit_static_remnant",
+      "storm_spirit_overload",
+      "storm_spirit_electric_vortex"
+    ],
+    "games": 1103,
+    "first_agree": 1084,
+    "opening": {
+      "name": "storm_spirit_static_remnant",
+      "agree": 1103
+    },
+    "names": {
+      "storm_spirit_static_remnant": "Static Remnant",
+      "storm_spirit_overload": "Overload",
+      "storm_spirit_electric_vortex": "Electric Vortex"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_mp_regen_150",
+        "label": "+1.5 Mana Regen",
+        "picked": 1069,
+        "games": 1102
+      },
+      "15": {
+        "name": "special_bonus_unique_storm_spirit_5",
+        "label": "Static Remnant Damage",
+        "picked": 627,
+        "games": 1076
+      },
+      "20": {
+        "name": "special_bonus_unique_storm_spirit",
+        "label": "Electric Vortex Duration",
+        "picked": 432,
+        "games": 812
+      },
+      "25": {
+        "name": "special_bonus_unique_storm_spirit_7",
+        "label": "Overload Attack Bounce",
+        "picked": 360,
+        "games": 397
+      }
+    },
+    "basis": "1103 games since 7.41: maxed storm_spirit_static_remnant > storm_spirit_overload > storm_spirit_electric_vortex 1071 (win 49.4%), storm_spirit_overload > storm_spirit_static_remnant > storm_spirit_electric_vortex 17 (win 64.7%), storm_spirit_static_remnant > storm_spirit_overload 12 (win 0.0%); talents 10: +1.5 Mana Regen 1069/1102 (48.9%), Overload Attack/Movement Speed Slow 33/1102 (54.5%); 15: Static Remnant Damage 627/1076 (47.8%), +250 Health 449/1076 (53.5%); 20: Electric Vortex Duration 432/812 (57.9%), Static Remnant Cooldown 380/812 (59.2%); 25: Overload Attack Bounce 360/397 (69.4%), Distance Auto Remnant in Ball Lightning 37/397 (73.0%)."
+  },
+  "suppress": {
+    "break": "Silver Edge is not his item: Ball Lightning and Overload carry his damage; his build is Kaya and Sange, Witch Blade, BKB and Parasma (no Silver Edge in 66 games against break heroes)."
+  }
+}

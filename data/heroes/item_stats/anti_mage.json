@@ -1,13 +1,13 @@
 {
- "hero": "anti-mage",
+ "hero": "Anti-Mage",
  "hero_id": 1,
  "position": "carry",
  "lane_role": 1,
  "since_patch": "7.40",
- "generated": "2026-10-19",
+ "generated": "2026-10-20",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
- "games": 445,
- "win": 48.5,
+ "games": 448,
+ "win": 48.7,
  "tempo_line": {
   "20": {
    "gold": 12500,
@@ -32,12 +32,12 @@
  "usual_build": [
   {
    "item": "wraith_band",
-   "share": 0.329,
+   "share": 0.33,
    "minute": 2.3
   },
   {
    "item": "magic_wand",
-   "share": 0.676,
+   "share": 0.67,
    "minute": 4.3
   },
   {
@@ -47,8 +47,8 @@
   },
   {
    "item": "pers",
-   "share": 0.625,
-   "minute": 11.3
+   "share": 0.628,
+   "minute": 11.2
   },
   {
    "item": "bfury",
@@ -67,12 +67,12 @@
   },
   {
    "item": "butterfly",
-   "share": 0.574,
-   "minute": 27.7
+   "share": 0.578,
+   "minute": 27.8
   },
   {
    "item": "skadi",
-   "share": 0.352,
+   "share": 0.353,
    "minute": 27.9
   },
   {
@@ -82,17 +82,17 @@
   },
   {
    "item": "black_king_bar",
-   "share": 0.213,
-   "minute": 31.8
+   "share": 0.216,
+   "minute": 32.3
   },
   {
    "item": "sange",
-   "share": 0.407,
+   "share": 0.404,
    "minute": 32.7
   },
   {
    "item": "abyssal_blade",
-   "share": 0.38,
+   "share": 0.376,
    "minute": 33.7
   }
  ],
@@ -174,7 +174,7 @@
   }
  ],
  "skills": {
-  "games": 445,
+  "games": 248,
   "orders": [
    {
     "order": [
@@ -182,17 +182,8 @@
      "antimage_mana_break",
      "antimage_counterspell"
     ],
-    "games": 225,
-    "win": 50.2
-   },
-   {
-    "order": [
-     "antimage_mana_break",
-     "antimage_blink",
-     "antimage_counterspell"
-    ],
-    "games": 104,
-    "win": 47.1
+    "games": 117,
+    "win": 51.3
    },
    {
     "order": [
@@ -200,41 +191,50 @@
      "antimage_counterspell",
      "antimage_mana_break"
     ],
-    "games": 92,
-    "win": 55.4
+    "games": 63,
+    "win": 58.7
+   },
+   {
+    "order": [
+     "antimage_mana_break",
+     "antimage_blink",
+     "antimage_counterspell"
+    ],
+    "games": 59,
+    "win": 59.3
    },
    {
     "order": [
      "antimage_blink",
      "antimage_mana_break"
     ],
-    "games": 16,
-    "win": 6.2
+    "games": 4,
+    "win": 0.0
    },
    {
     "order": [
      "antimage_mana_break",
      "antimage_blink"
     ],
-    "games": 4,
-    "win": 25.0
+    "games": 2,
+    "win": 50.0
    }
   ],
   "openings": [
    {
     "name": "antimage_mana_break",
-    "games": 369,
-    "win": 47.7
+    "games": 206,
+    "win": 53.9
    },
    {
     "name": "antimage_blink",
-    "games": 72,
-    "win": 54.2
+    "games": 40,
+    "win": 57.5
    },
    {
     "name": "antimage_counterspell",
-    "games": 4,
-    "win": 25.0
+    "games": 2,
+    "win": 0.0
    }
   ],
   "talents": {
@@ -242,168 +242,169 @@
     {
      "name": "special_bonus_unique_antimage_manavoid_aoe",
      "label": "Mana Void Radius",
-     "picked": 264,
-     "games": 443,
-     "win": 50.4
+     "picked": 148,
+     "games": 246,
+     "win": 55.4
     },
     {
      "name": "special_bonus_hp_regen_3",
      "label": "+3 Health Regen",
-     "picked": 179,
-     "games": 443,
-     "win": 45.3
+     "picked": 98,
+     "games": 246,
+     "win": 51.0
     }
    ],
    "15": [
     {
      "name": "special_bonus_unique_antimage_6",
      "label": "Mana Void Damage Multiplier",
-     "picked": 262,
-     "games": 354,
-     "win": 58.0
+     "picked": 171,
+     "games": 238,
+     "win": 56.7
     },
     {
      "name": "special_bonus_unique_antimage_5",
      "label": "/ Persecutor Min/Max Movement Slow",
-     "picked": 92,
-     "games": 354,
-     "win": 46.7
+     "picked": 67,
+     "games": 238,
+     "win": 52.2
     }
    ],
    "20": [
     {
      "name": "special_bonus_unique_antimage_3",
      "label": "Blink Cast Range",
-     "picked": 169,
-     "games": 235,
-     "win": 60.4
+     "picked": 161,
+     "games": 193,
+     "win": 59.6
     },
     {
      "name": "special_bonus_unique_antimage_8",
      "label": "Mana Void Stun",
-     "picked": 66,
-     "games": 235,
-     "win": 54.5
+     "picked": 32,
+     "games": 193,
+     "win": 56.2
     }
    ],
    "25": [
     {
      "name": "special_bonus_unique_antimage_2",
      "label": "Mana Void Cooldown",
-     "picked": 108,
-     "games": 139,
-     "win": 60.2
+     "picked": 62,
+     "games": 94,
+     "win": 61.3
     },
     {
      "name": "special_bonus_unique_antimage",
      "label": "Blink Cooldown",
-     "picked": 31,
-     "games": 139,
-     "win": 61.3
+     "picked": 32,
+     "games": 94,
+     "win": 62.5
     }
    ]
-  }
+  },
+  "since_patch": "7.41"
  },
  "counters": {
   "evasion": {
-   "games": 43,
-   "win": 44.2,
+   "games": 44,
+   "win": 43.2,
    "items": [
     {
      "item": "monkey_king_bar",
-     "share": 0.116,
-     "elsewhere": 0.05,
-     "lift": 2.34,
+     "share": 0.114,
+     "elsewhere": 0.052,
+     "lift": 2.19,
      "win_with": 40.0,
-     "win_without": 44.7
+     "win_without": 43.6
     },
     {
      "item": "great_famango",
-     "share": 0.186,
+     "share": 0.182,
      "elsewhere": 0.144,
-     "lift": 1.29,
+     "lift": 1.27,
      "win_with": 37.5,
-     "win_without": 45.7
-    },
-    {
-     "item": "wraith_band",
-     "share": 0.372,
-     "elsewhere": 0.318,
-     "lift": 1.17,
-     "win_with": 43.8,
      "win_without": 44.4
     },
     {
      "item": "black_king_bar",
-     "share": 0.256,
-     "elsewhere": 0.221,
-     "lift": 1.16,
-     "win_with": 54.5,
+     "share": 0.273,
+     "elsewhere": 0.223,
+     "lift": 1.22,
+     "win_with": 50.0,
      "win_without": 40.6
     },
     {
-     "item": "sange",
-     "share": 0.349,
-     "elsewhere": 0.323,
-     "lift": 1.08,
-     "win_with": 46.7,
+     "item": "wraith_band",
+     "share": 0.364,
+     "elsewhere": 0.319,
+     "lift": 1.14,
+     "win_with": 43.8,
      "win_without": 42.9
+    },
+    {
+     "item": "sange",
+     "share": 0.341,
+     "elsewhere": 0.322,
+     "lift": 1.06,
+     "win_with": 46.7,
+     "win_without": 41.4
     },
     {
      "item": "yasha",
      "share": 1.0,
      "elsewhere": 0.975,
      "lift": 1.03,
-     "win_with": 44.2,
+     "win_with": 43.2,
      "win_without": null
+    },
+    {
+     "item": "manta",
+     "share": 0.955,
+     "elsewhere": 0.946,
+     "lift": 1.01,
+     "win_with": 45.2,
+     "win_without": 0.0
     },
     {
      "item": "bfury",
      "share": 1.0,
      "elsewhere": 0.993,
      "lift": 1.01,
-     "win_with": 44.2,
+     "win_with": 43.2,
      "win_without": null
-    },
-    {
-     "item": "manta",
-     "share": 0.953,
-     "elsewhere": 0.945,
-     "lift": 1.01,
-     "win_with": 46.3,
-     "win_without": 0.0
     },
     {
      "item": "power_treads",
      "share": 1.0,
      "elsewhere": 0.998,
      "lift": 1.0,
-     "win_with": 44.2,
+     "win_with": 43.2,
      "win_without": null
     },
     {
      "item": "basher",
-     "share": 0.465,
+     "share": 0.455,
      "elsewhere": 0.488,
-     "lift": 0.95,
+     "lift": 0.93,
      "win_with": 45.0,
-     "win_without": 43.5
+     "win_without": 41.7
     },
     {
      "item": "pers",
-     "share": 0.512,
-     "elsewhere": 0.565,
-     "lift": 0.91,
-     "win_with": 54.5,
+     "share": 0.523,
+     "elsewhere": 0.567,
+     "lift": 0.92,
+     "win_with": 52.2,
      "win_without": 33.3
     },
     {
      "item": "magic_wand",
-     "share": 0.581,
-     "elsewhere": 0.639,
-     "lift": 0.91,
+     "share": 0.568,
+     "elsewhere": 0.636,
+     "lift": 0.89,
      "win_with": 44.0,
-     "win_without": 44.4
+     "win_without": 42.1
     }
    ]
   },
@@ -414,24 +415,24 @@
     {
      "item": "sphere",
      "share": 0.286,
-     "elsewhere": 0.037,
-     "lift": 7.82,
+     "elsewhere": 0.036,
+     "lift": 7.87,
      "win_with": 50.0,
      "win_without": 40.0
     },
     {
      "item": "moon_shard",
      "share": 0.143,
-     "elsewhere": 0.021,
-     "lift": 6.95,
+     "elsewhere": 0.02,
+     "lift": 7.0,
      "win_with": 0.0,
      "win_without": 50.0
     },
     {
      "item": "monkey_king_bar",
      "share": 0.143,
-     "elsewhere": 0.055,
-     "lift": 2.61,
+     "elsewhere": 0.057,
+     "lift": 2.52,
      "win_with": 0.0,
      "win_without": 50.0
     },
@@ -439,14 +440,14 @@
      "item": "aghanims_shard",
      "share": 0.143,
      "elsewhere": 0.057,
-     "lift": 2.5,
+     "lift": 2.52,
      "win_with": 100.0,
      "win_without": 33.3
     },
     {
      "item": "manta",
      "share": 1.0,
-     "elsewhere": 0.945,
+     "elsewhere": 0.946,
      "lift": 1.06,
      "win_with": 42.9,
      "win_without": null
@@ -454,7 +455,7 @@
     {
      "item": "pers",
      "share": 0.571,
-     "elsewhere": 0.559,
+     "elsewhere": 0.562,
      "lift": 1.02,
      "win_with": 50.0,
      "win_without": 33.3
@@ -486,21 +487,21 @@
     {
      "item": "great_famango",
      "share": 0.143,
-     "elsewhere": 0.148,
-     "lift": 0.96,
+     "elsewhere": 0.147,
+     "lift": 0.97,
      "win_with": 0.0,
      "win_without": 50.0
     },
     {
      "item": "magic_wand",
      "share": 0.571,
-     "elsewhere": 0.635,
-     "lift": 0.9,
+     "elsewhere": 0.63,
+     "lift": 0.91,
      "win_with": 75.0,
      "win_without": 0.0
     },
     {
-     "item": "wraith_band",
+     "item": "sange",
      "share": 0.286,
      "elsewhere": 0.324,
      "lift": 0.88,
@@ -510,71 +511,71 @@
    ]
   },
   "illusions": {
-   "games": 45,
-   "win": 44.4,
+   "games": 47,
+   "win": 44.7,
    "items": [
     {
      "item": "monkey_king_bar",
-     "share": 0.133,
-     "elsewhere": 0.048,
-     "lift": 2.81,
-     "win_with": 66.7,
-     "win_without": 41.0
+     "share": 0.149,
+     "elsewhere": 0.047,
+     "lift": 3.14,
+     "win_with": 71.4,
+     "win_without": 40.0
+    },
+    {
+     "item": "satanic",
+     "share": 0.106,
+     "elsewhere": 0.045,
+     "lift": 2.37,
+     "win_with": 60.0,
+     "win_without": 42.9
     },
     {
      "item": "black_king_bar",
-     "share": 0.311,
-     "elsewhere": 0.215,
-     "lift": 1.45,
-     "win_with": 57.1,
+     "share": 0.34,
+     "elsewhere": 0.214,
+     "lift": 1.59,
+     "win_with": 56.2,
      "win_without": 38.7
     },
     {
      "item": "great_famango",
-     "share": 0.2,
+     "share": 0.191,
      "elsewhere": 0.142,
-     "lift": 1.4,
+     "lift": 1.35,
      "win_with": 22.2,
      "win_without": 50.0
     },
     {
      "item": "wraith_band",
-     "share": 0.356,
-     "elsewhere": 0.32,
-     "lift": 1.11,
-     "win_with": 43.8,
-     "win_without": 44.8
+     "share": 0.362,
+     "elsewhere": 0.319,
+     "lift": 1.13,
+     "win_with": 47.1,
+     "win_without": 43.3
     },
     {
      "item": "magic_wand",
-     "share": 0.689,
-     "elsewhere": 0.627,
-     "lift": 1.1,
+     "share": 0.66,
+     "elsewhere": 0.626,
+     "lift": 1.05,
      "win_with": 38.7,
-     "win_without": 57.1
+     "win_without": 56.2
     },
     {
      "item": "basher",
-     "share": 0.511,
-     "elsewhere": 0.482,
-     "lift": 1.06,
+     "share": 0.489,
+     "elsewhere": 0.484,
+     "lift": 1.01,
      "win_with": 65.2,
-     "win_without": 22.7
-    },
-    {
-     "item": "sange",
-     "share": 0.333,
-     "elsewhere": 0.325,
-     "lift": 1.03,
-     "win_with": 73.3,
-     "win_without": 30.0
+     "win_without": 25.0
     },
     {
      "item": "bfury",
      "share": 1.0,
      "elsewhere": 0.993,
      "lift": 1.01,
-     "win_with": 44.4,
+     "win_with": 44.7,
      "win_without": null
     },
     {
@@ -582,134 +583,134 @@
      "share": 1.0,
      "elsewhere": 0.998,
      "lift": 1.0,
-     "win_with": 44.4,
+     "win_with": 44.7,
      "win_without": null
     },
     {
      "item": "yasha",
-     "share": 0.956,
+     "share": 0.957,
      "elsewhere": 0.98,
      "lift": 0.98,
-     "win_with": 46.5,
+     "win_with": 46.7,
      "win_without": 0.0
     },
     {
-     "item": "manta",
-     "share": 0.911,
-     "elsewhere": 0.95,
-     "lift": 0.96,
-     "win_with": 48.8,
-     "win_without": 0.0
+     "item": "sange",
+     "share": 0.319,
+     "elsewhere": 0.324,
+     "lift": 0.98,
+     "win_with": 73.3,
+     "win_without": 31.2
     },
     {
      "item": "pers",
-     "share": 0.533,
-     "elsewhere": 0.562,
-     "lift": 0.95,
-     "win_with": 62.5,
+     "share": 0.553,
+     "elsewhere": 0.564,
+     "lift": 0.98,
+     "win_with": 61.5,
      "win_without": 23.8
     }
    ]
   },
   "invisibility": {
-   "games": 109,
-   "win": 45.0,
+   "games": 110,
+   "win": 45.5,
    "items": [
     {
      "item": "wraith_band",
-     "share": 0.385,
-     "elsewhere": 0.304,
-     "lift": 1.27,
-     "win_with": 38.1,
+     "share": 0.391,
+     "elsewhere": 0.302,
+     "lift": 1.3,
+     "win_with": 39.5,
      "win_without": 49.3
     },
     {
      "item": "butterfly",
-     "share": 0.486,
-     "elsewhere": 0.458,
+     "share": 0.491,
+     "elsewhere": 0.462,
      "lift": 1.06,
-     "win_with": 54.7,
+     "win_with": 55.6,
      "win_without": 35.7
     },
     {
      "item": "pers",
-     "share": 0.578,
-     "elsewhere": 0.554,
-     "lift": 1.04,
-     "win_with": 47.6,
+     "share": 0.582,
+     "elsewhere": 0.556,
+     "lift": 1.05,
+     "win_with": 48.4,
      "win_without": 41.3
     },
     {
      "item": "magic_wand",
-     "share": 0.642,
-     "elsewhere": 0.631,
-     "lift": 1.02,
+     "share": 0.636,
+     "elsewhere": 0.627,
+     "lift": 1.01,
      "win_with": 44.3,
-     "win_without": 46.2
+     "win_without": 47.5
+    },
+    {
+     "item": "manta",
+     "share": 0.945,
+     "elsewhere": 0.947,
+     "lift": 1.0,
+     "win_with": 48.1,
+     "win_without": 0.0
     },
     {
      "item": "power_treads",
      "share": 1.0,
      "elsewhere": 0.997,
      "lift": 1.0,
-     "win_with": 45.0,
+     "win_with": 45.5,
      "win_without": null
     },
     {
      "item": "basher",
-     "share": 0.486,
+     "share": 0.482,
      "elsewhere": 0.485,
-     "lift": 1.0,
+     "lift": 0.99,
      "win_with": 56.6,
-     "win_without": 33.9
-    },
-    {
-     "item": "manta",
-     "share": 0.945,
-     "elsewhere": 0.946,
-     "lift": 1.0,
-     "win_with": 47.6,
-     "win_without": 0.0
+     "win_without": 35.1
     },
     {
      "item": "yasha",
-     "share": 0.972,
+     "share": 0.973,
      "elsewhere": 0.979,
      "lift": 0.99,
-     "win_with": 46.2,
+     "win_with": 46.7,
      "win_without": 0.0
+    },
+    {
+     "item": "sange",
+     "share": 0.318,
+     "elsewhere": 0.325,
+     "lift": 0.98,
+     "win_with": 62.9,
+     "win_without": 37.3
     },
     {
      "item": "bfury",
      "share": 0.982,
      "elsewhere": 0.997,
      "lift": 0.98,
-     "win_with": 45.8,
+     "win_with": 46.3,
      "win_without": 0.0
     },
     {
-     "item": "sange",
-     "share": 0.321,
-     "elsewhere": 0.327,
-     "lift": 0.98,
-     "win_with": 62.9,
-     "win_without": 36.5
-    },
-    {
      "item": "abyssal_blade",
-     "share": 0.284,
-     "elsewhere": 0.295,
-     "lift": 0.97,
+     "share": 0.282,
+     "elsewhere": 0.293,
+     "lift": 0.96,
      "win_with": 67.7,
-     "win_without": 35.9
+     "win_without": 36.7
     },
     {
      "item": "skadi",
-     "share": 0.275,
-     "elsewhere": 0.286,
-     "lift": 0.96,
+     "share": 0.273,
+     "elsewhere": 0.29,
+     "lift": 0.94,
      "win_with": 63.3,
-     "win_without": 38.0
+     "win_without": 38.8
     }
    ]
   },
@@ -720,7 +721,7 @@
     {
      "item": "pers",
      "share": 0.689,
-     "elsewhere": 0.545,
+     "elsewhere": 0.548,
      "lift": 1.26,
      "win_with": 48.4,
      "win_without": 64.3
@@ -728,8 +729,8 @@
     {
      "item": "great_famango",
      "share": 0.178,
-     "elsewhere": 0.145,
-     "lift": 1.23,
+     "elsewhere": 0.144,
+     "lift": 1.24,
      "win_with": 50.0,
      "win_without": 54.1
     },
@@ -744,10 +745,18 @@
     {
      "item": "ultimate_scepter",
      "share": 0.156,
-     "elsewhere": 0.145,
-     "lift": 1.07,
+     "elsewhere": 0.146,
+     "lift": 1.06,
      "win_with": 42.9,
      "win_without": 55.3
+    },
+    {
+     "item": "basher",
+     "share": 0.489,
+     "elsewhere": 0.484,
+     "lift": 1.01,
+     "win_with": 63.6,
+     "win_without": 43.5
     },
     {
      "item": "bfury",
@@ -756,14 +765,6 @@
      "lift": 1.01,
      "win_with": 53.3,
      "win_without": null
-    },
-    {
-     "item": "basher",
-     "share": 0.489,
-     "elsewhere": 0.485,
-     "lift": 1.01,
-     "win_with": 63.6,
-     "win_without": 43.5
     },
     {
      "item": "power_treads",
@@ -776,8 +777,8 @@
     {
      "item": "magic_wand",
      "share": 0.622,
-     "elsewhere": 0.635,
-     "lift": 0.98,
+     "elsewhere": 0.63,
+     "lift": 0.99,
      "win_with": 57.1,
      "win_without": 47.1
     },
@@ -785,7 +786,7 @@
      "item": "yasha",
      "share": 0.956,
      "elsewhere": 0.98,
-     "lift": 0.98,
+     "lift": 0.97,
      "win_with": 55.8,
      "win_without": 0.0
     },
@@ -800,87 +801,87 @@
     {
      "item": "skadi",
      "share": 0.267,
-     "elsewhere": 0.285,
-     "lift": 0.94,
+     "elsewhere": 0.288,
+     "lift": 0.93,
      "win_with": 66.7,
      "win_without": 48.5
     },
     {
      "item": "abyssal_blade",
      "share": 0.267,
-     "elsewhere": 0.295,
-     "lift": 0.9,
+     "elsewhere": 0.293,
+     "lift": 0.91,
      "win_with": 58.3,
      "win_without": 51.5
     }
    ]
   },
   "escape": {
-   "games": 205,
-   "win": 42.4,
+   "games": 206,
+   "win": 42.7,
    "items": [
     {
      "item": "skadi",
-     "share": 0.332,
-     "elsewhere": 0.242,
+     "share": 0.335,
+     "elsewhere": 0.244,
      "lift": 1.37,
-     "win_with": 50.0,
+     "win_with": 50.7,
      "win_without": 38.7
     },
     {
      "item": "ultimate_scepter",
-     "share": 0.166,
-     "elsewhere": 0.129,
-     "lift": 1.28,
+     "share": 0.165,
+     "elsewhere": 0.132,
+     "lift": 1.25,
      "win_with": 58.8,
-     "win_without": 39.2
+     "win_without": 39.5
     },
     {
      "item": "sange",
-     "share": 0.351,
-     "elsewhere": 0.304,
-     "lift": 1.15,
+     "share": 0.35,
+     "elsewhere": 0.302,
+     "lift": 1.16,
      "win_with": 55.6,
-     "win_without": 35.3
+     "win_without": 35.8
     },
     {
      "item": "abyssal_blade",
-     "share": 0.312,
-     "elsewhere": 0.275,
+     "share": 0.311,
+     "elsewhere": 0.273,
      "lift": 1.14,
      "win_with": 57.8,
-     "win_without": 35.5
+     "win_without": 35.9
     },
     {
      "item": "wraith_band",
-     "share": 0.341,
-     "elsewhere": 0.308,
-     "lift": 1.11,
+     "share": 0.34,
+     "elsewhere": 0.31,
+     "lift": 1.1,
      "win_with": 44.3,
-     "win_without": 41.5
+     "win_without": 41.9
     },
     {
      "item": "butterfly",
-     "share": 0.488,
-     "elsewhere": 0.446,
+     "share": 0.49,
+     "elsewhere": 0.45,
      "lift": 1.09,
-     "win_with": 50.0,
+     "win_with": 50.5,
      "win_without": 35.2
     },
     {
      "item": "black_king_bar",
-     "share": 0.234,
-     "elsewhere": 0.217,
-     "lift": 1.08,
+     "share": 0.233,
+     "elsewhere": 0.223,
+     "lift": 1.04,
      "win_with": 37.5,
-     "win_without": 43.9
+     "win_without": 44.3
     },
     {
      "item": "basher",
-     "share": 0.493,
-     "elsewhere": 0.479,
-     "lift": 1.03,
-     "win_with": 48.5,
+     "share": 0.495,
+     "elsewhere": 0.475,
+     "lift": 1.04,
+     "win_with": 49.0,
      "win_without": 36.5
     },
     {
@@ -888,7 +889,7 @@
      "share": 0.99,
      "elsewhere": 0.967,
      "lift": 1.02,
-     "win_with": 42.9,
+     "win_with": 43.1,
      "win_without": 0.0
     },
     {
@@ -896,24 +897,24 @@
      "share": 0.951,
      "elsewhere": 0.942,
      "lift": 1.01,
-     "win_with": 44.1,
+     "win_with": 44.4,
      "win_without": 10.0
-    },
-    {
-     "item": "power_treads",
-     "share": 1.0,
-     "elsewhere": 0.996,
-     "lift": 1.0,
-     "win_with": 42.4,
-     "win_without": null
     },
     {
      "item": "bfury",
      "share": 0.995,
      "elsewhere": 0.992,
      "lift": 1.0,
-     "win_with": 42.6,
+     "win_with": 42.9,
      "win_without": 0.0
+    },
+    {
+     "item": "power_treads",
+     "share": 1.0,
+     "elsewhere": 0.996,
+     "lift": 1.0,
+     "win_with": 42.7,
+     "win_without": null
     }
    ]
   },
@@ -932,40 +933,40 @@
     {
      "item": "ultimate_scepter",
      "share": 0.174,
-     "elsewhere": 0.145,
-     "lift": 1.2,
+     "elsewhere": 0.146,
+     "lift": 1.19,
      "win_with": 50.0,
      "win_without": 57.9
     },
     {
      "item": "basher",
      "share": 0.565,
-     "elsewhere": 0.481,
-     "lift": 1.17,
+     "elsewhere": 0.48,
+     "lift": 1.18,
      "win_with": 69.2,
      "win_without": 40.0
     },
     {
      "item": "sange",
      "share": 0.348,
-     "elsewhere": 0.325,
-     "lift": 1.07,
+     "elsewhere": 0.322,
+     "lift": 1.08,
      "win_with": 75.0,
      "win_without": 46.7
     },
     {
      "item": "abyssal_blade",
      "share": 0.304,
-     "elsewhere": 0.291,
-     "lift": 1.04,
+     "elsewhere": 0.289,
+     "lift": 1.05,
      "win_with": 71.4,
      "win_without": 50.0
     },
     {
      "item": "butterfly",
      "share": 0.478,
-     "elsewhere": 0.464,
-     "lift": 1.03,
+     "elsewhere": 0.468,
+     "lift": 1.02,
      "win_with": 81.8,
      "win_without": 33.3
     },
@@ -988,18 +989,10 @@
     {
      "item": "magic_wand",
      "share": 0.609,
-     "elsewhere": 0.635,
-     "lift": 0.96,
+     "elsewhere": 0.631,
+     "lift": 0.97,
      "win_with": 57.1,
      "win_without": 55.6
-    },
-    {
-     "item": "pers",
-     "share": 0.522,
-     "elsewhere": 0.562,
-     "lift": 0.93,
-     "win_with": 50.0,
-     "win_without": 63.6
     },
     {
      "item": "yasha",
@@ -1010,10 +1003,18 @@
      "win_without": 0.0
     },
     {
+     "item": "pers",
+     "share": 0.522,
+     "elsewhere": 0.565,
+     "lift": 0.92,
+     "win_with": 50.0,
+     "win_without": 63.6
+    },
+    {
      "item": "manta",
      "share": 0.87,
-     "elsewhere": 0.95,
-     "lift": 0.92,
+     "elsewhere": 0.951,
+     "lift": 0.91,
      "win_with": 60.0,
      "win_without": 33.3
     }
@@ -1034,15 +1035,15 @@
     {
      "item": "pers",
      "share": 0.609,
-     "elsewhere": 0.554,
-     "lift": 1.1,
+     "elsewhere": 0.557,
+     "lift": 1.09,
      "win_with": 42.9,
      "win_without": 27.8
     },
     {
      "item": "manta",
      "share": 0.978,
-     "elsewhere": 0.942,
+     "elsewhere": 0.943,
      "lift": 1.04,
      "win_with": 35.6,
      "win_without": 100.0
@@ -1058,7 +1059,7 @@
     {
      "item": "bfury",
      "share": 1.0,
-     "elsewhere": 0.992,
+     "elsewhere": 0.993,
      "lift": 1.01,
      "win_with": 37.0,
      "win_without": null
@@ -1066,7 +1067,7 @@
     {
      "item": "power_treads",
      "share": 1.0,
-     "elsewhere": 0.997,
+     "elsewhere": 0.998,
      "lift": 1.0,
      "win_with": 37.0,
      "win_without": null
@@ -1074,15 +1075,15 @@
     {
      "item": "magic_wand",
      "share": 0.565,
-     "elsewhere": 0.642,
-     "lift": 0.88,
+     "elsewhere": 0.637,
+     "lift": 0.89,
      "win_with": 46.2,
      "win_without": 25.0
     },
     {
      "item": "great_famango",
      "share": 0.13,
-     "elsewhere": 0.15,
+     "elsewhere": 0.149,
      "lift": 0.87,
      "win_with": 33.3,
      "win_without": 37.5
@@ -1090,95 +1091,111 @@
     {
      "item": "black_king_bar",
      "share": 0.196,
-     "elsewhere": 0.228,
-     "lift": 0.86,
+     "elsewhere": 0.231,
+     "lift": 0.85,
      "win_with": 33.3,
      "win_without": 37.8
     },
     {
      "item": "butterfly",
      "share": 0.348,
-     "elsewhere": 0.479,
-     "lift": 0.73,
+     "elsewhere": 0.483,
+     "lift": 0.72,
      "win_with": 37.5,
      "win_without": 36.7
     },
     {
      "item": "basher",
      "share": 0.348,
-     "elsewhere": 0.501,
-     "lift": 0.69,
+     "elsewhere": 0.5,
+     "lift": 0.7,
      "win_with": 43.8,
      "win_without": 33.3
     },
     {
      "item": "skadi",
      "share": 0.174,
-     "elsewhere": 0.296,
-     "lift": 0.59,
+     "elsewhere": 0.299,
+     "lift": 0.58,
      "win_with": 62.5,
      "win_without": 31.6
     }
    ]
   },
   "illusion_clearers": {
-   "games": 216,
+   "games": 218,
    "win": 51.4,
    "items": [
     {
      "item": "great_famango",
-     "share": 0.157,
-     "elsewhere": 0.14,
-     "lift": 1.13,
+     "share": 0.156,
+     "elsewhere": 0.139,
+     "lift": 1.12,
      "win_with": 44.1,
      "win_without": 52.7
     },
     {
      "item": "pers",
-     "share": 0.588,
-     "elsewhere": 0.533,
-     "lift": 1.1,
-     "win_with": 57.5,
+     "share": 0.592,
+     "elsewhere": 0.535,
+     "lift": 1.11,
+     "win_with": 57.4,
      "win_without": 42.7
     },
     {
      "item": "wraith_band",
-     "share": 0.333,
-     "elsewhere": 0.314,
-     "lift": 1.06,
-     "win_with": 47.2,
-     "win_without": 53.5
-    },
-    {
-     "item": "basher",
-     "share": 0.495,
-     "elsewhere": 0.476,
-     "lift": 1.04,
-     "win_with": 61.7,
-     "win_without": 41.3
-    },
-    {
-     "item": "magic_wand",
-     "share": 0.639,
-     "elsewhere": 0.629,
-     "lift": 1.02,
-     "win_with": 54.3,
-     "win_without": 46.2
+     "share": 0.335,
+     "elsewhere": 0.313,
+     "lift": 1.07,
+     "win_with": 47.9,
+     "win_without": 53.1
     },
     {
      "item": "black_king_bar",
-     "share": 0.227,
-     "elsewhere": 0.223,
-     "lift": 1.02,
+     "share": 0.234,
+     "elsewhere": 0.222,
+     "lift": 1.06,
      "win_with": 51.0,
      "win_without": 51.5
+    },
+    {
+     "item": "basher",
+     "share": 0.491,
+     "elsewhere": 0.478,
+     "lift": 1.03,
+     "win_with": 61.7,
+     "win_without": 41.4
     },
     {
      "item": "manta",
      "share": 0.954,
      "elsewhere": 0.939,
      "lift": 1.02,
-     "win_with": 53.9,
+     "win_with": 53.8,
+     "win_without": 0.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.633,
+     "elsewhere": 0.626,
+     "lift": 1.01,
+     "win_with": 54.3,
+     "win_without": 46.2
+    },
+    {
+     "item": "yasha",
+     "share": 0.977,
+     "elsewhere": 0.978,
+     "lift": 1.0,
+     "win_with": 52.6,
+     "win_without": 0.0
+    },
+    {
+     "item": "bfury",
+     "share": 0.991,
+     "elsewhere": 0.996,
+     "lift": 1.0,
+     "win_with": 51.9,
      "win_without": 0.0
     },
     {
@@ -1190,36 +1207,20 @@
      "win_without": null
     },
     {
-     "item": "bfury",
-     "share": 0.991,
-     "elsewhere": 0.996,
-     "lift": 1.0,
-     "win_with": 51.9,
-     "win_without": 0.0
-    },
-    {
-     "item": "yasha",
-     "share": 0.977,
-     "elsewhere": 0.978,
-     "lift": 1.0,
-     "win_with": 52.6,
-     "win_without": 0.0
-    },
-    {
      "item": "abyssal_blade",
-     "share": 0.287,
-     "elsewhere": 0.297,
-     "lift": 0.97,
+     "share": 0.284,
+     "elsewhere": 0.296,
+     "lift": 0.96,
      "win_with": 71.0,
-     "win_without": 43.5
+     "win_without": 43.6
     },
     {
-     "item": "sange",
-     "share": 0.319,
-     "elsewhere": 0.332,
+     "item": "skadi",
+     "share": 0.28,
+     "elsewhere": 0.291,
      "lift": 0.96,
-     "win_with": 69.6,
-     "win_without": 42.9
+     "win_with": 60.7,
+     "win_without": 47.8
     }
    ]
   },
@@ -1230,8 +1231,8 @@
     {
      "item": "skadi",
      "share": 0.32,
-     "elsewhere": 0.278,
-     "lift": 1.15,
+     "elsewhere": 0.281,
+     "lift": 1.14,
      "win_with": 75.0,
      "win_without": 38.2
     },
@@ -1262,7 +1263,7 @@
     {
      "item": "basher",
      "share": 0.48,
-     "elsewhere": 0.486,
+     "elsewhere": 0.485,
      "lift": 0.99,
      "win_with": 75.0,
      "win_without": 26.9
@@ -1278,7 +1279,7 @@
     {
      "item": "pers",
      "share": 0.54,
-     "elsewhere": 0.562,
+     "elsewhere": 0.565,
      "lift": 0.96,
      "win_with": 55.6,
      "win_without": 43.5
@@ -1286,16 +1287,16 @@
     {
      "item": "magic_wand",
      "share": 0.6,
-     "elsewhere": 0.638,
-     "lift": 0.94,
+     "elsewhere": 0.633,
+     "lift": 0.95,
      "win_with": 66.7,
      "win_without": 25.0
     },
     {
      "item": "butterfly",
      "share": 0.44,
-     "elsewhere": 0.468,
-     "lift": 0.94,
+     "elsewhere": 0.472,
+     "lift": 0.93,
      "win_with": 50.0,
      "win_without": 50.0
     },
@@ -1310,15 +1311,15 @@
     {
      "item": "sange",
      "share": 0.28,
-     "elsewhere": 0.332,
-     "lift": 0.84,
+     "elsewhere": 0.329,
+     "lift": 0.85,
      "win_with": 85.7,
      "win_without": 36.1
     },
     {
      "item": "ultimate_scepter",
      "share": 0.12,
-     "elsewhere": 0.149,
+     "elsewhere": 0.151,
      "lift": 0.8,
      "win_with": 83.3,
      "win_without": 45.5

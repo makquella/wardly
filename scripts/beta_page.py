@@ -116,7 +116,7 @@ def carries() -> list[str]:
     names = []
     for path in sorted(PLANS.glob("*.json")):
         plan = json.loads(path.read_text(encoding="utf-8"))
-        if "carry" in plan.get("positions", []):
+        if plan.get("positions", [""])[0] == "carry":  # primary position only
             names.append(plan["hero"])
     return sorted(names)
 

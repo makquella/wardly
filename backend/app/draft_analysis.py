@@ -76,10 +76,12 @@ COUNTERS: dict[str, tuple[set[str], list[str], set[str]]] = {
     ),
     "healing": (
         # Heroes whose own healing wins fights; a healing support is in almost
-        # every lineup and would ask for Spirit Vessel every game.
+        # every lineup and would ask for Spirit Vessel every game. Not the
+        # offlaner's: none of the 10 builds Spirit Vessel in high-rank games
+        # (the player's review, 2026-10-20; situational_items).
         {"Alchemist", "Necrophos", "Huskar", "Oracle", "Lifestealer"},
         ["spirit_vessel", "skadi"],
-        {"core", "offlane", "support"},
+        {"core", "support"},
     ),
 }
 
@@ -126,6 +128,12 @@ EVASION_PASSIVES = {
 # Duel. Names from Valve's /herodata, patch 7.41f.
 JUMPERS = {
     "Slark": "Pounce",
+    "Phantom Assassin": "Phantom Strike",
+    "Spirit Breaker": "Charge of Darkness",
+}
+# The jumpers whose jump is cast on the target (Valve /herodata behavior has the
+# unit-target bit), so Linken's Sphere blocks it; Slark's Pounce is not.
+TARGETED_JUMPERS = {
     "Phantom Assassin": "Phantom Strike",
     "Spirit Breaker": "Charge of Darkness",
 }

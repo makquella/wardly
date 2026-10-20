@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "hero": "Tidehunter",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "1298 league games since 7.41 (data/heroes/item_stats), win 48.4%. Reproduce: python scripts/hero_item_stats.py tidehunter.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Pipe of Insight (generic).",
+    "hero": "Valve /datafeed/herodata hero_id 29 (Gush, Kraken Shell, Anchor Smash, Ravage), 7.41f.",
+    "generic": "The generic Pipe of Insight against 3+ magic heroes stays: 15% of 118 games against them (10% otherwise).",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "pers",
+      "name": "Perseverance"
+    },
+    {
+      "item": "vladmir",
+      "name": "Vladmir's Offering"
+    },
+    {
+      "item": "consecrated_wraps",
+      "name": "Consecrated Wraps"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "shivas_guard",
+      "name": "Shiva's Guard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 62% (2), magic_wand 78% (6), phase_boots 98% (8), soul_ring 88% (8), ring_of_basilius 49% (10), pers 28% (11), buckler 50% (11), vladmir 48% (12), mage_slayer 24% (14), consecrated_wraps 33% (15), ultimate_scepter 65% (22), aghanims_shard 79% (23), shivas_guard 36% (30).",
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        18700
+      ]
+    ],
+    "items": [
+      {
+        "item": "phase_boots",
+        "name": "Phase Boots"
+      },
+      {
+        "item": "mage_slayer",
+        "name": "Mage Slayer"
+      },
+      {
+        "item": "vladmir",
+        "name": "Vladmir's Offering"
+      },
+      {
+        "item": "consecrated_wraps",
+        "name": "Consecrated Wraps"
+      },
+      {
+        "item": "radiance",
+        "name": "Radiance"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "shivas_guard",
+        "name": "Shiva's Guard"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 30:00 19500 (37 games, 75.7%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "tidehunter_anchor_smash",
+      "tidehunter_kraken_shell",
+      "tidehunter_gush"
+    ],
+    "games": 1298,
+    "first_agree": 1241,
+    "opening": {
+      "name": "tidehunter_anchor_smash",
+      "agree": 687
+    },
+    "names": {
+      "tidehunter_anchor_smash": "Anchor Smash",
+      "tidehunter_kraken_shell": "Kraken Shell",
+      "tidehunter_gush": "Gush"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_tidehunter_5",
+        "label": "Gush Slow",
+        "picked": 1085,
+        "games": 1292
+      },
+      "15": {
+        "name": "special_bonus_unique_tidehunter_2",
+        "label": "Gush Damage",
+        "picked": 947,
+        "games": 1206
+      },
+      "20": {
+        "name": "special_bonus_unique_tidehunter",
+        "label": "Gush Armor",
+        "picked": 586,
+        "games": 776
+      },
+      "25": {
+        "name": "special_bonus_unique_tidehunter_7",
+        "label": "Ravage Stun Duration",
+        "picked": 237,
+        "games": 263
+      }
+    },
+    "basis": "1298 games since 7.41: maxed tidehunter_anchor_smash > tidehunter_kraken_shell > tidehunter_gush 869 (win 51.2%), tidehunter_anchor_smash > tidehunter_gush > tidehunter_kraken_shell 343 (win 48.1%), tidehunter_anchor_smash > tidehunter_kraken_shell 29 (win 3.4%); talents 10: Gush Slow 1085/1292 (49.5%), Anchor Smash Damage Reduction 207/1292 (43.5%); 15: Gush Damage 947/1206 (52.5%), Ravage Cooldown 259/1206 (46.3%); 20: Gush Armor 586/776 (58.4%), Kraken Shell Cleanse triggers Anchor Smash 190/776 (62.6%); 25: Ravage Stun Duration 237/263 (58.6%), Anchor Smash affects buildings 26/263 (88.5%)."
+  }
+}

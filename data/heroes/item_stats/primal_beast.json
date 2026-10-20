@@ -1,0 +1,1237 @@
+{
+ "hero": "Primal Beast",
+ "hero_id": 137,
+ "position": "offlane",
+ "lane_role": 3,
+ "since_patch": "7.40",
+ "generated": "2026-10-20",
+ "source": "OpenDota Explorer: league games with parsed gold timelines",
+ "games": 591,
+ "win": 46.9,
+ "tempo_line": {
+  "25": {
+   "gold": 14000,
+   "net_worth": 13400,
+   "games": 46,
+   "win": 76.1
+  },
+  "30": {
+   "gold": 16500,
+   "net_worth": 15800,
+   "games": 47,
+   "win": 78.7
+  }
+ },
+ "tempo_win_target": 75.0,
+ "usual_build": [
+  {
+   "item": "bracer",
+   "share": 0.227,
+   "minute": 2.3
+  },
+  {
+   "item": "phase_boots",
+   "share": 0.986,
+   "minute": 6.8
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.801,
+   "minute": 8.0
+  },
+  {
+   "item": "soul_ring",
+   "share": 0.953,
+   "minute": 8.2
+  },
+  {
+   "item": "great_famango",
+   "share": 0.238,
+   "minute": 21.4
+  },
+  {
+   "item": "black_king_bar",
+   "share": 0.856,
+   "minute": 21.5
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.762,
+   "minute": 22.6
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.57,
+   "minute": 29.2
+  },
+  {
+   "item": "shivas_guard",
+   "share": 0.271,
+   "minute": 33.3
+  }
+ ],
+ "tempo_build": [
+  {
+   "item": "phase_boots",
+   "share": 0.914,
+   "minute": 5.7
+  },
+  {
+   "item": "soul_ring",
+   "share": 0.971,
+   "minute": 6.9
+  },
+  {
+   "item": "magic_wand",
+   "share": 0.771,
+   "minute": 7.9
+  },
+  {
+   "item": "consecrated_wraps",
+   "share": 0.229,
+   "minute": 11.2
+  },
+  {
+   "item": "aghanims_shard",
+   "share": 0.829,
+   "minute": 16.7
+  },
+  {
+   "item": "black_king_bar",
+   "share": 0.714,
+   "minute": 19.6
+  },
+  {
+   "item": "great_famango",
+   "share": 0.286,
+   "minute": 19.6
+  },
+  {
+   "item": "ultimate_scepter",
+   "share": 0.686,
+   "minute": 24.6
+  },
+  {
+   "item": "shivas_guard",
+   "share": 0.2,
+   "minute": 31.1
+  }
+ ],
+ "skills": {
+  "games": 591,
+  "orders": [
+   {
+    "order": [
+     "primal_beast_trample",
+     "primal_beast_onslaught",
+     "primal_beast_uproar"
+    ],
+    "games": 544,
+    "win": 49.4
+   },
+   {
+    "order": [
+     "primal_beast_trample",
+     "primal_beast_onslaught"
+    ],
+    "games": 41,
+    "win": 9.8
+   },
+   {
+    "order": [
+     "primal_beast_trample",
+     "primal_beast_uproar",
+     "primal_beast_onslaught"
+    ],
+    "games": 4,
+    "win": 100.0
+   },
+   {
+    "order": [
+     "primal_beast_trample"
+    ],
+    "games": 2,
+    "win": 0.0
+   }
+  ],
+  "openings": [
+   {
+    "name": "primal_beast_trample",
+    "games": 393,
+    "win": 48.9
+   },
+   {
+    "name": "primal_beast_onslaught",
+    "games": 138,
+    "win": 46.4
+   },
+   {
+    "name": "primal_beast_uproar",
+    "games": 60,
+    "win": 35.0
+   }
+  ],
+  "talents": {
+   "10": [
+    {
+     "name": "special_bonus_attack_damage_30",
+     "label": "+30 Damage",
+     "picked": 295,
+     "games": 449,
+     "win": 46.8
+    },
+    {
+     "name": "special_bonus_unique_primal_beast_trample_magic_resist",
+     "label": "+25% Magic Resistance During Trample",
+     "picked": 154,
+     "games": 449,
+     "win": 44.8
+    }
+   ],
+   "15": [
+    {
+     "name": "special_bonus_unique_primal_beast_trample_cooldown",
+     "label": "-5s Trample Cooldown",
+     "picked": 290,
+     "games": 495,
+     "win": 52.4
+    },
+    {
+     "name": "special_bonus_unique_primal_beast_uproar_armor",
+     "label": "+6 Uproar Armor Per Stack",
+     "picked": 205,
+     "games": 495,
+     "win": 49.3
+    }
+   ],
+   "20": [
+    {
+     "name": "special_bonus_unique_primal_beast_trample_attack_damage",
+     "label": "+20% Trample Attack Multiplier",
+     "picked": 189,
+     "games": 335,
+     "win": 64.6
+    },
+    {
+     "name": "special_bonus_unique_primal_beast_roar_dispells",
+     "label": "Basic Self-Dispel on Uproar Cast",
+     "picked": 146,
+     "games": 335,
+     "win": 56.2
+    }
+   ],
+   "25": [
+    {
+     "name": "special_bonus_unique_primal_beast_pulverize_duration",
+     "label": "+67% Pulverize Duration",
+     "picked": 89,
+     "games": 107,
+     "win": 70.8
+    },
+    {
+     "name": "special_bonus_unique_primal_beast_colossal_trample",
+     "label": "special_bonus_unique_primal_beast_colossal_trample",
+     "picked": 18,
+     "games": 107,
+     "win": 66.7
+    }
+   ]
+  }
+ },
+ "counters": {
+  "evasion": {
+   "games": 57,
+   "win": 52.6,
+   "items": [
+    {
+     "item": "sphere",
+     "share": 0.175,
+     "elsewhere": 0.067,
+     "lift": 2.6,
+     "win_with": 60.0,
+     "win_without": 51.1
+    },
+    {
+     "item": "greater_famango",
+     "share": 0.158,
+     "elsewhere": 0.073,
+     "lift": 2.16,
+     "win_with": 44.4,
+     "win_without": 54.2
+    },
+    {
+     "item": "pers",
+     "share": 0.211,
+     "elsewhere": 0.101,
+     "lift": 2.08,
+     "win_with": 58.3,
+     "win_without": 51.1
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.123,
+     "elsewhere": 0.066,
+     "lift": 1.87,
+     "win_with": 42.9,
+     "win_without": 54.0
+    },
+    {
+     "item": "soul_booster",
+     "share": 0.158,
+     "elsewhere": 0.092,
+     "lift": 1.72,
+     "win_with": 88.9,
+     "win_without": 45.8
+    },
+    {
+     "item": "great_famango",
+     "share": 0.281,
+     "elsewhere": 0.176,
+     "lift": 1.59,
+     "win_with": 68.8,
+     "win_without": 46.3
+    },
+    {
+     "item": "bloodstone",
+     "share": 0.105,
+     "elsewhere": 0.067,
+     "lift": 1.56,
+     "win_with": 83.3,
+     "win_without": 49.0
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.281,
+     "elsewhere": 0.193,
+     "lift": 1.46,
+     "win_with": 62.5,
+     "win_without": 48.8
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.947,
+     "elsewhere": 0.772,
+     "lift": 1.23,
+     "win_with": 53.7,
+     "win_without": 33.3
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.193,
+     "elsewhere": 0.157,
+     "lift": 1.23,
+     "win_with": 72.7,
+     "win_without": 47.8
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.825,
+     "elsewhere": 0.79,
+     "lift": 1.04,
+     "win_with": 57.4,
+     "win_without": 30.0
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.982,
+     "elsewhere": 0.951,
+     "lift": 1.03,
+     "win_with": 53.6,
+     "win_without": 0.0
+    }
+   ]
+  },
+  "evasion_break": {
+   "games": 11,
+   "win": 72.7,
+   "items": [
+    {
+     "item": "kaya",
+     "share": 0.182,
+     "elsewhere": 0.057,
+     "lift": 3.2,
+     "win_with": 100.0,
+     "win_without": 66.7
+    },
+    {
+     "item": "great_famango",
+     "share": 0.455,
+     "elsewhere": 0.181,
+     "lift": 2.51,
+     "win_with": 60.0,
+     "win_without": 83.3
+    },
+    {
+     "item": "magic_wand",
+     "share": 1.0,
+     "elsewhere": 0.784,
+     "lift": 1.27,
+     "win_with": 72.7,
+     "win_without": null
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.182,
+     "elsewhere": 0.16,
+     "lift": 1.13,
+     "win_with": 50.0,
+     "win_without": 77.8
+    },
+    {
+     "item": "soul_ring",
+     "share": 1.0,
+     "elsewhere": 0.953,
+     "lift": 1.05,
+     "win_with": 72.7,
+     "win_without": null
+    },
+    {
+     "item": "phase_boots",
+     "share": 1.0,
+     "elsewhere": 0.978,
+     "lift": 1.02,
+     "win_with": 72.7,
+     "win_without": null
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.636,
+     "elsewhere": 0.664,
+     "lift": 0.96,
+     "win_with": 71.4,
+     "win_without": 75.0
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.727,
+     "elsewhere": 0.795,
+     "lift": 0.92,
+     "win_with": 62.5,
+     "win_without": 100.0
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.182,
+     "elsewhere": 0.202,
+     "lift": 0.9,
+     "win_with": 50.0,
+     "win_without": 77.8
+    },
+    {
+     "item": "bracer",
+     "share": 0.182,
+     "elsewhere": 0.226,
+     "lift": 0.8,
+     "win_with": 50.0,
+     "win_without": 77.8
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.273,
+     "elsewhere": 0.433,
+     "lift": 0.63,
+     "win_with": 33.3,
+     "win_without": 87.5
+    }
+   ]
+  },
+  "illusions": {
+   "games": 55,
+   "win": 52.7,
+   "items": [
+    {
+     "item": "greater_famango",
+     "share": 0.145,
+     "elsewhere": 0.075,
+     "lift": 1.95,
+     "win_with": 62.5,
+     "win_without": 51.1
+    },
+    {
+     "item": "bracer",
+     "share": 0.345,
+     "elsewhere": 0.213,
+     "lift": 1.62,
+     "win_with": 57.9,
+     "win_without": 50.0
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.109,
+     "elsewhere": 0.067,
+     "lift": 1.62,
+     "win_with": 33.3,
+     "win_without": 55.1
+    },
+    {
+     "item": "pers",
+     "share": 0.145,
+     "elsewhere": 0.108,
+     "lift": 1.34,
+     "win_with": 75.0,
+     "win_without": 48.9
+    },
+    {
+     "item": "soul_booster",
+     "share": 0.127,
+     "elsewhere": 0.095,
+     "lift": 1.34,
+     "win_with": 71.4,
+     "win_without": 50.0
+    },
+    {
+     "item": "consecrated_wraps",
+     "share": 0.145,
+     "elsewhere": 0.11,
+     "lift": 1.32,
+     "win_with": 75.0,
+     "win_without": 48.9
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.527,
+     "elsewhere": 0.42,
+     "lift": 1.26,
+     "win_with": 62.1,
+     "win_without": 42.3
+    },
+    {
+     "item": "great_famango",
+     "share": 0.218,
+     "elsewhere": 0.183,
+     "lift": 1.19,
+     "win_with": 75.0,
+     "win_without": 46.5
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.673,
+     "elsewhere": 0.662,
+     "lift": 1.02,
+     "win_with": 59.5,
+     "win_without": 38.9
+    },
+    {
+     "item": "phase_boots",
+     "share": 1.0,
+     "elsewhere": 0.976,
+     "lift": 1.02,
+     "win_with": 52.7,
+     "win_without": null
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.945,
+     "elsewhere": 0.955,
+     "lift": 0.99,
+     "win_with": 53.8,
+     "win_without": 33.3
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.745,
+     "elsewhere": 0.799,
+     "lift": 0.93,
+     "win_with": 56.1,
+     "win_without": 42.9
+    }
+   ]
+  },
+  "invisibility": {
+   "games": 121,
+   "win": 40.5,
+   "items": [
+    {
+     "item": "magic_wand",
+     "share": 0.818,
+     "elsewhere": 0.781,
+     "lift": 1.05,
+     "win_with": 45.5,
+     "win_without": 18.2
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.678,
+     "elsewhere": 0.66,
+     "lift": 1.03,
+     "win_with": 47.6,
+     "win_without": 25.6
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.802,
+     "elsewhere": 0.791,
+     "lift": 1.01,
+     "win_with": 44.3,
+     "win_without": 25.0
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.975,
+     "elsewhere": 0.979,
+     "lift": 1.0,
+     "win_with": 40.7,
+     "win_without": 33.3
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.909,
+     "elsewhere": 0.966,
+     "lift": 0.94,
+     "win_with": 41.8,
+     "win_without": 27.3
+    },
+    {
+     "item": "bracer",
+     "share": 0.19,
+     "elsewhere": 0.234,
+     "lift": 0.81,
+     "win_with": 39.1,
+     "win_without": 40.8
+    },
+    {
+     "item": "great_famango",
+     "share": 0.149,
+     "elsewhere": 0.196,
+     "lift": 0.76,
+     "win_with": 50.0,
+     "win_without": 38.8
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.322,
+     "elsewhere": 0.457,
+     "lift": 0.7,
+     "win_with": 59.0,
+     "win_without": 31.7
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.107,
+     "elsewhere": 0.174,
+     "lift": 0.62,
+     "win_with": 61.5,
+     "win_without": 38.0
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.116,
+     "elsewhere": 0.223,
+     "lift": 0.52,
+     "win_with": 71.4,
+     "win_without": 36.4
+    }
+   ]
+  },
+  "healing": {
+   "games": 73,
+   "win": 54.8,
+   "items": [
+    {
+     "item": "consecrated_wraps",
+     "share": 0.178,
+     "elsewhere": 0.104,
+     "lift": 1.71,
+     "win_with": 69.2,
+     "win_without": 51.7
+    },
+    {
+     "item": "soul_booster",
+     "share": 0.137,
+     "elsewhere": 0.093,
+     "lift": 1.48,
+     "win_with": 80.0,
+     "win_without": 50.8
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.507,
+     "elsewhere": 0.419,
+     "lift": 1.21,
+     "win_with": 62.2,
+     "win_without": 47.2
+    },
+    {
+     "item": "bracer",
+     "share": 0.26,
+     "elsewhere": 0.22,
+     "lift": 1.18,
+     "win_with": 63.2,
+     "win_without": 51.9
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.986,
+     "elsewhere": 0.977,
+     "lift": 1.01,
+     "win_with": 55.6,
+     "win_without": 0.0
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.781,
+     "elsewhere": 0.795,
+     "lift": 0.98,
+     "win_with": 56.1,
+     "win_without": 50.0
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.918,
+     "elsewhere": 0.959,
+     "lift": 0.96,
+     "win_with": 53.7,
+     "win_without": 66.7
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.192,
+     "elsewhere": 0.203,
+     "lift": 0.95,
+     "win_with": 78.6,
+     "win_without": 49.2
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.726,
+     "elsewhere": 0.797,
+     "lift": 0.91,
+     "win_with": 56.6,
+     "win_without": 50.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.534,
+     "elsewhere": 0.681,
+     "lift": 0.78,
+     "win_with": 66.7,
+     "win_without": 41.2
+    },
+    {
+     "item": "great_famango",
+     "share": 0.137,
+     "elsewhere": 0.193,
+     "lift": 0.71,
+     "win_with": 60.0,
+     "win_without": 54.0
+    }
+   ]
+  },
+  "escape": {
+   "games": 263,
+   "win": 51.3,
+   "items": [
+    {
+     "item": "sphere",
+     "share": 0.106,
+     "elsewhere": 0.055,
+     "lift": 1.94,
+     "win_with": 78.6,
+     "win_without": 48.1
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.202,
+     "elsewhere": 0.128,
+     "lift": 1.57,
+     "win_with": 62.3,
+     "win_without": 48.6
+    },
+    {
+     "item": "tranquil_boots",
+     "share": 0.106,
+     "elsewhere": 0.073,
+     "lift": 1.46,
+     "win_with": 46.4,
+     "win_without": 51.9
+    },
+    {
+     "item": "consecrated_wraps",
+     "share": 0.129,
+     "elsewhere": 0.101,
+     "lift": 1.28,
+     "win_with": 55.9,
+     "win_without": 50.7
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.228,
+     "elsewhere": 0.18,
+     "lift": 1.27,
+     "win_with": 68.3,
+     "win_without": 46.3
+    },
+    {
+     "item": "pers",
+     "share": 0.125,
+     "elsewhere": 0.101,
+     "lift": 1.25,
+     "win_with": 78.8,
+     "win_without": 47.4
+    },
+    {
+     "item": "soul_booster",
+     "share": 0.11,
+     "elsewhere": 0.088,
+     "lift": 1.25,
+     "win_with": 86.2,
+     "win_without": 47.0
+    },
+    {
+     "item": "bracer",
+     "share": 0.251,
+     "elsewhere": 0.204,
+     "lift": 1.23,
+     "win_with": 50.0,
+     "win_without": 51.8
+    },
+    {
+     "item": "great_famango",
+     "share": 0.205,
+     "elsewhere": 0.171,
+     "lift": 1.2,
+     "win_with": 59.3,
+     "win_without": 49.3
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.844,
+     "elsewhere": 0.753,
+     "lift": 1.12,
+     "win_with": 55.4,
+     "win_without": 29.3
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.456,
+     "elsewhere": 0.409,
+     "lift": 1.12,
+     "win_with": 69.2,
+     "win_without": 36.4
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.7,
+     "elsewhere": 0.634,
+     "lift": 1.1,
+     "win_with": 58.7,
+     "win_without": 34.2
+    }
+   ]
+  },
+  "break": {
+   "games": 69,
+   "win": 55.1,
+   "items": [
+    {
+     "item": "heart",
+     "share": 0.101,
+     "elsewhere": 0.046,
+     "lift": 2.21,
+     "win_with": 85.7,
+     "win_without": 51.6
+    },
+    {
+     "item": "consecrated_wraps",
+     "share": 0.217,
+     "elsewhere": 0.1,
+     "lift": 2.18,
+     "win_with": 66.7,
+     "win_without": 51.9
+    },
+    {
+     "item": "bloodstone",
+     "share": 0.116,
+     "elsewhere": 0.065,
+     "lift": 1.78,
+     "win_with": 50.0,
+     "win_without": 55.7
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.638,
+     "elsewhere": 0.402,
+     "lift": 1.59,
+     "win_with": 56.8,
+     "win_without": 52.0
+    },
+    {
+     "item": "soul_booster",
+     "share": 0.145,
+     "elsewhere": 0.092,
+     "lift": 1.58,
+     "win_with": 60.0,
+     "win_without": 54.2
+    },
+    {
+     "item": "bracer",
+     "share": 0.232,
+     "elsewhere": 0.224,
+     "lift": 1.03,
+     "win_with": 43.8,
+     "win_without": 58.5
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.942,
+     "elsewhere": 0.956,
+     "lift": 0.99,
+     "win_with": 53.8,
+     "win_without": 75.0
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.971,
+     "elsewhere": 0.979,
+     "lift": 0.99,
+     "win_with": 53.7,
+     "win_without": 100.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.768,
+     "elsewhere": 0.791,
+     "lift": 0.97,
+     "win_with": 54.7,
+     "win_without": 56.2
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.739,
+     "elsewhere": 0.801,
+     "lift": 0.92,
+     "win_with": 54.9,
+     "win_without": 55.6
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.594,
+     "elsewhere": 0.672,
+     "lift": 0.88,
+     "win_with": 63.4,
+     "win_without": 42.9
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.116,
+     "elsewhere": 0.167,
+     "lift": 0.7,
+     "win_with": 50.0,
+     "win_without": 55.7
+    }
+   ]
+  },
+  "jumpers": {
+   "games": 47,
+   "win": 53.2,
+   "items": [
+    {
+     "item": "yasha",
+     "share": 0.106,
+     "elsewhere": 0.017,
+     "lift": 6.43,
+     "win_with": 100.0,
+     "win_without": 47.6
+    },
+    {
+     "item": "kaya",
+     "share": 0.149,
+     "elsewhere": 0.051,
+     "lift": 2.89,
+     "win_with": 85.7,
+     "win_without": 47.5
+    },
+    {
+     "item": "blade_mail",
+     "share": 0.128,
+     "elsewhere": 0.066,
+     "lift": 1.93,
+     "win_with": 33.3,
+     "win_without": 56.1
+    },
+    {
+     "item": "great_famango",
+     "share": 0.213,
+     "elsewhere": 0.184,
+     "lift": 1.16,
+     "win_with": 80.0,
+     "win_without": 45.9
+    },
+    {
+     "item": "bracer",
+     "share": 0.255,
+     "elsewhere": 0.222,
+     "lift": 1.15,
+     "win_with": 50.0,
+     "win_without": 54.3
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.809,
+     "elsewhere": 0.787,
+     "lift": 1.03,
+     "win_with": 52.6,
+     "win_without": 55.6
+    },
+    {
+     "item": "phase_boots",
+     "share": 1.0,
+     "elsewhere": 0.976,
+     "lift": 1.02,
+     "win_with": 53.2,
+     "win_without": null
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.957,
+     "elsewhere": 0.954,
+     "lift": 1.0,
+     "win_with": 53.3,
+     "win_without": 50.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.638,
+     "elsewhere": 0.665,
+     "lift": 0.96,
+     "win_with": 53.3,
+     "win_without": 52.9
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.702,
+     "elsewhere": 0.801,
+     "lift": 0.88,
+     "win_with": 54.5,
+     "win_without": 50.0
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.34,
+     "elsewhere": 0.438,
+     "lift": 0.78,
+     "win_with": 68.8,
+     "win_without": 45.2
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.128,
+     "elsewhere": 0.208,
+     "lift": 0.61,
+     "win_with": 83.3,
+     "win_without": 48.8
+    }
+   ]
+  },
+  "illusion_clearers": {
+   "games": 278,
+   "win": 43.2,
+   "items": [
+    {
+     "item": "consecrated_wraps",
+     "share": 0.119,
+     "elsewhere": 0.109,
+     "lift": 1.09,
+     "win_with": 57.6,
+     "win_without": 41.2
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.813,
+     "elsewhere": 0.776,
+     "lift": 1.05,
+     "win_with": 47.8,
+     "win_without": 23.1
+    },
+    {
+     "item": "soul_booster",
+     "share": 0.101,
+     "elsewhere": 0.096,
+     "lift": 1.05,
+     "win_with": 67.9,
+     "win_without": 40.4
+    },
+    {
+     "item": "pers",
+     "share": 0.112,
+     "elsewhere": 0.112,
+     "lift": 1.0,
+     "win_with": 61.3,
+     "win_without": 40.9
+    },
+    {
+     "item": "soul_ring",
+     "share": 0.953,
+     "elsewhere": 0.955,
+     "lift": 1.0,
+     "win_with": 42.6,
+     "win_without": 53.8
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.975,
+     "elsewhere": 0.981,
+     "lift": 0.99,
+     "win_with": 43.9,
+     "win_without": 14.3
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.781,
+     "elsewhere": 0.796,
+     "lift": 0.98,
+     "win_with": 45.6,
+     "win_without": 34.4
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.644,
+     "elsewhere": 0.681,
+     "lift": 0.95,
+     "win_with": 50.3,
+     "win_without": 30.3
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.155,
+     "elsewhere": 0.166,
+     "lift": 0.93,
+     "win_with": 48.8,
+     "win_without": 42.1
+    },
+    {
+     "item": "bracer",
+     "share": 0.212,
+     "elsewhere": 0.236,
+     "lift": 0.9,
+     "win_with": 40.7,
+     "win_without": 43.8
+    },
+    {
+     "item": "great_famango",
+     "share": 0.176,
+     "elsewhere": 0.195,
+     "lift": 0.9,
+     "win_with": 59.2,
+     "win_without": 39.7
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.392,
+     "elsewhere": 0.463,
+     "lift": 0.85,
+     "win_with": 60.6,
+     "win_without": 32.0
+    }
+   ]
+  },
+  "magic_lineup": {
+   "games": 53,
+   "win": 50.9,
+   "items": [
+    {
+     "item": "soul_ring",
+     "share": 0.962,
+     "elsewhere": 0.954,
+     "lift": 1.01,
+     "win_with": 51.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.434,
+     "elsewhere": 0.429,
+     "lift": 1.01,
+     "win_with": 73.9,
+     "win_without": 33.3
+    },
+    {
+     "item": "consecrated_wraps",
+     "share": 0.113,
+     "elsewhere": 0.113,
+     "lift": 1.0,
+     "win_with": 66.7,
+     "win_without": 48.9
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.774,
+     "elsewhere": 0.79,
+     "lift": 0.98,
+     "win_with": 48.8,
+     "win_without": 58.3
+    },
+    {
+     "item": "phase_boots",
+     "share": 0.962,
+     "elsewhere": 0.98,
+     "lift": 0.98,
+     "win_with": 51.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.585,
+     "elsewhere": 0.671,
+     "lift": 0.87,
+     "win_with": 58.1,
+     "win_without": 40.9
+    },
+    {
+     "item": "black_king_bar",
+     "share": 0.679,
+     "elsewhere": 0.805,
+     "lift": 0.84,
+     "win_with": 55.6,
+     "win_without": 41.2
+    },
+    {
+     "item": "veil_of_discord",
+     "share": 0.132,
+     "elsewhere": 0.164,
+     "lift": 0.81,
+     "win_with": 57.1,
+     "win_without": 50.0
+    },
+    {
+     "item": "bracer",
+     "share": 0.151,
+     "elsewhere": 0.232,
+     "lift": 0.65,
+     "win_with": 75.0,
+     "win_without": 46.7
+    },
+    {
+     "item": "shivas_guard",
+     "share": 0.113,
+     "elsewhere": 0.21,
+     "lift": 0.54,
+     "win_with": 50.0,
+     "win_without": 51.1
+    }
+   ]
+  }
+ },
+ "candidates": [
+  {
+   "group": "evasion",
+   "games": 57,
+   "item": "sphere",
+   "share": 0.175,
+   "elsewhere": 0.067,
+   "lift": 2.6,
+   "win_with": 60.0,
+   "win_without": 51.1
+  },
+  {
+   "group": "break",
+   "games": 69,
+   "item": "consecrated_wraps",
+   "share": 0.217,
+   "elsewhere": 0.1,
+   "lift": 2.18,
+   "win_with": 66.7,
+   "win_without": 51.9
+  }
+ ]
+}

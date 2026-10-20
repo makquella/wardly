@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-20",
+  "version": "0.58.0",
+  "heroes": [
+    "Ember Spirit",
+    "Shadow Fiend",
+    "Queen of Pain",
+    "Storm Spirit",
+    "Puck",
+    "Outworld Destroyer",
+    "Templar Assassin",
+    "Void Spirit",
+    "Dragon Knight",
+    "Axe",
+    "Bristleback",
+    "Centaur Warrunner",
+    "Legion Commander",
+    "Mars",
+    "Pangolier",
+    "Primal Beast",
+    "Slardar",
+    "Tidehunter",
+    "Timbersaw"
+  ],
+  "games": 15268,
+  "uk": {
+    "title": "Wardly 0.58: свій план для мідерів і хардлайнерів",
+    "lead": "Ще 19 героїв зі своїм планом: предмети проти драфту, збірка, темп і прокачка з лігових ігор на цьому герої. Тепер план є в усіх керрі, мідерів і хардлайнерів, яких підтримує Wardly.",
+    "tiles": {
+      "heroes": "Нових героїв з планом",
+      "games": "Лігових матчів у розрахунку",
+      "patch": "Механіки предметів"
+    },
+    "sections": [
+      {
+        "heading": "Хардлайн: свій BKB замість Pipe",
+        "hint": "Порада проти магії тепер залежить від того, що герой справді збирає.",
+        "items": [
+          "Axe, Legion Commander, Mars, Primal Beast, Slardar і Timbersaw проти трьох і більше героїв з магічною шкодою беруть раніше свій BKB — він у їхній збірці в 50–86 % ігор.",
+          "Centaur лишає Pipe of Insight: з ним проти магії він виграє 56 % ігор проти 34 % без нього.",
+          "Pangolier не потребує ні того, ні іншого: Rolling Thunder дає імунітет до дебафів і 80 % опору магії.",
+          "Spirit Vessel проти лікування хардлайнерам більше не радиться: у високих рангах його бере саппорт."
+        ]
+      },
+      {
+        "heading": "Мід: відповідь під героя",
+        "hint": "Механіку кожного предмета перевірено за даними Valve 7.41f.",
+        "items": [
+          "Queen of Pain, Puck, Void Spirit і Storm Spirit проти Phantom Assassin і Spirit Breaker — Linken's: Phantom Strike і Charge of Darkness цілять у вас, і він їх блокує. Проти Pounce у Slark — ні.",
+          "Shadow Fiend і Templar Assassin проти ухилення — Monkey King Bar; Dragon Knight проти втеч — Orchid, проти ухилення — Bloodthorn.",
+          "Ember Spirit і Void Spirit проти сильного лікування збирають Spirit Vessel раніше — він ріже відновлення на 70 %.",
+          "Мідерам-магам більше не радиться Silver Edge: у їхніх іграх його немає."
+        ]
+      },
+      {
+        "heading": "Збірка, темп і прокачка",
+        "hint": "Числа — з лігових матчів OpenDota поточного патча.",
+        "items": [
+          "Звичайна збірка — в порядку виграних ігор на цьому герої, темпова — коли ваш нетворс вище порога, з яким герой виграє близько 85 % ігор.",
+          "Прокачка й таланти — з тих самих ігор; у Shadow Fiend три Shadowraze рахуються як одна здатність, у Dragon Knight і Outworld Destroyer — лише ігри 7.41, бо змінилися їхні здібності.",
+          "Axe тепер качає Battle Hunger другим: так виграють частіше (55 % проти 49 %)."
+        ]
+      }
+    ],
+    "heroes_title": "Герої з новим планом",
+    "heroes_hint": "Наступними будуть саппорти.",
+    "changelog": "Усі зміни 0.58 у «Що нового» →",
+    "share_text": "Скиньте мідеру чи хардлайнеру з вашої команди: тепер Wardly знає і його героя.",
+    "badge": "Wardly"
+  },
+  "en": {
+    "title": "Wardly 0.58: a plan of their own for mids and offlaners",
+    "lead": "19 more heroes with a plan of their own: counter items for the enemy draft, the build, tempo and skills from league matches on that hero. Every carry, mid and offlaner Wardly supports now has one.",
+    "tiles": {
+      "heroes": "New heroes with a plan",
+      "games": "League matches behind them",
+      "patch": "Item mechanics"
+    },
+    "sections": [
+      {
+        "heading": "Offlane: your own BKB instead of Pipe",
+        "hint": "The advice against magic now depends on what the hero really builds.",
+        "items": [
+          "Axe, Legion Commander, Mars, Primal Beast, Slardar and Timbersaw take their own BKB earlier against three or more magic damage heroes: it is in their build in 50-86% of games.",
+          "Centaur keeps Pipe of Insight: with it he wins 56% of games against magic, 34% without.",
+          "Pangolier needs neither: Rolling Thunder gives debuff immunity and 80% magic resistance.",
+          "Offlaners are no longer told to buy Spirit Vessel against healing: in high ranks the support buys it."
+        ]
+      },
+      {
+        "heading": "Mid: an answer for the hero",
+        "hint": "Every item's mechanics checked against Valve's 7.41f data.",
+        "items": [
+          "Queen of Pain, Puck, Void Spirit and Storm Spirit take Linken's against Phantom Assassin and Spirit Breaker: Phantom Strike and Charge of Darkness are cast on you, and it blocks them. Not against Slark's Pounce.",
+          "Shadow Fiend and Templar Assassin take Monkey King Bar against evasion; Dragon Knight takes Orchid against escapes and Bloodthorn against evasion.",
+          "Ember Spirit and Void Spirit finish Spirit Vessel early against heavy healing: it cuts health restoration by 70%.",
+          "Caster mids are no longer told to buy Silver Edge: it is not in their games."
+        ]
+      },
+      {
+        "heading": "Build, tempo and skills",
+        "hint": "Numbers from OpenDota league matches of the current patch.",
+        "items": [
+          "The usual build follows the order of the won games on that hero, the tempo build comes when your net worth is over the line where the hero wins about 85% of games.",
+          "Skill builds and talents come from the same games; Shadow Fiend's three Shadowrazes count as one ability, Dragon Knight and Outworld Destroyer use 7.41 games only, since their abilities changed.",
+          "Axe now levels Battle Hunger second: that order wins more (55% against 49%)."
+        ]
+      }
+    ],
+    "heroes_title": "Heroes with a new plan",
+    "heroes_hint": "Supports come next.",
+    "changelog": "Everything in 0.58 under «What's new» →",
+    "share_text": "Send it to the mid or offlaner on your team: Wardly now knows their hero too.",
+    "badge": "Wardly"
+  }
+}

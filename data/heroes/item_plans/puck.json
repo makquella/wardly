@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "hero": "Puck",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "961 league games since 7.41 (data/heroes/item_stats), win 51.2%. Reproduce: python scripts/hero_item_stats.py puck.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Linken's Sphere, Black King Bar (generic, in his build).",
+    "hero": "Valve /datafeed/herodata hero_id 13 (Illusory Orb, Waning Rift, Phase Shift, Dream Coil), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [
+    {
+      "id": "jumpers",
+      "why": "jumper_linken",
+      "family": "linken",
+      "item": "sphere",
+      "name": "Linken's Sphere",
+      "enemy": "targeted_jumpers",
+      "minute": 18,
+      "basis": "Valve 7.41f Linken's Sphere: Spellblock blocks most targeted spells once every 14 s (+16 all attributes, +6.5 health and +4.25 mana regeneration). Valve /herodata: Phantom Strike and Charge of Darkness are cast on the target (unit-target behavior), Slark's Pounce is not. It is in his build (25%, ~31 min); against Slark, Phantom Assassin or Spirit Breaker 31% of 59 games (19% otherwise), won 67% against 42%: earlier. The player review (2026-10-20): Linken's against Phantom Assassin and Spirit Breaker, not against Slark.",
+      "reason": {
+        "en": "{enemy} jumps on you with {spell}: {item} blocks it, once every 14 seconds",
+        "uk": "{enemy} стрибає на вас через {spell}: {item} блокує цю здатність раз на 14 секунд"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "witch_blade",
+      "name": "Witch Blade"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "devastator",
+      "name": "Parasma"
+    },
+    {
+      "item": "aeon_disk",
+      "name": "Aeon Disk"
+    },
+    {
+      "item": "pers",
+      "name": "Perseverance"
+    },
+    {
+      "item": "octarine_core",
+      "name": "Octarine Core"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 95% (4), null_talisman 59% (4), ward_dispenser 34% (5), power_treads 98% (8), oblivion_staff 100% (12), witch_blade 100% (14), aghanims_shard 89% (21), devastator 85% (27), aeon_disk 30% (29), pers 26% (29), black_king_bar 23% (30), soul_booster 66% (31), sphere 25% (31), octarine_core 63% (33), overwhelming_blink 24% (43).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        10600
+      ],
+      [
+        25,
+        13900
+      ],
+      [
+        30,
+        16800
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "witch_blade",
+        "name": "Witch Blade"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "devastator",
+        "name": "Parasma"
+      },
+      {
+        "item": "octarine_core",
+        "name": "Octarine Core"
+      },
+      {
+        "item": "pers",
+        "name": "Perseverance"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 11000 (90 games, 88.9%), 25:00 14500 (119 games, 85.7%), 30:00 17500 (175 games, 85.7%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "puck_illusory_orb",
+      "puck_waning_rift",
+      "puck_phase_shift"
+    ],
+    "games": 961,
+    "first_agree": 958,
+    "opening": {
+      "name": "puck_illusory_orb",
+      "agree": 959
+    },
+    "names": {
+      "puck_illusory_orb": "Illusory Orb",
+      "puck_waning_rift": "Waning Rift",
+      "puck_phase_shift": "Phase Shift"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_puck_orb_damage",
+        "label": "Illusory Orb Damage",
+        "picked": 918,
+        "games": 961
+      },
+      "15": {
+        "name": "special_bonus_unique_puck_6",
+        "label": "Waning Rift Damage",
+        "picked": 892,
+        "games": 925
+      },
+      "20": {
+        "name": "special_bonus_unique_puck_2",
+        "label": "Waning Rift Cooldown",
+        "picked": 597,
+        "games": 726
+      },
+      "25": {
+        "name": "special_bonus_unique_puck_rift_radius",
+        "label": "Waning Rift Radius/Max Distance",
+        "picked": 255,
+        "games": 364
+      }
+    },
+    "basis": "961 games since 7.41: maxed puck_illusory_orb > puck_waning_rift > puck_phase_shift 924 (win 51.4%), puck_illusory_orb > puck_phase_shift > puck_waning_rift 23 (win 65.2%), puck_illusory_orb > puck_waning_rift 11 (win 0.0%); talents 10: Illusory Orb Damage 918/961 (52.0%), Waning Rift Silence Duration 43/961 (34.9%); 15: Waning Rift Damage 892/925 (52.8%), Dream Coil Cooldown 33/925 (63.6%); 20: Waning Rift Cooldown 597/726 (59.6%), Initial/Break Dream Coil Damage 129/726 (57.4%); 25: Waning Rift Radius/Max Distance 255/364 (69.4%), Dream Coil Pierces Debuff Immunity 109/364 (67.0%)."
+  },
+  "suppress": {
+    "break": "Silver Edge is not his item: his damage is magical (Illusory Orb, Waning Rift, Dream Coil); no Silver Edge in 68 games against break heroes."
+  }
+}

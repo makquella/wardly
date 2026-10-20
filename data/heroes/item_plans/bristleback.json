@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "hero": "Bristleback",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "656 league games since 7.41 (data/heroes/item_stats), win 45.3%. Reproduce: python scripts/hero_item_stats.py bristleback.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Pipe of Insight (generic).",
+    "hero": "Valve /datafeed/herodata hero_id 99 (Quill Spray, Bristleback, Warpath), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "vanguard",
+      "name": "Vanguard"
+    },
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "consecrated_wraps",
+      "name": "Consecrated Wraps"
+    },
+    {
+      "item": "lotus_orb",
+      "name": "Lotus Orb"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "sange_and_yasha",
+      "name": "Sange and Yasha"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "heart",
+      "name": "Heart of Tarrasque"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 74% (2), magic_wand 76% (6), vanguard 36% (6), soul_ring 62% (8), power_treads 91% (9), pers 62% (13), consecrated_wraps 49% (16), lotus_orb 55% (17), aghanims_shard 97% (18), sange 84% (21), yasha 82% (24), sange_and_yasha 81% (24), black_king_bar 42% (27), heart 37% (31), buckler 23% (32).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12500
+      ],
+      [
+        25,
+        14900
+      ]
+    ],
+    "items": [
+      {
+        "item": "vanguard",
+        "name": "Vanguard"
+      },
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "blade_mail",
+        "name": "Blade Mail"
+      },
+      {
+        "item": "lotus_orb",
+        "name": "Lotus Orb"
+      },
+      {
+        "item": "consecrated_wraps",
+        "name": "Consecrated Wraps"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "sange_and_yasha",
+        "name": "Sange and Yasha"
+      },
+      {
+        "item": "heart",
+        "name": "Heart of Tarrasque"
+      },
+      {
+        "item": "assault",
+        "name": "Assault Cuirass"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 80.0%+: 20:00 13000 (25 games, 80.0%), 25:00 15500 (79 games, 81.0%), 30:00 21500 (19 games, 84.2%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "bristleback_quill_spray",
+      "bristleback_bristleback",
+      "bristleback_viscous_nasal_goo"
+    ],
+    "games": 656,
+    "first_agree": 652,
+    "opening": {
+      "name": "bristleback_quill_spray",
+      "agree": 651
+    },
+    "names": {
+      "bristleback_quill_spray": "Quill Spray",
+      "bristleback_bristleback": "Bristleback",
+      "bristleback_viscous_nasal_goo": "Viscous Nasal Goo"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_attack_speed_25",
+        "label": "+25 Attack Speed",
+        "picked": 545,
+        "games": 654
+      },
+      "15": {
+        "name": "special_bonus_unique_bristleback_6",
+        "label": "/ Bristleback Back/Side Damage Reduction",
+        "picked": 426,
+        "games": 616
+      },
+      "20": {
+        "name": "special_bonus_hp_regen_25",
+        "label": "+25 Health Regen",
+        "picked": 274,
+        "games": 393
+      },
+      "25": {
+        "name": "special_bonus_unique_bristleback_3",
+        "label": "Warpath Damage Per Stack",
+        "picked": 135,
+        "games": 147
+      }
+    },
+    "basis": "656 games since 7.41: maxed bristleback_quill_spray > bristleback_bristleback > bristleback_viscous_nasal_goo 566 (win 46.5%), bristleback_quill_spray > bristleback_viscous_nasal_goo > bristleback_bristleback 67 (win 49.3%), bristleback_quill_spray > bristleback_bristleback 17 (win 0.0%); talents 10: +25 Attack Speed 545/654 (46.1%), +1.5 Mana Regen 109/654 (42.2%); 15: / Bristleback Back/Side Damage Reduction 426/616 (48.6%), Goo Cast Range 190/616 (46.8%); 20: +25 Health Regen 274/393 (61.7%), Quill Stack Damage 119/393 (51.3%); 25: Warpath Damage Per Stack 135/147 (68.1%), Bristleback Damage Threshold 12/147 (50.0%)."
+  }
+}

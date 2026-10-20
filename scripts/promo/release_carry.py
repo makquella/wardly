@@ -90,7 +90,7 @@ def plans() -> dict[str, dict]:
     found = {}
     for path in sorted(PLANS.glob("*.json")):
         plan = json.loads(path.read_text(encoding="utf-8"))
-        if "carry" in plan["positions"]:
+        if plan["positions"][0] == "carry":  # a mid plan that also serves a carry is not one
             found[plan["hero"]] = plan
     return found
 

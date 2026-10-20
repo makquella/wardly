@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "hero": "Pangolier",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "606 league games since 7.41 (data/heroes/item_stats), win 49.7%. Reproduce: python scripts/hero_item_stats.py pangolier.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar, Pipe of Insight (not in his games).",
+    "hero": "Valve /datafeed/herodata hero_id 120 (Swashbuckle, Shield Crash, Roll Up, Rolling Thunder), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "mage_slayer",
+      "name": "Mage Slayer"
+    },
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "diffusal_blade",
+      "name": "Diffusal Blade"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "basher",
+      "name": "Skull Basher"
+    },
+    {
+      "item": "octarine_core",
+      "name": "Octarine Core"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 46% (2), null_talisman 22% (4), magic_wand 85% (4), pers 73% (7), mage_slayer 64% (11), power_treads 71% (12), diffusal_blade 71% (14), aghanims_shard 83% (23), ultimate_scepter 83% (25), basher 39% (32), soul_booster 32% (33), octarine_core 29% (35).",
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        15400
+      ]
+    ],
+    "items": [
+      {
+        "item": "mage_slayer",
+        "name": "Mage Slayer"
+      },
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "diffusal_blade",
+        "name": "Diffusal Blade"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "basher",
+        "name": "Skull Basher"
+      },
+      {
+        "item": "octarine_core",
+        "name": "Octarine Core"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 30:00 16000 (164 games, 75.6%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "pangolier_swashbuckle",
+      "pangolier_shield_crash",
+      "pangolier_lucky_shot"
+    ],
+    "games": 606,
+    "first_agree": 579,
+    "opening": {
+      "name": "pangolier_swashbuckle",
+      "agree": 528
+    },
+    "names": {
+      "pangolier_swashbuckle": "Swashbuckle",
+      "pangolier_shield_crash": "Shield Crash",
+      "pangolier_lucky_shot": "Lucky Shot"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_pangolier_luckyshot_armor",
+        "label": "+3 Lucky Shot Armor Reduction",
+        "picked": 465,
+        "games": 606
+      },
+      "15": {
+        "name": "special_bonus_unique_pangolier_shield_crash_herostacks",
+        "label": "+125 Shield Crash Barrier",
+        "picked": 317,
+        "games": 575
+      },
+      "20": {
+        "name": "special_bonus_unique_pangolier_shield_crash_cooldown",
+        "label": "-1.5s Shield Crash Cooldown",
+        "picked": 336,
+        "games": 400
+      },
+      "25": {
+        "name": "special_bonus_unique_pangolier_3",
+        "label": "+20% Attack Damage as Swashbuckle Damage",
+        "picked": 87,
+        "games": 156
+      }
+    },
+    "basis": "606 games since 7.41: maxed pangolier_swashbuckle > pangolier_shield_crash > pangolier_lucky_shot 321 (win 47.4%), pangolier_swashbuckle > pangolier_lucky_shot > pangolier_shield_crash 241 (win 54.4%), pangolier_shield_crash > pangolier_swashbuckle > pangolier_lucky_shot 26 (win 61.5%); talents 10: +3 Lucky Shot Armor Reduction 465/606 (48.8%), +200 Swashbuckle Slash Range 141/606 (52.5%); 15: +125 Shield Crash Barrier 317/575 (52.1%), -2s Swashbuckle Cooldown 258/575 (50.8%); 20: -1.5s Shield Crash Cooldown 336/400 (61.0%), +2s Rolling Thunder Duration 64/400 (45.3%); 25: +20% Attack Damage as Swashbuckle Damage 87/156 (66.7%), -15s Rolling Thunder Cooldown 69/156 (69.6%)."
+  },
+  "suppress": {
+    "magic": "Valve 7.41f: Rolling Thunder and Roll Up give him debuff immunity and 80% magic resistance; high-rank Pangoliers buy no Pipe of Insight or BKB (none among their items against 3+ magic heroes, 47 games)."
+  }
+}
