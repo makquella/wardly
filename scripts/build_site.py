@@ -35,14 +35,15 @@ from app.hero_profiles import POSITION_PACE  # noqa: E402
 from app.live_tools import USABLE_SAFETY  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "scripts"))
-import news  # noqa: E402 - scripts/news.py, after the scripts path
+import beta_page  # noqa: E402 - scripts/beta_page.py, after the scripts path
+import news  # noqa: E402
 import news_hero  # noqa: E402
 import news_release  # noqa: E402
 
 # One version for styles.css, app.js and i18n-en.js on every page, hand-written
 # (index.html, heroes.html) and generated alike. Separate counters let one page
 # reuse a URL that browsers had already cached with older files.
-ASSET_VERSION = "27"
+ASSET_VERSION = "28"
 POSITIONS = ("carry", "mid", "offlane", "support")
 POSITION_NAMES = {
     "uk": {"carry": "Керрі", "mid": "Мід", "offlane": "Хардлайн", "support": "Саппорт"},
@@ -970,11 +971,33 @@ def news_pages(all_heroes: list[dict]) -> dict[Path, str]:
     return files
 
 
+def beta_pages(all_heroes: list[dict]) -> dict[Path, str]:
+    """site/beta.html and site/en/beta.html: the beta test path (beta_page.py)."""
+    by_name = {hero["name"]: hero for hero in all_heroes}
+    images = {path.stem for path in news.HERO_IMAGES.glob("*.webp")}
+    files: dict[Path, str] = {}
+    for lang in ("uk", "en"):
+        root = SITE if lang == "uk" else SITE / "en"
+        up = "" if lang == "uk" else "../"
+        text = beta_page.TEXT[lang]
+        files[root / "beta.html"] = _page(
+            lang,
+            up=up,
+            home="./",
+            path="beta.html",
+            title=f"{text['title']} — Wardly",
+            description=text["description"],
+            main=beta_page.main(lang, by_name, up, images),
+        )
+    return files
+
+
 # --- sitemap -----------------------------------------------------------------------
 
 
 def sitemap(all_heroes: list[dict]) -> str:
     pairs = [("/", "/en/"), ("/heroes.html", "/en/heroes.html"), ("/news.html", "/en/news.html")]
+    pairs.append(("/beta.html", "/en/beta.html"))
     pairs += [(f"/heroes/{h['slug']}.html", f"/en/heroes/{h['slug']}.html") for h in all_heroes]
     posts = news.load_posts()
     for page in (
@@ -1048,6 +1071,7 @@ def build() -> dict[Path, str]:
         files[SITE / "heroes" / f"{hero['slug']}.html"] = hero_page(hero, all_heroes, "uk")
         files[SITE / "en" / "heroes" / f"{hero['slug']}.html"] = hero_page(hero, all_heroes, "en")
     files.update(news_pages(all_heroes))
+    files.update(beta_pages(all_heroes))
     files[SITE / "sitemap.xml"] = sitemap(all_heroes)
     return files
 
