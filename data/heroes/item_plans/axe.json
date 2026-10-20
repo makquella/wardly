@@ -9,7 +9,8 @@
   "sources": {
     "games": "1074 league games since 7.41 (data/heroes/item_stats), win 51.1%. Reproduce: python scripts/hero_item_stats.py axe.",
     "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 2 (Berserker's Call, Counter Helix, Culling Blade), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 2 (Berserker's Call, Counter Helix, Culling Blade), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
   },
   "rules": [
     {
@@ -109,8 +110,8 @@
   "skills": {
     "order": [
       "axe_counter_helix",
-      "axe_berserkers_call",
-      "axe_battle_hunger"
+      "axe_battle_hunger",
+      "axe_berserkers_call"
     ],
     "games": 1074,
     "first_agree": 1007,
@@ -149,6 +150,6 @@
         "games": 234
       }
     },
-    "basis": "1074 games since 7.41: maxed axe_counter_helix > axe_berserkers_call > axe_battle_hunger 550 (win 48.9%), axe_counter_helix > axe_battle_hunger > axe_berserkers_call 433 (win 55.4%), axe_battle_hunger > axe_counter_helix > axe_berserkers_call 49 (win 69.4%); talents 10: Movement Speed per active Battle Hunger 939/1072 (52.2%), Culling Blade Kill Buff Bonus Duration 133/1072 (44.4%); 15: Battle Hunger Damage Per Second 800/1016 (56.4%), Berserker's Call Armor 216/1016 (44.0%); 20: +15 Strength 426/684 (62.2%), Counter Helix Damage 258/684 (62.0%); 25: Berserker's Call AoE 188/234 (63.8%), Culling Blade Damage 46/234 (73.9%)."
+    "basis": "The player review (2026-10-20): Battle Hunger second, the order that wins more (433 games, won 55.4%, against 550 and 48.9% with Berserker's Call second). 1074 games since 7.41: maxed axe_counter_helix > axe_berserkers_call > axe_battle_hunger 550 (win 48.9%), axe_counter_helix > axe_battle_hunger > axe_berserkers_call 433 (win 55.4%), axe_battle_hunger > axe_counter_helix > axe_berserkers_call 49 (win 69.4%); talents 10: Movement Speed per active Battle Hunger 939/1072 (52.2%), Culling Blade Kill Buff Bonus Duration 133/1072 (44.4%); 15: Battle Hunger Damage Per Second 800/1016 (56.4%), Berserker's Call Armor 216/1016 (44.0%); 20: +15 Strength 426/684 (62.2%), Counter Helix Damage 258/684 (62.0%); 25: Berserker's Call AoE 188/234 (63.8%), Culling Blade Damage 46/234 (73.9%)."
   }
 }

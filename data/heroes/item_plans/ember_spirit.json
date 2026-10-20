@@ -10,7 +10,8 @@
   "sources": {
     "games": "1537 league games since 7.41 (data/heroes/item_stats), win 52.8%. Reproduce: python scripts/hero_item_stats.py ember_spirit. Read as a mid (lane_role 2): 52 high-rank games as a carry were too few; the same plan serves a carry Ember.",
     "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel.",
-    "hero": "Valve /datafeed/herodata hero_id 106 (Sleight of Fist, Flame Guard, Fire Remnant), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 106 (Sleight of Fist, Flame Guard, Fire Remnant), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
   },
   "rules": [
     {

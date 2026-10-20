@@ -74,10 +74,12 @@ def death_kind(last: Any) -> str | None:
 
 
 # Counters to the enemy heroes seen in the match (enemy_heroes.py), by the
-# player's usual position: a right-click carry against evasion, an offlaner
-# against heavy healing; from these minutes on, when the build usually has room.
+# player's usual position: a right-click carry against evasion or illusions;
+# from these minutes on, when the build usually has room. Heavy healing gets no
+# generic item: Spirit Vessel is a support's in high-rank games (none of the 10
+# offlaners builds it; the player's review, 2026-10-20), a carry's or mid's own
+# plan names Eye of Skadi or Spirit Vessel from the build.
 EVASION_MINUTE = 15
-HEALING_MINUTE = 12
 ILLUSION_MINUTE = 12
 # A lineup of magic damage (draft_analysis.MAGIC_DAMAGE, 3+ seen): Pipe of
 # Insight for an offlaner, Black King Bar for a carry or a mid.
@@ -192,9 +194,6 @@ def _candidates(
     illusionist = next((e for e in enemies if e in COUNTERS["illusions"][0]), None)
     if illusionist and position == "carry" and (minute or 0) >= ILLUSION_MINUTE:
         generic.append(("illusions", "maelstrom", "Maelstrom", 0, illusionist, None, {}))
-    healer = next((e for e in enemies if e in COUNTERS["healing"][0]), None)
-    if healer and position == "offlane" and (minute or 0) >= HEALING_MINUTE:
-        generic.append(("healing", "spirit_vessel", "Spirit Vessel", 0, healer, None, {}))
     passive = next((e for e in enemies if e in BREAK_PASSIVES), None)
     if passive and position in ("carry", "mid") and (minute or 0) >= BREAK_MINUTE:
         generic.append(

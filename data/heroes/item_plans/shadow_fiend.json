@@ -10,7 +10,8 @@
     "games": "674 league games since 7.41 (data/heroes/item_stats), win 45.5%. Reproduce: python scripts/hero_item_stats.py shadow_fiend.",
     "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge.",
     "hero": "Valve /datafeed/herodata hero_id 11 (Shadowraze, Presence of the Dark Lord, Feast of Souls), 7.41f.",
-    "generic": "The generic Silver Edge against break heroes stays: Shadow Blade or Silver Edge in 24-33% of 46 games against Bristleback, Spectre or Huskar (15-20% otherwise), won 64% against 26%."
+    "generic": "The generic Silver Edge against break heroes stays: Shadow Blade or Silver Edge in 24-33% of 46 games against Bristleback, Spectre or Huskar (15-20% otherwise), won 64% against 26%.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
   },
   "rules": [
     {

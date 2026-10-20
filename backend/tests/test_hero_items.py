@@ -1114,7 +1114,7 @@ def test_mid_and_offlane_skill_builds_read_the_live_ability_keys():
 
 
 def test_a_plan_without_rules_still_needs_something_to_say():
-    plan = dict(plan_for("Queen of Pain", "mid"))
+    plan = dict(plan_for("Outworld Destroyer", "mid"))
     assert plan["rules"] == [] and validate(plan) is plan
     with pytest.raises(ValueError, match="nothing else"):
         validate(
@@ -1128,3 +1128,26 @@ def test_a_plan_without_rules_still_needs_something_to_say():
     for count in (0, 6, True, "3"):
         with pytest.raises(ValueError, match="count"):
             validate({**plan_for("Axe", "offlane"), "rules": [{**rule, "count": count}]})
+
+
+@pytest.mark.parametrize("hero", ["Queen of Pain", "Puck", "Void Spirit", "Storm Spirit"])
+def test_mids_block_phantom_strike_and_charge_with_linkens_not_pounce(hero):
+    for jumper, spell in (
+        ("Phantom Assassin", "Phantom Strike"),
+        ("Spirit Breaker", "Charge of Darkness"),
+    ):
+        item = _core(hero, [jumper, "Axe"], "mid", minute=18)
+        assert (item["key"], item["why"], item["spell"]) == ("sphere", "jumper_linken", spell)
+        assert item["reason"]["en"] == (
+            f"{jumper} jumps on you with {spell}: Linken's Sphere blocks it, once every 14 seconds"
+        )
+        assert _core(hero, [jumper, "Axe"], "mid", minute=17) is None
+        assert _core(hero, [jumper, "Axe"], "mid", ["item_sphere"], minute=18) is None
+    # Pounce is not cast on the target: Linken's does nothing.
+    assert _core(hero, ["Slark", "Axe"], "mid", minute=30) is None
+
+
+def test_axe_levels_battle_hunger_second():
+    axe = plan_skills(plan_for("Axe", "offlane"))
+    assert axe["order"] == ["axe_counter_helix", "axe_battle_hunger", "axe_berserkers_call"]
+    assert axe["opening"]["name"] == "axe_battle_hunger"

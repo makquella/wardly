@@ -8,9 +8,10 @@
   "checked": "2026-10-20",
   "sources": {
     "games": "1298 league games since 7.41 (data/heroes/item_stats), win 48.4%. Reproduce: python scripts/hero_item_stats.py tidehunter.",
-    "items": "Valve /datafeed/itemdata, 7.41f: Pipe of Insight, Spirit Vessel (generic).",
+    "items": "Valve /datafeed/itemdata, 7.41f: Pipe of Insight (generic).",
     "hero": "Valve /datafeed/herodata hero_id 29 (Gush, Kraken Shell, Anchor Smash, Ravage), 7.41f.",
-    "generic": "The generic Pipe of Insight against 3+ magic heroes stays: 15% of 118 games against them (10% otherwise)."
+    "generic": "The generic Pipe of Insight against 3+ magic heroes stays: 15% of 118 games against them (10% otherwise).",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
   },
   "rules": [],
   "build": [

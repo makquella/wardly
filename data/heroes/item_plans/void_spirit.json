@@ -8,8 +8,9 @@
   "checked": "2026-10-20",
   "sources": {
     "games": "835 league games since 7.41 (data/heroes/item_stats), win 44.8%. Reproduce: python scripts/hero_item_stats.py void_spirit.",
-    "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel.",
-    "hero": "Valve /datafeed/herodata hero_id 126 (Resonant Pulse, Aether Remnant, Dissimilate, Astral Step), 7.41f."
+    "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel, Linken's Sphere.",
+    "hero": "Valve /datafeed/herodata hero_id 126 (Resonant Pulse, Aether Remnant, Dissimilate, Astral Step), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
   },
   "rules": [
     {
@@ -24,6 +25,20 @@
       "reason": {
         "en": "{enemy} heals a lot: your {item} cuts their health restoration by 70% while it lasts, so finish it early",
         "uk": "{enemy} багато лікується: ваш {item} на час дії ріже відновлення здоров'я на 70%, тож зберіть його рано"
+      }
+    },
+    {
+      "id": "jumpers",
+      "why": "jumper_linken",
+      "family": "linken",
+      "item": "sphere",
+      "name": "Linken's Sphere",
+      "enemy": "targeted_jumpers",
+      "minute": 18,
+      "basis": "Valve 7.41f Linken's Sphere: Spellblock blocks most targeted spells once every 14 s (+16 all attributes, +6.5 health and +4.25 mana regeneration). Valve /herodata: Phantom Strike and Charge of Darkness are cast on the target (unit-target behavior), Slark's Pounce is not. High-rank Void Spirits against Slark, Phantom Assassin or Spirit Breaker: Linken's 21% of 77 games (7% otherwise), won 63% against 48%. The player review (2026-10-20): Linken's against Phantom Assassin and Spirit Breaker, not against Slark.",
+      "reason": {
+        "en": "{enemy} jumps on you with {spell}: {item} blocks it, once every 14 seconds",
+        "uk": "{enemy} стрибає на вас через {spell}: {item} блокує цю здатність раз на 14 секунд"
       }
     }
   ],

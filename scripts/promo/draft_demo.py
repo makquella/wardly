@@ -30,7 +30,9 @@ def enemies() -> list[str]:
     from app.situational_items import BREAK_PASSIVES
 
     names: list[str] = []
-    for kind in ("illusions", "evasion", "healing"):
+    # Heavy healing has no generic item (a hero's own plan names one), so no
+    # healer is a draft video's enemy.
+    for kind in ("illusions", "evasion"):
         names += sorted(COUNTERS[kind][0])
     names += sorted(BREAK_PASSIVES)
     return list(dict.fromkeys(names))

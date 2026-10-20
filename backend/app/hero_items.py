@@ -82,6 +82,7 @@ def groups() -> dict[str, dict[str, str | None]]:
         ILLUSION_CLEARERS,
         JUMPERS,
         MAGIC_DAMAGE,
+        TARGETED_JUMPERS,
     )
     from app.situational_items import BREAK_PASSIVES
 
@@ -94,6 +95,7 @@ def groups() -> dict[str, dict[str, str | None]]:
         "escape": dict(ESCAPES),
         "break": dict(BREAK_PASSIVES),
         "jumpers": dict(JUMPERS),
+        "targeted_jumpers": dict(TARGETED_JUMPERS),
         "illusion_clearers": dict.fromkeys(ILLUSION_CLEARERS),
         # Magic damage heroes; a rule names how many with `count` (the generic
         # counter needs draft_analysis.MAGIC_LINEUP_MIN).

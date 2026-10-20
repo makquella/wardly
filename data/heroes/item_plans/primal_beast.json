@@ -9,7 +9,8 @@
   "sources": {
     "games": "591 league games since 7.40 (data/heroes/item_stats), win 46.9%. Reproduce: python scripts/hero_item_stats.py primal_beast.",
     "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
-    "hero": "Valve /datafeed/herodata hero_id 137 (Onslaught, Trample, Uproar, Pulverize), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 137 (Onslaught, Trample, Uproar, Pulverize), 7.41f.",
+    "player": "Player review, 2026-10-20: no Spirit Vessel for offlaners against heavy healing (a support's item); Linken's Sphere for Queen of Pain, Puck, Void Spirit and Storm Spirit against Phantom Assassin and Spirit Breaker, not Slark; Axe levels Battle Hunger second; Templar Assassin keeps Meld > Psi Blades > Refraction."
   },
   "rules": [
     {
