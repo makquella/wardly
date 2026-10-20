@@ -17,47 +17,49 @@
 | 2 UK | Dota 2 Maincast | [office@maincast.com](mailto:office@maincast.com), [Telegram](https://t.me/maincasterska) | Общий публичный адрес компании, не подтверждённый адрес рекламного отдела; запросить подходящий контакт |
 | 3 UK | Krauch_V | [Telegram](https://t.me/krauch_dota) | Канал обозначен 21+; личного контакта модератора в публичном описании нет |
 
-Количество участников Discord не равно активной аудитории или ожидаемому охвату. Полные источники — `public_contacts` и `public_community_checks` в артефакте аудита. Основные тексты постов и ответы добровольцам: [beta-acquisition.md](beta-acquisition.md).
+Количество участников Discord не равно активной аудитории или ожидаемому охвату. Полные источники — `public_contacts` и `public_community_checks` в артефакте аудита. Основные тексты постов и ответы добровольцам: [beta-acquisition.md](beta-acquisition.md); закреплённое сообщение группы тестеров: [beta-pinned.md](beta-pinned.md).
+
+**С 20.10.2026 набор — «керрі до 4к MMR»**, а не три героя: в 0.57 у 20 керри свой план (предметы против драфта, сборка, темп, прокачка). Все ссылки ведут на страницу беты с путём «скачай → настрой → 3 матча → отзыв»: [UK](https://luhovyimvp.dev/beta.html), [EN](https://luhovyimvp.dev/en/beta.html). Код `ref` площадки не меняется. Ролики-примеры пока прежние; после публикации пары 0.57 можно заменить ссылку на неё.
 
 ## Типовий Лс з Харди — обращение
 
-Привіт! На вашому каналі є Dota 2 українською. Розвиваємо Wardly — безкоштовний Windows-тренер із підказками в матчі та розбором після гри. Шукаємо добровольців приблизно 0–4к MMR, особливо на Свені, Джагернауті й Терорблейді.
+Привіт! На вашому каналі є Dota 2 українською. Розвиваємо Wardly — безкоштовний Windows-тренер із підказками в матчі та розбором після гри. Шукаємо керрі-гравців приблизно до 4к MMR: у версії 0.57 у 20 керрі свій план — предмети проти драфту, збірка й прокачка з лігових матчів.
 
-Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Потрібні кілька матчів і чесний відгук: що допомогло, що запізнилося чи відволікало, де порада була неправильною. Надішлемо текст на перевірку й дотримаємося ваших правил.
+Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Потрібні три матчі на керрі й чесний відгук: що допомогло, що запізнилося чи відволікало, де порада була неправильною. Надішлемо текст на перевірку й дотримаємося ваших правил.
 
 Приклад: https://www.youtube.com/shorts/Q8etsMs4470
 
-Сайт: https://luhovyimvp.dev/?ref=beta-uk-hardy
+Як долучитися: https://luhovyimvp.dev/beta.html?ref=beta-uk-hardy
 
 ## Qubi_Dota_Coaching — message
 
 Hi! Your channel has a Sven carry analysis for 2–4k MMR players. We're developing Wardly, a free Windows Dota 2 coach with in-game tips and post-match reviews, and that is exactly one of the groups we'd like to hear from.
 
-Would your moderators allow one developer post at no cost? We're looking for volunteers around 0–4k MMR, especially Sven, Juggernaut and Terrorblade players. A few matches and honest feedback: what helped, what distracted you, and which advice was wrong. We can send the post for review and follow the server rules. We're asking for feedback, not an endorsement or a promise of MMR gains.
+Would your moderators allow one developer post at no cost? We're looking for carry players under about 4k MMR: in version 0.57, 20 carries have a plan of their own, with items against the enemy draft, builds and skills from league matches. Three carry matches and honest feedback: what helped, what distracted you, and which advice was wrong. We can send the post for review and follow the server rules. We're asking for feedback, not an endorsement or a promise of MMR gains.
 
 Demo: https://www.youtube.com/shorts/KAwwovVUuMI
 
-Website: https://luhovyimvp.dev/en/?ref=beta-en-qubi
+How to join: https://luhovyimvp.dev/en/beta.html?ref=beta-en-qubi
 
 ## BalloonDota — message
 
 Hi! Your carry and low-MMR guides address the players we're hoping to hear from. We're developing Wardly, a free Windows Dota 2 coach with in-game tips and post-match reviews.
 
-Would your moderators allow one transparent developer post at no cost? We're looking for volunteers around 0–4k MMR, especially Sven, Juggernaut and Terrorblade players. Participation means a few matches and honest feedback on what helped, what came too late or distracted you, and which advice was wrong. We can send the post for review and follow your community rules. No MMR promises or endorsement requested.
+Would your moderators allow one transparent developer post at no cost? We're looking for carry players under about 4k MMR: in version 0.57, 20 carries have a plan of their own. Participation means three carry matches and honest feedback on what helped, what came too late or distracted you, and which advice was wrong. We can send the post for review and follow your community rules. No MMR promises or endorsement requested.
 
 Demo: https://www.youtube.com/shorts/KAwwovVUuMI
 
-Website: https://luhovyimvp.dev/en/?ref=beta-en-balloon
+How to join: https://luhovyimvp.dev/en/beta.html?ref=beta-en-balloon
 
 ## Ghostik — звернення
 
 Привіт! На вашому каналі є розбір рішень на Axe від 14 жовтня. Саме чесна оцінка корисності порад дуже допомогла б тесту Wardly — безкоштовного Windows-тренера для Dota 2 з підказками в матчі та розбором після гри.
 
-Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Шукаємо добровольців приблизно 0–4к MMR, особливо на Свені, Джагернауті й Терорблейді: кілька матчів і відгук про те, що допомогло, запізнилося чи було неправильним. Можемо надіслати текст на перевірку. Обіцянок приросту MMR і прохання рекомендувати застосунок немає.
+Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Шукаємо керрі-гравців приблизно до 4к MMR — у 0.57 у 20 керрі свій план: три матчі й відгук про те, що допомогло, запізнилося чи було неправильним. Можемо надіслати текст на перевірку. Обіцянок приросту MMR і прохання рекомендувати застосунок немає.
 
 Приклад: https://www.youtube.com/shorts/Q8etsMs4470
 
-Сайт: https://luhovyimvp.dev/?ref=beta-uk-ghostik
+Як долучитися: https://luhovyimvp.dev/beta.html?ref=beta-uk-ghostik
 
 ## Maincast — лист
 
@@ -65,27 +67,27 @@ Website: https://luhovyimvp.dev/en/?ref=beta-en-balloon
 
 Вітаю! Підкажіть, будь ласка, до кого звернутися щодо одного безкоштовного допису від розробника для української Dota-спільноти.
 
-Розвиваємо Wardly — безкоштовний Windows-тренер із підказками під час гри та розбором після матчу. Шукаємо добровольців приблизно 0–4к MMR, особливо на Свені, Джагернауті й Терорблейді. Потрібні кілька матчів і чесний відгук: які поради допомогли, запізнилися, відволікали чи були неправильними.
+Розвиваємо Wardly — безкоштовний Windows-тренер із підказками під час гри та розбором після матчу. Шукаємо керрі-гравців приблизно до 4к MMR: у версії 0.57 у 20 керрі свій план — предмети проти драфту, збірка й прокачка з лігових матчів. Потрібні три матчі на керрі й чесний відгук: які поради допомогли, запізнилися, відволікали чи були неправильними.
 
 Можемо надіслати короткий текст на перевірку та дотриматися правил спільноти. Це запит на добровільне тестування без обіцянок приросту MMR; платне рекламне розміщення зараз не розглядаємо. Чи можливий у вас такий формат?
 
 Приклад: https://www.youtube.com/shorts/Q8etsMs4470
 
-Сайт: https://luhovyimvp.dev/?ref=beta-uk-maincast
+Як долучитися: https://luhovyimvp.dev/beta.html?ref=beta-uk-maincast
 
 ## Krauch_V — звернення
 
 Привіт! Побачили ваші українські Dota-стріми. Розвиваємо Wardly — безкоштовний Windows-тренер із підказками в матчі та розбором після гри.
 
-Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Шукаємо добровольців приблизно 0–4к MMR, особливо на Свені, Джагернауті й Терорблейді. Потрібні кілька матчів і чесний відгук: що допомогло, що відволікало, де рекомендація була хибною. Можемо надіслати текст на перевірку й дотриматися правил. Обіцянок приросту MMR немає.
+Чи можна погодити один безкоштовний допис від розробника у вашій спільноті? Шукаємо керрі-гравців приблизно до 4к MMR: у 0.57 у 20 керрі свій план. Потрібні три матчі на керрі й чесний відгук: що допомогло, що відволікало, де рекомендація була хибною. Можемо надіслати текст на перевірку й дотриматися правил. Обіцянок приросту MMR немає.
 
 Приклад: https://www.youtube.com/shorts/Q8etsMs4470
 
-Сайт: https://luhovyimvp.dev/?ref=beta-uk-krauch
+Як долучитися: https://luhovyimvp.dev/beta.html?ref=beta-uk-krauch
 
 ## После ответа
 
-- Разрешили: отправить локализованный пост из `beta-acquisition.md`, заменить `ref` на код площадки из обращения, согласовать финальный текст и место публикации. Зафиксировать разрешение и ссылку на фактический пост.
+- Разрешили: отправить локализованный пост из `beta-acquisition.md` (ссылка на `beta.html`), заменить `ref` на код площадки из обращения, согласовать финальный текст и место публикации. Зафиксировать разрешение и ссылку на фактический пост.
 - Только платно или отказ: поблагодарить, не спорить и не публиковать.
 - Нет ответа: отметить это в журнале; автоматических повторных сообщений нет.
 - Через 24 / 72 часа после реального поста: записать переходы, загрузки, ответы БЕТА/BETA, участников с несколькими матчами и полезные отзывы. До фактических размещений рост охвата не заявляется.
