@@ -661,9 +661,10 @@ def _card(icon: str, heading: str, hint: str, body: str, extra: str = "") -> str
 
 def _tile(icon: str, label: str, picture: str, name: str, value: str, tone: str = "") -> str:
     e = html.escape
+    # No picture: no line for it (a blank one would end in spaces).
+    picture_line = f"              {picture}\n" if picture else ""
     return f"""            <div class="news-tile{(" news-tile-" + tone) if tone else ""}">
-              {picture}
-              <div class="news-tile-text">
+{picture_line}              <div class="news-tile-text">
                 <p class="news-tile-label">{_icon(icon)}{e(label)}</p>
                 <p class="news-tile-name">{name}</p>
                 <p class="news-tile-value">{e(value)}</p>
