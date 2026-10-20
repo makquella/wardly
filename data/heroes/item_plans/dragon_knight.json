@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "hero": "Dragon Knight",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "683 league games since 7.40 (data/heroes/item_stats), win 49.2%; skills from 218 games of 7.41. Reproduce: python scripts/hero_item_stats.py dragon_knight.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Bloodthorn, Orchid Malevolence, Silver Edge.",
+    "hero": "Valve /datafeed/herodata hero_id 49 (Breathe Fire, Dragon Tail, Wyrm's Wrath, Elder Dragon Form), 7.41f.",
+    "generic": "The generic Silver Edge against break heroes stays: 25% of 28 games against them (5% otherwise), won 71% against 43%."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion_bloodthorn",
+      "family": "evasion",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "evasion",
+      "minute": 20,
+      "basis": "Valve 7.41f Bloodthorn: Soul Rend silences for 5 s and gives True Strike against the silenced target; the passive pierces evasion on 40% of attacks. Orchid is in his build (34%, ~18 min). High-rank Dragon Knights against Phantom Assassin or Windranger: Bloodthorn 22% of 102 games (14% otherwise), won 65% against 42%.",
+      "reason": {
+        "en": "{enemy} dodges attacks: {item} silences them, and your attacks never miss the silenced target",
+        "uk": "{enemy} ухиляється від атак: {item} накладає тишу, і по цілі під тишею ваші атаки не промахуються"
+      }
+    },
+    {
+      "id": "escape_evasion",
+      "why": "escape_bloodthorn",
+      "family": "escape",
+      "item": "bloodthorn",
+      "name": "Bloodthorn",
+      "enemy": "escape",
+      "also": "evasion",
+      "minute": 20,
+      "basis": "Valve 7.41f Bloodthorn is built from Orchid Malevolence and keeps its 5 s silence (Soul Rend), with True Strike against the silenced target: with an escape hero and an evasion hero together, one item answers both.",
+      "reason": {
+        "en": "{enemy} can escape and {escape} dodges attacks: {item} silences either one, and your attacks never miss the silenced target",
+        "uk": "{enemy} може втекти, а {escape} ухиляється від атак: {item} накладає тишу на будь-кого з них, і по цілі під тишею ваші атаки не промахуються"
+      }
+    },
+    {
+      "id": "escape",
+      "why": "escape_orchid",
+      "family": "escape",
+      "item": "orchid",
+      "name": "Orchid Malevolence",
+      "enemy": "escape",
+      "minute": 14,
+      "basis": "Valve 7.41f Orchid Malevolence: Soul Burn silences for 5 s (900 range, 18 s cooldown), so Blink, Ball Lightning or Phase Shift cannot be cast. High-rank Dragon Knights against escape heroes: Orchid 43% of 288 games (22% otherwise), Bloodthorn 24% (9%), won 59% against 47% with Bloodthorn.",
+      "reason": {
+        "en": "{enemy} escapes with {spell}: {item} silences them for 5 seconds, so the escape cannot be cast",
+        "uk": "{enemy} тікає через {spell}: {item} накладає тишу на 5 секунд, і втекти не вийде"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "armlet",
+      "name": "Armlet of Mordiggian"
+    },
+    {
+      "item": "mask_of_madness",
+      "name": "Mask of Madness"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "orchid",
+      "name": "Orchid Malevolence"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 73% (2), magic_wand 82% (4), ward_dispenser 21% (5), soul_ring 38% (6), power_treads 100% (6), armlet 30% (12), mask_of_madness 27% (13), aghanims_shard 27% (16), oblivion_staff 34% (16), orchid 34% (18), lesser_crit 39% (22), black_king_bar 64% (23), greater_crit 33% (26), buckler 24% (29).",
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        18700
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "armlet",
+        "name": "Armlet of Mordiggian"
+      },
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      },
+      {
+        "item": "assault",
+        "name": "Assault Cuirass"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 80.0%+: 25:00 18500 (11 games, 81.8%), 30:00 19500 (32 games, 81.2%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "dragon_knight_breathe_fire",
+      "dragon_knight_dragon_tail",
+      "dragon_knight_wyrms_wrath"
+    ],
+    "games": 218,
+    "first_agree": 201,
+    "opening": {
+      "name": "dragon_knight_breathe_fire",
+      "agree": 199
+    },
+    "names": {
+      "dragon_knight_breathe_fire": "Breathe Fire",
+      "dragon_knight_dragon_tail": "Dragon Tail",
+      "dragon_knight_wyrms_wrath": "Wyrm's Wrath"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_dragon_knight_3",
+        "label": "Breathe Fire Cooldown",
+        "picked": 131,
+        "games": 218
+      },
+      "15": {
+        "name": "special_bonus_hp_300",
+        "label": "+300 Health",
+        "picked": 107,
+        "games": 210
+      },
+      "20": {
+        "name": "special_bonus_unique_dragon_knight_9",
+        "label": "Breathe Fire Damage",
+        "picked": 101,
+        "games": 147
+      },
+      "25": {
+        "name": "special_bonus_unique_dragon_knight_wyrms_wrath_damage",
+        "label": "Wyrm's Wrath Bonuses",
+        "picked": 42,
+        "games": 59
+      }
+    },
+    "basis": "218 games since 7.41: maxed dragon_knight_breathe_fire > dragon_knight_dragon_tail > dragon_knight_wyrms_wrath 102 (win 54.9%), dragon_knight_breathe_fire > dragon_knight_wyrms_wrath > dragon_knight_dragon_tail 97 (win 53.6%), dragon_knight_wyrms_wrath > dragon_knight_breathe_fire > dragon_knight_dragon_tail 8 (win 62.5%); talents 10: Breathe Fire Cooldown 131/218 (51.1%), +15 Damage 87/218 (57.5%); 15: +300 Health 107/210 (61.7%), Dragon Tail Stun 103/210 (49.5%); 20: Breathe Fire Damage 101/147 (62.4%), Elder Dragon Form Attack Range 46/147 (69.6%); 25: Wyrm's Wrath Bonuses 42/59 (66.7%), Dragon Blood HP Regen/Armor 17/59 (70.6%)."
+  }
+}

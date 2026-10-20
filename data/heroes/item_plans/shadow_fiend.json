@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "hero": "Shadow Fiend",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "674 league games since 7.41 (data/heroes/item_stats), win 45.5%. Reproduce: python scripts/hero_item_stats.py shadow_fiend.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Monkey King Bar, Silver Edge.",
+    "hero": "Valve /datafeed/herodata hero_id 11 (Shadowraze, Presence of the Dark Lord, Feast of Souls), 7.41f.",
+    "generic": "The generic Silver Edge against break heroes stays: Shadow Blade or Silver Edge in 24-33% of 46 games against Bristleback, Spectre or Huskar (15-20% otherwise), won 64% against 26%."
+  },
+  "rules": [
+    {
+      "id": "evasion",
+      "why": "evasion_mkb",
+      "family": "evasion",
+      "item": "monkey_king_bar",
+      "name": "Monkey King Bar",
+      "enemy": "evasion",
+      "minute": 18,
+      "basis": "Valve 7.41f Monkey King Bar: each attack has an 80% chance to pierce evasion and deal 70 bonus magical damage (+50 damage, +50 attack speed). High-rank Shadow Fiends against Phantom Assassin or Windranger: 26% of 46 games (2% otherwise), won 67% against 38%.",
+      "reason": {
+        "en": "{enemy} dodges attacks: {item} pierces the evasion on 80% of your attacks",
+        "uk": "{enemy} ухиляється від атак: {item} пробиває ухилення 80% ваших атак"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "mask_of_madness",
+      "name": "Mask of Madness"
+    },
+    {
+      "item": "dragon_lance",
+      "name": "Dragon Lance"
+    },
+    {
+      "item": "yasha_and_kaya",
+      "name": "Yasha and Kaya"
+    },
+    {
+      "item": "butterfly",
+      "name": "Butterfly"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "greater_crit",
+      "name": "Daedalus"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 62% (4), power_treads 92% (5), mask_of_madness 51% (9), kaya 46% (11), yasha 62% (12), dragon_lance 52% (13), yasha_and_kaya 46% (13), invis_sword 23% (20), butterfly 28% (21), ultimate_scepter 27% (23), lesser_crit 47% (23), force_staff 21% (25), black_king_bar 39% (26), hurricane_pike 20% (26), greater_crit 38% (27).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        18200
+      ],
+      [
+        30,
+        21100
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "specialists_array",
+        "name": "Specialist's Array"
+      },
+      {
+        "item": "mask_of_madness",
+        "name": "Mask of Madness"
+      },
+      {
+        "item": "yasha_and_kaya",
+        "name": "Yasha and Kaya"
+      },
+      {
+        "item": "dragon_lance",
+        "name": "Dragon Lance"
+      },
+      {
+        "item": "butterfly",
+        "name": "Butterfly"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "hydras_breath",
+        "name": "Hydra's Breath"
+      },
+      {
+        "item": "greater_crit",
+        "name": "Daedalus"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 25:00 19000 (31 games, 87.1%), 30:00 22000 (43 games, 86.0%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "nevermore_shadowraze1",
+      "nevermore_dark_lord",
+      "nevermore_frenzy"
+    ],
+    "games": 674,
+    "first_agree": 667,
+    "opening": {
+      "name": "nevermore_shadowraze1",
+      "agree": 672
+    },
+    "names": {
+      "nevermore_shadowraze1": "Shadowraze",
+      "nevermore_dark_lord": "Presence of the Dark Lord",
+      "nevermore_frenzy": "Feast of Souls"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_nevermore_4",
+        "label": "Feast of Souls Attack Speed",
+        "picked": 377,
+        "games": 674
+      },
+      "15": {
+        "name": "special_bonus_unique_nevermore_3",
+        "label": "Presence Armor Reduction",
+        "picked": 395,
+        "games": 658
+      },
+      "20": {
+        "name": "special_bonus_unique_nevermore_1",
+        "label": "Necromastery Max Souls",
+        "picked": 427,
+        "games": 503
+      },
+      "25": {
+        "name": "special_bonus_unique_nevermore_raze_procsattacks",
+        "label": "Shadowraze Applies Attack Damage",
+        "picked": 104,
+        "games": 116
+      }
+    },
+    "basis": "674 games since 7.41: maxed nevermore_shadowraze1 > nevermore_dark_lord > nevermore_frenzy 550 (win 50.4%), nevermore_shadowraze1 > nevermore_dark_lord 70 (win 10.0%), nevermore_shadowraze1 > nevermore_frenzy > nevermore_dark_lord 47 (win 44.7%); talents 10: Feast of Souls Attack Speed 377/674 (49.3%), Shadowraze Stack Damage 297/674 (40.7%); 15: Presence Armor Reduction 395/658 (49.4%), Feast of Souls Souls Collected Per Hero 263/658 (41.4%); 20: Necromastery Max Souls 427/503 (57.8%), Requiem Fear per line 76/503 (50.0%); 25: Shadowraze Applies Attack Damage 104/116 (68.3%), Feast of Souls Grants Cast Speed 12/116 (75.0%)."
+  }
+}

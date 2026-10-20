@@ -69,12 +69,20 @@ RULE_KEYS = {
     "minute",
     "basis",
     "reason",
+    "count",
 }
 
 
 def groups() -> dict[str, dict[str, str | None]]:
     """Enemy hero groups a rule names: {group: {hero: spell or None}}."""
-    from app.draft_analysis import COUNTERS, ESCAPES, EVASION_PASSIVES, ILLUSION_CLEARERS, JUMPERS
+    from app.draft_analysis import (
+        COUNTERS,
+        ESCAPES,
+        EVASION_PASSIVES,
+        ILLUSION_CLEARERS,
+        JUMPERS,
+        MAGIC_DAMAGE,
+    )
     from app.situational_items import BREAK_PASSIVES
 
     return {
@@ -87,6 +95,9 @@ def groups() -> dict[str, dict[str, str | None]]:
         "break": dict(BREAK_PASSIVES),
         "jumpers": dict(JUMPERS),
         "illusion_clearers": dict.fromkeys(ILLUSION_CLEARERS),
+        # Magic damage heroes; a rule names how many with `count` (the generic
+        # counter needs draft_analysis.MAGIC_LINEUP_MIN).
+        "magic": dict.fromkeys(MAGIC_DAMAGE),
     }
 
 
@@ -149,8 +160,14 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
         raise fail(f"positions must be some of {sorted(POSITIONS)}")
     known = groups()
     rules = plan.get("rules")
-    if not isinstance(rules, list) or not rules:
-        raise fail("no rules")
+    if not isinstance(rules, list):
+        raise fail("rules is a list")
+    if not rules and not any(
+        plan.get(k) for k in ("suppress", "build", "skills", "tempo", "notes")
+    ):
+        # A hero whose high-rank games change no item still has a build, skills
+        # or tempo; an empty plan says nothing.
+        raise fail("no rules and nothing else")
     ids: set[str] = set()
     for rule in rules:
         if not isinstance(rule, dict) or not set(rule) <= RULE_KEYS:
@@ -173,6 +190,9 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
         minute = rule.get("minute")
         if isinstance(minute, bool) or not isinstance(minute, int) or not 0 <= minute <= 60:
             raise fail(f"{rule_id}: minute must be 0..60")
+        count = rule.get("count", 1)
+        if isinstance(count, bool) or not isinstance(count, int) or not 1 <= count <= 5:
+            raise fail(f"{rule_id}: count must be 1..5 enemy heroes of the group")
     suppress = plan.get("suppress", {})
     if not isinstance(suppress, dict) or not all(
         isinstance(v, str) and v.strip() for v in suppress.values()
@@ -323,9 +343,10 @@ def hero_rows(plan: dict[str, Any], enemies: list[str], minute: int | None) -> l
     for rule in plan["rules"]:
         if rule["family"] in done or (minute or 0) < rule["minute"]:
             continue
-        enemy = next((e for e in enemies if e in known[rule["enemy"]]), None)
-        if enemy is None:
+        seen = [e for e in enemies if e in known[rule["enemy"]]]
+        if len(seen) < rule.get("count", 1):
             continue
+        enemy = seen[0]
         escape = None
         if "also" in rule:
             escape = next((e for e in enemies if e in known[rule["also"]] and e != enemy), None)

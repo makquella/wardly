@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "hero": "Timbersaw",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "635 league games since 7.41 (data/heroes/item_stats), win 49.9%. Reproduce: python scripts/hero_item_stats.py timbersaw.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 98 (Whirling Death, Timber Chain, Reactive Armor, Chakram), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_bkb",
+      "why": "magic_bkb",
+      "family": "magic",
+      "item": "black_king_bar",
+      "name": "Black King Bar",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Black King Bar: Avatar applies a basic dispel, 60% magic resistance and makes negative effects of enemy spells do nothing for 9/8/7 s. It is in his build (57% of the won games, ~25 min); Pipe of Insight is not.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, so their spells cannot catch you between your Timber Chains",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, щоб їхні здібності не зловили вас між Timber Chain"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "kaya_and_sange",
+      "name": "Kaya and Sange"
+    },
+    {
+      "item": "lotus_orb",
+      "name": "Lotus Orb"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "shivas_guard",
+      "name": "Shiva's Guard"
+    },
+    {
+      "item": "heart",
+      "name": "Heart of Tarrasque"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "soul_booster",
+      "name": "Soul Booster"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 79% (2), magic_wand 86% (5), soul_ring 95% (7), power_treads 44% (8), kaya 99% (12), sange 94% (17), kaya_and_sange 94% (17), consecrated_wraps 20% (17), pers 32% (20), lotus_orb 29% (21), black_king_bar 57% (24), ultimate_scepter 39% (29), shivas_guard 59% (29), heart 28% (31), aghanims_shard 52% (32), soul_booster 27% (35), octarine_core 23% (36), sheepstick 20% (39), overwhelming_blink 22% (42).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12000
+      ],
+      [
+        25,
+        16300
+      ],
+      [
+        30,
+        20600
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "kaya_and_sange",
+        "name": "Kaya and Sange"
+      },
+      {
+        "item": "gungir",
+        "name": "Gleipnir"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "shivas_guard",
+        "name": "Shiva's Guard"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "heart",
+        "name": "Heart of Tarrasque"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "overwhelming_blink",
+        "name": "Overwhelming Blink"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 12500 (28 games, 85.7%), 25:00 17000 (30 games, 86.7%), 30:00 21500 (26 games, 88.5%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "shredder_whirling_death",
+      "shredder_timber_chain",
+      "shredder_reactive_armor"
+    ],
+    "games": 635,
+    "first_agree": 559,
+    "opening": {
+      "name": "shredder_whirling_death",
+      "agree": 419
+    },
+    "names": {
+      "shredder_whirling_death": "Whirling Death",
+      "shredder_timber_chain": "Timber Chain",
+      "shredder_reactive_armor": "Reactive Armor"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_mp_regen_150",
+        "label": "+1.5 Mana Regen",
+        "picked": 553,
+        "games": 634
+      },
+      "15": {
+        "name": "special_bonus_unique_timbersaw_5",
+        "label": "Whirling Death Stat Loss",
+        "picked": 458,
+        "games": 608
+      },
+      "20": {
+        "name": "special_bonus_unique_timbersaw_4",
+        "label": "Chakram Slow",
+        "picked": 313,
+        "games": 465
+      },
+      "25": {
+        "name": "special_bonus_unique_timbersaw_3",
+        "label": "Timber Chain Range/Projectile Speed",
+        "picked": 221,
+        "games": 255
+      }
+    },
+    "basis": "635 games since 7.41: maxed shredder_whirling_death > shredder_timber_chain > shredder_reactive_armor 501 (win 52.1%), shredder_timber_chain > shredder_whirling_death > shredder_reactive_armor 64 (win 48.4%), shredder_whirling_death > shredder_reactive_armor > shredder_timber_chain 43 (win 51.2%); talents 10: +1.5 Mana Regen 553/634 (50.3%), Reactive Armor Regeneration Per Stack 81/634 (48.1%); 15: Whirling Death Stat Loss 458/608 (52.0%), Max / Hero Attack Reactive Armor Stacks 150/608 (52.0%); 20: Chakram Slow 313/465 (57.5%), Exposure Therapy Heals for HP Per Tree Destroyed 152/465 (67.1%); 25: Timber Chain Range/Projectile Speed 221/255 (70.1%), Whirling Death Tree Bonus Damage 34/255 (67.6%)."
+  }
+}

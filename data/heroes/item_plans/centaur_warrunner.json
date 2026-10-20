@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "hero": "Centaur Warrunner",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "839 league games since 7.41 (data/heroes/item_stats), win 50.1%. Reproduce: python scripts/hero_item_stats.py centaur_warrunner.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Pipe of Insight.",
+    "hero": "Valve /datafeed/herodata hero_id 96 (Hoof Stomp, Double Edge, Retaliate, Stampede), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic",
+      "why": "magic_pipe",
+      "family": "magic",
+      "item": "pipe",
+      "name": "Pipe of Insight",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Pipe of Insight: Barrier absorbs 425 magic damage on every nearby ally for 8 s; 20% magic resistance and an 8% aura. High-rank Centaurs against 3+ magic damage heroes: 49% of 69 games (27% otherwise), won 56% against 34%.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} shields your whole team from their spells",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} захищає від їхніх здібностей усю вашу команду"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "vanguard",
+      "name": "Vanguard"
+    },
+    {
+      "item": "helm_of_the_dominator",
+      "name": "Helm of the Dominator"
+    },
+    {
+      "item": "heart",
+      "name": "Heart of Tarrasque"
+    },
+    {
+      "item": "pipe",
+      "name": "Pipe of Insight"
+    },
+    {
+      "item": "lotus_orb",
+      "name": "Lotus Orb"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "shivas_guard",
+      "name": "Shiva's Guard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 40% (3), vanguard 37% (7), helm_of_the_dominator 61% (8), magic_wand 59% (9), blade_mail 23% (13), soul_ring 24% (19), heart 64% (20), pipe 32% (21), crimson_guard 23% (22), pers 38% (23), lotus_orb 37% (24), aghanims_shard 60% (27), shivas_guard 35% (33), black_king_bar 38% (33), ultimate_scepter 42% (35).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        11000
+      ],
+      [
+        25,
+        14900
+      ],
+      [
+        30,
+        17800
+      ]
+    ],
+    "items": [
+      {
+        "item": "helm_of_the_dominator",
+        "name": "Helm of the Dominator"
+      },
+      {
+        "item": "heart",
+        "name": "Heart of Tarrasque"
+      },
+      {
+        "item": "pipe",
+        "name": "Pipe of Insight"
+      },
+      {
+        "item": "lotus_orb",
+        "name": "Lotus Orb"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "shivas_guard",
+        "name": "Shiva's Guard"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 11500 (40 games, 90.0%), 25:00 15500 (41 games, 87.8%), 30:00 18500 (77 games, 87.0%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "centaur_return",
+      "centaur_hoof_stomp",
+      "centaur_double_edge"
+    ],
+    "games": 839,
+    "first_agree": 779,
+    "opening": {
+      "name": "centaur_hoof_stomp",
+      "agree": 777
+    },
+    "names": {
+      "centaur_return": "Retaliate",
+      "centaur_hoof_stomp": "Hoof Stomp",
+      "centaur_double_edge": "Double Edge"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_movement_speed_15",
+        "label": "+15 Movement Speed",
+        "picked": 589,
+        "games": 835
+      },
+      "15": {
+        "name": "special_bonus_strength_10",
+        "label": "+10 Strength",
+        "picked": 624,
+        "games": 781
+      },
+      "20": {
+        "name": "special_bonus_unique_centaur_5",
+        "label": "Stampede Cooldown",
+        "picked": 342,
+        "games": 510
+      },
+      "25": {
+        "name": "special_bonus_unique_centaur_2",
+        "label": "Hoof Stomp Duration",
+        "picked": 139,
+        "games": 188
+      }
+    },
+    "basis": "839 games since 7.41: maxed centaur_return > centaur_hoof_stomp > centaur_double_edge 657 (win 50.7%), centaur_return > centaur_double_edge > centaur_hoof_stomp 105 (win 58.1%), centaur_hoof_stomp > centaur_double_edge > centaur_return 18 (win 38.9%); talents 10: +15 Movement Speed 589/835 (50.8%), +4 Health Regen 246/835 (49.2%); 15: +10 Strength 624/781 (53.5%), Double Edge Strength Damage 157/781 (52.9%); 20: Stampede Cooldown 342/510 (61.1%), Retaliate Damage 168/510 (63.7%); 25: Hoof Stomp Duration 139/188 (74.8%), Gains Retaliate Aura 49/188 (85.7%)."
+  }
+}

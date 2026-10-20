@@ -1,0 +1,179 @@
+{
+  "schema": 1,
+  "hero": "Void Spirit",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "835 league games since 7.41 (data/heroes/item_stats), win 44.8%. Reproduce: python scripts/hero_item_stats.py void_spirit.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel.",
+    "hero": "Valve /datafeed/herodata hero_id 126 (Resonant Pulse, Aether Remnant, Dissimilate, Astral Step), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "healing",
+      "why": "healing_vessel",
+      "family": "healing",
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel",
+      "enemy": "healing",
+      "minute": 8,
+      "basis": "Valve 7.41f Spirit Vessel: Soul Release on an enemy cuts its health restoration by 70% and drains 4% of its current health per second for 8 s (10 s cooldown, charges from hero deaths within 1500). It is in his build (Urn of Shadows 70% at ~6 min, Spirit Vessel 57% at ~12 min of the won games).",
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} cuts their health restoration by 70% while it lasts, so finish it early",
+        "uk": "{enemy} багато лікується: ваш {item} на час дії ріже відновлення здоров'я на 70%, тож зберіть його рано"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots",
+      "unless": [
+        "power_treads"
+      ]
+    },
+    {
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel"
+    },
+    {
+      "item": "pers",
+      "name": "Perseverance"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "manta",
+      "name": "Manta Style"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "yasha_and_kaya",
+      "name": "Yasha and Kaya"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "octarine_core",
+      "name": "Octarine Core"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 96% (4), ward_dispenser 30% (5), urn_of_shadows 70% (6), power_treads 62% (9), phase_boots 30% (9), spirit_vessel 57% (12), pers 35% (13), mage_slayer 25% (14), aghanims_shard 85% (17), kaya 57% (21), yasha 69% (24), manta 25% (25), ultimate_scepter 70% (25), yasha_and_kaya 43% (26), black_king_bar 30% (33), soul_booster 33% (34), octarine_core 27% (35).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        10600
+      ],
+      [
+        25,
+        13900
+      ],
+      [
+        30,
+        18200
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "spirit_vessel",
+        "name": "Spirit Vessel"
+      },
+      {
+        "item": "mage_slayer",
+        "name": "Mage Slayer"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "manta",
+        "name": "Manta Style"
+      },
+      {
+        "item": "yasha_and_kaya",
+        "name": "Yasha and Kaya"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "octarine_core",
+        "name": "Octarine Core"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 11000 (44 games, 86.4%), 25:00 14500 (55 games, 89.1%), 30:00 19000 (23 games, 87.0%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "void_spirit_resonant_pulse",
+      "void_spirit_aether_remnant",
+      "void_spirit_dissimilate"
+    ],
+    "games": 835,
+    "first_agree": 556,
+    "opening": {
+      "name": "void_spirit_resonant_pulse",
+      "agree": 717
+    },
+    "names": {
+      "void_spirit_resonant_pulse": "Resonant Pulse",
+      "void_spirit_aether_remnant": "Aether Remnant",
+      "void_spirit_dissimilate": "Dissimilate"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_void_spirit_4",
+        "label": "Resonant Pulse Damage",
+        "picked": 808,
+        "games": 835
+      },
+      "15": {
+        "name": "special_bonus_unique_void_spirit_2",
+        "label": "Aether Remnant Damage",
+        "picked": 709,
+        "games": 778
+      },
+      "20": {
+        "name": "special_bonus_unique_void_spirit_dissimilate_outerring",
+        "label": "Outer Dissimilate Ring",
+        "picked": 327,
+        "games": 526
+      },
+      "25": {
+        "name": "special_bonus_unique_void_spirit_8",
+        "label": "Astral Step Crit",
+        "picked": 163,
+        "games": 214
+      }
+    },
+    "basis": "835 games since 7.41: maxed void_spirit_resonant_pulse > void_spirit_aether_remnant > void_spirit_dissimilate 372 (win 44.6%), void_spirit_resonant_pulse > void_spirit_dissimilate > void_spirit_aether_remnant 184 (win 47.8%), void_spirit_dissimilate > void_spirit_aether_remnant > void_spirit_resonant_pulse 103 (win 47.6%); talents 10: Resonant Pulse Damage 808/835 (44.6%), +1.5 Mana Regen 27/835 (51.9%); 15: Aether Remnant Damage 709/778 (47.5%), Resonant Pulse Barrier 69/778 (47.8%); 20: Outer Dissimilate Ring 327/526 (55.4%), Astral Step Charge Restore Time 199/526 (57.8%); 25: Astral Step Crit 163/214 (60.7%), Dissimilate Roots for 51/214 (54.9%)."
+  },
+  "suppress": {
+    "break": "Silver Edge is not his item: Astral Step, Resonant Pulse and Aether Remnant carry his damage; no Silver Edge in 70 games against break heroes."
+  }
+}

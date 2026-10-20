@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "hero": "Axe",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "1074 league games since 7.41 (data/heroes/item_stats), win 51.1%. Reproduce: python scripts/hero_item_stats.py axe.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 2 (Berserker's Call, Counter Helix, Culling Blade), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_bkb",
+      "why": "magic_bkb",
+      "family": "magic",
+      "item": "black_king_bar",
+      "name": "Black King Bar",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Black King Bar: Avatar applies a basic dispel, 60% magic resistance and makes negative effects of enemy spells do nothing for 9/8/7 s. It is in his build (71% of the won games, ~25 min); Pipe of Insight is not. Berserker's Call puts him inside the enemy team for up to 3 s.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, so their spells cannot stop you after Berserker's Call",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, щоб після Berserker's Call їхні здібності вас не зупинили"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "vanguard",
+      "name": "Vanguard"
+    },
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "blade_mail",
+      "name": "Blade Mail"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "pers",
+      "name": "Perseverance"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 42% (2), vanguard 33% (5), magic_wand 69% (7), phase_boots 93% (7), blade_mail 90% (12), soul_ring 35% (15), aghanims_shard 80% (23), black_king_bar 71% (25), pers 29% (26), kaya 21% (28), lotus_orb 20% (29).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        16800
+      ],
+      [
+        30,
+        19700
+      ]
+    ],
+    "items": [
+      {
+        "item": "vanguard",
+        "name": "Vanguard"
+      },
+      {
+        "item": "phase_boots",
+        "name": "Phase Boots"
+      },
+      {
+        "item": "blade_mail",
+        "name": "Blade Mail"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "sange_and_yasha",
+        "name": "Sange and Yasha"
+      },
+      {
+        "item": "heart",
+        "name": "Heart of Tarrasque"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 14000 (13 games, 92.3%), 25:00 17500 (27 games, 88.9%), 30:00 20500 (29 games, 86.2%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "axe_counter_helix",
+      "axe_berserkers_call",
+      "axe_battle_hunger"
+    ],
+    "games": 1074,
+    "first_agree": 1007,
+    "opening": {
+      "name": "axe_battle_hunger",
+      "agree": 958
+    },
+    "names": {
+      "axe_counter_helix": "Counter Helix",
+      "axe_berserkers_call": "Berserker's Call",
+      "axe_battle_hunger": "Battle Hunger"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_axe_8",
+        "label": "Movement Speed per active Battle Hunger",
+        "picked": 939,
+        "games": 1072
+      },
+      "15": {
+        "name": "special_bonus_unique_axe",
+        "label": "Battle Hunger Damage Per Second",
+        "picked": 800,
+        "games": 1016
+      },
+      "20": {
+        "name": "special_bonus_strength_15",
+        "label": "+15 Strength",
+        "picked": 426,
+        "games": 684
+      },
+      "25": {
+        "name": "special_bonus_unique_axe_2",
+        "label": "Berserker's Call AoE",
+        "picked": 188,
+        "games": 234
+      }
+    },
+    "basis": "1074 games since 7.41: maxed axe_counter_helix > axe_berserkers_call > axe_battle_hunger 550 (win 48.9%), axe_counter_helix > axe_battle_hunger > axe_berserkers_call 433 (win 55.4%), axe_battle_hunger > axe_counter_helix > axe_berserkers_call 49 (win 69.4%); talents 10: Movement Speed per active Battle Hunger 939/1072 (52.2%), Culling Blade Kill Buff Bonus Duration 133/1072 (44.4%); 15: Battle Hunger Damage Per Second 800/1016 (56.4%), Berserker's Call Armor 216/1016 (44.0%); 20: +15 Strength 426/684 (62.2%), Counter Helix Damage 258/684 (62.0%); 25: Berserker's Call AoE 188/234 (63.8%), Culling Blade Damage 46/234 (73.9%)."
+  }
+}

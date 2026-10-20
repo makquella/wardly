@@ -37,9 +37,12 @@ def _lineup(plan, rule):
     """Enemies that make `rule` the first of its family; None when none do."""
     known = groups()
     others = known.get(rule.get("also"), {}) if rule.get("also") else {None: None}
-    for enemy in sorted(known[rule["enemy"]]):
+    group = sorted(known[rule["enemy"]])
+    for index, enemy in enumerate(group):
+        # A rule with `count` needs that many heroes of its group.
+        mates = [e for e in group[index + 1 :] + group[:index]][: rule.get("count", 1) - 1]
         for escape in sorted(others, key=str):
-            lineup = [enemy] + ([escape] if escape and escape != enemy else [])
+            lineup = [enemy, *mates] + ([escape] if escape and escape != enemy else [])
             if rule.get("also") and len(lineup) < 2:
                 continue
             rows = hero_rows(plan, lineup, 60)

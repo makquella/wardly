@@ -55,6 +55,8 @@ PAUSE = 2  # seconds between Explorer queries (a shared free service)
 # OpenDota lane_role of a hero's usual position; supports are not filtered.
 LANE_ROLE = {"carry": 1, "mid": 2, "offlane": 3}
 MIN_LINE_GAMES = 10
+# A skill build read from the latest patch alone needs this many games.
+SKILL_MIN_GAMES = 50
 # A draft plan's tempo curve keeps the points of this many games or more (a thinner
 # point stays in the stats file, not in the plan).
 PLAN_POINT_GAMES = 20
@@ -121,7 +123,7 @@ def _filter(hero_id: int, since: int, lane: int | None) -> str:
 
 def games(hero_id: int, since: int, lane: int | None) -> list[dict]:
     rows = explorer(
-        "SELECT pm.match_id, pm.player_slot, m.radiant_win, pm.gold_t[21] AS g20, "
+        "SELECT pm.match_id, pm.player_slot, m.radiant_win, m.start_time, pm.gold_t[21] AS g20, "
         "pm.gold_t[26] AS g25, pm.gold_t[31] AS g30, pm.purchase_log, "
         "pm.ability_upgrades_arr AS ups FROM player_matches pm JOIN matches m USING(match_id) "
         f"WHERE {_filter(hero_id, since, lane)} AND array_length(pm.gold_t, 1) > 20"
@@ -227,9 +229,13 @@ def skills(rows: list[dict], npc: str) -> dict[str, Any]:
     orders: dict[tuple[str, ...], list[dict]] = defaultdict(list)
     openings: dict[str, list[dict]] = defaultdict(list)
     talents: dict[int, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
+    from app.skill_build import ALIASES
+
     counted = 0
     for game in rows:
-        names = [n for n in (ids.get(str(a)) for a in game.get("ups") or []) if n]
+        # One skill logged under several ids (Shadow Fiend's three Shadowrazes)
+        # counts as one, as in the live skill build.
+        names = [ALIASES.get(n, n) for n in (ids.get(str(a)) for a in game.get("ups") or []) if n]
         if not names:
             continue
         counted += 1
@@ -287,7 +293,8 @@ def counters(
     from app.draft_analysis import MAGIC_DAMAGE
     from app.hero_items import groups
 
-    sets = {name: set(heroes) for name, heroes in groups().items()}
+    # One magic hero is no lineup: the magic group is read as magic_lineup below.
+    sets = {name: set(heroes) for name, heroes in groups().items() if name != "magic"}
     tests = {name: (lambda e, h=heroes: bool(e & h)) for name, heroes in sets.items()}
     tests["magic_lineup"] = lambda e: len(e & MAGIC_DAMAGE) >= MAGIC_LINEUP
     purchases = {r["match_id"]: bought(r, built) for r in rows}
@@ -347,7 +354,11 @@ def counters(
 
 
 def hero_stats(
-    hero: str, since_name: str | None, min_games: int, win: float | None = None
+    hero: str,
+    since_name: str | None,
+    min_games: int,
+    win: float | None = None,
+    position: str | None = None,
 ) -> dict[str, Any]:
     from app.dota_constants import hero_id_from_name, hero_npc_name
     from app.hero_profiles import get_hero_position
@@ -355,16 +366,30 @@ def hero_stats(
     hero_id = hero_id_from_name(hero)
     if hero_id is None:
         raise SystemExit(f"unknown hero {hero!r}")
-    position = get_hero_position(hero)
+    # The position asked for, else the plan's first one (Ember Spirit, listed as
+    # a carry, has a mid plan), else the hero's usual position.
+    from app.hero_items import load_plans
+
+    plan = load_plans().get(hero_id)
+    position = position or (plan["positions"][0] if plan else None) or get_hero_position(hero)
     lane = LANE_ROLE.get(position or "")
     patches = patch_starts()
     names = [n for n, _ in patches]
     index = names.index(since_name) if since_name in names else len(patches) - 1
     since_label, since = patches[index]
     rows = games(hero_id, since, lane)
+    patch_start, skill_rows, skills_since = since, rows, since_label
     if len(rows) < min_games and index > 0:
         since_label, since = patches[index - 1]
         rows = games(hero_id, since, lane)
+        # Abilities change between patches (Dragon Knight's Wyrm's Wrath, Outworld
+        # Destroyer's Objurgation in 7.41): the skill build keeps to the latest
+        # patch when it has SKILL_MIN_GAMES games.
+        latest = [r for r in rows if (r.get("start_time") or 0) > patch_start]
+        if len(latest) >= SKILL_MIN_GAMES:
+            skill_rows = latest
+        else:
+            skill_rows, skills_since = rows, since_label
     built = built_items()
     won = [r for r in rows if r["win"]]
     win, line = tempo_target(rows, win)
@@ -386,7 +411,7 @@ def hero_stats(
         "tempo_win_target": win,
         "usual_build": order(won, built),
         "tempo_build": order(rich, built),
-        "skills": skills(rows, hero_npc_name(hero_id)),
+        "skills": {**skills(skill_rows, hero_npc_name(hero_id)), "since_patch": skills_since},
         "counters": table,
         "candidates": candidates[:25],
     }
@@ -502,7 +527,7 @@ def draft(stats: dict[str, Any]) -> dict[str, Any]:
                 for level, picks in sk["talents"].items()
                 if picks
             },
-            "basis": f"{sk['games']} games: maxed "
+            "basis": f"{sk['games']} games since {sk.get('since_patch', stats['since_patch'])}: maxed "
             + ", ".join(
                 f"{' > '.join(o['order'])} {o['games']} (win {o['win']}%)" for o in sk["orders"][:3]
             )
@@ -560,6 +585,12 @@ def main() -> int:
     parser.add_argument(
         "--win", type=float, default=None, help="the tempo line's win %% (default: per hero)"
     )
+    parser.add_argument(
+        "--position",
+        choices=sorted(LANE_ROLE),
+        default=None,
+        help="read the hero in this position (default: the usual one)",
+    )
     args = parser.parse_args()
     if args.all:
         from app.schemas import _SUPPORTED_HERO_LOOKUP
@@ -579,7 +610,7 @@ def main() -> int:
             stats = json.loads((OUT_DIR / f"{key}.json").read_text(encoding="utf-8"))
             print(json.dumps(draft(stats), ensure_ascii=False, indent=2))
             continue
-        stats = hero_stats(hero, args.patch, args.min_games, args.win)
+        stats = hero_stats(hero, args.patch, args.min_games, args.win, args.position)
         if args.write:
             OUT_DIR.mkdir(parents=True, exist_ok=True)
             key = stats["hero"].lower().replace(" ", "_").replace("'", "").replace("-", "_")

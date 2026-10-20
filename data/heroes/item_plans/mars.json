@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "hero": "Mars",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "726 league games since 7.41 (data/heroes/item_stats), win 46.3%. Reproduce: python scripts/hero_item_stats.py mars.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 129 (Spear of Mars, God's Rebuke, Bulwark, Arena of Blood), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_bkb",
+      "why": "magic_bkb",
+      "family": "magic",
+      "item": "black_king_bar",
+      "name": "Black King Bar",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Black King Bar: Avatar applies a basic dispel, 60% magic resistance and makes negative effects of enemy spells do nothing for 9/8/7 s. It is in his build (57% of the won games, ~27 min); Pipe of Insight is not.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, so their spells cannot stop you inside your Arena",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, щоб усередині вашої Arena їхні здібності вас не зупинили"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "desolator",
+      "name": "Desolator"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 89% (2), magic_wand 64% (5), soul_ring 93% (7), phase_boots 99% (8), cyclone 39% (17), desolator 27% (18), buckler 21% (20), aghanims_shard 82% (21), great_famango 20% (22), black_king_bar 57% (27), sheepstick 20% (38).",
+  "tempo": {
+    "net_worth": [
+      [
+        30,
+        17800
+      ]
+    ],
+    "items": [
+      {
+        "item": "phase_boots",
+        "name": "Phase Boots"
+      },
+      {
+        "item": "armlet",
+        "name": "Armlet of Mordiggian"
+      },
+      {
+        "item": "desolator",
+        "name": "Desolator"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "satanic",
+        "name": "Satanic"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 30:00 18500 (37 games, 75.7%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "mars_spear",
+      "mars_gods_rebuke",
+      "mars_bulwark"
+    ],
+    "games": 726,
+    "first_agree": 623,
+    "opening": {
+      "name": "mars_gods_rebuke",
+      "agree": 558
+    },
+    "names": {
+      "mars_spear": "Spear of Mars",
+      "mars_gods_rebuke": "God's Rebuke",
+      "mars_bulwark": "Bulwark"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_mars_rebuke_radius",
+        "label": "God's Rebuke Distance",
+        "picked": 628,
+        "games": 724
+      },
+      "15": {
+        "name": "special_bonus_unique_mars_spear_bonus_damage",
+        "label": "Spear Of Mars Damage",
+        "picked": 395,
+        "games": 654
+      },
+      "20": {
+        "name": "special_bonus_unique_mars_spear_stun_duration",
+        "label": "Spear of Mars Stun",
+        "picked": 293,
+        "games": 359
+      },
+      "25": {
+        "name": "special_bonus_unique_mars_arena_of_blood_hp_regen",
+        "label": "Arena Of Blood Grants Team HP Regen",
+        "picked": 78,
+        "games": 112
+      }
+    },
+    "basis": "726 games since 7.41: maxed mars_spear > mars_gods_rebuke > mars_bulwark 563 (win 47.4%), mars_gods_rebuke > mars_spear > mars_bulwark 89 (win 62.9%), mars_spear > mars_gods_rebuke 60 (win 16.7%); talents 10: God's Rebuke Distance 628/724 (46.7%), +1.5 Mana Regen 96/724 (43.8%); 15: Spear Of Mars Damage 395/654 (48.6%), God's Rebuke Cooldown 259/654 (53.3%); 20: Spear of Mars Stun 293/359 (61.8%), Arena Of Blood Spear Damage 66/359 (62.1%); 25: Arena Of Blood Grants Team HP Regen 78/112 (61.5%), God's Rebuke Crit 34/112 (76.5%)."
+  }
+}

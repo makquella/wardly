@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "hero": "Ember Spirit",
+  "positions": [
+    "mid",
+    "carry"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "1537 league games since 7.41 (data/heroes/item_stats), win 52.8%. Reproduce: python scripts/hero_item_stats.py ember_spirit. Read as a mid (lane_role 2): 52 high-rank games as a carry were too few; the same plan serves a carry Ember.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel.",
+    "hero": "Valve /datafeed/herodata hero_id 106 (Sleight of Fist, Flame Guard, Fire Remnant), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "healing",
+      "why": "healing_vessel",
+      "family": "healing",
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel",
+      "enemy": "healing",
+      "minute": 8,
+      "basis": "Valve 7.41f Spirit Vessel: Soul Release on an enemy cuts its health restoration by 70% and drains 4% of its current health per second for 8 s (10 s cooldown, charges from hero deaths within 1500). It is in his build (Urn of Shadows 66% at ~8 min, Spirit Vessel 62% at ~13 min of the won games).",
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} cuts their health restoration by 70% while it lasts, so finish it early",
+        "uk": "{enemy} багато лікується: ваш {item} на час дії ріже відновлення здоров'я на 70%, тож зберіть його рано"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel"
+    },
+    {
+      "item": "mage_slayer",
+      "name": "Mage Slayer"
+    },
+    {
+      "item": "kaya",
+      "name": "Kaya"
+    },
+    {
+      "item": "veil_of_discord",
+      "name": "Veil of Discord"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "kaya_and_sange",
+      "name": "Kaya and Sange"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "soul_booster",
+      "name": "Soul Booster"
+    },
+    {
+      "item": "shivas_guard",
+      "name": "Shiva's Guard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 96% (4), ward_dispenser 30% (5), urn_of_shadows 66% (8), phase_boots 90% (8), spirit_vessel 62% (13), pers 63% (14), mage_slayer 58% (16), kaya 59% (20), veil_of_discord 28% (23), aghanims_shard 86% (24), black_king_bar 53% (25), sange 42% (28), kaya_and_sange 40% (29), bloodstone 20% (29), ultimate_scepter 64% (32), soul_booster 30% (32), shivas_guard 30% (34).",
+  "tempo": {
+    "net_worth": [
+      [
+        20,
+        12000
+      ],
+      [
+        25,
+        14900
+      ],
+      [
+        30,
+        17800
+      ]
+    ],
+    "items": [
+      {
+        "item": "phase_boots",
+        "name": "Phase Boots"
+      },
+      {
+        "item": "spirit_vessel",
+        "name": "Spirit Vessel"
+      },
+      {
+        "item": "mage_slayer",
+        "name": "Mage Slayer"
+      },
+      {
+        "item": "kaya_and_sange",
+        "name": "Kaya and Sange"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "veil_of_discord",
+        "name": "Veil of Discord"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "soul_booster",
+        "name": "Soul Booster"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 12500 (21 games, 85.7%), 25:00 15500 (58 games, 87.9%), 30:00 18500 (85 games, 87.1%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "ember_spirit_flame_guard",
+      "ember_spirit_searing_chains",
+      "ember_spirit_sleight_of_fist"
+    ],
+    "games": 1537,
+    "first_agree": 1104,
+    "opening": {
+      "name": "ember_spirit_flame_guard",
+      "agree": 1047
+    },
+    "names": {
+      "ember_spirit_flame_guard": "Flame Guard",
+      "ember_spirit_searing_chains": "Searing Chains",
+      "ember_spirit_sleight_of_fist": "Sleight of Fist"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_ember_spirit_1",
+        "label": "+165 Flame Guard Barrier Amount",
+        "picked": 1280,
+        "games": 1536
+      },
+      "15": {
+        "name": "special_bonus_unique_ember_spirit_3",
+        "label": "+100% Flame Guard Damage Per Second",
+        "picked": 1359,
+        "games": 1461
+      },
+      "20": {
+        "name": "special_bonus_unique_ember_spirit_6",
+        "label": "+50 Sleight of Fist Hero Damage",
+        "picked": 886,
+        "games": 1130
+      },
+      "25": {
+        "name": "special_bonus_unique_ember_spirit_4",
+        "label": "=2 Sleight of Fist Charges",
+        "picked": 391,
+        "games": 537
+      }
+    },
+    "basis": "1537 games since 7.41: maxed ember_spirit_flame_guard > ember_spirit_searing_chains > ember_spirit_sleight_of_fist 652 (win 57.1%), ember_spirit_flame_guard > ember_spirit_sleight_of_fist > ember_spirit_searing_chains 452 (win 50.4%), ember_spirit_sleight_of_fist > ember_spirit_searing_chains > ember_spirit_flame_guard 244 (win 54.5%); talents 10: +165 Flame Guard Barrier Amount 1280/1536 (52.5%), +12 Damage 256/1536 (54.7%); 15: +100% Flame Guard Damage Per Second 1359/1461 (54.8%), +0.8s Searing Chains Duration 102/1461 (52.0%); 20: +50 Sleight of Fist Hero Damage 886/1130 (58.5%), +50 Searing Chains Damage 244/1130 (61.5%); 25: =2 Sleight of Fist Charges 391/537 (65.7%), -12s Remnant Charge Restore Time 146/537 (61.6%)."
+  },
+  "suppress": {
+    "break": "Silver Edge is not his item: his damage is Sleight of Fist, Flame Guard and Fire Remnant; high-rank Embers never build it (Bloodstone 25% against break heroes, 17% otherwise).",
+    "illusions": "As a carry: Sleight of Fist hits every unit in up to 550 radius and Flame Guard burns around him, so illusions fall without Maelstrom."
+  }
+}

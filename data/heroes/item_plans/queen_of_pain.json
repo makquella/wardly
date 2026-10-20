@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "hero": "Queen of Pain",
+  "positions": [
+    "mid"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "1004 league games since 7.41 (data/heroes/item_stats), win 49.6%. Reproduce: python scripts/hero_item_stats.py queen_of_pain.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar (generic, in her build).",
+    "hero": "Valve /datafeed/herodata hero_id 39 (Shadow Strike, Scream of Pain, Sonic Wave: magic and pure damage), 7.41f."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "power_treads",
+      "name": "Power Treads"
+    },
+    {
+      "item": "kaya",
+      "name": "Kaya"
+    },
+    {
+      "item": "veil_of_discord",
+      "name": "Veil of Discord"
+    },
+    {
+      "item": "kaya_and_sange",
+      "name": "Kaya and Sange"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "bloodstone",
+      "name": "Bloodstone"
+    },
+    {
+      "item": "shivas_guard",
+      "name": "Shiva's Guard"
+    },
+    {
+      "item": "octarine_core",
+      "name": "Octarine Core"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: magic_wand 82% (4), null_talisman 60% (4), ward_dispenser 31% (5), soul_ring 32% (6), power_treads 97% (8), kaya 92% (13), veil_of_discord 63% (18), sange 79% (21), kaya_and_sange 78% (21), ultimate_scepter 81% (22), aghanims_shard 64% (28), black_king_bar 43% (29), soul_booster 64% (30), bloodstone 52% (30), shivas_guard 31% (32), octarine_core 28% (38).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        16300
+      ]
+    ],
+    "items": [
+      {
+        "item": "power_treads",
+        "name": "Power Treads"
+      },
+      {
+        "item": "kaya_and_sange",
+        "name": "Kaya and Sange"
+      },
+      {
+        "item": "veil_of_discord",
+        "name": "Veil of Discord"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "octarine_core",
+        "name": "Octarine Core"
+      },
+      {
+        "item": "bloodstone",
+        "name": "Bloodstone"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 85.0%+: 20:00 13000 (14 games, 92.9%), 25:00 17000 (27 games, 88.9%), 30:00 21500 (15 games, 86.7%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then take the Aegis and push for the throne",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім заберіть Aegis і йдіть на трон"
+    }
+  },
+  "skills": {
+    "order": [
+      "queenofpain_scream_of_pain",
+      "queenofpain_blink",
+      "queenofpain_shadow_strike"
+    ],
+    "games": 1004,
+    "first_agree": 957,
+    "opening": {
+      "name": "queenofpain_scream_of_pain",
+      "agree": 827
+    },
+    "names": {
+      "queenofpain_scream_of_pain": "Scream Of Pain",
+      "queenofpain_blink": "Blink",
+      "queenofpain_shadow_strike": "Shadow Strike"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_strength_7",
+        "label": "+7 Strength",
+        "picked": 941,
+        "games": 1003
+      },
+      "15": {
+        "name": "special_bonus_unique_queen_of_pain_4",
+        "label": "Shadow Strike Damage Interval",
+        "picked": 847,
+        "games": 958
+      },
+      "20": {
+        "name": "special_bonus_unique_queen_of_pain_2",
+        "label": "Scream of Pain Damage",
+        "picked": 576,
+        "games": 715
+      },
+      "25": {
+        "name": "special_bonus_unique_queen_of_pain_6",
+        "label": "Blink Cooldown",
+        "picked": 200,
+        "games": 324
+      }
+    },
+    "basis": "1004 games since 7.41: maxed queenofpain_scream_of_pain > queenofpain_blink > queenofpain_shadow_strike 823 (win 49.5%), queenofpain_scream_of_pain > queenofpain_shadow_strike > queenofpain_blink 115 (win 55.7%), queenofpain_shadow_strike > queenofpain_scream_of_pain > queenofpain_blink 42 (win 59.5%); talents 10: +7 Strength 941/1003 (49.6%), Attack Speed against Shadow Striked units 62/1003 (48.4%); 15: Shadow Strike Damage Interval 847/958 (51.6%), +30 Damage 111/958 (51.4%); 20: Scream of Pain Damage 576/715 (58.9%), Sonic Wave Cooldown 139/715 (61.9%); 25: Blink Cooldown 200/324 (67.0%), Sonic Wave Damage 124/324 (64.5%)."
+  },
+  "suppress": {
+    "break": "Silver Edge is not her item: her damage is Shadow Strike, Scream of Pain and Sonic Wave; high-rank Queens never build it (Eul's 12% against break heroes)."
+  }
+}

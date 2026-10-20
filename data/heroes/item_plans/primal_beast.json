@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "hero": "Primal Beast",
+  "positions": [
+    "offlane"
+  ],
+  "patch": "7.41",
+  "checked": "2026-10-20",
+  "sources": {
+    "games": "591 league games since 7.40 (data/heroes/item_stats), win 46.9%. Reproduce: python scripts/hero_item_stats.py primal_beast.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Black King Bar.",
+    "hero": "Valve /datafeed/herodata hero_id 137 (Onslaught, Trample, Uproar, Pulverize), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_bkb",
+      "why": "magic_bkb",
+      "family": "magic",
+      "item": "black_king_bar",
+      "name": "Black King Bar",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 14,
+      "basis": "Valve 7.41f Black King Bar: Avatar applies a basic dispel, 60% magic resistance and makes negative effects of enemy spells do nothing for 9/8/7 s. It is in his build (86% of the won games, ~22 min); Pipe of Insight is not. Pulverize is a channel a stun breaks.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, so their stuns cannot break Pulverize",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, щоб їхні оглушення не зірвали Pulverize"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "black_king_bar",
+      "name": "Black King Bar"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    },
+    {
+      "item": "shivas_guard",
+      "name": "Shiva's Guard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: bracer 23% (2), phase_boots 99% (7), magic_wand 80% (8), soul_ring 95% (8), great_famango 24% (21), black_king_bar 86% (22), aghanims_shard 76% (23), ultimate_scepter 57% (29), shivas_guard 27% (33).",
+  "tempo": {
+    "net_worth": [
+      [
+        25,
+        13400
+      ],
+      [
+        30,
+        15800
+      ]
+    ],
+    "items": [
+      {
+        "item": "phase_boots",
+        "name": "Phase Boots"
+      },
+      {
+        "item": "aghanims_shard",
+        "name": "Aghanim's Shard"
+      },
+      {
+        "item": "black_king_bar",
+        "name": "Black King Bar"
+      },
+      {
+        "item": "ultimate_scepter",
+        "name": "Aghanim's Scepter"
+      }
+    ],
+    "basis": "Gold lines where the hero wins 75.0%+: 25:00 14000 (46 games, 76.1%), 30:00 16500 (47 games, 78.7%); net worth ~0.96 of that gold; points under 20 games left out.",
+    "reason": {
+      "en": "Your net worth is {net_worth}, well ahead for this minute: {item} on the tempo build comes before the counters, then lead the fights and take objectives with your team",
+      "uk": "Ваш нетворс — {net_worth}, набагато більше звичайного для цієї хвилини: спершу {item} з темпової збірки, потім ведіть бійки й беріть об'єкти разом із командою"
+    }
+  },
+  "skills": {
+    "order": [
+      "primal_beast_trample",
+      "primal_beast_onslaught",
+      "primal_beast_uproar"
+    ],
+    "games": 591,
+    "first_agree": 591,
+    "opening": {
+      "name": "primal_beast_trample",
+      "agree": 393
+    },
+    "names": {
+      "primal_beast_trample": "Trample",
+      "primal_beast_onslaught": "Onslaught",
+      "primal_beast_uproar": "Uproar"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_attack_damage_30",
+        "label": "+30 Damage",
+        "picked": 295,
+        "games": 449
+      },
+      "15": {
+        "name": "special_bonus_unique_primal_beast_trample_cooldown",
+        "label": "-5s Trample Cooldown",
+        "picked": 290,
+        "games": 495
+      },
+      "20": {
+        "name": "special_bonus_unique_primal_beast_trample_attack_damage",
+        "label": "+20% Trample Attack Multiplier",
+        "picked": 189,
+        "games": 335
+      },
+      "25": {
+        "name": "special_bonus_unique_primal_beast_pulverize_duration",
+        "label": "+67% Pulverize Duration",
+        "picked": 89,
+        "games": 107
+      }
+    },
+    "basis": "591 games since 7.40: maxed primal_beast_trample > primal_beast_onslaught > primal_beast_uproar 544 (win 49.4%), primal_beast_trample > primal_beast_onslaught 41 (win 9.8%), primal_beast_trample > primal_beast_uproar > primal_beast_onslaught 4 (win 100.0%); talents 10: +30 Damage 295/449 (46.8%), +25% Magic Resistance During Trample 154/449 (44.8%); 15: -5s Trample Cooldown 290/495 (52.4%), +6 Uproar Armor Per Stack 205/495 (49.3%); 20: +20% Trample Attack Multiplier 189/335 (64.6%), Basic Self-Dispel on Uproar Cast 146/335 (56.2%); 25: +67% Pulverize Duration 89/107 (70.8%), special_bonus_unique_primal_beast_colossal_trample 18/107 (66.7%)."
+  }
+}

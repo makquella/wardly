@@ -1,10 +1,10 @@
 {
- "hero": "medusa",
+ "hero": "Medusa",
  "hero_id": 94,
  "position": "carry",
  "lane_role": 1,
  "since_patch": "7.40",
- "generated": "2026-10-19",
+ "generated": "2026-10-20",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 480,
  "win": 44.6,
@@ -148,7 +148,7 @@
   }
  ],
  "skills": {
-  "games": 480,
+  "games": 189,
   "orders": [
    {
     "order": [
@@ -156,16 +156,8 @@
      "medusa_split_shot",
      "medusa_gorgon_grasp"
     ],
-    "games": 234,
-    "win": 51.3
-   },
-   {
-    "order": [
-     "medusa_mystic_snake",
-     "medusa_split_shot"
-    ],
-    "games": 93,
-    "win": 26.9
+    "games": 109,
+    "win": 46.8
    },
    {
     "order": [
@@ -173,16 +165,24 @@
      "medusa_mystic_snake",
      "medusa_gorgon_grasp"
     ],
-    "games": 90,
-    "win": 48.9
+    "games": 43,
+    "win": 41.9
+   },
+   {
+    "order": [
+     "medusa_mystic_snake",
+     "medusa_split_shot"
+    ],
+    "games": 17,
+    "win": 11.8
    },
    {
     "order": [
      "medusa_split_shot",
      "medusa_mystic_snake"
     ],
-    "games": 58,
-    "win": 39.7
+    "games": 17,
+    "win": 47.1
    },
    {
     "order": [
@@ -197,18 +197,18 @@
   "openings": [
    {
     "name": "medusa_mystic_snake",
-    "games": 475,
-    "win": 44.2
+    "games": 187,
+    "win": 42.2
    },
    {
     "name": "medusa_split_shot",
-    "games": 3,
+    "games": 1,
     "win": 100.0
    },
    {
     "name": "medusa_gorgon_grasp",
-    "games": 2,
-    "win": 50.0
+    "games": 1,
+    "win": 0.0
    }
   ],
   "talents": {
@@ -216,47 +216,47 @@
     {
      "name": "special_bonus_unique_medusa_8",
      "label": "Stone Gaze Bonus Physical Damage",
-     "picked": 428,
-     "games": 479,
-     "win": 44.6
+     "picked": 169,
+     "games": 189,
+     "win": 43.8
     },
     {
      "name": "special_bonus_unique_medusa_gorgons_grasp_radius",
      "label": "Gorgon's Grasp Radius",
-     "picked": 51,
-     "games": 479,
-     "win": 43.1
+     "picked": 20,
+     "games": 189,
+     "win": 30.0
     }
    ],
    "15": [
     {
      "name": "special_bonus_unique_medusa_5",
      "label": "Mystic Snake Cooldown",
-     "picked": 155,
-     "games": 224,
-     "win": 44.5
+     "picked": 148,
+     "games": 180,
+     "win": 43.9
     },
     {
      "name": "special_bonus_unique_medusa_gorgons_grasp_volleys",
      "label": "Gorgon's Grasp Volley",
-     "picked": 69,
-     "games": 224,
-     "win": 50.7
+     "picked": 32,
+     "games": 180,
+     "win": 40.6
     }
    ],
    "20": [
     {
      "name": "special_bonus_unique_medusa_2",
      "label": "Split Shot Outgoing Damage",
-     "picked": 399,
-     "games": 408,
-     "win": 48.9
+     "picked": 133,
+     "games": 142,
+     "win": 50.4
     },
     {
      "name": "special_bonus_unique_medusa_snake_damage",
      "label": "Mystic Snake Damage / Mana Gain",
      "picked": 9,
-     "games": 408,
+     "games": 142,
      "win": 55.6
     }
    ],
@@ -264,19 +264,20 @@
     {
      "name": "special_bonus_intelligence_40",
      "label": "+40 Intelligence",
-     "picked": 34,
-     "games": 42,
-     "win": 58.8
+     "picked": 19,
+     "games": 26,
+     "win": 52.6
     },
     {
      "name": "special_bonus_unique_medusa",
      "label": "Stone Gaze Duration",
-     "picked": 8,
-     "games": 42,
-     "win": 75.0
+     "picked": 7,
+     "games": 26,
+     "win": 85.7
     }
    ]
-  }
+  },
+  "since_patch": "7.41"
  },
  "counters": {
   "evasion": {
@@ -308,20 +309,20 @@
      "win_without": 11.1
     },
     {
-     "item": "falcon_blade",
-     "share": 0.137,
-     "elsewhere": 0.131,
-     "lift": 1.05,
-     "win_with": 28.6,
-     "win_without": 45.5
-    },
-    {
      "item": "magic_wand",
      "share": 0.98,
      "elsewhere": 0.93,
      "lift": 1.05,
      "win_with": 42.0,
      "win_without": 100.0
+    },
+    {
+     "item": "falcon_blade",
+     "share": 0.137,
+     "elsewhere": 0.131,
+     "lift": 1.05,
+     "win_with": 28.6,
+     "win_without": 45.5
     },
     {
      "item": "yasha",
@@ -520,20 +521,20 @@
      "win_without": 37.0
     },
     {
-     "item": "yasha",
-     "share": 0.968,
-     "elsewhere": 0.991,
-     "lift": 0.98,
-     "win_with": 33.3,
-     "win_without": 100.0
-    },
-    {
      "item": "power_treads",
      "share": 0.968,
      "elsewhere": 0.984,
      "lift": 0.98,
      "win_with": 36.7,
      "win_without": 0.0
+    },
+    {
+     "item": "yasha",
+     "share": 0.968,
+     "elsewhere": 0.991,
+     "lift": 0.98,
+     "win_with": 33.3,
+     "win_without": 100.0
     },
     {
      "item": "diffusal_blade",
@@ -630,20 +631,20 @@
      "win_without": 50.0
     },
     {
-     "item": "lesser_crit",
-     "share": 0.469,
-     "elsewhere": 0.45,
-     "lift": 1.04,
-     "win_with": 58.5,
-     "win_without": 50.0
-    },
-    {
      "item": "butterfly",
      "share": 0.805,
      "elsewhere": 0.777,
      "lift": 1.04,
      "win_with": 61.5,
      "win_without": 22.7
+    },
+    {
+     "item": "lesser_crit",
+     "share": 0.469,
+     "elsewhere": 0.45,
+     "lift": 1.04,
+     "win_with": 58.5,
+     "win_without": 50.0
     },
     {
      "item": "magic_wand",
@@ -662,12 +663,12 @@
      "win_without": 39.0
     },
     {
-     "item": "yasha",
-     "share": 0.991,
-     "elsewhere": 0.989,
+     "item": "manta",
+     "share": 0.982,
+     "elsewhere": 0.984,
      "lift": 1.0,
-     "win_with": 53.6,
-     "win_without": 100.0
+     "win_with": 54.1,
+     "win_without": 50.0
     }
    ]
   },
@@ -810,6 +811,14 @@
      "win_without": 45.6
     },
     {
+     "item": "invis_sword",
+     "share": 0.155,
+     "elsewhere": 0.13,
+     "lift": 1.19,
+     "win_with": 39.3,
+     "win_without": 47.7
+    },
+    {
      "item": "skadi",
      "share": 0.53,
      "elsewhere": 0.445,
@@ -824,14 +833,6 @@
      "lift": 1.19,
      "win_with": 48.8,
      "win_without": 40.7
-    },
-    {
-     "item": "invis_sword",
-     "share": 0.155,
-     "elsewhere": 0.13,
-     "lift": 1.19,
-     "win_with": 39.3,
-     "win_without": 47.7
     },
     {
      "item": "ultimate_scepter",
@@ -858,20 +859,20 @@
      "win_without": 37.5
     },
     {
-     "item": "manta",
-     "share": 0.994,
-     "elsewhere": 0.977,
-     "lift": 1.02,
-     "win_with": 46.1,
-     "win_without": 100.0
-    },
-    {
      "item": "magic_wand",
      "share": 0.945,
      "elsewhere": 0.93,
      "lift": 1.02,
      "win_with": 47.4,
      "win_without": 30.0
+    },
+    {
+     "item": "manta",
+     "share": 0.994,
+     "elsewhere": 0.977,
+     "lift": 1.02,
+     "win_with": 46.1,
+     "win_without": 100.0
     }
    ]
   },
@@ -912,20 +913,20 @@
      "win_without": 53.8
     },
     {
-     "item": "manta",
-     "share": 1.0,
-     "elsewhere": 0.982,
-     "lift": 1.02,
-     "win_with": 35.9,
-     "win_without": null
-    },
-    {
      "item": "butterfly",
      "share": 0.795,
      "elsewhere": 0.782,
      "lift": 1.02,
      "win_with": 45.2,
      "win_without": 0.0
+    },
+    {
+     "item": "manta",
+     "share": 1.0,
+     "elsewhere": 0.982,
+     "lift": 1.02,
+     "win_with": 35.9,
+     "win_without": null
     },
     {
      "item": "yasha",
@@ -1054,14 +1055,6 @@
      "win_without": 36.7
     },
     {
-     "item": "ultimate_scepter",
-     "share": 0.155,
-     "elsewhere": 0.147,
-     "lift": 1.06,
-     "win_with": 55.6,
-     "win_without": 44.9
-    },
-    {
      "item": "butterfly",
      "share": 0.828,
      "elsewhere": 0.777,
@@ -1070,7 +1063,15 @@
      "win_without": 20.0
     },
     {
-     "item": "manta",
+     "item": "ultimate_scepter",
+     "share": 0.155,
+     "elsewhere": 0.147,
+     "lift": 1.06,
+     "win_with": 55.6,
+     "win_without": 44.9
+    },
+    {
+     "item": "power_treads",
      "share": 0.983,
      "elsewhere": 0.983,
      "lift": 1.0,
@@ -1156,14 +1157,6 @@
      "win_without": 33.3
     },
     {
-     "item": "disperser",
-     "share": 0.119,
-     "elsewhere": 0.119,
-     "lift": 1.0,
-     "win_with": 57.7,
-     "win_without": 48.7
-    },
-    {
      "item": "power_treads",
      "share": 0.982,
      "elsewhere": 0.985,
@@ -1172,12 +1165,20 @@
      "win_without": 25.0
     },
     {
-     "item": "yasha",
-     "share": 0.982,
-     "elsewhere": 0.996,
+     "item": "disperser",
+     "share": 0.119,
+     "elsewhere": 0.119,
+     "lift": 1.0,
+     "win_with": 57.7,
+     "win_without": 48.7
+    },
+    {
+     "item": "manta",
+     "share": 0.977,
+     "elsewhere": 0.989,
      "lift": 0.99,
-     "win_with": 49.8,
-     "win_without": 50.0
+     "win_with": 50.0,
+     "win_without": 40.0
     }
    ]
   },
@@ -1258,20 +1259,20 @@
      "win_without": 46.8
     },
     {
-     "item": "null_talisman",
-     "share": 0.667,
-     "elsewhere": 0.629,
-     "lift": 1.06,
-     "win_with": 47.2,
-     "win_without": 50.0
-    },
-    {
      "item": "magic_wand",
      "share": 0.981,
      "elsewhere": 0.93,
      "lift": 1.06,
      "win_with": 49.1,
      "win_without": 0.0
+    },
+    {
+     "item": "null_talisman",
+     "share": 0.667,
+     "elsewhere": 0.629,
+     "lift": 1.06,
+     "win_with": 47.2,
+     "win_without": 50.0
     },
     {
      "item": "black_king_bar",

@@ -1013,3 +1013,118 @@ def test_an_early_item_sold_for_a_slot_is_not_named_again():
     # Sold later for a slot (Manta and Skadi owned): the build goes on.
     late = ["item_manta", "item_aghanims_shard", "item_dragon_lance", "item_skadi"]
     assert next_listed_item(build, meta, late)["key"] == "hurricane_pike"
+
+
+# --- the mid and offlane wave (2026-10-20) --------------------------------------------
+
+
+def _core(hero, enemies, position, owned=(), minute=20):
+    return situational_item(
+        [], list(owned), META, enemies=list(enemies), position=position, minute=minute, hero=hero
+    )
+
+
+@pytest.mark.parametrize(
+    "hero", ["Axe", "Legion Commander", "Mars", "Primal Beast", "Slardar", "Timbersaw"]
+)
+def test_offlaners_with_bkb_in_the_build_take_it_against_a_magic_lineup(hero):
+    # Three magic damage heroes: their own BKB earlier, not the generic Pipe.
+    item = _core(hero, MAGIC_LINEUP, "offlane")
+    assert (item["key"], item["why"], item["enemy"]) == ("black_king_bar", "magic_bkb", "Lion")
+    assert item["reason"]["en"].startswith("Lion and other magic damage heroes")
+    assert item["reason"]["uk"].startswith("Lion та інші герої з магічною шкодою")
+    # Two are no lineup, before minute 14 too early, an owned BKB answers it.
+    assert _core(hero, ["Lion", "Lina", "Axe"], "offlane") is None
+    assert _core(hero, MAGIC_LINEUP, "offlane", minute=13) is None
+    assert _core(hero, MAGIC_LINEUP, "offlane", ["item_black_king_bar"]) is None
+    assert _core("Dark Seer", MAGIC_LINEUP, "offlane")["key"] == "pipe"
+
+
+def test_offlane_pipe_stays_or_goes_by_the_hero():
+    centaur = _core("Centaur Warrunner", MAGIC_LINEUP, "offlane")
+    assert (centaur["key"], centaur["why"]) == ("pipe", "magic_pipe")
+    assert "shields your whole team" in centaur["reason"]["en"]
+    for hero in ("Tidehunter", "Bristleback"):
+        assert _core(hero, MAGIC_LINEUP, "offlane")["why"] == "magic"  # the generic Pipe
+    # Rolling Thunder and Roll Up: debuff immunity and 80% magic resistance.
+    assert _core("Pangolier", MAGIC_LINEUP, "offlane") is None
+
+
+def test_caster_mids_get_no_generic_silver_edge_and_right_click_mids_keep_it():
+    lineup = ["Bristleback", "Axe"]
+    for hero in ("Queen of Pain", "Storm Spirit", "Puck", "Outworld Destroyer", "Void Spirit"):
+        assert _core(hero, lineup, "mid") is None
+    for hero in ("Shadow Fiend", "Dragon Knight", "Templar Assassin"):
+        assert _core(hero, lineup, "mid")["key"] == "silver_edge"
+    # The generic BKB against a magic lineup stays for every mid.
+    assert _core("Queen of Pain", MAGIC_LINEUP, "mid")["key"] == "black_king_bar"
+
+
+def test_ember_and_void_finish_spirit_vessel_against_heavy_healing():
+    for hero in ("Ember Spirit", "Void Spirit"):
+        item = _core(hero, ["Necrophos", "Axe"], "mid", minute=8)
+        assert (item["key"], item["why"]) == ("spirit_vessel", "healing_vessel")
+        assert "70%" in item["reason"]["en"] and "70%" in item["reason"]["uk"]
+        assert _core(hero, ["Necrophos", "Axe"], "mid", minute=7) is None
+        assert _core(hero, ["Necrophos", "Axe"], "mid", ["item_spirit_vessel"], minute=8) is None
+    # One plan for a carry Ember too: no Maelstrom against illusions.
+    assert plan_for("Ember Spirit", "carry") is plan_for("Ember Spirit", "mid")
+    assert _core("Ember Spirit", ["Naga Siren", "Axe"], "carry") is None
+
+
+def test_dragon_knight_silences_escapes_and_evasion():
+    escape = _core("Dragon Knight", ["Queen of Pain", "Axe"], "mid", minute=14)
+    assert (escape["key"], escape["enemy"], escape["spell"]) == ("orchid", "Queen of Pain", "Blink")
+    assert escape["reason"]["en"] == (
+        "Queen of Pain escapes with Blink: Orchid Malevolence silences them for 5 seconds, "
+        "so the escape cannot be cast"
+    )
+    both = _core("Dragon Knight", ["Phantom Assassin", "Queen of Pain"], "mid", minute=20)
+    assert (both["key"], both["why"]) == ("bloodthorn", "evasion_bloodthorn")
+    # Bloodthorn is built from Orchid: it answers the escape too.
+    assert (
+        _core("Dragon Knight", ["Phantom Assassin", "Queen of Pain"], "mid", ["item_bloodthorn"])
+        is None
+    )
+
+
+def test_shadow_fiend_and_templar_pierce_evasion_with_monkey_king_bar():
+    for hero in ("Shadow Fiend", "Templar Assassin"):
+        item = _core(hero, ["Windranger", "Axe"], "mid", minute=18)
+        assert (item["key"], item["why"]) == ("monkey_king_bar", "evasion_mkb")
+        assert _core(hero, ["Windranger", "Axe"], "mid", minute=17) is None
+    # Not for a caster mid.
+    assert _core("Puck", ["Windranger", "Axe"], "mid", minute=30) is None
+
+
+def test_mid_and_offlane_skill_builds_read_the_live_ability_keys():
+    # Shadowraze is logged under three ids; the plan keeps the one the app aliases to.
+    sf = plan_skills(plan_for("Shadow Fiend", "mid"))
+    assert sf["order"] == ["nevermore_shadowraze1", "nevermore_dark_lord", "nevermore_frenzy"]
+    # 7.41 abilities only (Wyrm's Wrath, Objurgation), not 7.40's Dragon Blood or Essence Flux.
+    assert plan_skills(plan_for("Dragon Knight", "mid"))["order"][2] == "dragon_knight_wyrms_wrath"
+    assert (
+        "obsidian_destroyer_objurgation"
+        in plan_skills(plan_for("Outworld Destroyer", "mid"))["order"]
+    )
+    # Void Spirit: Power Treads or Phase Boots, not both.
+    build = plan_for("Void Spirit", "mid")["build"]
+    phase = next(e for e in build if e["item"] == "phase_boots")
+    assert phase["unless"] == ["power_treads"]
+
+
+def test_a_plan_without_rules_still_needs_something_to_say():
+    plan = dict(plan_for("Queen of Pain", "mid"))
+    assert plan["rules"] == [] and validate(plan) is plan
+    with pytest.raises(ValueError, match="nothing else"):
+        validate(
+            {
+                k: v
+                for k, v in plan.items()
+                if k not in ("build", "build_basis", "skills", "tempo", "suppress")
+            }
+        )
+    rule = plan_for("Axe", "offlane")["rules"][0]
+    for count in (0, 6, True, "3"):
+        with pytest.raises(ValueError, match="count"):
+            validate({**plan_for("Axe", "offlane"), "rules": [{**rule, "count": count}]})

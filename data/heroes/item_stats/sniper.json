@@ -4,7 +4,7 @@
  "position": "carry",
  "lane_role": 1,
  "since_patch": "7.40",
- "generated": "2026-10-19",
+ "generated": "2026-10-20",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 290,
  "win": 59.3,
@@ -178,7 +178,7 @@
   }
  ],
  "skills": {
-  "games": 290,
+  "games": 149,
   "orders": [
    {
     "order": [
@@ -186,8 +186,8 @@
      "sniper_headshot",
      "sniper_take_aim"
     ],
-    "games": 136,
-    "win": 58.1
+    "games": 74,
+    "win": 62.2
    },
    {
     "order": [
@@ -195,8 +195,8 @@
      "sniper_take_aim",
      "sniper_shrapnel"
     ],
-    "games": 61,
-    "win": 63.9
+    "games": 33,
+    "win": 66.7
    },
    {
     "order": [
@@ -204,16 +204,8 @@
      "sniper_shrapnel",
      "sniper_take_aim"
     ],
-    "games": 43,
-    "win": 69.8
-   },
-   {
-    "order": [
-     "sniper_shrapnel",
-     "sniper_headshot"
-    ],
-    "games": 15,
-    "win": 33.3
+    "games": 17,
+    "win": 52.9
    },
    {
     "order": [
@@ -221,20 +213,28 @@
      "sniper_headshot",
      "sniper_shrapnel"
     ],
-    "games": 12,
-    "win": 75.0
+    "games": 7,
+    "win": 57.1
+   },
+   {
+    "order": [
+     "sniper_headshot",
+     "sniper_take_aim"
+    ],
+    "games": 6,
+    "win": 16.7
    }
   ],
   "openings": [
    {
     "name": "sniper_headshot",
-    "games": 147,
-    "win": 63.3
+    "games": 76,
+    "win": 60.5
    },
    {
     "name": "sniper_shrapnel",
-    "games": 139,
-    "win": 54.7
+    "games": 69,
+    "win": 56.5
    },
    {
     "name": "sniper_take_aim",
@@ -247,67 +247,68 @@
     {
      "name": "special_bonus_unique_sniper_headshot_damage",
      "label": "Headshot Damage",
-     "picked": 263,
-     "games": 290,
-     "win": 59.3
+     "picked": 124,
+     "games": 149,
+     "win": 58.9
     },
     {
      "name": "special_bonus_unique_sniper_5",
      "label": "Take Aim Passive Attack Range",
-     "picked": 27,
-     "games": 290,
-     "win": 59.3
+     "picked": 25,
+     "games": 149,
+     "win": 60.0
     }
    ],
    "15": [
     {
      "name": "special_bonus_unique_sniper_6",
      "label": "Attack Speed During Take Aim",
-     "picked": 158,
-     "games": 254,
-     "win": 63.3
+     "picked": 101,
+     "games": 136,
+     "win": 60.4
     },
     {
      "name": "special_bonus_unique_sniper_1",
      "label": "Assassinate Damage",
-     "picked": 96,
-     "games": 254,
-     "win": 63.5
+     "picked": 35,
+     "games": 136,
+     "win": 65.7
     }
    ],
    "20": [
     {
      "name": "special_bonus_unique_sniper_4",
      "label": "Take Aim Duration",
-     "picked": 103,
-     "games": 115,
-     "win": 73.8
+     "picked": 61,
+     "games": 65,
+     "win": 75.4
     },
     {
      "name": "special_bonus_unique_sniper_shrapnel_damage",
      "label": "Shrapnel Damage",
-     "picked": 12,
-     "games": 115,
-     "win": 58.3
+     "picked": 4,
+     "games": 65,
+     "win": 50.0
     }
    ],
    "25": [
     {
      "name": "special_bonus_unique_sniper_3",
      "label": "Max Headshot Knockback Distance",
-     "picked": 9,
-     "games": 13,
-     "win": 88.9
+     "picked": 4,
+     "games": 7,
+     "win": 100.0
     },
     {
      "name": "special_bonus_unique_sniper_2",
      "label": "Shrapnel Charge Restore Time",
-     "picked": 4,
-     "games": 13,
-     "win": 75.0
+     "picked": 3,
+     "games": 7,
+     "win": 66.7
     }
    ]
-  }
+  },
+  "since_patch": "7.41"
  },
  "counters": {
   "evasion": {
@@ -661,20 +662,20 @@
      "win_without": 60.0
     },
     {
-     "item": "invis_sword",
-     "share": 0.158,
-     "elsewhere": 0.121,
-     "lift": 1.3,
-     "win_with": 91.7,
-     "win_without": 62.5
-    },
-    {
      "item": "specialists_array",
      "share": 0.25,
      "elsewhere": 0.192,
      "lift": 1.3,
      "win_with": 73.7,
      "win_without": 64.9
+    },
+    {
+     "item": "invis_sword",
+     "share": 0.158,
+     "elsewhere": 0.121,
+     "lift": 1.3,
+     "win_with": 91.7,
+     "win_without": 62.5
     },
     {
      "item": "hurricane_pike",
@@ -849,20 +850,20 @@
      "win_without": 60.6
     },
     {
-     "item": "mjollnir",
-     "share": 0.699,
-     "elsewhere": 0.624,
-     "lift": 1.12,
-     "win_with": 72.3,
-     "win_without": 42.9
-    },
-    {
      "item": "mask_of_madness",
      "share": 0.527,
      "elsewhere": 0.472,
      "lift": 1.12,
      "win_with": 61.2,
      "win_without": 65.9
+    },
+    {
+     "item": "mjollnir",
+     "share": 0.699,
+     "elsewhere": 0.624,
+     "lift": 1.12,
+     "win_with": 72.3,
+     "win_without": 42.9
     },
     {
      "item": "force_staff",

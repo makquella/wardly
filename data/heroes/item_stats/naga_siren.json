@@ -4,7 +4,7 @@
  "position": "carry",
  "lane_role": 1,
  "since_patch": "7.40",
- "generated": "2026-10-19",
+ "generated": "2026-10-20",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 288,
  "win": 54.9,
@@ -159,7 +159,7 @@
   }
  ],
  "skills": {
-  "games": 288,
+  "games": 126,
   "orders": [
    {
     "order": [
@@ -167,63 +167,54 @@
      "naga_siren_rip_tide",
      "naga_siren_ensnare"
     ],
-    "games": 230,
-    "win": 57.8
-   },
-   {
-    "order": [
-     "naga_siren_deluge",
-     "naga_siren_mirror_image",
-     "naga_siren_ensnare"
-    ],
-    "games": 25,
-    "win": 60.0
-   },
-   {
-    "order": [
-     "naga_siren_deluge",
-     "naga_siren_mirror_image"
-    ],
-    "games": 11,
-    "win": 18.2
+    "games": 118,
+    "win": 58.5
    },
    {
     "order": [
      "naga_siren_mirror_image",
      "naga_siren_rip_tide"
     ],
-    "games": 7,
-    "win": 14.3
+    "games": 3,
+    "win": 33.3
    },
    {
     "order": [
-     "naga_siren_deluge",
+     "naga_siren_mirror_image",
+     "naga_siren_ensnare",
+     "naga_siren_rip_tide"
+    ],
+    "games": 2,
+    "win": 50.0
+   },
+   {
+    "order": [
+     "naga_siren_rip_tide",
+     "naga_siren_mirror_image",
      "naga_siren_ensnare"
     ],
-    "games": 3,
-    "win": 33.3
+    "games": 2,
+    "win": 100.0
+   },
+   {
+    "order": [
+     "naga_siren_mirror_image",
+     "naga_siren_ensnare"
+    ],
+    "games": 1,
+    "win": 0.0
    }
   ],
   "openings": [
    {
     "name": "naga_siren_mirror_image",
-    "games": 274,
-    "win": 55.8
-   },
-   {
-    "name": "naga_siren_deluge",
-    "games": 6,
-    "win": 50.0
+    "games": 125,
+    "win": 58.4
    },
    {
     "name": "naga_siren_ensnare",
-    "games": 5,
+    "games": 1,
     "win": 0.0
-   },
-   {
-    "name": "naga_siren_rip_tide",
-    "games": 3,
-    "win": 66.7
    }
   ],
   "talents": {
@@ -231,15 +222,15 @@
     {
      "name": "special_bonus_unique_naga_siren_2",
      "label": "Rip Tide Damage",
-     "picked": 280,
-     "games": 286,
-     "win": 55.7
+     "picked": 122,
+     "games": 125,
+     "win": 59.0
     },
     {
      "name": "special_bonus_unique_naga_siren_reel_in_speed",
      "label": "Reel In Pull Speed",
-     "picked": 6,
-     "games": 286,
+     "picked": 3,
+     "games": 125,
      "win": 33.3
     }
    ],
@@ -247,51 +238,52 @@
     {
      "name": "special_bonus_unique_naga_siren_4",
      "label": "Mirror Image Damage",
-     "picked": 156,
-     "games": 254,
-     "win": 62.2
+     "picked": 71,
+     "games": 119,
+     "win": 67.6
     },
     {
      "name": "special_bonus_unique_naga_siren_3",
      "label": "Mirror Image Illusion Damage Taken",
-     "picked": 98,
-     "games": 254,
-     "win": 55.1
+     "picked": 48,
+     "games": 119,
+     "win": 50.0
     }
    ],
    "20": [
     {
      "name": "special_bonus_unique_naga_siren",
      "label": "Mirror Image Illusion",
-     "picked": 146,
-     "games": 156,
-     "win": 69.9
+     "picked": 80,
+     "games": 81,
+     "win": 68.8
     },
     {
      "name": "special_bonus_unique_naga_siren_5",
      "label": "Song of the Siren Cooldown",
-     "picked": 10,
-     "games": 156,
-     "win": 80.0
+     "picked": 1,
+     "games": 81,
+     "win": 100.0
     }
    ],
    "25": [
     {
      "name": "special_bonus_unique_naga_siren_6",
      "label": "Mirror Image Cooldown",
-     "picked": 39,
-     "games": 45,
-     "win": 79.5
+     "picked": 20,
+     "games": 25,
+     "win": 80.0
     },
     {
      "name": "special_bonus_agility_25",
      "label": "+25 Agility",
-     "picked": 6,
-     "games": 45,
-     "win": 83.3
+     "picked": 5,
+     "games": 25,
+     "win": 80.0
     }
    ]
-  }
+  },
+  "since_patch": "7.41"
  },
  "counters": {
   "evasion": {
@@ -331,20 +323,20 @@
      "win_without": 38.5
     },
     {
+     "item": "magic_wand",
+     "share": 0.448,
+     "elsewhere": 0.402,
+     "lift": 1.12,
+     "win_with": 61.5,
+     "win_without": 50.0
+    },
+    {
      "item": "diffusal_blade",
      "share": 0.103,
      "elsewhere": 0.093,
      "lift": 1.12,
      "win_with": 66.7,
      "win_without": 53.8
-    },
-    {
-     "item": "aghanims_shard",
-     "share": 0.31,
-     "elsewhere": 0.278,
-     "lift": 1.12,
-     "win_with": 77.8,
-     "win_without": 45.0
     },
     {
      "item": "heart",
@@ -355,20 +347,12 @@
      "win_without": 30.0
     },
     {
-     "item": "magic_wand",
-     "share": 0.448,
-     "elsewhere": 0.402,
+     "item": "aghanims_shard",
+     "share": 0.31,
+     "elsewhere": 0.278,
      "lift": 1.12,
-     "win_with": 61.5,
-     "win_without": 50.0
-    },
-    {
-     "item": "bloodthorn",
-     "share": 0.552,
-     "elsewhere": 0.517,
-     "lift": 1.07,
-     "win_with": 68.8,
-     "win_without": 38.5
+     "win_with": 77.8,
+     "win_without": 45.0
     },
     {
      "item": "skadi",
@@ -377,6 +361,14 @@
      "lift": 1.07,
      "win_with": 87.5,
      "win_without": 42.9
+    },
+    {
+     "item": "bloodthorn",
+     "share": 0.552,
+     "elsewhere": 0.517,
+     "lift": 1.07,
+     "win_with": 68.8,
+     "win_without": 38.5
     },
     {
      "item": "black_king_bar",
@@ -465,20 +457,20 @@
      "win_without": 28.6
     },
     {
-     "item": "bloodthorn",
-     "share": 0.455,
-     "elsewhere": 0.526,
-     "lift": 0.86,
-     "win_with": 60.0,
-     "win_without": 41.7
-    },
-    {
      "item": "skadi",
      "share": 0.227,
      "elsewhere": 0.263,
      "lift": 0.86,
      "win_with": 60.0,
      "win_without": 47.1
+    },
+    {
+     "item": "bloodthorn",
+     "share": 0.455,
+     "elsewhere": 0.526,
+     "lift": 0.86,
+     "win_with": 60.0,
+     "win_without": 41.7
     },
     {
      "item": "arcane_boots",
@@ -605,20 +597,20 @@
    "win": 54.5,
    "items": [
     {
-     "item": "wraith_band",
-     "share": 0.727,
-     "elsewhere": 0.541,
-     "lift": 1.34,
-     "win_with": 45.8,
-     "win_without": 77.8
-    },
-    {
      "item": "diffusal_blade",
      "share": 0.121,
      "elsewhere": 0.09,
      "lift": 1.34,
      "win_with": 75.0,
      "win_without": 51.7
+    },
+    {
+     "item": "wraith_band",
+     "share": 0.727,
+     "elsewhere": 0.541,
+     "lift": 1.34,
+     "win_with": 45.8,
+     "win_without": 77.8
     },
     {
      "item": "yasha",
@@ -795,12 +787,12 @@
      "win_without": 50.0
     },
     {
-     "item": "ring_of_basilius",
-     "share": 0.191,
-     "elsewhere": 0.179,
+     "item": "oblivion_staff",
+     "share": 0.809,
+     "elsewhere": 0.757,
      "lift": 1.07,
-     "win_with": 45.5,
-     "win_without": 57.0
+     "win_with": 57.0,
+     "win_without": 45.5
     }
    ]
   },
