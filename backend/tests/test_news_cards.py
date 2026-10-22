@@ -86,12 +86,32 @@ def test_the_hero_caption_uses_the_site_numbers():
     caption = cards.hero_caption(hero, facts, {"win": 0.526, "pick": 0.183})
     assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
     assert caption.startswith("⚔️ <b>Герой тижня: Juggernaut</b>")
-    assert "52,6 %" in caption and "Blade Fury" in caption
-    assert f"нижче <b>{hero['profile']['low_hp_warning_threshold']} %</b>" in caption
-    assert "/heroes/juggernaut.html?ref=tg" in caption
+    assert "52,6 %" in caption and "/heroes/juggernaut.html?ref=tg" in caption
+    # Juggernaut has a plan: the skill order, tempo and counters in numbers.
+    assert "🎯 Прокачка: <b>" in caption and "нетворсу на" in caption
+    assert "лігові матчі патча" in caption and "Відходь, коли HP" not in caption
+    assert "Керрі — керрі" not in caption
     assert "&#x27;" not in caption  # Telegram needs only <, > and & escaped
     page = cards.hero_card(hero, facts, None, Path("/nonexistent"))
-    assert "Juggernaut" in page and "Що підкаже Wardly" in page
+    assert "Juggernaut" in page and "Що виграє на цьому герої" in page
+    # A hero without a plan keeps the hero page's thresholds.
+    plain = {**facts, "insights": None}
+    caption = cards.hero_caption(hero, plain, None)
+    assert "Blade Fury" in caption
+    assert f"нижче <b>{hero['profile']['low_hp_warning_threshold']} %</b>" in caption
+    assert "Що підкаже Wardly" in cards.hero_card(hero, plain, None, Path("/nonexistent"))
+
+
+def test_a_hero_with_a_plan_comes_before_a_better_win_rate_without_one():
+    post = _post(_rows())
+    site = [
+        {"name": "Wraith King", "key": _key(post, "Wraith King"), "position": "carry"},
+        {"name": "Juggernaut", "key": _key(post, "Juggernaut"), "position": "carry"},
+    ]
+    hero, _ = cards.pick_hero(post, site, [])
+    assert hero["name"] == "Juggernaut"  # Wraith King wins more but has no plan
+    hero, _ = cards.pick_hero(post, site, ["Juggernaut"])
+    assert hero["name"] == "Wraith King"
 
 
 def test_a_release_caption_keeps_the_headlines_and_the_links():
@@ -206,3 +226,31 @@ def test_a_release_with_a_news_post_links_to_it():
     assert "<b>Свій план для 20 керрі</b>" in caption
     assert "/news/2026-10-19-release-0-57-0.html?ref=tg" in caption
     assert "✅ Коли гра вирішується" in caption and "Ursa" in caption
+
+
+def test_hero_insights_show_only_what_the_plan_and_its_stats_hold():
+    import hero_insights
+
+    assert [hero_insights.games_uk(n) for n in (1, 3, 11, 12, 21, 24, 241, 317)] == [
+        "1 гра",
+        "3 гри",
+        "11 ігор",
+        "12 ігор",
+        "21 гра",
+        "24 гри",
+        "241 гра",
+        "317 ігор",
+    ]
+    found = hero_insights.facts("Phantom Lancer", "carry")
+    assert found["games"] == 317 and found["patch"] == "7.41"
+    assert found["skills"]["order"][0] == "Spirit Lance"
+    assert found["tempo"]["net_worth"] == 15400 and found["tempo"]["minute"] == 25
+    # Only counters with a clear record get numbers; one item and one enemy kind each.
+    for counter in found["counters"]:
+        record = counter["record"]
+        assert record is None or record["with"] - record["without"] >= hero_insights.MIN_GAP
+    assert len({c["against"] for c in found["counters"]}) == len(found["counters"])
+    kinds = [kind for kind, _title, _sub in hero_insights.rows(found, "en")]
+    assert kinds[:3] == ["skills", "tempo", "fast"]
+    assert hero_insights.facts("Phantom Lancer", "support") is None
+    assert hero_insights.facts("Crystal Maiden", "support") is None
