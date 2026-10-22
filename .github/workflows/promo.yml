@@ -42,9 +42,9 @@ on:
         type: boolean
         default: true
       beta_campaign:
-        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs"
+        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs; hook-review: the hook-format test pair"
         type: choice
-        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments]
+        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review]
         default: "off"
       beta_run_id:
         description: "Reviewed artifact run ID (required for deliver/shorts/series)"
@@ -209,7 +209,7 @@ jobs:
         # scripts/promo/release_carry.py, carry_beta.py: built and checked like a
         # beta pair, then beta_campaign=shorts with this run's ID sends it with the
         # YouTube button (the carry-beta pairs carry their own YouTube time).
-        if: inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments'
+        if: inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments' || inputs.beta_campaign == 'hook-review'
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           CAMPAIGN: ${{ inputs.beta_campaign }}
@@ -218,6 +218,7 @@ jobs:
             release) creative=carry-plans-0.57 ;;
             carry-review) creative=carry-match-review ;;
             carry-moments) creative=carry-decisive-moments ;;
+            hook-review) creative=review-who-threw ;;
           esac
           status=0
           python -m scripts.promo.beta --out promo-out --creative "$creative" 2> release-stderr.log || status=$?
@@ -227,7 +228,7 @@ jobs:
             exit "$status"
           fi
       - name: Check beta narration independently
-        if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments'
+        if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments' || inputs.beta_campaign == 'hook-review'
         run: |
           python -m pip install faster-whisper==1.2.1
           python -m scripts.promo.beta --out promo-out --speech-check

@@ -144,6 +144,19 @@ Kyiv). Receipts: Actions run 38781318750. That one-off tool was removed after
 it ran; the Worker keeps the generic `publish_at` support in `src/social.js`.
 Every other release goes through the Telegram buttons as above.
 
+### Hook format test
+
+`beta_campaign=hook-review`, `send=false` builds a UK/EN pair in the format of the
+[Shorts rules](marketing/shorts-rules.md) (`scripts/promo/hook_review.py`,
+`hook_review.css/js`): an all-chat argument as the hook, «check your part» before
+the brand, the match number typed into the app's own field, the review sections
+ticked off, the score counting up, an Anti-Mage example (5 of 9 deaths to one hero,
+the app's `killed_by_one` text), the in-game tip as the second hook, «not a report»
+and a short free-for-Windows ending. No header, one logo, a schematic map with
+seeded dust behind every scene; motion follows the narration only. Up to 34 s.
+The chat lines are a dramatisation; every card and label comes from the app and the
+build fails if they change. Review the artifact, then `deliver` or `shorts` as above.
+
 ### Release pair 0.57 (20 carries)
 
 `beta_campaign=release`, `send=false` builds a Ukrainian/English pair about the

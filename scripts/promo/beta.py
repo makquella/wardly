@@ -22,6 +22,7 @@ from . import (
     beta_shorts,
     carry_beta,
     experiments,
+    hook_review,
     media,
     release_carry,
     render,
@@ -150,12 +151,14 @@ def storyboard(
     lengths: tuple[float, ...] = (3.2, 3.8, 3.5, 2.5, 4, 2.8, 3)
     if len(texts) != len(lengths):
         # Another scene count: about as long as the words take to say.
-        lengths = tuple(max(2.5, 0.45 * len(text.split()) + 1.0) for text in texts)
+        per_word, per_scene = getattr(story, "DRAFT_PACE", (0.45, 1.0))
+        lengths = tuple(max(2.5, per_word * len(text.split()) + per_scene) for text in texts)
     words, at = [], 0.0
     for text, span in zip(texts, lengths, strict=True):
         words.extend(scenes.estimated_words(text, at + 0.05, at + span - 0.2))
         at += span
-    return timings(texts, words, at, minimum=20, maximum=27, tail=0.8)
+    maximum = getattr(story, "MAX_SECONDS", 27)
+    return timings(texts, words, at, minimum=20, maximum=maximum, tail=0.8)
 
 
 def srt(captions: list[dict[str, Any]]) -> str:
@@ -337,6 +340,11 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
         story = release_carry.profile()
         revision = release_carry.REVISION
         claims["release"] = release_carry.verify()
+    elif creative == hook_review.CREATIVE:
+        # The test Short in the dynamic hook format (docs/marketing/shorts-rules.md).
+        story = hook_review.profile()
+        revision = hook_review.REVISION
+        claims["hook_review"] = hook_review.verify()
     elif creative in carry_beta.CREATIVES:
         # The scheduled carry-beta pairs: claims from the app's own texts.
         story = carry_beta.profile(creative)
@@ -393,7 +401,12 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
                 save(folder / "alignment.json", words)
                 save(cache_path, identity)
             timeline, captions, total = timings(
-                texts, words, voice.duration(master), minimum=20, maximum=27, tail=0.8
+                texts,
+                words,
+                voice.duration(master),
+                minimum=20,
+                maximum=getattr(story, "MAX_SECONDS", 27),
+                tail=0.8,
             )
             voice.join([(master, total)], folder / "padded.wav")
         aligned = [
@@ -699,8 +712,16 @@ def main() -> None:
     parser.add_argument(
         "--creative",
         default="sven-under-4k",
-        choices=("sven-under-4k", release_carry.CREATIVE, *carry_beta.CREATIVES),
-        help="which pair to build (0.57 release: release_carry.py; carry beta: carry_beta.py)",
+        choices=(
+            "sven-under-4k",
+            release_carry.CREATIVE,
+            *carry_beta.CREATIVES,
+            hook_review.CREATIVE,
+        ),
+        help=(
+            "which pair to build (0.57 release: release_carry.py; carry beta: "
+            "carry_beta.py; hook format test: hook_review.py)"
+        ),
     )
     args = parser.parse_args()
     if sum((args.draft, args.deliver_only, args.speech_check, args.shorts_approval)) > 1:

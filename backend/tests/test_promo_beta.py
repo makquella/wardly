@@ -407,3 +407,54 @@ def test_a_worker_that_drops_the_publish_time_gets_no_button(monkeypatch, tmp_pa
         with pytest.raises(SystemExit, match="preserve youtube_publish_at"):
             beta.deliver(tmp_path, shorts=True)
         assert not any(route.endswith("sendVideo") for route, _ in calls)
+
+
+def test_the_hook_format_test_says_what_the_app_says():
+    from scripts.promo import hook_review
+
+    claims = hook_review.verify()
+    assert claims == {"killed_by": 5, "deaths": 9, "grade": "C"}
+    story = hook_review.profile()
+    for language in beta.LANGUAGES:
+        voice = story.COPY[language]["voice"]
+        # The hook comes first, the brand only in the second scene, and the
+        # ending is one short line about Windows without asking for anything.
+        assert "Wardly" not in voice[0] and "Wardly" in voice[1]
+        assert "Windows" in voice[-1] and len(voice[-1].split()) <= 7
+        assert not any(word in " ".join(voice).lower() for word in ("beta", "бета", "test"))
+        screen = hook_review.screens(language)
+        assert len(screen["sections"]) == 5
+        package = beta_shorts.package(
+            language,
+            {
+                "sha256": "0" * 64,
+                "visual_revision": hook_review.REVISION,
+                "creative": hook_review.CREATIVE,
+            },
+        )
+        assert package["topic"] == f"{hook_review.CREATIVE}-{language}"
+        assert "youtube_publish_at" not in package
+        assert len(package["youtube_title"]) <= 100
+        assert f"ref=shorts-whothrew-{language}" in package["caption"]
+    uk = hook_review.screens("uk")
+    assert uk["finding"] == (
+        "Головна загроза: Phantom Assassin",
+        "5 з 9 смертей — від Phantom Assassin.",
+    )
+    assert uk["labels"]["loading"] == "Завантажую матч з OpenDota…"
+    timeline, captions, total = beta.storyboard("uk", story=story)
+    assert len(timeline) == 8 and total <= hook_review.MAX_SECONDS
+    page = story.page(
+        "uk",
+        timeline,
+        story.phrase_captions(
+            "uk",
+            [
+                {"word": w["w"], "start": w["s"], "end": w["e"]}
+                for c in captions
+                for w in c["words"]
+            ],
+            captions[-1]["end"],
+        ),
+    )
+    assert page.count(" data-brand>") == 1 and "<header>" not in page
