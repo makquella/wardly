@@ -157,6 +157,15 @@ seeded dust behind every scene; motion follows the narration only. Up to 34 s.
 The chat lines are a dramatisation; every card and label comes from the app and the
 build fails if they change. Review the artifact, then `deliver` or `shorts` as above.
 
+The full cut adds generated b-roll and sound. `beta_campaign=sfx` makes the
+ElevenLabs effects and a music bed (`scripts/promo/sound_effects.py`, kept in that
+run's artifact for 7 days). `beta_campaign=hook-review` with `sfx_run_id=<that run>`
+(and `beta_run_id=<an earlier hook-review build>` to reuse its narration) then
+downloads the Higgsfield clips listed in `hook_review.BROLL` (hash-checked), puts
+them behind the hook, the brand reveal and the match-number step, and mixes the
+voice, the clips' own sound, the effects on the animated moments and the music
+ducked under the voice.
+
 ### Release pair 0.57 (20 carries)
 
 `beta_campaign=release`, `send=false` builds a Ukrainian/English pair about the

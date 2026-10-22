@@ -362,6 +362,9 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
     if selected:
         save(out / "voice-catalog.json", selected)
     motion = {} if draft else prepare_motion(out, getattr(story, "HEROES", beta_scenes.HEROES))
+    if not draft and hasattr(story, "broll"):
+        # Generated b-roll behind some scenes (hook_review.BROLL, hash-checked).
+        motion.update(story.broll(out))
     for language in LANGUAGES:
         folder = out / language
         folder.mkdir(exist_ok=True)
@@ -418,6 +421,13 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
         save(folder / "timeline.json", timeline)
         save(folder / "captions.json", captions)
         (folder / "captions.srt").write_text(srt(captions), encoding="utf-8")
+        audio = folder / "padded.wav"
+        if not draft and hasattr(story, "mix"):
+            # Effects and a music bed under the voice (promo-out/sfx from
+            # beta_campaign=sfx, restored by the workflow).
+            audio = story.mix(
+                language, timeline, captions, audio, total, folder / "mixed.wav", out / "sfx"
+            )
         page_html = story.page(language, timeline, captions, motion)
         layout = layout_check(page_html, timeline, folder)
         package = {
@@ -439,7 +449,7 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
                 page_html,
                 total,
                 folder / "video.mp4",
-                folder / "padded.wav",
+                audio,
                 cover=folder / "cover.jpg",
                 inline=True,
             )
@@ -447,6 +457,7 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
             package["sha256"] = digest(folder / "video.mp4")
             save(folder / "youtube-metadata.json", beta_shorts.package(language, package))
             (folder / "padded.wav").unlink()
+            (folder / "mixed.wav").unlink(missing_ok=True)
         save(folder / "package.json", package)
         print(f"{language}: {'storyboard' if draft else 'video'} {total:.2f}s; layout passed")
 

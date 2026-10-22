@@ -47,7 +47,11 @@ on:
         options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review, sfx]
         default: "off"
       beta_run_id:
-        description: "Reviewed artifact run ID (required for deliver/shorts/series)"
+        description: "Reviewed artifact run ID (required for deliver/shorts/series; hook-review: the build whose narration to reuse)"
+        type: string
+        default: ""
+      sfx_run_id:
+        description: "hook-review: the beta_campaign=sfx run whose effects and music to mix in"
         type: string
         default: ""
 
@@ -204,6 +208,25 @@ jobs:
           if [ "$status" -ne 0 ]; then
             echo "::error title=Beta build::$(tail -n 1 beta-stderr.log)"
             exit "$status"
+          fi
+      - name: Restore the narration and effects for the hook cut
+        if: inputs.beta_campaign == 'hook-review'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BETA_RUN_ID: ${{ inputs.beta_run_id }}
+          SFX_RUN_ID: ${{ inputs.sfx_run_id }}
+        run: |
+          if ! [[ "$SFX_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::sfx_run_id must be a beta_campaign=sfx run ID"
+            exit 1
+          fi
+          gh run download "$SFX_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "promo-$SFX_RUN_ID" --dir promo-out
+          if [[ "$BETA_RUN_ID" =~ ^[0-9]+$ ]]; then
+            gh run download "$BETA_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "promo-$BETA_RUN_ID" --dir prior
+            for lang in uk en; do
+              mkdir -p "promo-out/$lang"
+              cp "prior/$lang/narration.wav" "prior/$lang/alignment.json" "prior/$lang/narration-config.json" "promo-out/$lang/"
+            done
           fi
       - name: Build a creative pair (0.57 release, carry beta)
         # scripts/promo/release_carry.py, carry_beta.py: built and checked like a

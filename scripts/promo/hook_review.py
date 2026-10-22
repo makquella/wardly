@@ -204,6 +204,8 @@ def profile() -> SimpleNamespace:
         DRAFT_PACE=DRAFT_PACE,
         phrase_captions=partial(base.phrase_captions, phrases=PHRASES),
         page=page,
+        broll=broll,
+        mix=mix,
     )
 
 
@@ -417,3 +419,152 @@ def _map() -> str:
         + "".join(towers)
         + "</svg>"
     )
+
+
+# --- b-roll and sound for the full cut ----------------------------------------------
+
+# Generated with Higgsfield (Kling 3.0, 9:16, 5 s, native sound), 2026-10-22.
+BROLL = {
+    "rage": (
+        "https://d8j0ntlcm91z4.cloudfront.net/user_3L48PZ0BtANBTDRDPsU5hmY79Dx/"
+        "hf_20261022_205701_3a676d30-7a75-489d-811e-f80cb628807c.mp4",
+        "edecf94a649fcf33ddbb19f235b9218fc75d86578eb330d61f9524891dd946ea",
+    ),
+    "warrior": (
+        "https://d8j0ntlcm91z4.cloudfront.net/user_3L48PZ0BtANBTDRDPsU5hmY79Dx/"
+        "hf_20261022_205701_4dcc1bed-3754-4294-a418-f0bcebcdfbc3.mp4",
+        "5e3471e5b5b78d2031ffd24c4208a4555c11dfa9601e3aec3919696823be09a0",
+    ),
+    "keys": (
+        "https://d8j0ntlcm91z4.cloudfront.net/user_3L48PZ0BtANBTDRDPsU5hmY79Dx/"
+        "hf_20261022_205709_5604f6b9-5ba8-4d82-b129-5fe202a9a117.mp4",
+        "d4dc454d26b6c3e31741f00437d67f2f2a7d5a8cd1b38b96bbd92af85f69dc6c",
+    ),
+}
+
+
+def broll(out: Path) -> dict[str, list[str]]:
+    """Download the b-roll (hash-checked) and return its frames for the page."""
+    import hashlib
+    import subprocess
+    import urllib.request
+
+    from . import render
+
+    root = out / "broll"
+    root.mkdir(parents=True, exist_ok=True)
+    frames: dict[str, list[str]] = {}
+    for name, (url, sha256) in BROLL.items():
+        video = root / f"{name}.mp4"
+        if not video.exists() or hashlib.sha256(video.read_bytes()).hexdigest() != sha256:
+            with urllib.request.urlopen(url, timeout=120) as response:  # noqa: S310
+                video.write_bytes(response.read())
+        if hashlib.sha256(video.read_bytes()).hexdigest() != sha256:
+            raise ValueError(f"b-roll {name} changed at its source")
+        folder = root / name
+        folder.mkdir(exist_ok=True)
+        if not any(folder.glob("*.jpg")):
+            subprocess.run(
+                [render.ffmpeg(), "-v", "error", "-y", "-i", str(video),
+                 "-vf", f"fps={CLIP_FPS},scale=810:1440", "-q:v", "5", str(folder / "%04d.jpg")],
+                check=True,
+            )  # fmt: skip
+        frames[f"clip:{name}"] = [base.uri(path) for path in sorted(folder.glob("*.jpg"))]
+    return frames
+
+
+def sound_events(
+    language: str, timeline: list[dict], captions: list[dict]
+) -> tuple[list[tuple], float]:
+    """([(seconds, effect, dB)], slam): the ElevenLabs effects (sound_effects.EFFECTS) on the
+    moments hook_review.js animates, quiet enough to stay under the voice."""
+    uk = language == "uk"
+    words = [w for caption in captions for w in caption["words"]]
+
+    def start(scene: int) -> float:
+        return timeline[scene]["start"]
+
+    def word(scene: int, fragment: str, fallback: float) -> float:
+        span = timeline[scene]
+        for w in words:
+            if span["start"] - 0.01 <= w["s"] < span["end"] and fragment in w["w"].lower():
+                return w["s"] - span["start"]
+        return fallback
+
+    events = [(0.0, "hit", -9)]
+    events += [(0.05 + 0.13 * i, "tick", -14) for i in range(3)]
+    events += [(0.25 + 0.38 * i, "chat", -9) for i in range(4)]
+    slam = word(0, "хто" if uk else "who", 2.4) - 0.04
+    events += [(slam - 0.03, "slam", -9), (slam, "boom", -12)]
+    events += [
+        (start(i) - 0.32, "whoosh" if i % 2 else "swipe", -9) for i in range(1, len(timeline))
+    ]
+    wardly = start(1) + word(1, "wardly", 2.2) - 0.08
+    events += [(wardly - 2.0, "riser", -14), (wardly - 0.05, "logo", -8), (wardly, "boom", -13)]
+    typed = start(2) + word(2, "номер" if uk else "number", 0.6) + 0.05
+    press = typed + 0.12 + 0.045 * len(MATCH_NUMBER)
+    checks = max(press + 0.25, start(2) + word(2, "розбирає" if uk else "reviews", 1.6))
+    end = timeline[2]["end"] - 0.35
+    events += [(typed, "typing", -7), (press, "enter", -8)]
+    events += [(checks + (i + 1) * (end - checks) / 5 - 0.05, "check", -11) for i in range(5)]
+    row = start(3) + word(3, "перемога" if uk else "win", 1.8) - 0.08
+    events += [(start(3) + 0.15, "score", -17), (start(3) + 1.25, "hit", -15)]
+    events += [(row, "swipe", -10), (row + 0.18, "swipe", -11)]
+    nine = start(4) + word(4, "дев" if uk else "nine", 1.4) - 0.08
+    threat = start(4) + word(4, "від" if uk else "five", 2.6) - 0.08 - (0.3 if uk else 0)
+    events += [(nine, "sword", -11), (nine + 0.02, "hit", -13), (threat, "glitch", -9)]
+    events.append((start(5) + word(5, "підкаже" if uk else "tips", 1.0) - 0.08, "hit", -15))
+    report = start(6) + word(6, "репорт" if uk else "report", 1.2)
+    events += [(start(6) + 0.45, "hit", -15), (report + 0.1, "glitch", -8)]
+    events.append((report + 0.47, "stamp", -6))
+    events += [(start(7), "boom", -17), (start(7) + 0.25, "click", -8)]
+    events += [(start(7) + 0.5 + 0.14 * i, "check", -12) for i in range(3)]
+    return [(max(0.0, at), name, db) for at, name, db in events], slam
+
+
+def mix(language, timeline, captions, narration: Path, total: float, out: Path, sfx: Path) -> Path:
+    """Narration + b-roll sound + effects + a music bed ducked under the voice."""
+    import subprocess
+
+    from . import render
+
+    events, slam = sound_events(language, timeline, captions)
+    broll_dir = out.parent.parent / "broll"
+    inputs = ["-i", str(narration), "-stream_loop", "-1", "-i", str(sfx / "music.mp3")]
+    clips = [  # (clip, seconds into it, where, length, dB)
+        ("rage", CLIPS["rage"] - slam, 0.0, timeline[0]["end"], -13),
+        ("warrior", CLIPS["warrior"], timeline[1]["start"], timeline[1]["end"] - timeline[1]["start"], -16),
+        ("keys", CLIPS["keys"], timeline[2]["start"], 1.0, -8),
+    ]  # fmt: skip
+    inputs += [arg for name, *_ in clips for arg in ("-i", str(broll_dir / f"{name}.mp4"))]
+    inputs += [arg for _, name, _ in events for arg in ("-i", str(sfx / f"{name}.mp3"))]
+    outro = timeline[-1]["start"]
+    parts = [
+        f"[0:a]apad,atrim=0:{total},asplit=2[voice][key]",
+        f"[1:a]atrim=0:{total},volume=-19dB,afade=t=in:d=0.4,"
+        f"afade=t=out:st={total - 1.2}:d=1.2,volume='if(gte(t,{outro}),1.3,1)':eval=frame[music]",
+        "[music][key]sidechaincompress=threshold=0.03:ratio=6:attack=15:release=250[bed]",
+    ]
+    labels = ["[voice]", "[bed]"]
+    for i, (_name, offset, at, length, db) in enumerate(clips):
+        ms = int(at * 1000)
+        parts.append(
+            f"[{2 + i}:a]atrim={max(0.0, offset)}:{max(0.0, offset) + length},asetpts=PTS-STARTPTS,"
+            f"afade=t=out:st={max(0.0, length - 0.25)}:d=0.25,volume={db}dB,adelay={ms}|{ms}[c{i}]"
+        )
+        labels.append(f"[c{i}]")
+    first = 2 + len(clips)
+    for i, (at, _name, db) in enumerate(events):
+        ms = int(at * 1000)
+        parts.append(f"[{first + i}:a]volume={db}dB,adelay={ms}|{ms}[e{i}]")
+        labels.append(f"[e{i}]")
+    parts.append(
+        "".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duration=first,"
+        f"atrim=0:{total},alimiter=limit=0.89[mix]"
+    )
+    subprocess.run(
+        [render.ffmpeg(), "-v", "error", "-y", *inputs, "-filter_complex", ";".join(parts),
+         "-map", "[mix]", "-ar", "48000", "-ac", "2", str(out)],
+        check=True,
+    )  # fmt: skip
+    return out
