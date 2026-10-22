@@ -110,7 +110,8 @@ window.renderAt=async t=>{
   footage.style.transform=`${q} scale(${1+0.08*(1-ease(local/0.4))+local*0.01})`;
  }
  if(active===2&&current.classList.contains('keys')){
-  current.querySelector('.footage').style.opacity=String(1-0.72*ease((local-0.45)/0.35));
+  // The finger lands on the key ~0.5 s in; then the keyboard dims under the form.
+  current.querySelector('.footage').style.opacity=String(1-0.72*ease((local-0.55)/0.35));
  }
  if(active===1){
   const at=parseFloat(current.querySelector('.burst').dataset.t)||0, k=clamp((local-at)/0.6);

@@ -104,7 +104,7 @@ SECTION_KEYS = ("laning", "farm", "survival", "fights", "items")
 # motion["clip:<name>"]; the scene is plain without them): seconds into the
 # clip at the scene's start. For "rage" it is the desk slam's second in the
 # clip instead: the page starts the clip so that the slam lands on «хто злив».
-CLIPS = {"rage": 3.1, "warrior": 0.3, "keys": 1.2}
+CLIPS = {"rage": 3.1, "warrior": 0.3, "keys": 1.5}
 CLIP_FPS = 24
 
 
@@ -296,7 +296,7 @@ def page(language, timeline, captions, motion=None):
     scene(
         keys + f'<div class="kicker fx" data-fx="blur" data-at="0" data-safe><i></i>WARDLY</div>'
         f'<h1 class="title fx" data-fx="blur" data-at="0.05" data-safe>{esc(labels["open"])}</h1>'
-        f'<div class="form fx" data-fx="rise" data-at="{0.55 if keys else 0.15}">'
+        f'<div class="form fx" data-fx="rise" data-at="{0.6 if keys else 0.15}">'
         f'<div class="field"><span class="placeholder" data-safe>{esc(labels["placeholder"])}</span>'
         f'<span class="typed" data-safe data-text="{MATCH_NUMBER}"></span><i class="caret"></i></div>'
         f'<div class="button" data-safe>{esc(labels["button"])}</div></div>'
@@ -423,7 +423,8 @@ def _map() -> str:
 
 # --- b-roll and sound for the full cut ----------------------------------------------
 
-# Generated with Higgsfield (Kling 3.0, 9:16, 5 s, native sound), 2026-10-22.
+# Generated with Higgsfield (Kling 3.0, 9:16, 5 s, native sound), 2026-10-22; the
+# keyboard is a pro-mode single-finger take (a two-handed typing take looked fake).
 BROLL = {
     "rage": (
         "https://d8j0ntlcm91z4.cloudfront.net/user_3L48PZ0BtANBTDRDPsU5hmY79Dx/"
@@ -437,8 +438,8 @@ BROLL = {
     ),
     "keys": (
         "https://d8j0ntlcm91z4.cloudfront.net/user_3L48PZ0BtANBTDRDPsU5hmY79Dx/"
-        "hf_20261022_205709_5604f6b9-5ba8-4d82-b129-5fe202a9a117.mp4",
-        "d4dc454d26b6c3e31741f00437d67f2f2a7d5a8cd1b38b96bbd92af85f69dc6c",
+        "hf_20261022_214134_93819959-d8ab-461e-abc3-c20299ae334a.mp4",
+        "e77b3bab6579d0a560760e0a009b42649047718b516e9700c79ef8ea2b7ce634",
     ),
 }
 
@@ -534,7 +535,7 @@ def mix(language, timeline, captions, narration: Path, total: float, out: Path, 
     clips = [  # (clip, seconds into it, where, length, dB)
         ("rage", CLIPS["rage"] - slam, 0.0, timeline[0]["end"], -13),
         ("warrior", CLIPS["warrior"], timeline[1]["start"], timeline[1]["end"] - timeline[1]["start"], -16),
-        ("keys", CLIPS["keys"], timeline[2]["start"], 1.0, -8),
+        ("keys", CLIPS["keys"], timeline[2]["start"], 1.0, -14),
     ]  # fmt: skip
     inputs += [arg for name, *_ in clips for arg in ("-i", str(broll_dir / f"{name}.mp4"))]
     inputs += [arg for _, name, _ in events for arg in ("-i", str(sfx / f"{name}.mp3"))]
