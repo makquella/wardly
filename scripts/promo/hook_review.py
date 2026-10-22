@@ -550,17 +550,20 @@ def mix(language, timeline, captions, narration: Path, total: float, out: Path, 
         ms = int(at * 1000)
         parts.append(
             f"[{2 + i}:a]atrim={max(0.0, offset)}:{max(0.0, offset) + length},asetpts=PTS-STARTPTS,"
-            f"afade=t=out:st={max(0.0, length - 0.25)}:d=0.25,volume={db}dB,adelay={ms}|{ms}[c{i}]"
+            f"afade=t=out:st={max(0.0, length - 0.25)}:d=0.25,volume={db}dB,adelay={ms}|{ms},"
+            f"apad,atrim=0:{total}[c{i}]"
         )
         labels.append(f"[c{i}]")
     first = 2 + len(clips)
     for i, (at, _name, db) in enumerate(events):
         ms = int(at * 1000)
-        parts.append(f"[{first + i}:a]volume={db}dB,adelay={ms}|{ms}[e{i}]")
+        parts.append(f"[{first + i}:a]volume={db}dB,adelay={ms}|{ms},apad,atrim=0:{total}[e{i}]")
         labels.append(f"[e{i}]")
+    # Every track is padded to the full length, so amix divides by the same count
+    # throughout and volume undoes it (the workflow's ffmpeg 4.2 has no normalize=0).
     parts.append(
-        "".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duration=first,"
-        f"atrim=0:{total},alimiter=limit=0.89[mix]"
+        "".join(labels) + f"amix=inputs={len(labels)}:duration=first:dropout_transition=0,"
+        f"volume={len(labels)},atrim=0:{total},alimiter=limit=0.89[mix]"
     )
     subprocess.run(
         [render.ffmpeg(), "-v", "error", "-y", *inputs, "-filter_complex", ";".join(parts),
