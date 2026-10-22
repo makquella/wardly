@@ -42,9 +42,9 @@ on:
         type: boolean
         default: true
       beta_campaign:
-        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs; hook-review: the hook-format test pair"
+        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs; hook-review: the hook-format test pair; sfx: ElevenLabs sound effects and a music bed for the cut"
         type: choice
-        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review]
+        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review, sfx]
         default: "off"
       beta_run_id:
         description: "Reviewed artifact run ID (required for deliver/shorts/series)"
@@ -227,6 +227,12 @@ jobs:
             echo "::error title=Release build::$(tail -n 1 release-stderr.log)"
             exit "$status"
           fi
+      - name: Generate sound effects and a music bed
+        # scripts/promo/sound_effects.py: MP3s in the artifact (promo-out/sfx).
+        if: inputs.beta_campaign == 'sfx'
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python -m scripts.promo.sound_effects --out promo-out/sfx
       - name: Check beta narration independently
         if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments' || inputs.beta_campaign == 'hook-review'
         run: |
