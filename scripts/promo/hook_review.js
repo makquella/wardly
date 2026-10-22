@@ -64,7 +64,8 @@ window.renderAt=async t=>{
   switch(el.dataset.fx){
    case 'blur': move=`translateY(${(1-k)*26}px) scale(${0.96+0.04*k})`; blur=(1-k)*16; break;
    case 'rise': move=`translateY(${(1-k)*80}px)`; break;
-   case 'slide': move=`translateX(${(1-k)*-90}px)`; break;
+   // Text inside a card starts 36 px in: a shorter slide keeps it in the safe area.
+   case 'slide': move=`translateX(${(1-k)*-40}px)`; break;
    case 'pop': move=`scale(${0.55+0.45*back(x/0.45)})`; opacity=ease(x/0.2); break;
    case 'slam': {
     const s=ease(x/0.2); move=`scale(${1.1-0.1*s})`; opacity=ease(x/0.12);
