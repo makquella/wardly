@@ -68,5 +68,12 @@
   "format": "release",
   "topic": "0.58.0",
   "hook": 0
+ },
+ {
+  "id": "60da92f53f15406d",
+  "date": "2026-10-22",
+  "format": "hero",
+  "topic": "sniper",
+  "hook": 1
  }
 ]
