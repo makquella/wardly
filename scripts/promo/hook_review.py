@@ -100,6 +100,12 @@ APP_LABELS = {
 }
 # The review sections, in the order the app scores them.
 SECTION_KEYS = ("laning", "farm", "survival", "fights", "items")
+# Optional generated b-roll behind three scenes (24 fps frames passed in
+# motion["clip:<name>"]; the scene is plain without them): seconds into the
+# clip at the scene's start. For "rage" it is the desk slam's second in the
+# clip instead: the page starts the clip so that the slam lands on «хто злив».
+CLIPS = {"rage": 3.1, "warrior": 0.3, "keys": 1.2}
+CLIP_FPS = 24
 
 
 def screens(language: str) -> dict:
@@ -224,8 +230,18 @@ def page(language, timeline, captions, motion=None):
 
     sections: list[str] = []
 
-    def scene(body: str) -> None:
-        sections.append(f'<section class="scene s{len(sections)}">{body}</section>')
+    def scene(body: str, cls: str = "") -> None:
+        sections.append(f'<section class="scene s{len(sections)} {cls}">{body}</section>')
+
+    def footage(name: str) -> str:
+        """Generated b-roll (motion["clip:<name>"], see CLIPS) behind a scene."""
+        frames = motion.get(f"clip:{name}")
+        if not frames:
+            return ""
+        return (
+            f'<div class="footage"><img class="clip" data-clip="{name}" '
+            f'data-from="{CLIPS[name]:.2f}" src="{frames[0]}"></div><div class="shade"></div>'
+        )
 
     # 0. The hook: the argument in all-chat after a lost game.
     rows = "".join(
@@ -239,32 +255,52 @@ def page(language, timeline, captions, motion=None):
         f'<span class="word fx" data-fx="blur" data-at="{0.05 + 0.13 * i:.2f}" data-safe>{esc(w)}</span> '
         for i, w in enumerate(words)
     )
+    rage = footage("rage")
+    # With the b-roll the chat pops up over the desk in bubbles the slam knocks away
+    # (they start inside the safe area; flying off-screen is the point, so their
+    # text is not held to it).
+    bubbles = "".join(
+        f'<div class="bubble b{i} fx" data-fx="pop" data-at="{0.25 + 0.38 * i:.2f}">'
+        f'{portrait(key)}<b class="{"bad" if i == 3 else ""}">{esc(line)}</b></div>'
+        for i, (key, _name, line) in enumerate(CHAT[language][1:])
+    )
+    chat = (
+        f'<div class="bubbles">{bubbles}</div>'
+        if rage
+        else f'<div class="chat fx" data-fx="rise" data-at="0.2"><div class="chat-head" data-safe>{t("ЧАТ · ВСІ", "CHAT · ALL")}</div>{rows}</div>'
+    )
     scene(
-        f'<div class="kicker fx" data-fx="blur" data-at="0" data-safe><i></i>{t("РОЗБІР МАТЧІВ DOTA 2", "DOTA 2 MATCH REVIEW")}</div>'
-        f'<h1 class="headline">{headline}</h1>'
-        f'<div class="chat fx" data-fx="rise" data-at="0.2"><div class="chat-head" data-safe>{t("ЧАТ · ВСІ", "CHAT · ALL")}</div>{rows}</div>'
+        rage
+        + f'<div class="kicker fx" data-fx="blur" data-at="0" data-safe><i></i>{t("РОЗБІР МАТЧІВ DOTA 2", "DOTA 2 MATCH REVIEW")}</div>'
+        f'<h1 class="headline">{headline}</h1>' + chat,
+        "with-footage" if rage else "",
     )
     # 1. The promise, then the brand.
+    warrior = footage("warrior")
     scene(
-        f'<h1 class="promise fx" data-fx="blur" data-at="0" data-safe>{t("Перевір<br><em>свою частину</em>", "Check<br><em>your part</em>")}</h1>'
+        warrior
+        + f'<h1 class="promise fx" data-fx="blur" data-at="0" data-safe>{t("Перевір<br><em>свою частину</em>", "Check<br><em>your part</em>")}</h1>'
         '<div class="burst" data-on="wardly"></div>'
         f'<img class="brand-logo fx" data-fx="pop" data-on="wardly" src="{base.uri(assets / "logo.png")}" data-brand>'
-        '<div class="brand-name fx" data-fx="pop" data-on="wardly" data-delay="0.08" data-safe>Wardly</div>'
+        '<div class="brand-name fx" data-fx="pop" data-on="wardly" data-delay="0.08" data-safe>Wardly</div>',
+        "with-footage" if warrior else "",
     )
     # 2. The process: the match number typed in, then the review sections.
     checks = "".join(
         f'<div class="check" data-step="{i}"><i></i><span data-safe>{esc(name)}</span></div>'
         for i, name in enumerate(screen["sections"])
     )
+    keys = footage("keys")
     scene(
-        f'<div class="kicker fx" data-fx="blur" data-at="0" data-safe><i></i>WARDLY</div>'
+        keys + f'<div class="kicker fx" data-fx="blur" data-at="0" data-safe><i></i>WARDLY</div>'
         f'<h1 class="title fx" data-fx="blur" data-at="0.05" data-safe>{esc(labels["open"])}</h1>'
-        '<div class="form fx" data-fx="rise" data-at="0.15">'
+        f'<div class="form fx" data-fx="rise" data-at="{0.55 if keys else 0.15}">'
         f'<div class="field"><span class="placeholder" data-safe>{esc(labels["placeholder"])}</span>'
         f'<span class="typed" data-safe data-text="{MATCH_NUMBER}"></span><i class="caret"></i></div>'
         f'<div class="button" data-safe>{esc(labels["button"])}</div></div>'
         f'<div class="status" data-safe><i class="spin"></i>{esc(labels["loading"])}</div>'
-        f'<div class="checks"><div class="bar"><i></i></div>{checks}</div>'
+        f'<div class="checks"><div class="bar"><i></i></div>{checks}</div>',
+        "with-footage keys" if keys else "",
     )
     # 3. The score counts up; the result does not save it.
     number, grade, label = screen["score"]
@@ -329,6 +365,7 @@ def page(language, timeline, captions, motion=None):
         f'<div class="features">{cards}</div>'
     )
     root = Path(__file__).parent
+    flash = '<div class="flash"></div>'
     return base.document(
         language,
         timeline,
@@ -336,7 +373,7 @@ def page(language, timeline, captions, motion=None):
         motion,
         '<div class="map"><div class="plane">' + _map() + "</div></div>"
         '<div class="glow"></div><div class="dust"></div>'
-        f'<main data-creative="{CREATIVE}">' + "".join(sections) + "</main>",
+        f'<main data-creative="{CREATIVE}">' + "".join(sections) + "</main>" + flash,
         c,
         extra_css=(root / "hook_review.css").read_text(encoding="utf-8"),
         javascript=(root / "hook_review.js").read_text(encoding="utf-8"),

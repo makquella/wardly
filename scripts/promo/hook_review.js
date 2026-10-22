@@ -35,7 +35,16 @@ const pings=[[150,250],[930,560],[110,1540],[960,1700],[820,190]].map(([x,y],i)=
  const el=document.createElement('b');el.textContent='!';el.style.left=`${x}px`;el.style.top=`${y}px`;
  dust.appendChild(el);return {el,p:i*1.3};
 });
-const plane=document.querySelector('.plane');
+const plane=document.querySelector('.plane'), flash=document.querySelector('.flash');
+// The desk slam in the hook's b-roll lands on «хто злив» / «who threw».
+const slamAt=wordAt(0,language==='uk'?'хто':'who',2.4)-0.04;
+const clipFrame=(img,local)=>{
+ const frames=motion['clip:'+img.dataset.clip]; if(!frames?.length)return null;
+ const from=parseFloat(img.dataset.from||0)-(img.dataset.clip==='rage'?slamAt:0);
+ const n=Math.min(frames.length-1,Math.max(0,Math.floor((local+from)*24)));
+ if(img.dataset.frame===String(n))return null;
+ img.src=frames[n]; img.dataset.frame=String(n); return img.decode();
+};
 window.renderAt=async t=>{
  const active=Math.max(0,timeline.findIndex(s=>t>=s.start&&t<s.end));
  const local=Math.max(0,t-timeline[active].start), span=length(active);
@@ -58,6 +67,11 @@ window.renderAt=async t=>{
   const frames=motion[img.dataset.hero];
   if(frames?.length){const n=Math.floor(t*20)%frames.length;if(img.dataset.frame!==String(n)){img.src=frames[n];img.dataset.frame=String(n);decoding.push(img.decode());}}
  });
+ current.querySelectorAll('[data-clip]').forEach(img=>{const d=clipFrame(img,local);if(d)decoding.push(d);});
+ // Every cut punches in from a white flash; hits flash again.
+ // Text punches in a little (it stays in the safe area); footage and map more.
+ let flashAmount=active?0.5*(1-ease(local/0.14)):0, punch=0.012*(1-ease(local/0.35));
+ let quake=0;
  current.querySelectorAll('.fx').forEach(el=>{
   const at=parseFloat(el.dataset.t)||0, x=local-at, k=ease(x/0.35);
   let move='', opacity=k, blur=0;
@@ -73,15 +87,37 @@ window.renderAt=async t=>{
     break;
    }
   }
+  if(el.dataset.fx==='slam'&&x>0&&x<0.12)flashAmount=Math.max(flashAmount,0.35*(1-x/0.12));
   el.style.opacity=String(x<0?0:opacity);
   el.style.transform=`${move} ${el.dataset.base||''}`;
   el.style.filter=blur>0.2?`blur(${blur}px)`:'';
  });
+ if(active===0&&current.classList.contains('with-footage')){
+  const after=local-slamAt;
+  if(after>0&&after<0.45)quake=26*(1-after/0.45);
+  if(after>0&&after<0.1)flashAmount=Math.max(flashAmount,0.6*(1-after/0.1));
+  // The slam knocks the chat away.
+  current.querySelectorAll('.bubble').forEach((b,i)=>{
+   if(after<=0)return;
+   const k=ease(after/0.5), dir=i%2?1:-1;
+   b.style.transform=`translate(${dir*k*260}px,${-k*120+k*k*260}px) rotate(${dir*k*24}deg) scale(${1-0.2*k})`;
+   b.style.opacity=String(1-k);
+  });
+ }
+ const footage=current.querySelector('.footage');
+ if(footage){
+  const q=quake?`translate(${Math.sin(local*97)*quake}px,${Math.cos(local*73)*quake*0.7}px)`:'';
+  footage.style.transform=`${q} scale(${1+0.08*(1-ease(local/0.4))+local*0.01})`;
+ }
+ if(active===2&&current.classList.contains('keys')){
+  current.querySelector('.footage').style.opacity=String(1-0.72*ease((local-0.45)/0.35));
+ }
  if(active===1){
   const at=parseFloat(current.querySelector('.burst').dataset.t)||0, k=clamp((local-at)/0.6);
   const burst=current.querySelector('.burst');
   burst.style.opacity=String(local<at?0:(1-k)*0.9);
   burst.style.transform=`scale(${0.4+2.4*ease(k)})`;
+  if(local>at&&local-at<0.12)flashAmount=Math.max(flashAmount,0.55*(1-(local-at)/0.12));
   if(local>at)current.querySelector('.promise').style.opacity=String(1-0.65*ease((local-at)/0.3));
  }
  if(active===2){
@@ -133,7 +169,8 @@ window.renderAt=async t=>{
  const dx=shake?Math.sin(local*95)*shake:0, dy=shake?Math.cos(local*71)*shake*0.6:0;
  current.style.opacity=String(out);
  current.style.filter=out<1?`blur(${(1-out)*10}px)`:'';
- current.style.transform=`translate(${dx}px,${dy}px) scale(${1-(1-out)*0.03})`;
+ current.style.transform=`translate(${dx}px,${dy}px) scale(${1+punch-(1-out)*0.03})`;
+ flash.style.opacity=String(Math.min(0.7,flashAmount));
  // Captions: the whole phrase, the word being spoken in gold.
  const cue=captions.find(c=>t>=c.start&&t<c.end), box=document.querySelector('.captions');
  box.style.display=cue?'block':'none';
