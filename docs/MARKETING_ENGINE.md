@@ -202,6 +202,20 @@ uploads the video private with `publishAt`, and YouTube opens it itself at that
 time. A button pressed less than 15 minutes before the time (`SCHEDULE_MARGIN`)
 publishes at once and the report says so. Nothing is uploaded without the button.
 
+### The film «Із хаосу — у наступний крок»
+
+`films/wardly-next-step` is a 25-second Remotion film (its own README): a Dota opening
+(Juggernaut, his inventory, «ЩО КУПИТИ?», the death-screen card naming Black King Bar), the
+post-match review and the end card. `beta_campaign=film`, `send=false` renders it in the workflow
+from its committed sources (the soundtrack from the committed ElevenLabs takes, the film's gates,
+the motion-blurred master with its sync/spec checks, the layout audit) and packs it with
+`scripts/promo/film.py`: the MP4, a cover, the narration recognised independently by
+faster-whisper. After reviewing that artifact, `beta_campaign=film-shorts`,
+`beta_run_id=<that run>`, `send=true` sends the exact MP4 to the private chat with the YouTube-only
+button (`beta.deliver` for the one Ukrainian film). Its YouTube time is `film.PUBLISH_AT`
+(24.10.2026 17:00 Kyiv); the title, description and tags are `film.metadata`. As with the carry
+pairs, the press uploads it private with that time and YouTube opens it itself.
+
 ### Reach audit and acquisition materials
 
 `beta_campaign=audit`, `send=false` runs `youtube_audit.mjs` with the existing

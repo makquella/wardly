@@ -462,8 +462,17 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
         print(f"{language}: {'storyboard' if draft else 'video'} {total:.2f}s; layout passed")
 
 
-def deliver(out: Path, *, shorts: bool = False) -> None:
-    """Send privately; the explicit Shorts mode adds the existing YouTube-only callback."""
+def deliver(
+    out: Path,
+    *,
+    shorts: bool = False,
+    languages: tuple[str, ...] = LANGUAGES,
+    kind: str = KIND,
+) -> None:
+    """Send privately; the explicit Shorts mode adds the existing YouTube-only callback.
+
+    `languages` and `kind`: the films of another reviewed artifact (film.py: one Ukrainian film).
+    """
     bot, chat = send._env("TELEGRAM_BOT_TOKEN"), send._env("TELEGRAM_CHAT_ID")
     endpoint = f"{experiments.TELEGRAM_API}/bot{bot}"
     private = send._request(
@@ -479,11 +488,11 @@ def deliver(out: Path, *, shorts: bool = False) -> None:
     # Validate the entire pair before the first network upload.
     packages = {}
     receipt_name = "shorts-approval-receipt.json" if shorts else "telegram-receipt.json"
-    for language in LANGUAGES:
+    for language in languages:
         folder = out / language
         package = json.loads((folder / "package.json").read_text(encoding="utf-8"))
         if (
-            package.get("kind") != KIND
+            package.get("kind") != kind
             or package.get("draft")
             or package.get("language") != language
         ):
@@ -672,12 +681,12 @@ def transcript_similarity(expected: str, actual: str) -> float:
     return SequenceMatcher(None, normalize(expected), normalize(actual), autojunk=False).ratio()
 
 
-def speech_check(out: Path) -> None:
+def speech_check(out: Path, languages: tuple[str, ...] = LANGUAGES) -> None:
     """Independently recognize the rendered speech, including the English delivery."""
     from faster_whisper import WhisperModel
 
     model = WhisperModel("small", device="cpu", compute_type="int8", cpu_threads=2)
-    for language in LANGUAGES:
+    for language in languages:
         folder = out / language
         segments, info = model.transcribe(str(folder / "video.mp4"), beam_size=5, vad_filter=True)
         transcript = " ".join(segment.text.strip() for segment in segments)

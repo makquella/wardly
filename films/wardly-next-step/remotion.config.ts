@@ -19,7 +19,9 @@ const sandboxBrowser = (): string | null => {
   return found ?? null;
 };
 
-const browser = process.env.REMOTION_BROWSER || process.env.CHROMIUM_PATH || PINNED_BROWSER || sandboxBrowser();
+// The pinned path only where it exists (a CI runner has none: Remotion downloads its own shell there).
+const pinned = PINNED_BROWSER && existsSync(PINNED_BROWSER) ? PINNED_BROWSER : null;
+const browser = process.env.REMOTION_BROWSER || process.env.CHROMIUM_PATH || pinned || sandboxBrowser();
 if (browser) Config.setBrowserExecutable(browser);
 
 // ANGLE gives the GPU code paths (WebGL, effects) a working GL backend in headless Linux.
