@@ -483,7 +483,9 @@ def main() -> None:
     l1 = meter.integrated_loudness(mix)
     mix *= 10 ** ((a.lufs - l1) / 20)
     mix, gr2 = limiter(mix, -1.6)
-    # the tail decays to digital zero
+    # the head enters from zero over 3 ms (no click on frame 0), the tail decays to digital zero
+    head = int(0.003 * SR)
+    mix[:head] *= np.linspace(0, 1, head)[:, None]
     tail = int(0.4 * SR)
     mix[-tail:] *= np.linspace(1, 0, tail)[:, None] ** 2
     mix[-480:] = 0

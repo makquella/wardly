@@ -35,7 +35,7 @@ export default function cues(): SoundEvent[] {
   // the morph: three letters roll (one soft tick each), the card lands with its dot
   [0, 1, 2].forEach((j) => ev.push({ f: CUE.roll + j * 4 + 8, kind: 'roll', weight: 0.55, pan: 0.05 * j, id: `roll${j}` }));
   ev.push({ f: CUE.shrink + 24, kind: 'whoosh', weight: 0.3, dur: 44, apexFrac: 0.55, id: 'word-into-card' });
-  ev.push({ f: CUE.dotLand, kind: 'land', variant: 'light', weight: 0.9, pan: -0.3, id: 'card-dot' });
+  ev.push({ f: CUE.dotLand, kind: 'land', variant: 'light', weight: 0.55, pan: -0.3, id: 'card-dot' });
   // the live card leaves, the review arrives
   ev.push({ f: CUE.away + 18, kind: 'whoosh', weight: 0.6, dur: 40, apexFrac: 0.45, id: 'card-away' });
   ev.push({ f: CUE.index, kind: 'pop', weight: 0.7, pan: -0.3, id: 'index' });

@@ -196,8 +196,10 @@ const Logo: React.FC<{ frame: number }> = ({ frame: f }) => {
   const eye = prog(f, CUE.logo + 14, CUE.logo + 44, E.out);
   const k = creep(f);
   const c = creepPt(f, { x: LOGO.cx, y: LOGO.cy });
-  const s = LOGO.size * k;
-  const box: React.CSSProperties = { position: 'absolute', left: c.x - s / 2, top: c.y - s / 2, width: s, height: s };
+  const s = LOGO.size;
+  // a fixed-size image moved and scaled by one transform: resizing the element itself would
+  // re-pick the image's resampling every few frames (a one-frame shimmer on the ring)
+  const box: React.CSSProperties = { position: 'absolute', left: 0, top: 0, width: s, height: s, transformOrigin: '50% 50%', translate: `${c.x - s / 2}px ${c.y - s / 2}px`, scale: `${k}` };
   const ring = `conic-gradient(from ${DOT_ANGLE}deg, #000 ${sweep}deg, transparent ${sweep}deg), radial-gradient(circle closest-side, transparent 60%, #000 60.5%)`;
   return (
     <>
@@ -206,7 +208,7 @@ const Logo: React.FC<{ frame: number }> = ({ frame: f }) => {
       {/* the eye opens in the centre */}
       <Img
         src={staticFile('img/logo.png')}
-        style={{ ...box, WebkitMaskImage: 'radial-gradient(circle closest-side, #000 60%, transparent 60.5%)', opacity: eye, transform: `scale(${mix(0.7, 1, eye)})` }}
+        style={{ ...box, WebkitMaskImage: 'radial-gradient(circle closest-side, #000 60%, transparent 60.5%)', opacity: eye, scale: `${k * mix(0.7, 1, eye)}` }}
       />
     </>
   );
