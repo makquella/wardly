@@ -274,8 +274,8 @@ jobs:
           npx tsx audio/export-cues.ts
           python audio/build_soundtrack.py --cues out/cues.json --out public/audio/soundtrack.wav --stems out/stems --json out/qa/score.json
           npm run check
-          bash scripts/render.sh Film out/film.mp4 --blur --accept-cut 15-17 --accept-cut 58-60
           bash scripts/layout-audit.sh Film --copy --safe feed9x16
+          bash scripts/render.sh Film out/film.mp4 --blur --accept-cut 15-17 --accept-cut 58-60
       - name: Package the film for review
         # scripts/promo/film.py: the MP4, a cover, its checks; the narration recognised
         # independently (faster-whisper with the PyAV it was built against).

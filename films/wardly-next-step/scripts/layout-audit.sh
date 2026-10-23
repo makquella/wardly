@@ -230,7 +230,13 @@ const report = {
 };
 fs.writeFileSync(jsonPath, JSON.stringify(report, null, 1) + '\n');
 for (const x of issues) console.log(`  f${x.frame}  ${x.kind}  ${x.id}  ${x.detail}`);
-if (!byFrame.size) console.log(`  no CINETIC_AUDIT output: does ${comp} accept the audit prop and render <Audit/> inside <FontGate>?`);
+if (!byFrame.size) {
+  console.log(`  no CINETIC_AUDIT output: does ${comp} accept the audit prop and render <Audit/> inside <FontGate>?`);
+  // what the render did say instead (a browser that logs elsewhere, a page error), for a remote run
+  const lines = fs.readFileSync(log, 'utf8').split('\n').filter(Boolean);
+  console.log(`  render log (${lines.length} lines), last 40:`);
+  for (const l of lines.slice(-40)) console.log(`    ${l.slice(0, 300)}`);
+}
 else if (missing.length) console.log(`  no audit line for frames ${missing.join(',')}`);
 const n = audited.reduce((s, d) => s + d.boxes.length, 0);
 const z = report.safe ? ` in ${report.zone} (top ${report.safe.top}, right ${report.safe.right}, bottom ${report.safe.bottom}, left ${report.safe.left})` : '';
