@@ -261,6 +261,15 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install numpy scipy soundfile pyloudnorm opencv-python-headless
+          # Playwright's Chromium headless shell (the Install step), the browser the film was made
+          # with: the layout audit reads the page's console, which Remotion's own download keeps.
+          REMOTION_BROWSER="$(find "$HOME/.cache/ms-playwright" -path '*chromium_headless_shell-*' -type f \( -name headless_shell -o -name chrome-headless-shell \) | head -n 1)"
+          if [ -z "$REMOTION_BROWSER" ]; then
+            echo "::error::Playwright's Chromium headless shell is missing"
+            exit 1
+          fi
+          export REMOTION_BROWSER
+          echo "browser: $REMOTION_BROWSER"
           npm ci --no-audit --no-fund
           npx tsx audio/export-cues.ts
           python audio/build_soundtrack.py --cues out/cues.json --out public/audio/soundtrack.wav --stems out/stems --json out/qa/score.json
