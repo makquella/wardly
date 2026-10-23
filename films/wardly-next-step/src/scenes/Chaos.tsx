@@ -165,6 +165,7 @@ export const Question: React.FC<{ i: number; frame: number; pose?: QOverride; hi
     lineHeight: TYPE.question.lead,
     whiteSpace: 'pre',
     color: C.text,
+    fontKerning: 'none', // the roll draws changed letters as separate boxes; no kerning anywhere keeps the hand-off seamless
   };
   // Q1: «Що» slides out to the left as the hook goes
   const leadOut = i === 0 ? prog(f, CUE.hook - 4, CUE.hook + 18, E.exit) : 0;

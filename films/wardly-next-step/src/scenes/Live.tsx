@@ -33,7 +33,7 @@ const SHRINK_END = CUE.dotLand - 6;
 /** The word in flight: hero size and weight → the card's 16 px / 600, anchored on its baseline. */
 export const MorphWord: React.FC<{ frame: number }> = ({ frame: f }) => {
   if (f < CUE.shrink || f >= SHRINK_END) return null;
-  const t = prog(f, CUE.shrink, SHRINK_END, E.inOut);
+  const t = prog(f, CUE.shrink, SHRINK_END, E.smooth); // a soft in-out: the right edge peaks near 20 px/f, so the blur stays clean
   const a = heroWord(CUE.shrink);
   const b = cardWord(f);
   const size = Math.exp(mix(Math.log(a.size), Math.log(b.size), t));
@@ -57,7 +57,8 @@ export const MorphWord: React.FC<{ frame: number }> = ({ frame: f }) => {
         letterSpacing: `${track}em`,
         lineHeight: 1,
         whiteSpace: 'pre',
-        color: mixColor(C.text, C.text, t),
+        fontKerning: 'none', // matches the hero line it takes over from
+        color: C.text,
       }}
     >
       {WORD}
@@ -74,11 +75,11 @@ export const LiveDot: React.FC<{ frame: number }> = ({ frame: f }) => {
   const a = qDotScreen(0, h1);
   // first it slides in to become the full stop of «Купіть.» (the question is now a statement) ...
   const hero = qScreen(0, CUE.shrink);
-  const stop = { x: hero.x + (measureTracked(WORD, qFont.size, qFont.weight, qFont.track, qFont.family) + qFont.size * 0.02) * hero.s + a.r, y: a.y, r: a.r };
+  const stop = { x: hero.x + (measureTracked(WORD, qFont.size, qFont.weight, qFont.track, qFont.family) + qFont.size * 0.08) * hero.s + a.r, y: a.y, r: a.r };
   const bp = cardToScreen(LC, centre(), pose.k, pose.dy, L.dot);
   const t1 = prog(f, h1 + 4, CUE.roll + 22, E.inOut);
   // ... then, as the word shrinks into the card, it drops into the card's status dot
-  const t = prog(f, CUE.shrink + 4, CUE.dotLand, E.inOut);
+  const t = prog(f, CUE.shrink + 4, CUE.dotLand, E.smooth);
   const from = { x: mix(a.x, stop.x, t1), y: a.y };
   const p = arc(from, bp, t, 0.22);
   const r = Math.exp(mix(Math.log(a.r), Math.log(L.dot.r * LC.S * pose.k), t));
