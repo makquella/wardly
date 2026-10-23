@@ -1,15 +1,17 @@
 # Treatment — «Із хаосу — у наступний крок»
 
-**Logline:** three questions every Dota player asks collapse into one card, one drill, one next step.
+**Logline:** familiar Dota, one item choice, one clear answer from Wardly — then one drill, one next step.
 
-**Device:** the question mark. Its dot is the object that travels through the whole film:
-«?» of «Що купити?» → the status dot of the real «Порада» card; «?» of «Чому відстаю?» → the
-numbered index of the review finding; «?» of «Що змінити?» → the drill row; that last dot turns red
+**Device:** one object followed through every hand-off. Juggernaut's blade → the cut that opens onto
+his inventory; the Black King Bar icon → the item icon of the real death-screen card, which opens
+around it. In the review, the «?» of «Чому відстаю?» → the numbered index of the finding; «?» of
+«Що змінити?» → the drill row; that last dot turns red
 (the film's accent: *next step*), becomes the full stop of «крок.» and finally the red dot on the
 Wardly logo's orbit. A question loses its hook and becomes a statement.
 
 **Specificity test:** a generic "tips app" film would answer with a generic tip. Wardly's answers are
-its own: an item card with the gold amount and the fountain pick-up, and a review that compares your
+its own: an item named for *this* match (two deaths held by stuns → Black King Bar, with the reason),
+and a review that compares your
 last hits with the other carry *of this match* and gives one drill. Both are real strings from the code.
 
 **Feature-word test:** muted, a stranger sees "a card over the game" and "a match review" because the
@@ -31,27 +33,30 @@ descriptions (Art of the Title) and widely known stills, not from scrubbing the 
 
 | Bar | Time | Picture | Copy | Sound |
 |---|---|---|---|---|
-| 1–2 | 0.0–4.0 | Real app fragments in depth; «Що купити?», «Чому відстаю?», «Що змінити?» slam in on the spoken words and shove each other back; from 3.25 s they interrupt on 8ths/16ths, density doubles, camera creeps in | the three questions (VO says them) | tense pulse + ticks, a slam per question, stutter + riser |
-| 3 | 4.0–4.6 | **Break.** Hard stop; noise falls into depth; «Чому відстаю?» and «Що змінити?» retreat to the top and bottom edges and wait; «Що купити?» alone in the centre | — | silence (the pause before the interface), a low suck |
-| 3–4 | 4.6–6.2 | «Що» leaves, the «?» hook retracts to its dot; «купити» → «Купіть» (three letters roll); the word shrinks into the first word of the real «Порада» card while the card grows around it; the dot lands as the card's status dot | card text (UI) | three soft ticks, card lands |
-| 4–5 | 6.1–10.0 | Card readable, slow push | VO «Під час гри — одна коротка порада.» | pad enters, quiet |
+| 1 | 0.0–0.8 | Juggernaut (Valve's render), big, lit from the upper right; he turns in from the lower right and stops dead on the hit (0.25 s); a band of light crosses the mask, a glint runs up the blade | — | a swoosh into one short hit; the music enters on it |
+| 1 | 0.8–2.0 | The camera runs along the blade toward its tip; the blade widens into a slit and the cut opens onto the inventory (3×2 slots, TP, backpack); the real icons fly in along the same direction and click into their slots a 16th apart | — | a sweep left → right, six clicks |
+| 2 | 2.0–3.75 | The inventory steps back; «ЩО КУПИТИ?» on the spoken «Що»; Butterfly and Black King Bar rise out of the empty slot; the focus (scale, light) goes to Butterfly, then to Black King Bar; a beat to take it in | «ЩО КУПИТИ?» (VO says it) | a tick on each focus change |
+| 2–3 | 3.75–4.25 | The pick: everything but Black King Bar leaves; it waits alone, one breath | — | the music stops dead; a soft stop |
+| 3–4 | 4.25–6.1 | The camera pulls back from the icon: the real death-screen card opens around it, the icon now its item row; the title, then «Купіть Black King Bar зараз…» | card text (UI) | a pop, a soft text tick |
+| 4–5 | 6.1–10.0 | Card readable, slow push; the reason arrives at 7.25 s («Чому Black King Bar: …») | VO «Під час гри — одна коротка порада.» | pad enters, quiet |
 | 6 | 10.0–11.0 | Card recedes; «Чому відстаю?» comes forward from the top edge | — | whoosh |
 | 6–8 | 10.5–15.0 | Real «Головне на наступну гру» card builds: index «1» (from the «?» dot), title, «Лінія», «36 добивань до 10:00 проти 65…»; camera pushes onto the numbers | VO «Після гри — чесний розбір матчу.» / «Де саме ви відстали…» | soft UI pops |
 | 8–9 | 15.0–18.0 | «Що змінити?» rises from the bottom edge; its dot drops into the drill row, the «Вправа» box opens; a red marker (accent) marks it as the next step | VO «…і що змінити наступного разу.» | tick, light kick + hats build |
 | 10 | 18.0–21.0 | Everything clears to the one dot; it turns red; «Менше хаосу.» / «Чіткіший наступний крок.» — the red dot is the full stop | slogan (two fragments) | music peak on «крок» |
 | 11–13 | 21.0–25.0 | The dot flies to the logo's orbit as the mark assembles; «Wardly»; «Безкоштовно для Windows» · «luhovyimvp.dev»; slow creep | VO «Wardly. Безкоштовно для Windows.» | music stops on the bar line, one clean hit, tail |
 
-Copy (film words, excluding UI strings): Що купити? Чому відстаю? Що змінити? Менше хаосу. Чіткіший
+Copy (film words, excluding UI strings): ЩО КУПИТИ? Чому відстаю? Що змінити? Менше хаосу. Чіткіший
 наступний крок. Wardly. Безкоштовно для Windows. luhovyimvp.dev — 16 words.
 
 ## Three key frames
 
-1. **Start (≈ 3.6 s):** maximum density — the three questions overlapping at three depths, one sharp,
-   real numbers drifting behind.
-2. **Transformation (≈ 5.6 s):** «Купіть» half-way between the big hero word and its slot in the
-   card; the card shell growing around it; the dot dropping into the status position; the other two
-   questions waiting at the edges.
-3. **Final (≈ 24.5 s):** the logo with its red dot, «Wardly», the slogan and the URL.
+1. **Start (≈ 0.33 s):** Juggernaut just stopped on the hit: the mask and the blade in the key light,
+   the frame full of the hero. Dota in the first second.
+2. **Choice (≈ 3.3 s):** «ЩО КУПИТИ?» over two real icons, Black King Bar in focus, Butterfly stepped
+   back, the inventory with its one empty slot below.
+3. **Transformation (≈ 4.45 s):** the camera pulling back from the Black King Bar icon: the real
+   death-screen card opening around it, the icon already its item row.
+4. **Final (≈ 24.8 s):** the logo with its red dot, «Wardly», the slogan and the URL.
 
 ## Higgsfield
 

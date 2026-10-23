@@ -4,8 +4,9 @@ import { C } from './brand/tokens';
 import { Audit } from './lib/Audit';
 import { FontGate } from './lib/FontGate';
 import type { SafeSpec } from './lib/safe';
-import { Noise, Question } from './scenes/Chaos';
-import { LiveCard, LiveDot, MorphWord } from './scenes/Live';
+import { DotaIntro } from './scenes/Dota';
+import { LiveCard } from './scenes/Live';
+import { Question } from './scenes/Questions';
 import { ReviewScene } from './scenes/Review';
 import { Finale } from './scenes/Finale';
 import { CUE } from './timeline';
@@ -19,13 +20,10 @@ export type FilmProps = { audit?: boolean; safe?: SafeSpec; offset?: number };
 export const Picture: React.FC<{ frame: number }> = ({ frame: f }) => (
   <AbsoluteFill style={{ background: C.ink }}>
     <Img src={staticFile('img/stage.png')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-    <Noise frame={f} />
+    <DotaIntro frame={f} />
     {f < CUE.drill + 40 && <Question i={1} frame={f} pose={qOverride(1, f)} />}
     {f < CUE.clear && <Question i={2} frame={f} pose={qOverride(2, f)} />}
     <LiveCard frame={f} />
-    {f < CUE.dotLand + 10 && <Question i={0} frame={f} hideKey={f >= CUE.shrink} rollFrame={f} />}
-    <MorphWord frame={f} />
-    <LiveDot frame={f} />
     <ReviewScene frame={f} />
     <Finale frame={f} />
   </AbsoluteFill>

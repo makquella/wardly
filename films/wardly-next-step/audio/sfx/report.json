@@ -90,5 +90,20 @@
   "prompt": "Light minimal electronic groove at exactly 120 BPM in D minor: soft kick on every beat, crisp closed hi-hats on the off-beats, soft claps on two and four, warm synth pad and plucked arpeggio, hopeful and rising, instrumental, clean modern tech product, no vocals",
   "seconds": 12,
   "bytes": 193141
+ },
+ "click.mp3": {
+  "prompt": "One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "click-2.mp3": {
+  "prompt": "One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "click-3.mp3": {
+  "prompt": "One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short",
+  "seconds": 0.5,
+  "bytes": 8820
  }
 }

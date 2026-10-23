@@ -16,26 +16,33 @@ export type SoundEvent = {
   pitch?: number | string;
   apexFrac?: number;
   dur?: number;
+  panTo?: number; // the pan travels from `pan` to here over the sound (a directional sweep)
   variant?: string;
   id?: string;
 };
 
-const SLAM = 6; // frames from the spoken word to the contact (scenes/layout.ts)
-const STORM = [0, 15, 23, 30, 34, 38, 41, 43, 44, 45]; // scenes/layout.ts STORM
+const ITEMS = 6; // scenes/Dota.tsx: five items and the TP scroll, a 16th apart
+const ITEM_STEP = 7.5; // scenes/Dota.tsx ITEM_STEP
+const SLOT_PAN = [-0.35, 0, 0.35, -0.35, 0, 0.5]; // the slot's column, left to right
 
 export default function cues(): SoundEvent[] {
   const ev: SoundEvent[] = [];
-  // the questions slam in on their contact frames
-  [CUE.q1, CUE.q2, CUE.q3].forEach((q, i) => ev.push({ f: q + SLAM, kind: 'slam', weight: 1 + 0.1 * i, pan: [-0.1, 0.12, -0.05][i], id: `q${i + 1}-slam` }));
-  // the storm: a tick on every interruption, rising
-  STORM.forEach((d, j) => ev.push({ f: CUE.storm + d, kind: 'tick', weight: 0.5 + 0.05 * j, pan: [-0.2, 0.2, 0][j % 3], id: `storm${j}` }));
-  ev.push({ f: CUE.brk, kind: 'riser', dur: CUE.brk - CUE.storm, id: 'storm-riser' });
-  // the break: a hard stop (the riser cuts), a low suck into the quiet
-  ev.push({ f: CUE.brk, kind: 'suck', weight: 0.8, dur: 40, id: 'break' });
-  // the morph: three letters roll (one soft tick each), the card lands with its dot
-  [0, 1, 2].forEach((j) => ev.push({ f: CUE.roll + j * 4 + 8, kind: 'roll', weight: 0.55, pan: 0.05 * j, id: `roll${j}` }));
-  ev.push({ f: CUE.shrink + 24, kind: 'whoosh', weight: 0.3, dur: 44, apexFrac: 0.55, id: 'word-into-card' });
-  ev.push({ f: CUE.dotLand, kind: 'land', variant: 'light', weight: 0.55, pan: -0.3, id: 'card-dot' });
+  // Juggernaut stops dead: one short hit (the music's first beat lands with it)
+  // the swoosh of his move from the right, into the stop
+  ev.push({ f: CUE.hit - 5, kind: 'whoosh', weight: 0.55, dur: 18, apexFrac: 0.55, pan: 0.5, panTo: 0, id: 'hero-move' });
+  ev.push({ f: CUE.hit, kind: 'slam', weight: 1.2, pan: 0.1, id: 'hero-hit' });
+  // the camera runs up the blade and its shape opens: one sweep, travelling left to right with it
+  ev.push({ f: CUE.wipe, kind: 'whoosh', weight: 0.9, dur: 40, apexFrac: 0.6, pan: -0.6, panTo: 0.6, id: 'blade-sweep' });
+  // each item clicks into its slot
+  for (let i = 0; i < ITEMS; i++) ev.push({ f: CUE.item0 + i * ITEM_STEP, kind: 'click', weight: i === ITEMS - 1 ? 0.6 : 0.8, pan: SLOT_PAN[i], id: `item${i}` });
+  // the focus moves between the two candidates
+  ev.push({ f: CUE.optA, kind: 'tick', weight: 0.55, pan: 0.25, id: 'focus-damage' });
+  ev.push({ f: CUE.optB, kind: 'tick', weight: 0.65, pan: -0.3, id: 'focus-bkb' });
+  // the pick is silent; then the pause (the music stops dead), and the card opens
+  ev.push({ f: CUE.brk, kind: 'suck', weight: 0.5, dur: 40, id: 'break' }); // a soft stop: the pause is quiet
+  ev.push({ f: CUE.reveal + 2, kind: 'pop', weight: 0.8, pan: -0.35, id: 'card-open' });
+  ev.push({ f: CUE.reveal + 26, kind: 'text', weight: 0.5, id: 'card-text' });
+  ev.push({ f: CUE.why + 4, kind: 'text', weight: 0.4, id: 'card-why' });
   // the live card leaves, the review arrives
   ev.push({ f: CUE.away + 18, kind: 'whoosh', weight: 0.6, dur: 40, apexFrac: 0.45, id: 'card-away' });
   ev.push({ f: CUE.index, kind: 'pop', weight: 0.7, pan: -0.3, id: 'index' });

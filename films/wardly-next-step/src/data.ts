@@ -2,11 +2,33 @@
 // checks that keep the film honest. Nothing here is invented: if the app's wording changes, update
 // it here and in BRIEF.md, never "improve" it.
 
-/** The live overlay card: advice_i18n.py (spend parts) with gold = 1800, as in site/assets/overlay/uk/spend.webp. */
+/**
+ * The live overlay card: the death screen (backend/app/death_screen.py, uk), the card the overlay
+ * shows while the player waits to respawn (overlay/app.js showDeathScreen: class "plan
+ * death-screen", the title as its label, the first line as the action, the item to buy as its icon
+ * under it, the other lines as the reason). Black King Bar comes from situational_items.py: two
+ * deaths held by stuns with no free second ("disabled"), the gold for it in hand.
+ */
 export const LIVE = {
-  label: 'Порада', // overlay/app.js uk.tip, the medium-priority card
-  action: 'Купіть частини наступного предмета на 1800 золота зараз — заберете їх біля фонтана.',
-  reason: 'Невитрачене золото частково втрачається при наступній смерті.',
+  label: 'Відродження через 23 с', // TEXT.uk.title, s = 23
+  action: "Купіть Black King Bar зараз: золота вистачає, кур'єр принесе.", // TEXT.uk.buy_item
+  item: { key: 'black_king_bar', name: 'Black King Bar' }, // card["items"]: the icon of the item the buy line names
+  reason: 'Чому Black King Bar: смертей під контролем — 2, з ним контроль вас не втримає.', // TEXT.uk.why_disabled, n = 2
+};
+
+/**
+ * The opening's Dota material: a carry Juggernaut's inventory around minute 20, from his own plan
+ * (data/heroes/item_plans/juggernaut.json: Power Treads, Battle Fury, Manta Style; Magic Wand and
+ * Wraith Band from the start of the build_basis), the slot left empty for the choice, and the two
+ * candidates: the plan's next damage item (Butterfly) and the item the card names (Black King Bar).
+ * Icons: Valve's CDN (tools/fetch_dota.py), the same pictures the app shows.
+ */
+export const DOTA = {
+  hero: 'juggernaut',
+  slots: ['power_treads', 'bfury', 'manta', 'magic_wand', 'wraith_band', null] as (string | null)[],
+  tp: 'tpscroll',
+  damage: 'butterfly',
+  answer: 'black_king_bar',
 };
 
 /** The post-match focus card: renderer/matches.js focusCard + findingItem, texts from analysis_texts.py. */
@@ -24,28 +46,6 @@ export const REVIEW = {
   drill: 'На лінії стежте за HP кріпів і бийте, коли вистачить одного удару; тримайте суперника під тиском, коли він добиває.',
 };
 
-/** Strings that are visible in the app's own screenshots: the noise of the opening. */
-export const NOISE = [
-  '390 / 430',
-  '−210',
-  'через 15 с',
-  'Торментор',
-  '3 / 9 / 6',
-  'добивань до 10 −20',
-  'золото/хв −179',
-  '11 500',
-  '38:00',
-  'смертей: 9',
-  '4:00',
-  '−29',
-  'Рошан',
-  '1800',
-  'смертей +6',
-  'Maelstrom до 26:00',
-  '9 000',
-  '160 / 3',
-];
-
 /** The end card: the site's address (README, site root is Ukrainian) and the README's "Free … for Windows". */
 export const CTA = { url: 'luhovyimvp.dev', free: 'Безкоштовно для Windows' };
 
@@ -53,7 +53,8 @@ export const CTA = { url: 'luhovyimvp.dev', free: 'Безкоштовно для
 const assert = (ok: boolean, msg: string) => {
   if (!ok) throw new Error(`data.ts: ${msg}`);
 };
-assert(LIVE.action.startsWith('Купіть '), 'the live card must start with «Купіть» (the morph lands on it)');
+assert(LIVE.action.startsWith(`Купіть ${LIVE.item.name} `) && LIVE.reason.startsWith(`Чому ${LIVE.item.name}:`), 'the card must name the item it shows');
+assert(DOTA.answer === LIVE.item.key, 'the chosen icon is the one the card shows');
 assert(REVIEW.text.startsWith(`${REVIEW.lh10} добивань`) && REVIEW.text.includes(`проти ${REVIEW.peer} `), 'review numbers and text disagree');
 assert(REVIEW.lh10 < REVIEW.peer, 'the finding is «behind», so lh10 < peer');
 // Ukrainian plural for 36: «добивань» (5-20 and x5-x9, x0 take the genitive plural).

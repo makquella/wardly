@@ -25,6 +25,15 @@ export const C = {
   // Product UI states, reproduced exactly (BRIEF.md, brand-supplied exceptions):
   warn: '#E5B454', // cinetic:brand-supplied the overlay's amber «Порада» dot (--warn)
   cream: '#EFE5D4', // cinetic:brand-supplied the logo eye's cream (--cream)
+  error: '#EB6F6F', // cinetic:brand-supplied the overlay's red stripe of the death-screen card (--error)
+  // Dota 2's inventory as the game draws it (slot well, bevel), and the hero's light: real material
+  // around Valve's own art, never a film colour of its own.
+  slot: '#07080A', // the slot's dark well
+  slotEdge: 'rgba(255, 255, 255, 0.14)', // its top bevel
+  slotShade: 'rgba(0, 0, 0, 0.75)', // its inner shadow
+  hud: '#121317', // the inventory panel
+  key: 'rgba(255, 255, 255, 0.20)', // the key light's spill on the stage
+  rim: 'rgba(255, 255, 255, 0.9)', // the rim and glint on the mask and the blade
   white: '#FFFFFF',
   mute: '#70737C', // = text3, the name the starter's helpers (Audit, Scramble) use
 };

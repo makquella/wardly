@@ -7,8 +7,8 @@ import { REVIEW } from '../data';
 import { E, mix, prog } from '../lib/anim';
 import { arc, mixColor, track } from '../lib/track';
 import { CUE } from '../timeline';
-import { HOOK, qDotScreen, type QOverride } from './Chaos';
-import { cardToScreen, Q_HOME, qScreen, RC, rcCam, rcLayout } from './layout';
+import { HOOK, qDotScreen, type QOverride } from './Questions';
+import { cardToScreen, Q_HOME, RC, rcCam, rcLayout } from './layout';
 
 const LUCIDE = {
   target: (
@@ -72,7 +72,7 @@ const IndexDot: React.FC<{ frame: number }> = ({ frame: f }) => {
   const h1 = HOOK[1][1];
   if (f < h1 || f >= CUE.index + 2) return null;
   const L = rcLayout();
-  const a = qDotScreen(1, h1, qOverride(1, h1));
+  const a = qDotScreen(1, qOverride(1, h1)!);
   const cam = rcCam(f);
   const b = reviewToScreen(f, L.index);
   const t = prog(f, h1 + 2, CUE.index, E.inOut);
@@ -171,5 +171,3 @@ export const ReviewScene: React.FC<{ frame: number }> = ({ frame }) => (
     <IndexDot frame={frame} />
   </>
 );
-
-export { qScreen };

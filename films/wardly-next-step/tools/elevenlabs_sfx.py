@@ -23,6 +23,7 @@ EFFECTS = {
     "index": ("A single soft bubble pop, short rounded user interface notification blip, clear and audible, dry", 0.5, 2),
     "text": ("Very soft short paper swipe, text appearing on a screen, subtle user interface sound", 0.5, 1),
     "whoosh": ("Clean airy whoosh, soft and smooth, a card sliding past, modern user interface motion, no impact", 0.8, 2),
+    "click": ("One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short", 0.5, 3),
     "bell": ("Single small bright bell chime, one clear pure tone with a gentle short decay, no reverb wash", 1.5, 1),
     "hit": ("A single clean bell-like logo hit: one low sub thump and a bright ringing chime struck once, decaying smoothly, one strike only, dry and clean", 3.0, 3, 0.7),
 }

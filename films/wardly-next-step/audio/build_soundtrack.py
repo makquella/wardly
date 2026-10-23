@@ -9,7 +9,7 @@ levelled to the designed sound it replaced, so the balance of the mix stays as t
         --stems out/stems --json out/qa/score.json
 
 Music at the film's 120 BPM, three ElevenLabs parts laid on the bars with their beats on the grid:
-the tension pulse under the questions stops dead on the break, the calm pad swells in after the
+the tension pulse enters on Juggernaut's hit, builds under the choice and stops dead on the break, the calm pad swells in after the
 pause, the light groove enters on bar 8, and the music stops on the wordmark: one clean hit and
 its tail. `--music code` builds the earlier numpy score (D minor, resolving to D major) instead.
 """
@@ -101,6 +101,7 @@ def rms_db(x: np.ndarray) -> float:
 KIT = {
     "slam": (["slam", "slam-2", "slam-3"], -11.7, "attack"),
     "tick": (["tick-2", "tick"], -24.9, "attack"),
+    "click": (["click", "click-2", "click-3"], -21.0, "attack"),  # an item snapping into its slot: a touch over the ticks
     "riser": (["riser"], -13.0, "end"),
     "suck": (["stop"], -13.8, "attack"),
     "roll": (["letter"], -27.5, "attack"),
@@ -312,7 +313,7 @@ def music_eleven(total: float, beat: float, cues: dict) -> tuple[dict[str, np.nd
     brk, pad_in, groove_in, stop = cues["brk"], cues["pad_in"], cues["groove"], cues["stop"]
     info: dict = {}
     parts: dict[str, np.ndarray] = {}
-    for name, start, end, lufs in (("tension", 0.0, brk, -18.1), ("calm", brk, groove_in, -24.5), ("groove", groove_in, stop, -22.6)):
+    for name, start, end, lufs in (("tension", cues["music_in"], brk, -18.1), ("calm", brk, groove_in, -24.5), ("groove", groove_in, stop, -22.6)):
         x = decode(MUSIC / f"{name}.mp3")
         ph = beat_phase(x, beat)
         need = int((end - start) * SR)
@@ -334,10 +335,9 @@ def music_eleven(total: float, beat: float, cues: dict) -> tuple[dict[str, np.nd
         parts[name] = bus
         info[name] = {"beat_phase_s": round(ph, 3), "from_s": start, "to_s": end}
     t = np.arange(n) / SR
-    # the questions build: the pulse rises from -6 dB to full into the break, which cuts it dead
-    parts["tension"] *= np.interp(t, [0, brk], [0.5, 1.0])
-    head = int(0.025 * SR)  # the film starts from silence, then the pulse (its first beat sits on frame 0)
-    parts["tension"][:head] *= np.linspace(0, 1, head) ** 2
+    # the choice builds: the pulse enters on the hit (its first beat on the hit's frame), rises from
+    # -6 dB to full into the break, which cuts it dead
+    parts["tension"] *= np.interp(t, [cues["music_in"], brk], [0.5, 1.0])
     cut = int(brk * SR)
     parts["tension"][cut - int(0.004 * SR) : cut] *= np.linspace(1, 0, int(0.004 * SR))
     parts["tension"][cut:] = 0
@@ -375,6 +375,20 @@ def place(bus: np.ndarray, x: np.ndarray, at: float, pan: float = 0.0) -> None:
     gr = np.sin((pan + 1) * np.pi / 4)
     bus[s:e, 0] += x[: e - s] * gl * np.sqrt(2)
     bus[s:e, 1] += x[: e - s] * gr * np.sqrt(2)
+
+
+def place_sweep(bus: np.ndarray, x: np.ndarray, at: float, p0: float, p1: float) -> None:
+    """place() with the pan travelling from p0 to p1 over the sound: a directional sweep."""
+    s = int(round(at * SR))
+    if s < 0:
+        x = x[-s:]
+        s = 0
+    e = min(bus.shape[0], s + len(x))
+    if e <= s:
+        return
+    pan = np.linspace(p0, p1, e - s)
+    bus[s:e, 0] += x[: e - s] * np.cos((pan + 1) * np.pi / 4) * np.sqrt(2)
+    bus[s:e, 1] += x[: e - s] * np.sin((pan + 1) * np.pi / 4) * np.sqrt(2)
 
 
 def load_vo(path: Path) -> tuple[np.ndarray, float]:
@@ -481,14 +495,17 @@ def main() -> None:
             continue
         k = used.get(kind, 0)
         used[kind] = k + 1
-        if kind == "suck":
-            w = 1.0  # the break is levelled as one sound, its weight only times the picture
         x, anchor = sfx(kind, k, w, e["dur"] / fps if kind == "riser" else None)
-        place(fx_bus, x, fr(e["f"]) - anchor, pan)
+        if "panTo" in e:
+            place_sweep(fx_bus, x, fr(e["f"]) - anchor, pan, e["panTo"] * 0.15 / 0.2)
+        else:
+            place(fx_bus, x, fr(e["f"]) - anchor, pan)
         report["events"]["placed"].append({"id": e.get("id"), "f": e["f"], "kind": kind, "take": KIT[kind][0][k % len(KIT[kind][0])], "t": round(fr(e["f"]), 3)})
 
     if not a.draft:
-        cues = {"brk": fr(byid["break"]["f"]), "storm": fr(byid["storm0"]["f"]), "pad_in": fr(byid["break"]["f"]) + 1.0, "groove": 7 * bar, "stop": fr(byid["lockup"]["f"])}
+        brk = fr(byid["break"]["f"])
+        # the music enters on the hero's hit; the numpy score's storm (32nd ticks) takes the last bar before the break
+        cues = {"music_in": fr(byid["hero-hit"]["f"]), "brk": brk, "storm": brk - bar / 2, "pad_in": brk + 1.0, "groove": 7 * bar, "stop": fr(byid["lockup"]["f"])}
         if a.music == "code":
             m = music(sec, bar, beat, cues)
         else:

@@ -39,8 +39,8 @@ export const TAIL = FPS;
 // Acts: contiguous, bar-aligned, [from, from + dur). The film is one continuous take (objects
 // travel across act seams), so the acts are ranges of one picture, not separate shots.
 export const ACT = {
-  chaos: { from: b(1), dur: b(3) - b(1) }, // three questions collide over the app's own numbers
-  live: { from: b(3), dur: b(6) - b(3) }, // the break; «купити» becomes «Купіть» of the real overlay card
+  dota: { from: b(1), dur: b(3) - b(1) }, // Juggernaut, his inventory, one choice: «ЩО КУПИТИ?»
+  live: { from: b(3), dur: b(6) - b(3) }, // the pause; the chosen icon opens the real overlay card around itself
   review: { from: b(6), dur: b(10) - b(6) }, // «Чому відстаю?» / «Що змінити?» answered by the real review card
   resolve: { from: b(10), dur: b(13) + TAIL - b(10) }, // one red dot: the slogan's full stop, then the logo
 };
@@ -49,7 +49,7 @@ export const TOTAL = b(13) + TAIL;
 
 /** Voice-over takes (audio/vo/voN.wav) and where they start. Spoken words drive the cues below. */
 export const VO = {
-  vo1: 8, // offgrid: voice «Що купити? Чому відстаю? Що змінити?» (3.6 s: starts early so «Що змінити?» lands before the storm)
+  vo1: b(2, 0, 2), // «Що купити?» as the question lands over the inventory
   vo2: b(4, 0, 1) - 2, // offgrid: voice «Під час гри — одна коротка порада.»
   vo3: b(6, 0, 2), // «Після гри — чесний розбір матчу.» as «Чому відстаю?» comes forward
   vo4: b(7, 2, 2), // «Де саме ви відстали — і що змінити наступного разу.» (a breath after «матчу.»)
@@ -59,16 +59,20 @@ export const VO = {
 
 // Named sync points (absolute frames). Voice-led cues sit where the word is spoken.
 export const CUE = {
-  q1: VO.vo1, // offgrid: voice «Що купити?» slams in on «Що»
-  q2: VO.vo1 + 76, // offgrid: voice «Чому відстаю?»
-  q3: VO.vo1 + 160, // offgrid: voice «Що змінити?»
-  storm: b(2, 2, 2), // the questions start interrupting each other on 8ths (scenes/layout.ts STORM_T ends on the break)
-  brk: b(3), // the break: everything stops
-  settle: b(3, 1, 2), // the noise has fallen away; one question is left
-  hook: b(3, 2), // «Що» leaves and the «?» loses its hook
-  roll: b(3, 2, 2), // «купити» rolls to «Купіть»
-  shrink: b(3, 3, 2), // the word shrinks into the card, the card grows around it
-  dotLand: b(4, 1), // the dot lands as the card's status dot
+  // the opening: a Dota scene, a choice, the answer (scenes/Dota.tsx); the hit is the music's downbeat
+  hit: b(1, 0, 2), // Juggernaut's move stops dead on the hit
+  slash: b(1, 1, 2), // the camera runs along the blade toward its tip
+  wipe: b(1, 2), // the blade's shape opens onto the inventory
+  item0: b(1, 2, 3), // the first item clicks into its slot (once the wipe is open); the rest follow a 16th apart (ITEM_STEP)
+  packed: b(2), // the TP scroll clicks in last: one slot is left empty; the inventory steps back for the question
+  ask: VO.vo1, // «ЩО КУПИТИ?» on the spoken «Що»; the two candidates rise out of the empty slot
+  optA: b(2, 1, 2), // focus on the damage item (Butterfly)
+  optB: b(2, 2, 2), // focus moves to Black King Bar
+  pick: b(2, 3, 2), // Black King Bar stays, everything else leaves
+  brk: b(3), // the pause: the music stops, the icon waits alone
+  reveal: b(3, 0, 2), // the camera pulls back from the icon: the real card opens around it
+  cardDone: b(3, 3), // the card's first line is in: the slow push begins
+  why: b(4, 2, 2), // the reason arrives: «Чому Black King Bar: …»
   away: b(6), // the live card recedes
   q2Come: b(6, 0, 1), // offgrid: overlap «Чому відстаю?» comes forward from the top edge as the card leaves
   review: b(6, 1), // the review card builds
@@ -139,16 +143,15 @@ export const chain = (id: string, mode: 'build' | 'replace', fragments: [text: s
 // Every on-screen word: the word budget (kind: 'ui' entries are counted apart), the hold check,
 // and the text-flow checks (fragments, words on screen at once, copy rate, text share) read this.
 export const COPY: Copy[] = [
-  // The opening questions: each slams in on its spoken word and is read under the voice.
-  { id: 'q1', text: 'Що купити?', in: CUE.q1, resolved: CUE.q1 + 6, out: CUE.hook },
-  { id: 'q2', text: 'Чому відстаю?', in: CUE.q2, resolved: CUE.q2 + 6, out: CUE.settle },
-  { id: 'q3', text: 'Що змінити?', in: CUE.q3, resolved: CUE.q3 + 6, out: CUE.settle },
-  // While they wait at the edges they are dim objects, not copy; they are read again when they come forward.
+  // The opening question, on the spoken «Що»; it leaves as the choice is made.
+  { id: 'ask', text: 'ЩО КУПИТИ?', in: CUE.ask, resolved: CUE.ask + 8, out: CUE.pick },
+  // «Чому відстаю?» / «Що змінити?» arrive in the review, from the edges.
   { id: 'q2b', text: 'Чому відстаю?', in: CUE.q2Come, resolved: CUE.q2Come + 40, out: CUE.title + 2 },
   { id: 'q3b', text: 'Що змінити?', in: CUE.q3Come - 30, resolved: CUE.q3Come - 4, out: CUE.drill + 6 },
   // The product's own text (kind 'ui'): read while it is on screen.
-  { id: 'live-card', text: 'Купіть частини наступного предмета на 1800 золота зараз', in: CUE.dotLand - 8, resolved: CUE.dotLand + 34, out: CUE.away, kind: 'ui' },
-  { id: 'live-reason', text: 'Невитрачене золото частково втрачається при наступній смерті.', in: CUE.dotLand + 14, resolved: CUE.dotLand + 56, out: CUE.away, kind: 'ui' },
+  { id: 'live-title', text: 'Відродження через 23 с', in: CUE.reveal + 18, resolved: CUE.reveal + 34, out: CUE.away, kind: 'ui' },
+  { id: 'live-card', text: "Купіть Black King Bar зараз: золота вистачає, кур'єр принесе.", in: CUE.reveal + 24, resolved: CUE.reveal + 60, out: CUE.away, kind: 'ui' },
+  { id: 'live-reason', text: 'Чому Black King Bar: смертей під контролем — 2, з ним контроль вас не втримає.', in: CUE.why, resolved: CUE.why + 30, out: CUE.away, kind: 'ui' },
   { id: 'finding', text: 'Програли лінію за добиваннями · 36 добивань до 10:00 проти 65', in: CUE.title, resolved: CUE.title + 30, out: CUE.clear, kind: 'ui' },
   { id: 'drill', text: 'Вправа: на лінії стежте за HP кріпів', in: CUE.drill + 10, resolved: CUE.drill + 40, out: CUE.clear, kind: 'ui' },
   // The slogan, built as two fragments; it stays on the end card.

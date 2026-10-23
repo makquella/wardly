@@ -14,7 +14,7 @@ import soundfile as sf
 VOICE = "9Sj8ugvpK1DmcAXyvi3a"  # Alex Nekrasov - Confident and Clear
 MODEL = os.environ.get("ELEVENLABS_MODEL", "eleven_v4")
 TEXTS = {
-    1: "Що купити? Чому відстаю? Що змінити?",
+    1: "Що купити?",  # the opening question alone: the review asks the other two on screen
     2: "Під час гри — одна коротка порада.",
     3: "Після гри — чесний розбір матчу.",
     4: "Де саме ви відстали — і що змінити наступного разу.",

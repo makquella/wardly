@@ -1,120 +1,51 @@
-// Act 2: «купити» becomes «Купіть», the first word of the real overlay card, and the card grows
-// around it; the «?» dot lands as the card's status dot. The card is overlay/styles.css, scaled.
+// Act 2: the chosen icon becomes the item icon of the real overlay card and the card opens around it.
+// The card is the death screen (overlay/styles.css: .overlay-shell.plan.death-screen, its red stripe,
+// the title as its label, the item row under the first line), laid out at 356 px and scaled.
 import React from 'react';
-import { C, FONT, TYPE } from '../brand/tokens';
+import { Img, staticFile } from 'remotion';
+import { C, FONT } from '../brand/tokens';
 import { LIVE } from '../data';
-import { E, mix, prog } from '../lib/anim';
-import { baselineOf, measureTracked } from '../lib/measure';
-import { arc, mixColor } from '../lib/track';
+import { E, lmix, mix, prog } from '../lib/anim';
 import { CUE } from '../timeline';
-import { cardToScreen, LC, lcLayout, lcPose, qFont, qScreen, Q_KEY_TOP } from './layout';
-import { HOOK, qDotScreen } from './Chaos';
+import { cardIconAt, PICK_W } from './Dota';
+import { LC, lcLayout, lcPose } from './layout';
 
-const WORD = 'Купіть';
-const centre = () => ({ x: LC.w / 2, y: lcLayout().h / 2 });
+/** The pull-back: 1 when the card is at rest; at the reveal its icon is exactly the candidate on screen. */
+const zoomOf = (f: number) => lmix(PICK_W / (lcLayout().icon.w * LC.S), 1, prog(f, CUE.reveal, CUE.reveal + 64, E.cam));
 
-/** Where the card's first word sits on screen at frame f (its baseline-left point and its px size). */
-const cardWord = (f: number) => {
-  const L = lcLayout();
-  const pose = lcPose(f);
-  const p = cardToScreen(LC, centre(), pose.k, pose.dy, { x: L.word.x, y: L.word.base });
-  return { ...p, size: 16 * LC.S * pose.k };
-};
-
-/** Where the hero word sits on screen (baseline-left, px size), from question 1's pose. */
-const heroWord = (f: number) => {
-  const p = qScreen(0, f);
-  const base = Q_KEY_TOP + baselineOf(qFont.size, qFont.weight, TYPE.question.lead, qFont.family);
-  return { x: p.x, y: p.y + base * p.s, size: qFont.size * p.s };
-};
-
-const SHRINK_END = CUE.dotLand - 6;
-
-/** The word in flight: hero size and weight → the card's 16 px / 600, anchored on its baseline. */
-export const MorphWord: React.FC<{ frame: number }> = ({ frame: f }) => {
-  if (f < CUE.shrink || f >= SHRINK_END) return null;
-  const t = prog(f, CUE.shrink, SHRINK_END, E.smooth); // a soft in-out: the right edge peaks near 20 px/f, so the blur stays clean
-  const a = heroWord(CUE.shrink);
-  const b = cardWord(f);
-  const size = Math.exp(mix(Math.log(a.size), Math.log(b.size), t));
-  const weight = mix(qFont.weight, 600, t);
-  const track = mix(qFont.track, 0, t);
-  const x = mix(a.x, b.x, t);
-  const y = mix(a.y, b.y, t);
-  const fs = qFont.size; // the hero's own size, so the hand-off frame is identical; then only scaled, never re-hinted
-  const base = baselineOf(fs, Math.round(weight), 1, FONT.text);
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        transform: `translate(${x}px, ${y}px) scale(${size / fs}) translate(0px, ${-base}px)`,
-        transformOrigin: '0 0',
-        fontFamily: FONT.text,
-        fontSize: fs,
-        fontWeight: weight,
-        letterSpacing: `${track}em`,
-        lineHeight: 1,
-        whiteSpace: 'pre',
-        fontKerning: 'none', // matches the hero line it takes over from
-        color: C.text,
-      }}
-    >
-      {WORD}
-    </div>
-  );
-};
-
-/** Q1's dot: from the «?» (white) to the card's status dot (amber), on an arc. */
-export const LiveDot: React.FC<{ frame: number }> = ({ frame: f }) => {
-  const h1 = HOOK[0][1];
-  if (f < h1 || f >= CUE.dotLand) return null;
-  const L = lcLayout();
-  const pose = lcPose(f);
-  const a = qDotScreen(0, h1);
-  // first it slides in to become the full stop of «Купіть.» (the question is now a statement) ...
-  const hero = qScreen(0, CUE.shrink);
-  const stop = { x: hero.x + (measureTracked(WORD, qFont.size, qFont.weight, qFont.track, qFont.family) + qFont.size * 0.08) * hero.s + a.r, y: a.y, r: a.r };
-  const bp = cardToScreen(LC, centre(), pose.k, pose.dy, L.dot);
-  const t1 = prog(f, h1 + 4, CUE.roll + 22, E.inOut);
-  // ... then, as the word shrinks into the card, it drops into the card's status dot
-  const t = prog(f, CUE.shrink + 4, CUE.dotLand, E.smooth);
-  const from = { x: mix(a.x, stop.x, t1), y: a.y };
-  const p = arc(from, bp, t, 0.22);
-  const r = Math.exp(mix(Math.log(a.r), Math.log(L.dot.r * LC.S * pose.k), t));
-  const col = mixColor(C.text, C.warn, prog(f, CUE.dotLand - 14, CUE.dotLand, E.smooth));
-  return <div style={{ position: 'absolute', left: 0, top: 0, width: r * 2, height: r * 2, borderRadius: '50%', background: col, transform: `translate(${p.x - r}px, ${p.y - r}px)` }} />;
-};
-
-/** The real overlay card («Порада», medium priority), laid out at 404 px and scaled. */
 export const LiveCard: React.FC<{ frame: number }> = ({ frame: f }) => {
-  if (f < CUE.shrink || f > CUE.away + 40) return null;
+  if (f < CUE.reveal || f > CUE.away + 40) return null;
   const L = lcLayout();
   const pose = lcPose(f);
-  const c = centre();
-  // the container grows from around the word to the whole card
-  const g = prog(f, CUE.shrink + 20, CUE.dotLand + 6, E.out); // only once the word is close to its slot
-  const wordW = measureTracked(WORD, 16, 600, 0);
-  const from = { t: L.word.top - 5, l: L.word.x - 8, r: LC.w - (L.word.x + wordW + 8), b: L.h - (L.word.top + 21.6 + 5) };
-  const clip = `inset(${mix(from.t, 0, g)}px ${mix(from.r, 0, g)}px ${mix(from.b, 0, g)}px ${mix(from.l, 0, g)}px round ${mix(8, 12, g)}px)`;
-  const wordsIn = (i: number) => prog(f, CUE.dotLand - 8 + i * 1.5, CUE.dotLand + 10 + i * 1.5, E.out);
-  const handed = f >= SHRINK_END; // the card's own «Купіть» takes over from the flying word
+  const z = zoomOf(f);
+  const a = cardIconAt(); // the pull-back is anchored on the icon's top-left corner, which never moves
+  const c = { x: LC.w / 2, y: L.h / 2 };
+  // the resting transform (the push about the card's centre, then the recede), then the pull-back about the icon
+  const k = LC.S * pose.k;
+  const tx0 = LC.x + c.x * LC.S - c.x * k;
+  const ty0 = LC.y + c.y * LC.S - c.y * k + pose.dy;
+  const tx = a.x + (tx0 - a.x) * z;
+  const ty = a.y + (ty0 - a.y) * z;
+  // the card's surface spreads out of the icon's own box
+  const g = prog(f, CUE.reveal + 2, CUE.reveal + 40, E.out);
+  const m = 2;
+  const from = { t: L.icon.y - m, l: L.icon.x - m, r: LC.w - (L.icon.x + L.icon.w + m), b: L.h - (L.icon.y + L.icon.h + m) };
+  const clip = `inset(${mix(from.t, 0, g)}px ${mix(from.r, 0, g)}px ${mix(from.b, 0, g)}px ${mix(from.l, 0, g)}px round ${mix(3, 12, g)}px)`;
+  const titleIn = prog(f, CUE.reveal + 18, CUE.reveal + 34, E.out);
+  const wordsIn = (i: number) => prog(f, CUE.reveal + 24 + i * 2, CUE.reveal + 40 + i * 2, E.out);
   let n = 0;
-  const tx = c.x * LC.S - c.x * LC.S * pose.k;
-  const ty = c.y * LC.S - c.y * LC.S * pose.k + pose.dy;
   return (
     <div
       data-ui
       style={{
         position: 'absolute',
-        left: LC.x,
-        top: LC.y,
+        left: 0,
+        top: 0,
         width: LC.w,
         height: L.h,
         transformOrigin: '0 0',
-        transform: `translate(${tx}px, ${ty}px) scale(${LC.S * pose.k})`,
-        opacity: pose.o * prog(f, CUE.shrink + 14, CUE.shrink + 26, E.smooth),
+        transform: `translate(${tx}px, ${ty}px) scale(${k * z})`,
+        opacity: pose.o,
         clipPath: clip,
       }}
     >
@@ -125,50 +56,40 @@ export const LiveCard: React.FC<{ frame: number }> = ({ frame: f }) => {
           borderRadius: 12,
           border: `1px solid ${C.border}`,
           background: C.overlayBg,
-          boxShadow: `inset 3px 0 0 ${C.warn}, 0 20px 60px rgba(0, 0, 0, 0.35)`,
+          boxShadow: `inset 3px 0 0 ${C.error}, 0 20px 60px rgba(0, 0, 0, 0.35)`,
         }}
       />
-      {/* top row: the status dot and «Порада» */}
-      <div style={{ position: 'absolute', left: L.dot.x - 3, top: L.dot.y - 3, width: 6, height: 6, borderRadius: '50%', background: C.warn, opacity: f >= CUE.dotLand ? 1 : 0 }} />
+      {/* top row: the idle dot and the title («Відродження через 23 с») */}
+      <div style={{ position: 'absolute', left: L.dot.x - 3, top: L.dot.y - 3, width: 6, height: 6, borderRadius: '50%', background: C.idle, opacity: titleIn }} />
       <div
-        style={{
-          position: 'absolute',
-          left: L.x0 + 6 + 8,
-          top: L.rowTop,
-          height: 15,
-          lineHeight: '15px',
-          fontFamily: FONT.text,
-          fontSize: 12,
-          fontWeight: 500,
-          color: C.text2,
-          opacity: prog(f, CUE.dotLand - 4, CUE.dotLand + 12, E.out),
-        }}
+        style={{ position: 'absolute', left: L.x0 + 6 + 8, top: L.rowTop, height: 15, lineHeight: '15px', fontFamily: FONT.text, fontSize: 12, fontWeight: 500, color: C.text2, opacity: titleIn, transform: `translateX(${(1 - titleIn) * -6}px)` }}
       >
         {LIVE.label}
       </div>
       {L.action.map((line, li) => (
         <div
           key={li}
-          style={{ position: 'absolute', left: L.x0, top: L.actionTop + li * 21.6, height: 21.6, lineHeight: '21.6px', fontFamily: FONT.text, fontSize: 16, fontWeight: 600, color: C.text, whiteSpace: 'pre' }}
+          style={{ position: 'absolute', left: L.x0, top: L.actionTop + li * 18.9, height: 18.9, lineHeight: '18.9px', fontFamily: FONT.text, fontSize: 14, fontWeight: 600, color: C.text, whiteSpace: 'pre' }}
         >
-          {line.split(' ').map((w, wi) => {
-            const first = li === 0 && wi === 0;
-            const k = first ? (handed ? 1 : 0) : wordsIn(n++);
+          {line.split(' ').map((w, wi, all) => {
+            const kk = wordsIn(n++);
             return (
-              <span key={wi} style={{ opacity: k, display: 'inline-block', transform: `translateY(${(1 - k) * 4}px)` }}>
+              <span key={wi} style={{ opacity: kk, display: 'inline-block', transform: `translateY(${(1 - kk) * 4}px)` }}>
                 {w}
-                {wi < line.split(' ').length - 1 ? ' ' : ''}
+                {wi < all.length - 1 ? ' ' : ''}
               </span>
             );
           })}
         </div>
       ))}
+      {/* the item row: the icon the viewer followed from the inventory */}
+      <Img src={staticFile(`img/dota/items/${LIVE.item.key}.png`)} style={{ position: 'absolute', left: L.icon.x, top: L.icon.y, width: L.icon.w, height: L.icon.h, borderRadius: 3 }} />
       {L.reason.map((line, li) => {
-        const k = prog(f, CUE.dotLand + 14 + li * 4, CUE.dotLand + 34 + li * 4, E.out);
+        const kk = prog(f, CUE.why + li * 6, CUE.why + 24 + li * 6, E.out);
         return (
           <div
             key={li}
-            style={{ position: 'absolute', left: L.x0, top: L.reasonTop + li * 18.2, height: 18.2, lineHeight: '18.2px', fontFamily: FONT.text, fontSize: 13, fontWeight: 400, color: C.text2, whiteSpace: 'pre', opacity: k, transform: `translateY(${(1 - k) * 3}px)` }}
+            style={{ position: 'absolute', left: L.x0, top: L.reasonTop + li * 18.2, height: 18.2, lineHeight: '18.2px', fontFamily: FONT.text, fontSize: 13, fontWeight: 400, color: C.text2, whiteSpace: 'pre', opacity: kk, transform: `translateY(${(1 - kk) * 3}px)` }}
           >
             {line}
           </div>

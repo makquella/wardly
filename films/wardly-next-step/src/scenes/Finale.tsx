@@ -10,7 +10,7 @@ import { glyphDot } from '../lib/glyph';
 import { baselineOf, fitSize, measureTracked } from '../lib/measure';
 import { arc, mixColor } from '../lib/track';
 import { copy, CUE, TOTAL } from '../timeline';
-import { HOOK, qDotScreen } from './Chaos';
+import { HOOK, qDotScreen } from './Questions';
 import { RC, rcLayout } from './layout';
 import { qOverride, reviewToScreen } from './Review';
 
@@ -101,7 +101,7 @@ export const redDotAt = (f: number) => {
   const per = { ...per0, ...breathe(Math.min(f, TO_LOGO[0]), B, per0) };
   const ld = logoDot();
   if (f < DRILL_LAND) {
-    const a = qDotScreen(2, h1, qOverride(2, h1));
+    const a = qDotScreen(2, qOverride(2, h1)!);
     const b = gutter(f);
     const t = prog(f, h1, DRILL_LAND, E.inOut);
     const p = arc(a, b, t, -0.25);
