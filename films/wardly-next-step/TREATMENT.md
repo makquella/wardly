@@ -54,7 +54,7 @@ Copy (film words, excluding UI strings): ЩО КУПИТИ? Чому відст�
    the frame full of the hero. Dota in the first second.
 2. **Choice (≈ 3.3 s):** «ЩО КУПИТИ?» over two real icons, Black King Bar in focus, Butterfly stepped
    back, the inventory with its one empty slot below.
-3. **Transformation (≈ 4.45 s):** the camera pulling back from the Black King Bar icon: the real
+3. **Transformation (≈ 4.77 s):** the camera pulling back from the Black King Bar icon: the real
    death-screen card opening around it, the icon already its item row.
 4. **Final (≈ 24.8 s):** the logo with its red dot, «Wardly», the slogan and the URL.
 

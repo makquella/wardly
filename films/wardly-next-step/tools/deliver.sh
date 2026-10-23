@@ -16,6 +16,6 @@ grab() { ffmpeg -v error -y -i "$src" -vf "select='eq(n,$1)'" -vframes 1 "delive
 rm -f deliver/keyframe-*.png
 grab 20 keyframe-1-start-0.33s          # Juggernaut stopped on the hit: Dota in the first second
 grab 200 keyframe-2-choice-3.3s          # «ЩО КУПИТИ?»: Black King Bar in focus, Butterfly stepped back
-grab 267 keyframe-3-transformation-4.45s # the card opening around the Black King Bar icon
+grab 286 keyframe-3-transformation-4.77s # the card opening around the Black King Bar icon: «Купіть Black King Bar…»
 grab 1490 keyframe-4-final-24.8s         # logo, «Wardly», slogan, address
 ls -la deliver
