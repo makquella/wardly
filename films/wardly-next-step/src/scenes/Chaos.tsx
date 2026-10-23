@@ -172,7 +172,8 @@ export const Question: React.FC<{ i: number; frame: number; pose?: QOverride; hi
   return (
     <div
       data-text={`q${i + 1}`}
-      style={{ position: 'absolute', left: 0, top: 0, transform: `translate(${p.x}px, ${p.y}px) scale(${p.s})`, transformOrigin: '0 0', opacity: p.o, filter: p.o < 0.97 && f < CUE.brk + 6 ? `blur(${((1 - p.o) * 5).toFixed(2)}px)` : undefined }}
+      // fontSize: the block's smallest text (the lead word), so the layout audit measures real type, not the 16 px default
+      style={{ position: 'absolute', left: 0, top: 0, fontSize: Q_LEAD, transform: `translate(${p.x}px, ${p.y}px) scale(${p.s})`, transformOrigin: '0 0', opacity: p.o, filter: p.o < 0.97 && f < CUE.brk + 6 ? `blur(${((1 - p.o) * 5).toFixed(2)}px)` : undefined }}
     >
       <div
         style={{

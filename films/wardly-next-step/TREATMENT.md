@@ -31,7 +31,7 @@ descriptions (Art of the Title) and widely known stills, not from scrubbing the 
 
 | Bar | Time | Picture | Copy | Sound |
 |---|---|---|---|---|
-| 1–2 | 0.0–4.0 | Real app fragments in depth; «Що купити?», «Чому відстаю?», «Що змінити?» slam in on the spoken words and shove each other back; from 3.2 s they interrupt on 8ths/16ths, density doubles, camera creeps in | the three questions (VO says them) | tense pulse + ticks, a slam per question, stutter + riser |
+| 1–2 | 0.0–4.0 | Real app fragments in depth; «Що купити?», «Чому відстаю?», «Що змінити?» slam in on the spoken words and shove each other back; from 3.25 s they interrupt on 8ths/16ths, density doubles, camera creeps in | the three questions (VO says them) | tense pulse + ticks, a slam per question, stutter + riser |
 | 3 | 4.0–4.6 | **Break.** Hard stop; noise falls into depth; «Чому відстаю?» and «Що змінити?» retreat to the top and bottom edges and wait; «Що купити?» alone in the centre | — | silence (the pause before the interface), a low suck |
 | 3–4 | 4.6–6.2 | «Що» leaves, the «?» hook retracts to its dot; «купити» → «Купіть» (three letters roll); the word shrinks into the first word of the real «Порада» card while the card grows around it; the dot lands as the card's status dot | card text (UI) | three soft ticks, card lands |
 | 4–5 | 6.1–10.0 | Card readable, slow push | VO «Під час гри — одна коротка порада.» | pad enters, quiet |
@@ -55,6 +55,7 @@ Copy (film words, excluding UI strings): Що купити? Чому відст�
 
 ## Higgsfield
 
-Used for the voice (its ElevenLabs engine). No generated visuals: the brief requires the logo,
+Not used in the current cut: the voice, effects and music now come from ElevenLabs directly (the
+repository preset). No generated visuals: the brief requires the logo,
 text and UI from sources, there is no gameplay, and an AI texture or b-roll would add decoration
 without a job. Recorded here as a deliberate choice.

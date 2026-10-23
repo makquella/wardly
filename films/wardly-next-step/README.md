@@ -2,7 +2,7 @@
 
 A 25-second vertical promo (1080×1920, 60 fps, Ukrainian voice-over) built in code with
 Remotion: typography, the real Wardly UI rebuilt from the app's own CSS and strings, the real logo,
-and a soundtrack designed in code. No gameplay footage. Nothing here is published.
+and an ElevenLabs soundtrack (voice, effects, music) placed on the picture's cues in code. No gameplay footage. Nothing here is published.
 
 - **Idea:** three questions every Dota player asks (*Що купити? Чому відстаю? Що змінити?*)
   collide, stop, and are answered one by one by the product: the live overlay card and the
@@ -25,6 +25,8 @@ pyloudnorm` (and `opencv-python-headless` for `scripts/forensics.py`).
 ```bash
 cd films/wardly-next-step
 npm install
+python tools/elevenlabs_vo.py                      # only to re-take the voice (ELEVENLABS_API_KEY); then tools/transcribe_vo.py
+python tools/elevenlabs_sfx.py                     # only to re-take effects/music (ELEVENLABS_API_KEY)
 npx tsx audio/export-cues.ts                       # sound cues from the picture's constants -> out/cues.json
 python audio/build_soundtrack.py                   # voice + effects + music, mastered -> public/audio/soundtrack.wav
 bash scripts/render.sh Film out/film.mp4 --blur    # motion-blurred master + mux + sync/spec gates
@@ -57,20 +59,25 @@ Iterate on one part with the `Acts/*` compositions (`npx remotion studio`); `Tra
 | `src/scenes/Review.tsx` | the real «Головне на наступну гру» card, the index dot |
 | `src/scenes/Finale.tsx` | the slogan, the red dot, the logo's orbit drawing itself, the end card |
 | `src/sync.ts`, `audio/export-cues.ts` | sound events computed from the picture's constants |
-| `audio/build_soundtrack.py` | effects and music synthesised in numpy, voice placement, ducking, master |
+| `audio/build_soundtrack.py` | takes trimmed and levelled onto their cues, music laid on the bars, voice placement, ducking, master (`--music code`: the earlier numpy score) |
+| `audio/sfx/`, `audio/music/` | ElevenLabs effect takes and the three music parts (`tension`, `calm`, `groove`); prompts in `audio/sfx/report.json` and `tools/elevenlabs_sfx.py` |
+| `tools/elevenlabs_vo.py`, `tools/elevenlabs_sfx.py` | re-take the voice / the effects and music (need `ELEVENLABS_API_KEY`) |
 | `audio/vo/` | the six voice takes (`voN.src.mp3` as delivered, `voN.wav` 48 kHz) and `words.json` (word timings) |
 | `public/img/` | `logo.png` (= `site/assets/logo.png`), `stage.png` (dithered backdrop, `tools/make_stage.py`) |
 | `scripts/` | the cinetic toolkit (MIT, `scripts/LICENSE-cinetic.txt`): render, gates, QA |
 
 ## Materials and tools
 
-- Voice: ElevenLabs engine via Higgsfield `text2speech_v2` (`variant: elevenlabs`), preset voice
-  "Alexey" (`7c2133e5-68ab-511f-9aed-9a67664382b1`). The repository's own ElevenLabs preset (Alex
-  Nekrasov, `eleven_v4`) needs `ELEVENLABS_API_KEY`, which this cloud session did not have.
-  Each take was checked with faster-whisper (medium, uk); «чесний розбір» was re-taken as
-  «чесний розбір матчу» because the short take was heard as «частний».
-- Effects and music: designed in code (no samples, no ElevenLabs SFX: no API key here; Higgsfield
-  only offers speech for standalone audio).
+- Voice: the repository's ElevenLabs preset (`scripts/promo/voice.py`): Alex Nekrasov
+  (`9Sj8ugvpK1DmcAXyvi3a`), `eleven_v4`, `uk`, stability 0.5, speed 1.0; one take per line
+  (`tools/elevenlabs_vo.py`). Each take was checked with faster-whisper (medium, uk): every word is
+  heard right; the brand is written «Wordly» (Whisper spells the English /ˈwɔːdli/ that way in uk and
+  en alike, in every take). The v4 takes run 15–25 % longer than the earlier Higgsfield ones, so the
+  timeline was re-timed on their words (and the storm starts a 16th later, at 3.25 s).
+- Effects: ElevenLabs sound-generation (`tools/elevenlabs_sfx.py`, after
+  `scripts/promo/sound_effects.py`), trimmed to the attack or apex and levelled to the designed
+  sounds they replaced. Music: ElevenLabs music in three parts (one request with a section plan came
+  back as a single sub-bass drone), with their beats placed on the 120 BPM grid.
 - Fonts: Inter and Montserrat (OFL), vendored from `@fontsource-variable`.
 - Logo, colours, card markup and strings: this repository (paths in BRIEF.md).
 - Icons: lucide `target` and `lightbulb` paths, as vendored in `frontend/launcher/assets/icons/lucide.js` (ISC).

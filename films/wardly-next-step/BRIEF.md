@@ -1,8 +1,8 @@
 # Brief — «Із хаосу — у наступний крок»
 
 **Spec:** 1080x1920@60, 25.0 s (1500 f), 120 BPM (30 f beat, 120 f bar), pace: crisp hook → calm body,
-audio: Ukrainian VO (ElevenLabs engine via Higgsfield, voice "Alexey") + code-designed SFX and
-music bed (numpy), master −14 LUFS, true peak ≤ −1.5 dBTP.
+audio: Ukrainian VO (ElevenLabs `eleven_v4`, Alex Nekrasov, the repository preset) + ElevenLabs SFX and
+music bed (three parts on the grid), master −14 LUFS, true peak ≤ −1.5 dBTP.
 
 - **Product:** Wardly — free, local-first Dota 2 coach for Windows: a short card over the game while
   you play, an honest review after it (README, site).

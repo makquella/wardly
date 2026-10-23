@@ -21,7 +21,7 @@ export type SoundEvent = {
 };
 
 const SLAM = 6; // frames from the spoken word to the contact (scenes/layout.ts)
-const STORM = [0, 15, 30, 38, 45, 49, 53, 56, 58, 60]; // scenes/layout.ts STORM
+const STORM = [0, 15, 23, 30, 34, 38, 41, 43, 44, 45]; // scenes/layout.ts STORM
 
 export default function cues(): SoundEvent[] {
   const ev: SoundEvent[] = [];

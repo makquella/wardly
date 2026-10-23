@@ -1,21 +1,24 @@
-"""The film's soundtrack: voice-over, designed effects and a music bed, mixed and mastered.
+"""The film's soundtrack: voice-over, effects and a music bed, mixed and mastered.
 
-Everything except the voice is synthesised here (numpy/scipy), deterministic, on the frames in
-out/cues.json (exported from the picture's own constants by audio/export-cues.ts). The voice takes
-are audio/vo/vo1..vo6.wav (ElevenLabs engine through Higgsfield, voice "Alexey").
+Voice, effects and music are ElevenLabs takes (tools/elevenlabs_vo.py, tools/elevenlabs_sfx.py),
+placed here on the frames in out/cues.json (exported from the picture's own constants by
+audio/export-cues.ts). Every effect take is trimmed to its attack (or centred on its apex) and
+levelled to the designed sound it replaced, so the balance of the mix stays as tuned.
 
     python audio/build_soundtrack.py --cues out/cues.json --out public/audio/soundtrack.wav \
         --stems out/stems --json out/qa/score.json
 
-Music in D minor at the film's 120 BPM: a tense pulse under the questions that stops dead on the
-break, a quiet pad once the card appears, a light kick from the review to the slogan, and on the
-logo the music stops on the bar line and resolves to D major: one clean hit and its tail.
+Music at the film's 120 BPM, three ElevenLabs parts laid on the bars with their beats on the grid:
+the tension pulse under the questions stops dead on the break, the calm pad swells in after the
+pause, the light groove enters on bar 8, and the music stops on the wordmark: one clean hit and
+its tail. `--music code` builds the earlier numpy score (D minor, resolving to D major) instead.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -76,111 +79,79 @@ def midi(m: float) -> float:
 
 
 # ---------------------------------------------------------------- effects
-def sfx_slam(w: float, seed: int) -> np.ndarray:
-    n = int(0.9 * SR)
-    body = sweep_sine(110, 42, 0.9, 5) * env_exp(n, 0.22, 0.001)
-    r = rng(seed)
-    crack = bp(r.standard_normal(n), 900, 5000) * env_exp(n, 0.018, 0.0005) * 0.9
-    thud = bp(r.standard_normal(n), 120, 500) * env_exp(n, 0.07, 0.001) * 0.8
-    return fade_edges(np.tanh((body * 1.0 + crack + thud) * 1.4) * 0.42 * w)
+SFX = ROOT / "sfx"
+MUSIC = ROOT / "music"
 
 
-def sfx_tick(w: float, seed: int) -> np.ndarray:
-    n = int(0.08 * SR)
-    r = rng(seed)
-    click = hp(r.standard_normal(n), 3500) * env_exp(n, 0.006, 0.0003)
-    blip = np.sin(2 * np.pi * 2400 * t_axis(0.08)) * env_exp(n, 0.012, 0.0005) * 0.4
-    return fade_edges((click + blip) * 0.35 * w)
+def decode(path: Path) -> np.ndarray:
+    """An MP3 take as 48 kHz mono float."""
+    pcm = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+    return np.frombuffer(pcm, dtype=np.float32).astype(np.float64)
 
 
-def sfx_riser(sec: float, seed: int) -> np.ndarray:
-    n = int(sec * SR)
-    r = rng(seed)
-    noise = r.standard_normal(n)
-    out = np.zeros(n)
-    # a band of noise whose centre climbs exponentially, filtered in short blocks
-    blocks = 48
-    edges = np.linspace(0, n, blocks + 1).astype(int)
-    for i in range(blocks):
-        fc = 500 * (14 ** (i / (blocks - 1)))
-        seg = noise[max(0, edges[i] - 2048) : edges[i + 1]]
-        y = bp(seg, fc / 1.6, min(fc * 1.6, SR / 2 - 100))
-        out[edges[i] : edges[i + 1]] = y[-(edges[i + 1] - edges[i]) :]
-    ramp = np.linspace(0, 1, n) ** 2.2
-    tone = np.sin(2 * np.pi * np.cumsum(np.geomspace(220, 880, n)) / SR) * 0.15
-    y = (out + tone) * ramp * 0.5
-    y[-int(0.003 * SR) :] *= np.linspace(1, 0, int(0.003 * SR))  # the hard stop, without a click
-    return y
+def rms_db(x: np.ndarray) -> float:
+    return float(20 * np.log10(np.sqrt(np.mean(x**2)) + 1e-12))
 
 
-def sfx_break(seed: int) -> np.ndarray:
-    n = int(1.6 * SR)
-    sub = np.sin(2 * np.pi * 44 * t_axis(1.6)) * env_exp(n, 0.45, 0.004)
-    r = rng(seed)
-    air = lp(r.standard_normal(n), 400) * env_exp(n, 0.25, 0.002) * 0.25
-    return fade_edges((sub + air) * 0.32)
+# kind: (takes, level dB, how it is levelled, trim). Levels: the RMS of the designed sound each take
+# replaces, at weight 1 (first 100 ms after the attack; a whoosh around its apex; a riser over its
+# last 100 ms), so the mix keeps its balance. Trim: "attack" starts the take 1 ms before its first
+# sample within 30 dB of its peak; "apex" centres the take's 30 ms envelope maximum on the event's
+# apex; "end" ends a riser on the last frame of its build (the cut is the break).
+KIT = {
+    "slam": (["slam", "slam-2", "slam-3"], -11.7, "attack"),
+    "tick": (["tick-2", "tick"], -24.9, "attack"),
+    "riser": (["riser"], -13.0, "end"),
+    "suck": (["stop"], -13.8, "attack"),
+    "roll": (["letter"], -27.5, "attack"),
+    "land": (["land"], -16.7, "attack"),
+    "pop": (["index"], -19.4, "attack"),
+    "text": (["text"], -35.1, "attack"),
+    "whoosh": (["whoosh", "whoosh-2"], -22.7, "apex"),
+    "bell": (["bell"], -14.9, "attack"),
+    "hit": (["hit"], -9.1, "attack"),
+}
+LENGTH = {"text": 0.2}  # seconds kept of a take whose tail has a second bump (a stray onset on no picture event)
+_takes: dict[str, np.ndarray] = {}
 
 
-def sfx_roll(w: float, seed: int) -> np.ndarray:
-    n = int(0.06 * SR)
-    r = rng(seed)
-    x = bp(r.standard_normal(n), 1800, 5000) * env_exp(n, 0.008, 0.0004)
-    tone = np.sin(2 * np.pi * 1320 * t_axis(0.06)) * env_exp(n, 0.015, 0.0005) * 0.5
-    return fade_edges((x + tone) * 0.3 * w)
+def take(name: str) -> np.ndarray:
+    if name not in _takes:
+        _takes[name] = decode(SFX / f"{name}.mp3")
+    return _takes[name]
 
 
-def sfx_land(w: float, seed: int) -> np.ndarray:
-    n = int(0.5 * SR)
-    pop = sweep_sine(980, 620, 0.5, 8) * env_exp(n, 0.05, 0.0008)
-    low = np.sin(2 * np.pi * 150 * t_axis(0.5)) * env_exp(n, 0.06, 0.001) * 0.6
-    r = rng(seed)
-    tx = bp(r.standard_normal(n), 2000, 7000) * env_exp(n, 0.006, 0.0003) * 0.4
-    return fade_edges((pop * 0.55 + low + tx) * 0.5 * w)
-
-
-def sfx_pop(w: float) -> np.ndarray:
-    n = int(0.25 * SR)
-    x = sweep_sine(760, 560, 0.25, 8) * env_exp(n, 0.04, 0.0008)
-    return fade_edges(x * 0.35 * w)
-
-
-def sfx_text(w: float, seed: int) -> np.ndarray:
-    n = int(0.12 * SR)
-    r = rng(seed)
-    x = bp(r.standard_normal(n), 1500, 6000) * env_exp(n, 0.01, 0.0005)
-    return fade_edges(x * 0.2 * w)
-
-
-def sfx_whoosh(sec: float, apex: float, w: float, seed: int) -> np.ndarray:
-    n = int(sec * SR)
-    r = rng(seed)
-    noise = r.standard_normal(n)
-    t = np.linspace(0, 1, n)
-    shape = np.exp(-((t - apex) ** 2) / (2 * 0.16**2))
-    lo = bp(noise, 300, 1500)
-    hi = bp(noise, 1500, 6000)
-    mixw = np.clip((t - apex + 0.3) / 0.6, 0, 1)
-    y = (lo * (1 - mixw) + hi * mixw) * shape
-    return fade_edges(y * 0.35 * w, 0.01, 0.02)
-
-
-def bell(freq: float, sec: float, w: float) -> np.ndarray:
-    n = int(sec * SR)
-    t = t_axis(sec)
-    y = np.zeros(n)
-    for ratio, amp, tau in ((1.0, 1.0, 1.1), (2.0, 0.35, 0.6), (2.76, 0.25, 0.35), (5.4, 0.1, 0.15)):
-        y += amp * np.sin(2 * np.pi * freq * ratio * t) * env_exp(n, tau, 0.002)
-    return fade_edges(y * 0.25 * w, 0.002, 0.05)
-
-
-def sfx_hit(w: float, seed: int) -> np.ndarray:
-    sec = 3.0
-    n = int(sec * SR)
-    sub = np.sin(2 * np.pi * midi(38) * t_axis(sec)) * env_exp(n, 0.55, 0.003)
-    r = rng(seed)
-    tx = bp(r.standard_normal(n), 800, 6000) * env_exp(n, 0.02, 0.0006) * 0.5
-    b = bell(midi(74), sec, 1.2) + bell(midi(81), sec, 0.6) + bell(midi(78), sec, 0.5)  # D5 A5 F#5: D major
-    return fade_edges((sub * 0.9 + tx + b) * 0.55 * w, 0.002, 0.3)
+def sfx(kind: str, k: int, w: float, dur: float | None = None) -> tuple[np.ndarray, float]:
+    """(the take, trimmed and levelled; its anchor in seconds from its first sample)."""
+    names, level, trim = KIT[kind]
+    x = take(names[k % len(names)]).copy()
+    if kind in LENGTH:
+        x = x[: int(LENGTH[kind] * SR)]
+    x = x - np.mean(x)
+    env = np.sqrt(np.convolve(x**2, np.ones(48) / 48, mode="same"))
+    pk = env.max()
+    if trim == "attack":
+        on = max(0, int(np.argmax(env > pk * 10 ** (-30 / 20))) - int(0.001 * SR))
+        x = x[on:]
+        ref = x[: int(0.1 * SR)]
+        anchor = 0.0
+    elif trim == "apex":
+        e30 = np.sqrt(np.convolve(x**2, np.ones(1440) / 1440, mode="same"))
+        ap = int(np.argmax(e30))
+        ref = x[max(0, ap - 2400) : ap + 2400]
+        anchor = ap / SR
+    else:  # end: the riser ends where its build is last within 3 dB of its loudest, trimmed to dur
+        e30 = np.sqrt(np.convolve(x**2, np.ones(1440) / 1440, mode="same"))
+        end = int(np.nonzero(e30 > e30.max() * 10 ** (-3 / 20))[0][-1])
+        start = max(0, end - int((dur or 1.0) * SR))
+        x = x[start:end] * np.linspace(0, 1, end - start) ** 2.2  # it builds into the break: quiet until the last beat, so the storm's ticks stay heard
+        ref = x[-int(0.1 * SR) :]
+        anchor = len(x) / SR
+    x = x * 10 ** ((level - rms_db(ref)) / 20) * w
+    x = fade_edges(x, 0.001 if trim != "apex" else 0.02, 0.06 if kind in LENGTH else 0.02)
+    if trim == "end":
+        x[-int(0.003 * SR) :] *= np.linspace(1, 0, int(0.003 * SR))  # the hard stop, without a click
+    return x, anchor
 
 
 # ---------------------------------------------------------------- music
@@ -313,7 +284,82 @@ def music(total: float, bar: float, beat: float, cues: dict) -> dict[str, np.nda
     for x in (pad, drums):
         x[stop - int(0.02 * SR) : stop] *= np.linspace(1, 0, int(0.02 * SR))
         x[stop:] = 0
-    return {"tension": tension, "pad": pad, "drums": drums}
+    return {"tension": tension, "pad": pad * 0.9, "drums": drums}
+
+
+def beat_phase(x: np.ndarray, beat: float) -> float:
+    """Seconds from the take's start to its first beat: the offset of a beat-spaced grid that
+    collects the most onset strength (10 ms log-energy rises). The parts are asked for at 120 BPM
+    and hold it (beat phase spread under 10 ms), so a phase is all they need to sit on the grid."""
+    hop = int(0.01 * SR)
+    e = np.log10(np.array([np.mean(x[i : i + hop] ** 2) for i in range(0, len(x) - hop, hop)]) + 1e-10)
+    flux = np.maximum(0, np.diff(e, prepend=e[0]))
+    span = int(min(len(x) / SR, 8.0) / 0.01)
+    best, at = -1.0, 0.0
+    for ms in range(int(beat * 1000)):
+        idx = (np.arange(ms / 10, span, beat * 100)).astype(int)
+        score = float(flux[idx].sum())
+        if score > best:
+            best, at = score, ms / 1000
+    return at
+
+
+def music_eleven(total: float, beat: float, cues: dict) -> tuple[dict[str, np.ndarray], dict]:
+    """The three ElevenLabs parts on the film's bars, each levelled to the section it replaces
+    (integrated loudness of the numpy score: tension -18.1, pad -24.5, pad + drums -22.6 LUFS)."""
+    n = int(total * SR)
+    meter = pyln.Meter(SR)
+    brk, pad_in, groove_in, stop = cues["brk"], cues["pad_in"], cues["groove"], cues["stop"]
+    info: dict = {}
+    parts: dict[str, np.ndarray] = {}
+    for name, start, end, lufs in (("tension", 0.0, brk, -18.1), ("calm", brk, groove_in, -24.5), ("groove", groove_in, stop, -22.6)):
+        x = decode(MUSIC / f"{name}.mp3")
+        ph = beat_phase(x, beat)
+        need = int((end - start) * SR)
+        y = x[int(ph * SR) :]
+        if name == "calm" and len(y) < need:  # the pad's two-bar figure runs 8 s; loop its second turn (bar-aligned) once more
+            loop = y[int(4.0 * SR) : int(8.0 * SR)]
+            xf = int(0.03 * SR)
+            body = y[: int(8.0 * SR)]
+            while len(body) < need:
+                seg = loop.copy()
+                body[-xf:] = body[-xf:] * np.linspace(1, 0, xf) + seg[:xf] * np.linspace(0, 1, xf)
+                body = np.concatenate([body, seg[xf:]])
+            y = body
+        y = y[:need]
+        y = y * 10 ** ((lufs - meter.integrated_loudness(y)) / 20)
+        bus = np.zeros(n)
+        s0 = int(start * SR)
+        bus[s0 : s0 + len(y)] = y
+        parts[name] = bus
+        info[name] = {"beat_phase_s": round(ph, 3), "from_s": start, "to_s": end}
+    t = np.arange(n) / SR
+    # the questions build: the pulse rises from -6 dB to full into the break, which cuts it dead
+    parts["tension"] *= np.interp(t, [0, brk], [0.5, 1.0])
+    head = int(0.025 * SR)  # the film starts from silence, then the pulse (its first beat sits on frame 0)
+    parts["tension"][:head] *= np.linspace(0, 1, head) ** 2
+    cut = int(brk * SR)
+    parts["tension"][cut - int(0.004 * SR) : cut] *= np.linspace(1, 0, int(0.004 * SR))
+    parts["tension"][cut:] = 0
+    # the pad swells in slowly out of the pause; the groove takes over on bar 8
+    calm = parts["calm"]
+    calm[: int(pad_in * SR)] = 0
+    sw = int(1.6 * SR)
+    calm[int(pad_in * SR) : int(pad_in * SR) + sw] *= np.linspace(0, 1, sw) ** 2
+    g0 = int(groove_in * SR)
+    xo = int(0.15 * SR)
+    calm[g0 - xo : g0] *= np.linspace(1, 0, xo)
+    groove = parts["groove"]
+    groove[g0 : g0 + int(0.01 * SR)] *= np.linspace(0, 1, int(0.01 * SR))
+    # air: a faint room tone under everything after the break, so the pause is quiet, never a dropout
+    air = lp(rng(5).standard_normal(n), 900) * 10 ** (-58 / 20) * 3
+    air[:cut] = 0
+    # the music stops on the bar line of the logo
+    stop_i = int(stop * SR)
+    for x in (calm, groove):
+        x[stop_i - int(0.02 * SR) : stop_i] *= np.linspace(1, 0, int(0.02 * SR))
+        x[stop_i:] = 0
+    return {"tension": parts["tension"], "pad": calm + air, "drums": groove}, info
 
 
 # ---------------------------------------------------------------- mix
@@ -396,6 +442,7 @@ def main() -> None:
     ap.add_argument("--json", default="out/qa/score.json")
     ap.add_argument("--lufs", type=float, default=-14.0)
     ap.add_argument("--draft", action="store_true", help="no music, effects and voice only")
+    ap.add_argument("--music", choices=("eleven", "code"), default="eleven", help="ElevenLabs parts (audio/music) or the numpy score")
     a = ap.parse_args()
     data = json.loads(Path(a.cues).read_text())
     fps, total = data["fps"], data["total"]
@@ -410,7 +457,9 @@ def main() -> None:
     vo_bus = np.zeros((n, 2))
     fx_bus = np.zeros((n, 2))
     mu_bus = np.zeros((n, 2))
-    report: dict = {"events": [], "warnings": []}
+    # events.placed: what the effects stem sounds; events.skipped: cues it leaves to another stem (the
+    # voice takes), so scripts/av-audit.py does not look for them in the effects stem
+    report: dict = {"events": {"placed": [], "skipped": []}, "warnings": []}
 
     # voice: each take placed so its onset lands on its frame, levelled per take
     meter = pyln.Meter(SR)
@@ -420,51 +469,32 @@ def main() -> None:
         lv = meter.integrated_loudness(x)
         x = x * 10 ** ((-17.0 - lv) / 20)
         place(vo_bus, x, fr(e["f"]) - on, 0.0)
-        report["events"].append({"id": e["id"], "t": round(fr(e["f"]), 3), "onset_in_take": round(on, 3), "take_lufs": round(lv, 1)})
+        report["events"]["skipped"].append({"id": e["id"], "f": e["f"], "kind": "voice", "t": round(fr(e["f"]), 3), "onset_in_take": round(on, 3), "take_lufs": round(lv, 1), "stem": "voice"})
 
     vo_bus, vo_gr = limiter(vo_bus, -5.0)  # the voice's peaks held 12 dB over its loudness
     report["voice_limiter_db"] = round(vo_gr, 2)
 
-    for k, e in enumerate(ev):
+    used: dict[str, int] = {}
+    for e in ev:
         kind, w, pan = e["kind"], e.get("weight", 1.0), e.get("pan", 0.0) * 0.15 / 0.2
-        at = fr(e["f"])
-        x = None
-        if kind == "slam":
-            x = sfx_slam(w, k)
-        elif kind == "tick":
-            x = sfx_tick(w, k)
-        elif kind == "riser":
-            d = e["dur"] / fps
-            x = sfx_riser(d, k)
-            at -= d
-        elif kind == "suck":
-            x = sfx_break(k)
-        elif kind == "roll":
-            x = sfx_roll(w, k)
-        elif kind == "land":
-            x = sfx_land(w, k)
-        elif kind == "pop":
-            x = sfx_pop(w)
-        elif kind == "text":
-            x = sfx_text(w, k)
-        elif kind == "whoosh":
-            d = e["dur"] / fps
-            x = sfx_whoosh(d, e.get("apexFrac", 0.5), w, k)
-            at -= d * e.get("apexFrac", 0.5)
-        elif kind == "bell":
-            x = bell(midi(86), 1.6, w)  # D6
-        elif kind == "hit":
-            x = sfx_hit(w, k)
-        if x is not None:
-            place(fx_bus, x, at, pan)
-            report["events"].append({"id": e.get("id"), "kind": kind, "t": round(fr(e["f"]), 3)})
+        if kind not in KIT:
+            continue
+        k = used.get(kind, 0)
+        used[kind] = k + 1
+        if kind == "suck":
+            w = 1.0  # the break is levelled as one sound, its weight only times the picture
+        x, anchor = sfx(kind, k, w, e["dur"] / fps if kind == "riser" else None)
+        place(fx_bus, x, fr(e["f"]) - anchor, pan)
+        report["events"]["placed"].append({"id": e.get("id"), "f": e["f"], "kind": kind, "take": KIT[kind][0][k % len(KIT[kind][0])], "t": round(fr(e["f"]), 3)})
 
     if not a.draft:
-        cues = {"brk": fr(byid["break"]["f"]), "storm": fr(byid["storm0"]["f"]), "pad_in": fr(byid["break"]["f"]) + 1.0, "stop": fr(byid["lockup"]["f"])}
-        m = music(sec, bar, beat, cues)
-        place(mu_bus, m["tension"], 0, 0)
-        place(mu_bus, m["pad"] * 0.9, 0, 0)
-        place(mu_bus, m["drums"], 0, 0)
+        cues = {"brk": fr(byid["break"]["f"]), "storm": fr(byid["storm0"]["f"]), "pad_in": fr(byid["break"]["f"]) + 1.0, "groove": 7 * bar, "stop": fr(byid["lockup"]["f"])}
+        if a.music == "code":
+            m = music(sec, bar, beat, cues)
+        else:
+            m, report["music_parts"] = music_eleven(sec, beat, cues)
+        for part in m.values():
+            place(mu_bus, part, 0, 0)
 
     # duck the music under the voice (6 dB, 40 ms attack, 250 ms release)
     vo_env = np.abs(vo_bus).max(axis=1)
@@ -498,7 +528,7 @@ def main() -> None:
     g = 10 ** ((a.lufs - l0) / 20)
     for name, bus in (("voice", vo_bus), ("sfx", fx_bus * 0.9), ("music", mu_bus * 0.8)):
         sf.write(stems / f"{name}.wav", np.clip(bus * g, -1, 1), SR, subtype="PCM_24")
-    report.update({"lufs": round(lufs, 2), "true_peak_db": round(tp, 2), "limiter_max_gr_db": round(min(gr, gr2), 2), "limiter_hot_s": hot1, "seconds": sec, "sfx": "designed in code (numpy), no external samples", "voice": "ElevenLabs engine via Higgsfield, preset voice Alexey"})
+    report.update({"lufs": round(lufs, 2), "true_peak_db": round(tp, 2), "limiter_max_gr_db": round(min(gr, gr2), 2), "limiter_hot_s": hot1, "seconds": sec, "sfx": "ElevenLabs sound-generation (audio/sfx)", "music": "ElevenLabs music (audio/music)" if a.music == "eleven" else "numpy score", "voice": "ElevenLabs eleven_v4, Alex Nekrasov (uk)"})
     if abs(lufs - a.lufs) > 0.5:
         report["warnings"].append(f"loudness {lufs:.2f} LUFS off target {a.lufs}")
     if tp > -1.5:

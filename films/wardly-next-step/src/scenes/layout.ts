@@ -54,8 +54,8 @@ export const slamOf = (i: number) => QUESTIONS[i].cue + SLAM;
 // the break sends Q2 and Q3 to the edges to wait and leaves Q1 in the centre.
 export const Q_HOME = {
   q1: { x: 112, y: 671 }, // the morph happens here: «купити» is already level with the card's first line
-  q2Wait: { x: 112, y: 300, s: 0.36, o: 0.3 },
-  q3Wait: { x: 112, y: 1396, s: 0.36, o: 0.3 },
+  q2Wait: { x: 112, y: 300, s: 0.37, o: 0.3 },
+  q3Wait: { x: 112, y: 1396, s: 0.37, o: 0.3 },
 };
 const DIM = 0.36;
 const BRK0 = CUE.brk + 6; // a six-frame freeze, then the break moves
@@ -101,7 +101,7 @@ export const qPose = (i: number, f: number): QPose => {
 };
 
 /** Frames after CUE.storm where the storm switches speaker: 8ths, then 16ths, accelerating. */
-export const STORM_T = [0, 15, 30, 38, 45, 49, 53, 56, 58, 60];
+export const STORM_T = [0, 15, 23, 30, 34, 38, 41, 43, 44, 45];
 
 /** The storm's switch frames and who speaks: 8ths, then 16ths, ending on Q1. */
 export const STORM = (() => {

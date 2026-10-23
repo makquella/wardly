@@ -49,20 +49,20 @@ export const TOTAL = b(13) + TAIL;
 
 /** Voice-over takes (audio/vo/voN.wav) and where they start. Spoken words drive the cues below. */
 export const VO = {
-  vo1: 15, // offgrid: voice «Що купити? Чому відстаю? Що змінити?»
+  vo1: 8, // offgrid: voice «Що купити? Чому відстаю? Що змінити?» (3.6 s: starts early so «Що змінити?» lands before the storm)
   vo2: b(4, 0, 1) - 2, // offgrid: voice «Під час гри — одна коротка порада.»
-  vo3: b(6, 1), // «Після гри — чесний розбір матчу.»
-  vo4: b(7, 2), // «Де саме ви відстали — і що змінити наступного разу.»
-  vo5: b(10, 1), // «Менше хаосу. Чіткіший наступний крок.»
-  vo6: b(12, 0, 1) + 2, // offgrid: voice «Wardly. Безкоштовно для Windows.»
+  vo3: b(6, 0, 2), // «Після гри — чесний розбір матчу.» as «Чому відстаю?» comes forward
+  vo4: b(7, 2, 2), // «Де саме ви відстали — і що змінити наступного разу.» (a breath after «матчу.»)
+  vo5: b(10), // «Менше хаосу. Чіткіший наступний крок.» (on the clear, so «крок.» lands before the logo)
+  vo6: b(11, 3) + 10, // offgrid: voice «Wardly. Безкоштовно для Windows.» «Wardly» as the wordmark appears; «Windows.» ends before the tail
 };
 
 // Named sync points (absolute frames). Voice-led cues sit where the word is spoken.
 export const CUE = {
   q1: VO.vo1, // offgrid: voice «Що купити?» slams in on «Що»
-  q2: VO.vo1 + 65, // offgrid: voice «Чому відстаю?»
-  q3: VO.vo1 + 138, // offgrid: voice «Що змінити?»
-  storm: b(2, 2), // the questions start interrupting each other on 8ths
+  q2: VO.vo1 + 76, // offgrid: voice «Чому відстаю?»
+  q3: VO.vo1 + 160, // offgrid: voice «Що змінити?»
+  storm: b(2, 2, 2), // the questions start interrupting each other on 8ths (scenes/layout.ts STORM_T ends on the break)
   brk: b(3), // the break: everything stops
   settle: b(3, 1, 2), // the noise has fallen away; one question is left
   hook: b(3, 2), // «Що» leaves and the «?» loses its hook
@@ -74,13 +74,13 @@ export const CUE = {
   review: b(6, 1), // the review card builds
   index: b(6, 3), // the «?» dot becomes the finding's index
   title: b(7), // the finding's title and text
-  push: VO.vo4 + 40, // offgrid: voice the camera pushes onto 36 / 65 on «відстали»
-  q3Come: VO.vo4 + 108, // offgrid: voice «Що змінити?» rises from the bottom edge on «змінити»
-  drill: VO.vo4 + 148, // offgrid: voice the drill opens; the dot turns red
+  push: VO.vo4 + 57, // offgrid: voice the camera pushes onto 36 / 65 on «відстали»
+  q3Come: VO.vo4 + 134, // offgrid: voice «Що змінити?» rises from the bottom edge on «змінити»
+  drill: VO.vo4 + 178, // offgrid: voice the drill opens; the dot turns red
   clear: b(10), // everything clears to the red dot
   slogan1: VO.vo5, // «Менше хаосу.»
-  slogan2: VO.vo5 + 80, // offgrid: voice «Чіткіший наступний крок.» lands just after the word is spoken, once «Менше хаосу.» is read
-  period: VO.vo5 + 145, // offgrid: voice «крок.» — the red dot is the full stop
+  slogan2: VO.vo5 + 105, // offgrid: voice «Чіткіший наступний крок.» lands just after the word is spoken, once «Менше хаосу.» is read
+  period: VO.vo5 + 175, // offgrid: voice «крок.» — the red dot is the full stop
   logo: b(11, 3), // the dot flies to the logo's orbit; the orbit draws itself
   wordmark: b(12), // «Wardly» locks: the one clean hit
   cta: b(12, 2), // the address
