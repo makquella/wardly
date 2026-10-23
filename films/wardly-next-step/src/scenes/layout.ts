@@ -90,10 +90,10 @@ export const qPose = (i: number, f: number): QPose => {
   const p = track(f, keys[i]);
   // The storm: from CUE.storm the questions interrupt each other on 8ths, then 16ths; the one that
   // speaks is sharp and forward, the others drop back. It ends on Q1 a beat before the break.
-  if (f >= CUE.storm - 4 && f < BRK0 + 4) {
+  if (f >= CUE.storm - 14 && f < BRK0 + 4) {
     const focus = stormFocus(f);
     const mine = focus[i];
-    const on = prog(f, CUE.storm - 4, CUE.storm, E.out) * (1 - prog(f, BRK0, BRK0 + 4, E.out));
+    const on = prog(f, CUE.storm - 14, CUE.storm + 2, E.smooth) * (1 - prog(f, BRK0, BRK0 + 4, E.out)); // the storm takes over smoothly, no pop
     p.o = mix(p.o, mix(DIM, 1, mine), on);
     p.s *= 1 + 0.05 * mine;
   }
@@ -222,7 +222,7 @@ export const rcCam = (f: number) => {
   const inP = prog(f, CUE.review - 10, CUE.review + 24, E.out);
   const push = prog(f, CUE.push - 6, CUE.push + 40, E.cam);
   const reframe = prog(f, CUE.drill - 4, CUE.drill + 50, E.cam);
-  const drift = 1 + 0.02 * prog(f, CUE.review, CUE.push, E.linear); // never frozen while it is read
+  const drift = 1 + 0.05 * prog(f, CUE.review, CUE.push, E.linear); // never frozen while it is read
   const k = drift * mix(1, 1.07, push) * mix(1, 1 / 1.07, reframe) * (1 + 0.025 * prog(f, CUE.drill + 50, CUE.clear, E.dolly));
   const dy = mix(30, 0, inP) + mix(0, -170, reframe);
   const out = prog(f, CUE.clear, CUE.clear + 30, E.in);

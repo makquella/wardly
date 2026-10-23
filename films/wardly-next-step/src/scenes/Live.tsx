@@ -41,7 +41,7 @@ export const MorphWord: React.FC<{ frame: number }> = ({ frame: f }) => {
   const track = mix(qFont.track, 0, t);
   const x = mix(a.x, b.x, t);
   const y = mix(a.y, b.y, t);
-  const fs = 150; // drawn at a fixed size and scaled, so the glyphs never re-hint mid-move
+  const fs = qFont.size; // the hero's own size, so the hand-off frame is identical; then only scaled, never re-hinted
   const base = baselineOf(fs, Math.round(weight), 1, FONT.text);
   return (
     <div
