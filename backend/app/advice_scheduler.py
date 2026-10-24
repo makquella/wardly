@@ -44,6 +44,7 @@ from app.advice_validity import (
     FILLER_ACTIONS,
     advice_basis,
     is_filler,
+    named_tool,
     refreshed_reason,
     withdraw_reason,
 )
@@ -542,6 +543,15 @@ class AdviceScheduler:
         # extracted as one atomic block. Returns a bare ScheduledAdvice | None.
         if decision_point == "LOW_HP":
             low_hp_action = self._low_hp_episode_action_locked(state)
+            raw_extra = state.get("extra_context")
+            if (
+                low_hp_action == "pattern"
+                and isinstance(raw_extra, dict)
+                and raw_extra.get("teleporting") is True
+            ):
+                # «Stop re-contesting the lane» while the TP out channels: it
+                # names no tool and asks for what the TP does (_held_by_channel).
+                low_hp_action = "suppress"
             if low_hp_action == "suppress":
                 self.state.repeated_low_hp_suppressed_count += 1
                 self.state.post_laning_safety_suppressed_count += _post_laning_int(state)
@@ -1013,7 +1023,8 @@ class AdviceScheduler:
         )
 
         with self._lock:
-            if is_filler(fallback, decision_point):
+            channel = self._held_by_channel_locked(state, decision_point, fallback)
+            if is_filler(fallback, decision_point) or channel:
                 # A card without a decision (a generic «keep farming») is not
                 # worth the player's attention: keep what is shown, say nothing.
                 self.state.no_new_decision_count += 1
@@ -1034,7 +1045,7 @@ class AdviceScheduler:
                     next_allowed=0,
                     new_advice=False,
                     advice_mode="status",
-                    suppressed_reason="no_new_decision",
+                    suppressed_reason="channelling" if channel else "no_new_decision",
                 )
             r = self._evaluate_ux_laning_locked(
                 current_time=current_time,
@@ -1769,6 +1780,20 @@ class AdviceScheduler:
         self.state._is_pinned = decision_point in DEATH_REVIEW_DECISIONS or _is_dead_or_respawning(
             state
         )
+
+    def _held_by_channel_locked(
+        self, state: dict[str, Any], decision_point: str, card: RecommendationResponse
+    ) -> bool:
+        """A TP channel is on (action_feedback teleporting): a card that names
+        no tool to press (leave, farm elsewhere, group up) asks for what the
+        TP already does or cannot be done without cancelling it, urgent or
+        not («leave the wave now» while the TP home channels). A card naming a
+        tool still passes: a Wand or a Faerie Fire may save the channel."""
+        raw_extra = state.get("extra_context")
+        extra: dict[str, Any] = raw_extra if isinstance(raw_extra, dict) else {}
+        if extra.get("teleporting") is not True or decision_point == "DISABLED_STATUS":
+            return False
+        return named_tool(card.action, state) is None
 
     def _readiness_moment_locked(
         self, decision_point: str, state: dict[str, Any]

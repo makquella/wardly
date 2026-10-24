@@ -9,6 +9,12 @@
 
   const TEXT = {
     en: {
+      "0.60.0": [
+        "A short plan instead of separate cards: one near-term goal with what it rests on, the next step, and when it is done or called off. It changes only when the best action changes: a lane that gives nothing («+1 last hit from 5:05 to 6:35, HP down to 12%»: the tower's last hits and a support, not an automatic jungle), an active item waiting in the stash, a fight that is over (from the score, never from enemies leaving the minimap: «hit their tower now» with the team, or recover), the Aegis with the team until when it lasts.",
+        "Deaths and revives by observation: a life lost without the counter rising is «not known yet» until the game shows a late counter (a death), a stand-up on the spot with the Aegis or Reincarnation (a revive) or a return at the fountain (a death the counter missed, never counted twice). Several deaths at one spot with allies or at an objective are no longer «change your route».",
+        "Allies near are allies who stay next to you, not a passer-by and not a group outnumbered by visible enemies. The Aegis holds the buyback card back only when it is known to last another minute.",
+        "Less voice: «the moment the disable ends, use X» only with HP at 50% or 15% of it lost in the disable; after a kill «hold the next engage until Doppelganger is back», only with an enemy close, once per fight; no «step back» while a TP channels. A card still up shows this moment's gold and Wand charges. A charged Wand is named next to the escape again."
+      ],
       "0.59.0": [
         "Your own phases are no longer a disable. Dota marks the hero as stunned during Manta Style's split, Phantom Lancer's Doppelganger or Omnislash; Wardly took that for an enemy stun and said «The moment the disable ends, use Manta». Now a stun that starts as your own cooldown starts, with no debuff and no HP lost, gets no card, and a stun with no debuff and no damage no order to spend an item. A real stun right after your phase (a debuff appears, HP drops) still gets its card at once.",
         "The Aegis is not a death. Losing a life to the Aegis or Reincarnation no longer counts as a death, brings no death review or «after respawn, change your route», and Wardly stays quiet until you stand again. Two deaths across the map are no longer «a repeated route»: only deaths in one area (or three at one spot in a game) are. «You died with low resources» now looks at the HP you entered the fight with, not the last tick before the death.",
@@ -572,6 +578,12 @@
       ]
     },
     uk: {
+      "0.60.0": [
+        "Короткий план замість окремих карток: одна найближча мета — на чому стоїть, наступний крок, коли виконана чи скасована. Змінюється лише тоді, коли змінюється найкраща дія: лінія не дає нічого («+1 добивання з 5:05 до 6:35, HP падало до 12%»: добивати біля вежі й кликати саппорта, а не автоматично ліс), активний предмет чекає в схованці, бійка скінчилась (за рахунком, а не за тим, що вороги зникли з мінікарти: «бийте їхню вежу зараз» з командою або відновіться), Aegis з командою — до котрої хвилини він діє.",
+        "Смерть і воскресіння за спостереженнями: втрачене життя без зростання лічильника — «ще невідомо», доки гра не покаже лічильник, що запізнився (смерть), підйом на місці з Aegis чи Reincarnation (воскресіння) чи появу біля фонтану (смерть, яку лічильник не показав; двічі не рахується). Кілька смертей в одній точці з союзниками чи біля цілі більше не «змініть маршрут».",
+        "Союзники поруч — ті, хто лишається поруч, а не той, хто пробіг повз, і не група, якої видимих ворогів більше. Aegis знімає картку байбеку, лише коли відомо, що він діятиме ще хвилину.",
+        "Менше голосу: «щойно контроль закінчиться, натисніть X» — лише з HP до 50% чи мінус 15% за цей контроль; після вбивства — «не починайте нову бійку, доки Doppelganger не відновиться», лише з ворогом поруч і раз за бійку; під час телепорту — без «відійдіть». Картка, що ще діє, показує золото й заряди Wand цієї миті. Заряджений Wand знову названо поруч із втечею."
+      ],
       "0.59.0": [
         "Ваші власні фази більше не вважаються контролем. Dota позначає героя оглушеним під час розділення Manta Style, Doppelganger у Phantom Lancer чи Omnislash; Wardly приймав це за ворожий стан і казав «Щойно контроль закінчиться, натисніть Manta». Тепер оглушення, що почалося разом із вашою перезарядкою, без дебафу й без втрати HP, картки не дає, а оглушення без дебафу й без шкоди — наказу витратити предмет. Справжній стан одразу після вашої фази (з'явився дебаф, падає HP) і далі дає картку одразу.",
         "Aegis — не смерть. Втрачене через Aegis чи Reincarnation життя більше не рахується смертю, не дає розбору смерті чи «після відродження змініть маршрут», і Wardly мовчить, доки ви знову не встанете. Дві смерті в різних кінцях карти більше не «повторний маршрут»: лише смерті в одному місці (чи три в одній точці за гру). «Ви загинули з низьким ресурсом» тепер дивиться на HP, з яким ви почали бій, а не на останню мить перед смертю.",

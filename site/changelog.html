@@ -98,6 +98,33 @@
       <article data-doc="uk" lang="uk">
         <h1>Що нового</h1>
         <p class="doc-updated">Усі версії Wardly. Встановлений застосунок оновлюється сам, коли Дота закрита.</p>
+<section class="release" id="v0.60.0">
+<h2><a href="#v0.60.0">Версія 0.60.0</a></h2>
+<ul>
+  <li><strong>Короткий план замість окремих карток.</strong> Wardly тримає одну найближчу мету: на чому вона стоїть, який наступний крок, коли вона виконана і коли скасована. Нова мета з'являється лише тоді, коли змінюється найкраща дія:</li>
+  <li><strong>Лінія не дає нічого.</strong> Наприклад: «+1 добивання з 5:05 до 6:35, HP падало до 12%, ворогів поруч: 2». Тоді — добивати біля вежі й кликати саппорта, а не автоматично «йти в ліс»: Wardly не бачить, чи ваш герой зачистить табори на цьому рівні, і прямо це каже.</li>
+  <li><strong>Активний предмет чекає в схованці</strong> (Manta, BKB, Blink… чи рецепт до них): поки його не привезли, його не натиснути.</li>
+  <li><strong>Бійка скінчилась</strong> — за рахунком, а не за тим, що вороги зникли з мінікарти. Виграли з командою біля їхньої вежі: «Бийте її зараз». Мало HP: відновіться.</li>
+  <li><strong>Aegis з командою</strong> — до котрої хвилини він діє і що ним брати; без команди він прощає лише одну помилку.</li>
+  <li><strong>Смерть і воскресіння за спостереженнями.</strong> Втрачене життя без зростання лічильника — «ще невідомо», доки гра не покаже:</li>
+  <li>лічильник, що запізнився, — це звичайна смерть;</li>
+  <li>підйом на місці з Aegis чи Reincarnation — це воскресіння;</li>
+  <li>довгий таймер відродження чи поява біля фонтану — це смерть, яку лічильник не показав (її не порахують двічі).</li>
+  <li>Підйом на місці без Aegis і Reincarnation — не «друге життя».</li>
+  <li>Смерті в розриві даних рахуються, але без місця.</li>
+  <li><strong>Повтор місця — ще не повтор помилки.</strong> Кілька смертей в одній точці разом із союзниками чи біля цілі — це місце бійок, а не маршрут, який треба міняти.</li>
+  <li><strong>Союзники поруч — ті, хто лишається поруч.</strong> Союзник, що пробіг повз за одну мить, — не команда, і команда, яку видимих ворогів довкола більше, — теж. Aegis знімає картку байбеку лише тоді, коли відомо, що він діятиме ще хвилину, і база не під загрозою.</li>
+  <li><strong>Менше голосу.</strong></li>
+  <li>«Щойно контроль закінчиться, натисніть X» — лише коли під контролем справді є що втрачати: HP до 50% чи мінус 15% максимального HP за цей контроль. Коротке оглушення на повному HP картки не дає.</li>
+  <li>Після вбивства — не «заходьте знову», а «не починайте нову бійку, доки Doppelganger не відновиться», і лише коли ворог поруч чи вас б'ють. Серія вбивств — одна така картка.</li>
+  <li>Під час телепорту картки «відійдіть» не приходять.</li>
+  <li><strong>Свіжі числа.</strong> Картка, що ще діє, показує золото, ціну байбеку і заряди Wand саме цієї миті; голос не повторює її через нове число.</li>
+  <li><strong>Виправлено.</strong></li>
+  <li>Власна фаза визначається за виміряною тривалістю кожної механіки (Doppelganger, Manta, Metamorphosis), а не за будь-якою вашою перезарядкою поруч з оглушенням.</li>
+  <li>Заряджений Magic Wand знову названо поруч із втечею: «Використайте Doppelganger, щоб піти, потім Magic Wand».</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.0" rel="noopener">Завантажити й подробиці</a></p>
+</section>
 <section class="release" id="v0.59.0">
 <h2><a href="#v0.59.0">Версія 0.59.0</a></h2>
 <ul>
@@ -1580,6 +1607,33 @@
       <article data-doc="en" lang="en" hidden>
         <h1>What's new</h1>
         <p class="doc-updated">Every Wardly version. The installed app updates itself while Dota is closed.</p>
+<section class="release" id="v0.60.0">
+<h2><a href="#v0.60.0">Version 0.60.0</a></h2>
+<ul>
+  <li><strong>A short plan instead of separate cards.</strong> Wardly keeps one near-term goal: what it rests on, the next step, when it is done and when it is called off. A new one comes only when the best action changes:</li>
+  <li><strong>The lane gives you nothing.</strong> For example: «+1 last hit from 5:05 to 6:35, HP down to 12%, 2 enemies around you». The answer is the tower's last hits and calling a support, not an automatic «go to the jungle»: Wardly cannot see whether your hero clears camps at this level, and it says so.</li>
+  <li><strong>An active item waits in the stash</strong> (Manta, BKB, Blink… or their recipe): until it is delivered you cannot press it.</li>
+  <li><strong>A fight is over</strong> — read from the score, never from enemies leaving the minimap. Won with the team next to their tower: «hit it now». Low on HP: recover.</li>
+  <li><strong>The Aegis with the team</strong> — until when it lasts and what to take with it; without the team it covers one mistake.</li>
+  <li><strong>Death and revive by observation.</strong> A life lost without the counter rising is «not known yet» until the game shows it:</li>
+  <li>a late counter is an ordinary death;</li>
+  <li>standing up on the spot with the Aegis or Reincarnation is a revive;</li>
+  <li>a long respawn timer or a return at the fountain is a death the counter missed (never counted twice).</li>
+  <li>Standing up on the spot without the Aegis or Reincarnation is no «second life».</li>
+  <li>Deaths inside a data gap are counted, without a place.</li>
+  <li><strong>The same place is not yet the same mistake.</strong> Several deaths at one spot with allies next to you or at an objective are where the fights were, not a route to change.</li>
+  <li><strong>Allies near means allies who stay.</strong> An ally passing by for one moment is not a team, and neither is a group outnumbered by the visible enemies around. The Aegis holds the buyback card back only when it is known to last another minute and the base is safe.</li>
+  <li><strong>Less voice.</strong></li>
+  <li>«The moment the disable ends, use X» only when the disable puts something at stake: HP at or under 50%, or 15% of max HP lost in it. A short stun at full HP gets no card.</li>
+  <li>After a kill: not «go in again» but «hold the next engage until Doppelganger is back», and only with an enemy close or damage coming. A kill streak is one such card.</li>
+  <li>No «step back» cards while a TP channels.</li>
+  <li><strong>Fresh numbers.</strong> A card still up shows this moment's gold, buyback cost and Wand charges; the voice does not repeat it for a new number.</li>
+  <li><strong>Fixed.</strong></li>
+  <li>An own phase is judged by each mechanic's measured length (Doppelganger, Manta, Metamorphosis), not by any own cooldown next to a stun.</li>
+  <li>A charged Magic Wand is named again next to the escape: «Use Doppelganger now to get out, then Magic Wand».</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.0" rel="noopener">Download and details</a></p>
+</section>
 <section class="release" id="v0.59.0">
 <h2><a href="#v0.59.0">Version 0.59.0</a></h2>
 <ul>

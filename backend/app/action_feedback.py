@@ -50,6 +50,10 @@ CONSUMABLES = {
 MAX_GAP = 3.0
 # Uses older than this are forgotten.
 KEEP_SECONDS = 30.0
+# A TP scroll channels 3 s (game seconds); with a tick of slack, a hero whose
+# TP cooldown just started and who has not moved is still channelling.
+TP_CHANNEL_SECONDS = 4.0
+TP_STILL_RADIUS = 150
 # Gold rising this much in one tick next to a vanished item: a sale.
 SALE_GOLD = 10
 
@@ -120,6 +124,36 @@ class ActionWatch:
         self._cooldowns: dict[str, float] = {}
         self._uses: dict[str, float] = {}
         self._casts: dict[str, float] = {}
+        self._tp_cooldown: float | None = None
+        self._tp_cast: tuple[float, float, float] | None = None
+
+    def _teleporting(self, extra: Mapping[str, Any], at: float | None) -> bool:
+        """The TP scroll's cooldown started moments ago and the hero stands
+        where it was: the channel is on. GSI has no channel flag; a moved hero
+        (arrived, or cancelled and walked) is no longer channelling."""
+        cooldown = extra.get("tp_cooldown")
+        cooldown = float(cooldown) if isinstance(cooldown, (int, float)) else None
+        x, y = extra.get("xpos"), extra.get("ypos")
+        if (
+            at is not None
+            and cooldown is not None
+            and cooldown > 0
+            and self._tp_cooldown == 0
+            and isinstance(x, (int, float))
+            and isinstance(y, (int, float))
+        ):
+            self._tp_cast = (at, float(x), float(y))
+        self._tp_cooldown = cooldown
+        cast = self._tp_cast
+        if cast is None or at is None or extra.get("alive") is False:
+            return False
+        if at - cast[0] > TP_CHANNEL_SECONDS or not isinstance(x, (int, float)):
+            self._tp_cast = None
+            return False
+        if not isinstance(y, (int, float)) or abs(x - cast[1]) + abs(y - cast[2]) > TP_STILL_RADIUS:
+            self._tp_cast = None
+            return False
+        return True
 
     def observe(self, extra: Mapping[str, Any], at: float | None) -> dict[str, Any]:
         snapshot = {
@@ -142,7 +176,9 @@ class ActionWatch:
         if extra.get("alive") is False:
             self._uses = {}
         self._last, self._last_at, self._cooldowns = snapshot, at, cooldowns
+        teleporting = self._teleporting(extra, at)
         return {
+            "teleporting": teleporting,
             "recent_uses": {name: round(at - t, 1) for name, t in self._uses.items()}
             if at is not None
             else {},
