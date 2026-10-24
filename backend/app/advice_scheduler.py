@@ -44,10 +44,10 @@ from app.advice_validity import (
     FILLER_ACTIONS,
     advice_basis,
     is_filler,
-    named_tool,
     refreshed_reason,
     withdraw_reason,
 )
+from app.channel_rules import channel_verdict
 from app.config import ADVICE_FREQUENCY, USE_LLM
 from app.hero_gameplay import rule_valid
 from app.laning_coach import (
@@ -456,7 +456,10 @@ class AdviceScheduler:
         # S2/S4/S5/S6 (all return a bare ScheduledAdvice | None). On a duplicate
         # it keeps an active advice visible or returns a cooldown result; None
         # to fall through. Early-return preserved.
-        duplicate = self.state._last_advice_state_hash == state_hash
+        duplicate = (
+            self.state._last_advice_state_hash == state_hash
+            and decision_point != self.state._overtaken_type
+        )
         if duplicate:
             self.state.duplicate_suppressed_count += 1
             suppressed_reason = (
@@ -547,10 +550,10 @@ class AdviceScheduler:
             if (
                 low_hp_action == "pattern"
                 and isinstance(raw_extra, dict)
-                and raw_extra.get("teleporting") is True
+                and channel_verdict(raw_extra, None, "retreat_reset") == "hold"
             ):
-                # «Stop re-contesting the lane» while the TP out channels: it
-                # names no tool and asks for what the TP does (_held_by_channel).
+                # «Stop re-contesting the lane» is a move order: during an
+                # assumed TP channel with no danger seen it waits (channel_rules).
                 low_hp_action = "suppress"
             if low_hp_action == "suppress":
                 self.state.repeated_low_hp_suppressed_count += 1
@@ -692,6 +695,7 @@ class AdviceScheduler:
             now=current_time,
             action_type=policy["action_type"],
             moment=self._readiness_moment_locked(decision_point, state) is not None,
+            overtaken=decision_point == self.state._overtaken_type,
         )
         if ux_result["recommendation"] is None:
             reason = ux_result["suppressed_reason"] or "cooldown"
@@ -784,6 +788,15 @@ class AdviceScheduler:
                 game_time_seconds=game_time_seconds,
             )
         )
+        if (
+            suppress_post_laning
+            and post_laning_reason == "duplicate_post_laning"
+            and self._readiness_moment_locked(decision_point, state) is not None
+        ):
+            # The category comes from the game state, not from the card: an
+            # earlier disable card filed under it says nothing about this kill
+            # or revive, whose readiness card is already one per moment.
+            suppress_post_laning = False
         if suppress_post_laning:
             heartbeat = self._heartbeat_nudge_locked(
                 decision_point=decision_point,
@@ -1023,7 +1036,7 @@ class AdviceScheduler:
         )
 
         with self._lock:
-            channel = self._held_by_channel_locked(state, decision_point, fallback)
+            channel = self._held_by_channel_locked(state, fallback, policy.get("action_type"))
             if is_filler(fallback, decision_point) or channel:
                 # A card without a decision (a generic «keep farming») is not
                 # worth the player's attention: keep what is shown, say nothing.
@@ -1782,18 +1795,16 @@ class AdviceScheduler:
         )
 
     def _held_by_channel_locked(
-        self, state: dict[str, Any], decision_point: str, card: RecommendationResponse
+        self, state: dict[str, Any], card: RecommendationResponse, action_type: str | None
     ) -> bool:
-        """A TP channel is on (action_feedback teleporting): a card that names
-        no tool to press (leave, farm elsewhere, group up) asks for what the
-        TP already does or cannot be done without cancelling it, urgent or
-        not («leave the wave now» while the TP home channels). A card naming a
-        tool still passes: a Wand or a Faerie Fire may save the channel."""
+        """An assumed TP channel (action_feedback `teleporting`) and a card
+        whose action would end it for no danger seen (channel_rules): it
+        waits until the channel is over. The action is the card's structured
+        tool (`card.tool`, set by the copy that chose it) or, without one, the
+        policy's action type; never the words of the action."""
         raw_extra = state.get("extra_context")
         extra: dict[str, Any] = raw_extra if isinstance(raw_extra, dict) else {}
-        if extra.get("teleporting") is not True or decision_point == "DISABLED_STATUS":
-            return False
-        return named_tool(card.action, state) is None
+        return channel_verdict(extra, card.tool, action_type) == "hold"
 
     def _readiness_moment_locked(
         self, decision_point: str, state: dict[str, Any]
@@ -1836,6 +1847,7 @@ class AdviceScheduler:
         )
         self.state._withdrawn = None
         self.state._withdrawn_until = None
+        self.state._overtaken_type = None
 
     def _revalidate_active_locked(self, state: dict[str, Any], now: datetime) -> None:
         """Drop the held card once the snapshot no longer supports it
@@ -1864,9 +1876,12 @@ class AdviceScheduler:
             "card_clock": basis.get("clock"),
         }
         self.state._withdrawn_until = now + WITHDRAWN_NOTICE
-        if reason in {"cannot_act_now", "superseded_by_threat"}:
-            # Not done, only overtaken (a stun landed on «use X now»): the next
-            # low-HP evaluation may speak again, in the form that fits now.
+        if reason == "can_act_now":
+            self.state._overtaken_type = str(basis.get("decision_point") or "") or None
+        if reason in {"cannot_act_now", "can_act_now", "superseded_by_threat"}:
+            # Not done, only overtaken (a stun landed on «use X now», a stun
+            # gave way to a silence X goes through): the next evaluation may
+            # speak again, in the form that fits now.
             self.state._low_hp_episode_active = False
         self.state._last_recommendation = None
         self.state._active_advice_until = None
@@ -2181,7 +2196,7 @@ class AdviceScheduler:
         now: datetime,
         game_time_seconds: float | None,
     ) -> int:
-        if self.state.last_advice_at is None:
+        if self.state.last_advice_at is None or decision_point == self.state._overtaken_type:
             return 0
 
         if (

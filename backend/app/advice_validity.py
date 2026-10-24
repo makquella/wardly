@@ -19,6 +19,9 @@ Rules (each from what the card itself claims):
 - a low-HP card once HP is back well above the line it was made at;
 - a disable card once the status is classified as the player's own phase (not
   when the disable ends: «the moment it ends, use X» is for exactly then);
+- «the moment the disable ends, use X» once the stun or hex is over but a
+  silence or mute still holds and X can be pressed through it (an item under a
+  silence): waiting is no longer the step, the fresh decision says what now;
 - a calm card (farm, TP, smoke, items) once an enemy disable or a fast HP fall
   is seen: it must not stay on screen through a fight it says nothing about.
 """
@@ -159,6 +162,19 @@ def _tool_used(tool: Mapping[str, Any], state: Mapping[str, Any]) -> bool:
     return False
 
 
+def _pressable_through_status(tool: Mapping[str, Any], state: Mapping[str, Any]) -> bool:
+    """An «after the disable» tool that the remaining status no longer blocks."""
+    if tool.get("mode") != "after_disable":
+        return False
+    extra = _extra(state)
+    if extra.get("stunned") is True or extra.get("hexed") is True:
+        return False
+    silenced, muted = extra.get("silenced") is True, extra.get("muted") is True
+    if not (silenced or muted):
+        return False  # the disable is over: the card is for exactly then
+    return not muted if tool.get("kind") == "item" else not silenced
+
+
 def _cannot_press_now(tool: Mapping[str, Any], state: Mapping[str, Any]) -> bool:
     if tool.get("mode") != "now":
         return False
@@ -217,6 +233,8 @@ def withdraw_reason(basis: Mapping[str, Any] | None, state: Mapping[str, Any]) -
             return "action_done"
         if _cannot_press_now(tool, state):
             return "cannot_act_now"
+        if _pressable_through_status(tool, state):
+            return "can_act_now"
     facts = basis.get("facts")
     if isinstance(facts, Mapping):
         gold, cost = _number(extra.get("available_gold")), _number(extra.get("buyback_cost"))

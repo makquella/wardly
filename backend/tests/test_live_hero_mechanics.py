@@ -203,3 +203,122 @@ def test_a_leave_card_waits_while_the_tp_channels(client, clock):
 def test_without_a_channel_the_same_moment_gets_its_leave_card(client, clock):
     actions = _channel_match(client, clock, tp_cooldown=0)
     assert actions, actions
+
+
+# 6b. The channel lifecycle and what each action does to it (channel_rules).
+
+
+def _tp_watch_sequence(watch: ActionWatch, steps: list[dict[str, Any]]) -> list[bool]:
+    return [watch.observe(step, step["at"])["teleporting"] for step in steps]
+
+
+def _tp_step(at: float, cooldown: float | None, x: float = 5000.0, **kw: Any) -> dict[str, Any]:
+    return {"alive": True, "xpos": x, "ypos": 5000.0, "tp_cooldown": cooldown, "at": at, **kw}
+
+
+def test_a_completed_tp_ends_the_channel_on_arrival():
+    watch = ActionWatch()
+    seen = _tp_watch_sequence(
+        watch,
+        [_tp_step(100, 0), _tp_step(101, 80), _tp_step(102, 79), _tp_step(104, None, x=13000)],
+    )
+    assert seen == [False, True, True, False]
+    assert watch.channel_end == "tp_gone"
+
+
+def test_a_cancelled_tp_with_the_hero_still_standing_holds_nothing_for_long():
+    # Cancelled, the hero keeps standing: the inference cannot tell, so it
+    # ends with its window (TP_CHANNEL_SECONDS), not never.
+    from app.action_feedback import TP_CHANNEL_SECONDS
+
+    watch = ActionWatch()
+    steps = [_tp_step(100, 0)] + [_tp_step(101 + i, 80 - i) for i in range(10)]
+    seen = _tp_watch_sequence(watch, steps)
+    assert seen[1] is True and seen[-1] is False
+    assert sum(seen) <= TP_CHANNEL_SECONDS + 1
+    assert watch.channel_end == "window_over"
+
+
+def test_a_stun_or_a_walk_ends_the_assumed_channel():
+    watch = ActionWatch()
+    seen = _tp_watch_sequence(
+        watch, [_tp_step(100, 0), _tp_step(101, 80), _tp_step(102, 79, stunned=True)]
+    )
+    assert seen == [False, True, False] and watch.channel_end == "interrupted"
+    watch = ActionWatch()
+    seen = _tp_watch_sequence(
+        watch, [_tp_step(100, 0), _tp_step(101, 80), _tp_step(102, 79, x=5400)]
+    )
+    assert seen == [False, True, False] and watch.channel_end == "moved"
+
+
+def test_a_missed_channel_start_or_a_data_gap_assumes_no_channel():
+    # First seen already on cooldown: no ready → running, no channel assumed.
+    watch = ActionWatch()
+    assert _tp_watch_sequence(watch, [_tp_step(100, 80), _tp_step(101, 79)]) == [False, False]
+    # A gap longer than MAX_GAP right after the start: the channel is unknown.
+    watch = ActionWatch()
+    seen = _tp_watch_sequence(watch, [_tp_step(100, 0), _tp_step(101, 80), _tp_step(106, 75)])
+    assert seen == [False, True, False] and watch.channel_end == "data_gap"
+
+
+def test_what_each_action_does_to_an_assumed_channel():
+    from app.channel_rules import channel_verdict
+
+    calm = {"teleporting": True, "hp_falling_fast": None}
+    # An ability cast, Manta, a Wand, BKB: they interrupt a TP (Valve data:
+    # no IGNORE_CHANNEL) -> wait while nothing is seen.
+    for tool in (
+        {"kind": "ability", "name": "Doppelganger"},
+        {"kind": "item", "name": "item_manta"},
+        {"kind": "item", "name": "item_magic_wand"},
+        {"kind": "item", "name": "item_black_king_bar"},
+    ):
+        assert channel_verdict(calm, tool, "retreat_reset") == "hold", tool
+    # Glimmer Cape and Shadow Blade ignore channels: compatible.
+    for name in ("item_glimmer_cape", "item_invis_sword"):
+        assert channel_verdict(calm, {"kind": "item", "name": name}, "retreat_reset") == (
+            "compatible"
+        )
+    # A constraint with nothing to do now touches no channel.
+    assert channel_verdict(calm, None, "respect_hero_safety_window") == "compatible"
+    # Observed danger justifies breaking the TP for a tool, never for a walk.
+    danger = {"teleporting": True, "hp_falling_fast": 40}
+    assert channel_verdict(danger, {"kind": "ability", "name": "Doppelganger"}, None) == (
+        "justified"
+    )
+    assert channel_verdict(danger, None, "retreat_reset") == "hold"
+    # No channel assumed: nothing to judge.
+    assert channel_verdict({"teleporting": False}, None, "retreat_reset") == "none"
+
+
+def _scheduler_holds(extra: dict[str, Any], tool: dict[str, str] | None, action_type: str) -> bool:
+    from app.advice_scheduler import ADVICE_SCHEDULER
+    from app.schemas import RecommendationResponse
+
+    card = RecommendationResponse(
+        action="Use Doppelganger now to get out, then reset HP.",
+        reason="r",
+        risk="",
+        priority="high",
+        time_window="now",
+        tool=tool,
+    )
+    state = {"hero": "Phantom Lancer", "extra_context": extra}
+    return ADVICE_SCHEDULER._held_by_channel_locked(state, card, action_type)
+
+
+def test_an_escape_card_during_the_tp_waits_when_no_danger_is_seen():
+    # 0.60.0 let any card that named a tool through the channel; casting
+    # Doppelganger ends the TP, so with nothing dangerous seen it waits.
+    doppelganger = {"kind": "ability", "name": "Doppelganger"}
+    calm = {"teleporting": True, "hp_falling_fast": None, "hp_delta_10s": -2}
+    assert _scheduler_holds(calm, doppelganger, "retreat_reset") is True
+
+
+def test_an_escape_card_during_the_tp_passes_when_hp_is_falling_fast():
+    doppelganger = {"kind": "ability", "name": "Doppelganger"}
+    falling = {"teleporting": True, "hp_falling_fast": 45, "hp_delta_10s": -45}
+    assert _scheduler_holds(falling, doppelganger, "retreat_reset") is False
+    # No assumed channel: nothing is held.
+    assert _scheduler_holds({"teleporting": False}, doppelganger, "retreat_reset") is False

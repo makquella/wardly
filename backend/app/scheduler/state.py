@@ -76,6 +76,11 @@ class SchedulerState:
     _active_basis: dict[str, Any] | None = None
     _withdrawn: dict[str, Any] | None = None
     _withdrawn_until: datetime | None = None
+    # The type of a card withdrawn because the player can now do more than it
+    # said (a stun gave way to a silence the named item goes through): the
+    # next card of that type is held back neither by its own cooldown nor as
+    # a duplicate of the same game state.
+    _overtaken_type: str | None = None
     withdrawn_count: int = 0
     no_new_decision_count: int = 0
     # Bumped for each card shown: an async refinement applies only to its card.

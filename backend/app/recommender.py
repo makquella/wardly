@@ -5,6 +5,8 @@ The local advice policy owns priority and timing. This module only supplies
 short, safe action/reason/risk text.
 """
 
+from typing import Any
+
 from app.advice_policy import build_advice_policy
 from app.hero_gameplay import selected_rule
 from app.hero_gameplay_texts import GAMEPLAY_RISK
@@ -165,6 +167,7 @@ def generate_recommendation(
         risk=text["risk"],
         priority=policy["priority"],
         time_window=policy["time_window"],
+        tool=text.get("tool"),
     )
 
 
@@ -186,8 +189,8 @@ DEATH_ACTION_TYPES = {
 }
 
 
-def _fallback_text(req: GameSituationRequest, action_type: str) -> dict[str, str]:
-    text = _base_fallback_text(req, action_type)
+def _fallback_text(req: GameSituationRequest, action_type: str) -> dict[str, Any]:
+    text: dict[str, Any] = dict(_base_fallback_text(req, action_type))
     extra = req.extra_context or {}
     # Name what can be pressed right now (live_tools.py); the plain text stays
     # when GSI shows nothing ready.
@@ -202,7 +205,7 @@ def _fallback_text(req: GameSituationRequest, action_type: str) -> dict[str, str
     elif action_type == "wait_out_disable":
         tool = disabled_copy(extra, req.hero)
     if tool is not None:
-        text = {**text, "action": tool[0], "reason": tool[1]}
+        text = {**text, "action": tool[0], "reason": tool[1], "tool": getattr(tool, "tool", None)}
     if action_type == "conserve_mana_or_reset":
         # Name only the escape that is learned (W at 3:16 was not yet).
         text = {**text, "reason": low_mana_reason(extra, req.hero)}

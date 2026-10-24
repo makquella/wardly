@@ -23,6 +23,16 @@ preceding snapshot (never a later one: `w` orders the lines); recordings made
 before 0.60 stamped GSI lines after publishing them, so a snapshot stamped up
 to 0.05 s after the card is shown as the other candidate.
 
+After the replay, `--audit` rows of cards naming a tool also carry
+`historical`: the recorded use of that tool within the card's episode
+(replay_outcomes.py): the decision snapshot, the poll that showed the card,
+and the interval the use lies in, relative to both. This reads the future of
+the recording and runs after the replay: it never feeds a decision, and it
+says when the recorded player used the tool, not that a card made them.
+The audit ends with the plan record (live_plan.py): `plan` rows (each plan and
+how it ended) and `reassessment` rows (each major item received and what it
+did to the current plan).
+
 The wall time of each payload is replayed through a fake clock (the advice
 scheduler reads datetime.now), so cooldowns hold as in the real match. No
 network: OpenDota is off; `--items` (OpenDota /api/constants/items, saved
@@ -260,7 +270,9 @@ def main() -> int:
             module.datetime = ReplayDateTime  # type: ignore[attr-defined]
 
     from fastapi.testclient import TestClient
+    from replay_outcomes import historical_use, snapshot_row
 
+    from app.gsi_state import normalize_gsi_payload
     from app.local_api_auth import LOCAL_API_AUTH, LOCAL_API_URL
     from app.main import app
     from app.match_records import MATCH_RECORDS
@@ -318,6 +330,10 @@ def main() -> int:
                     if isinstance(observed, (int, float))
                     else None,
                     "evidence": _evidence(last_raw or {}),
+                    # The recording's `w` of the snapshot the card stands on.
+                    "decision_w": round(first + observed - BASE.timestamp(), 3)
+                    if isinstance(observed, (int, float)) and first is not None
+                    else None,
                 }
             )
         for kind, card_id, title, text in _cards(answer):
@@ -329,6 +345,9 @@ def main() -> int:
 
     racing: list[dict[str, Any]] = []
     last_clock: Any = None
+    snapshots: list[dict[str, Any]] = []
+    plan_rows: dict[str, dict[str, Any]] = {}
+    memory_module = importlib.import_module("app.match_memory")
     with _open(args.recording) as lines:
         for line in lines:
             record = json.loads(line)
@@ -364,6 +383,18 @@ def main() -> int:
                 break
             payload["auth"] = {"token": token}
             client.post("/gsi", json=payload)
+            # The plan's own record (live_plan.py), kept as it grows (the
+            # match memory resets after the game): how each plan ended and
+            # each reassessment after a major item was received.
+            plan = memory_module.MATCH_MEMORY.plan
+            for kind, entries in (("plan", plan.history), ("reassessment", plan.reassessments)):
+                for entry in list(entries)[-3:]:  # at most a few new per snapshot
+                    key = json.dumps([kind, entry], sort_keys=True, default=str)
+                    plan_rows.setdefault(key, {"kind": kind, **entry})
+            normalized = normalize_gsi_payload(record["p"])
+            snapshots.append(
+                snapshot_row(wall, normalized.get("extra_context") or {}, normalized.get("hero"))
+            )
             if polled is not None and wall - polled < 1.0:
                 continue
             polled = wall
@@ -377,6 +408,20 @@ def main() -> int:
             f"{sign}{abs(clock) // 60:>2}:{abs(clock) % 60:02d} {row['kind']:6} "
             f"{row['title']}" + (f" — {row['text']}" if row["text"] else "")
         )
+    for row in audit:
+        if row["kind"] != "advice":
+            continue
+        basis = row.get("basis") or {}
+        source = row.get("status_source") or {}
+        flags = source.get("flags") if source.get("kind") not in {None, "none"} else ()
+        row["historical"] = historical_use(
+            snapshots,
+            tool=basis.get("tool"),
+            decision_w=row.get("decision_w"),
+            shown_w=float(row["w"]),
+            status_flags=flags or (),
+        )
+    audit += plan_rows.values()
     if args.audit:
         args.audit.write_text(
             "".join(json.dumps(r, ensure_ascii=False, default=str) + "\n" for r in audit),

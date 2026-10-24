@@ -107,6 +107,7 @@ def clean_recommendation_text(
         priority=recommendation.priority,
         time_window=recommendation.time_window,
         source=recommendation.source,
+        tool=recommendation.tool,
     )
 
 

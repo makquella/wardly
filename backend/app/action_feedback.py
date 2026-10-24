@@ -50,9 +50,12 @@ CONSUMABLES = {
 MAX_GAP = 3.0
 # Uses older than this are forgotten.
 KEEP_SECONDS = 30.0
-# A TP scroll channels 3 s (game seconds); with a tick of slack, a hero whose
-# TP cooldown just started and who has not moved is still channelling.
-TP_CHANNEL_SECONDS = 4.0
+# A TP scroll's channel, inferred: its cooldown started and the hero stands
+# within TP_STILL_RADIUS of where it was. Measured in two recordings (4 TPs):
+# the hero arrived 2.9-5.1 s (game time) after the cooldown started; past
+# TP_CHANNEL_SECONDS the inference ends whatever happened (a cancelled TP with
+# the hero still standing must not hold cards for long).
+TP_CHANNEL_SECONDS = 6.0
 TP_STILL_RADIUS = 150
 # Gold rising this much in one tick next to a vanished item: a sale.
 SALE_GOLD = 10
@@ -126,14 +129,24 @@ class ActionWatch:
         self._casts: dict[str, float] = {}
         self._tp_cooldown: float | None = None
         self._tp_cast: tuple[float, float, float] | None = None
+        self._tp_seen_at: float | None = None
+        # Why the last inferred TP channel ended (tests, audits).
+        self.channel_end: str | None = None
 
     def _teleporting(self, extra: Mapping[str, Any], at: float | None) -> bool:
-        """The TP scroll's cooldown started moments ago and the hero stands
-        where it was: the channel is on. GSI has no channel flag; a moved hero
-        (arrived, or cancelled and walked) is no longer channelling."""
+        """The TP channel inferred (see TP_CHANNEL_SECONDS). It ends, with
+        `channel_end` saying why, when the hero moves or lands (arrived or
+        walked off), a stun, hex or mute lands (they interrupt it), the TP
+        leaves the slot, the hero dies, the data has a gap, or the window is
+        over. A channel whose start was not seen (no ready → running) is not
+        assumed."""
         cooldown = extra.get("tp_cooldown")
         cooldown = float(cooldown) if isinstance(cooldown, (int, float)) else None
         x, y = extra.get("xpos"), extra.get("ypos")
+        last_at = self._tp_seen_at
+        self._tp_seen_at = at
+        if at is not None and last_at is not None and at - last_at > MAX_GAP:
+            self._end_channel("data_gap")
         if (
             at is not None
             and cooldown is not None
@@ -143,17 +156,30 @@ class ActionWatch:
             and isinstance(y, (int, float))
         ):
             self._tp_cast = (at, float(x), float(y))
+            self.channel_end = None
         self._tp_cooldown = cooldown
         cast = self._tp_cast
-        if cast is None or at is None or extra.get("alive") is False:
+        if cast is None or at is None:
             return False
-        if at - cast[0] > TP_CHANNEL_SECONDS or not isinstance(x, (int, float)):
-            self._tp_cast = None
-            return False
-        if not isinstance(y, (int, float)) or abs(x - cast[1]) + abs(y - cast[2]) > TP_STILL_RADIUS:
-            self._tp_cast = None
-            return False
+        if extra.get("alive") is False:
+            return self._end_channel("died")
+        if any(extra.get(flag) is True for flag in ("stunned", "hexed", "muted")):
+            return self._end_channel("interrupted")
+        if cooldown is None:
+            return self._end_channel("tp_gone")
+        if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+            return self._end_channel("position_unknown")
+        if abs(x - cast[1]) + abs(y - cast[2]) > TP_STILL_RADIUS:
+            return self._end_channel("moved")
+        if at - cast[0] > TP_CHANNEL_SECONDS:
+            return self._end_channel("window_over")
         return True
+
+    def _end_channel(self, reason: str) -> bool:
+        if self._tp_cast is not None:
+            self.channel_end = reason
+        self._tp_cast = None
+        return False
 
     def observe(self, extra: Mapping[str, Any], at: float | None) -> dict[str, Any]:
         snapshot = {

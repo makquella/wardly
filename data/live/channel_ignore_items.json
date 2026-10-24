@@ -1,0 +1,24 @@
+{
+  "source": "Valve item definitions, dota/scripts/npc/items.txt (github.com/dotabuff/d2vpkr, master, fetched 2026-10-24): items whose AbilityBehavior has DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL",
+  "note": "Using any other item, casting an ability or moving interrupts a channel such as the Town Portal Scroll. An item's effect after the cast (a self-silence, an invisibility break) can still end it.",
+  "items": [
+    "item_ancient_janggo",
+    "item_armlet",
+    "item_blade_mail",
+    "item_boots_of_bearing",
+    "item_furion_gold_bag",
+    "item_glimmer_cape",
+    "item_invis_sword",
+    "item_madstone_bundle",
+    "item_mask_of_madness",
+    "item_phase_boots",
+    "item_radiance",
+    "item_refresher",
+    "item_shadow_amulet",
+    "item_shivas_guard",
+    "item_silver_edge",
+    "item_tidehunter_fish",
+    "item_trickster_cloak",
+    "item_veil_of_discord"
+  ]
+}

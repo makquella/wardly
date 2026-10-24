@@ -418,6 +418,149 @@ def test_the_same_disable_card_two_minutes_later_is_a_new_stun(client, clock):
     assert new_cards == [430, 549], new_cards
 
 
+def _enemies_near(*names: str) -> dict[str, Any]:
+    return {
+        f"e{i}": {
+            "image": "minimap_enemyicon",
+            "unitname": f"npc_dota_hero_{name}",
+            "team": 3,
+            "xpos": -4700 + 100 * i,
+            "ypos": -5000,
+        }
+        for i, name in enumerate(names)
+    }
+
+
+def _disable_cards(client, clock, payloads) -> list[str]:
+    actions = []
+    for payload in payloads:
+        clock["t"] += 0.5
+        client.post("/gsi", json=payload)
+        answer = client.get("/overlay/recommendation").json()
+        if answer.get("new_advice") and answer["decision_point"] == "DISABLED_STATUS":
+            actions.append(answer["recommendation"]["action"])
+    return actions
+
+
+def test_caught_at_high_hp_by_visible_enemies_gets_the_card_before_half_hp(client, clock):
+    # A gank: two enemy heroes next to him, a stun with a debuff, HP still
+    # 93 %. The card may come before the burst lands.
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank))
+    stun = [gsi(1503, stunned=True, debuff=True, hp=1300, minimap=gank)] * 3
+    assert _disable_cards(client, clock, stun) == ["The moment the disable ends, use Manta Style."]
+
+
+def test_one_visible_enemy_next_to_a_lone_hero_is_a_threat(client, clock):
+    lone = _enemies_near("lion")
+    feed(client, clock, _calm(1500, 3, minimap=lone))
+    stun = [gsi(1503, stunned=True, debuff=True, hp=1300, minimap=lone)] * 3
+    assert _disable_cards(client, clock, stun)
+
+
+def test_one_visible_enemy_with_an_ally_staying_next_to_the_hero_waits_for_damage(client, clock):
+    one_with_ally = {
+        **_enemies_near("lion"),
+        "a0": {
+            "image": "minimap_herocircle",
+            "unitname": "npc_dota_hero_axe",
+            "team": 2,
+            "xpos": -5100,
+            "ypos": -5000,
+        },
+    }
+    feed(client, clock, _calm(1500, 4, minimap=one_with_ally))
+    stun = [gsi(1504, stunned=True, debuff=True, hp=1300, minimap=one_with_ally)] * 3
+    assert _disable_cards(client, clock, stun) == []
+
+
+def test_an_own_phase_next_to_enemies_orders_no_defensive_item(client, clock):
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank))
+    phase = [gsi(1503, stunned=True, abilities=_abilities(w=25), minimap=gank)] * 3
+    assert _disable_cards(client, clock, phase) == []
+
+
+def test_an_unknown_status_next_to_enemies_orders_nothing_confident(client, clock):
+    # No `has_debuff` field and no HP lost: the source is unknown; enemies
+    # in sight do not make it a confirmed enemy disable.
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank, debuff=None))
+    unknown = [gsi(1503, stunned=True, debuff=None, hp=1400, minimap=gank)] * 3
+    assert _disable_cards(client, clock, unknown) == []
+
+
+def test_a_dangerous_stun_right_after_an_own_cast_is_not_suppressed(client, clock):
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank))
+    feed(client, clock, [gsi(1503, stunned=True, abilities=_abilities(w=25), minimap=gank)])
+    feed(client, clock, [gsi(1504, abilities=_abilities(w=24), minimap=gank)])
+    stun = [
+        gsi(1505, stunned=True, debuff=True, hp=1350, abilities=_abilities(w=23), minimap=gank)
+    ] * 3
+    assert _disable_cards(client, clock, stun) == ["The moment the disable ends, use Manta Style."]
+
+
+def test_a_stun_at_high_hp_with_no_enemy_in_sight_still_waits_for_damage(client, clock):
+    # The noise filter stays: a stray stun with nobody visible around.
+    feed(client, clock, _calm(1500, 3, minimap={}))
+    stun = [gsi(1503, stunned=True, debuff=True, hp=1350, minimap={})] * 3
+    assert _disable_cards(client, clock, stun) == []
+
+
+def _disable_feed(client, clock, payloads) -> list[tuple[bool, str | None, str | None]]:
+    """(new card, its action, withdrawal reason) per payload."""
+    out = []
+    for payload in payloads:
+        clock["t"] += 0.5
+        client.post("/gsi", json=payload)
+        answer = client.get("/overlay/recommendation").json()
+        action = (answer.get("recommendation") or {}).get("action")
+        withdrawn = (answer.get("withdrawn_advice") or {}).get("reason")
+        out.append((bool(answer.get("new_advice")), action, withdrawn))
+    return out
+
+
+def test_a_stun_giving_way_to_a_silence_turns_the_card_into_press_now(client, clock):
+    # PL 23:51: a stun, then a silence with Manta ready. «The moment the
+    # disable ends» was right for the stun; under the silence Manta can be
+    # pressed and removes it, so the card changes at once.
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank))
+    seq = [gsi(1503, stunned=True, debuff=True, hp=1300, minimap=gank)] * 3
+    seq += [gsi(1505, silenced=True, debuff=True, hp=1250, minimap=gank)] * 2
+    out = _disable_feed(client, clock, seq)
+    assert out[0] == (True, "The moment the disable ends, use Manta Style.", None)
+    assert out[3][:2] == (True, "Use Manta Style now: it removes the silence.")
+    assert not out[4][0]  # one press-now card, not a stream
+
+
+def test_a_stun_that_simply_ends_keeps_its_card(client, clock):
+    # Counterexample: the disable is over with nothing left: «the moment it
+    # ends, use X» is for exactly then; nothing is withdrawn or added.
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank))
+    seq = [gsi(1503, stunned=True, debuff=True, hp=1300, minimap=gank)] * 3
+    seq += [gsi(1505, hp=1250, minimap=gank)] * 2
+    out = _disable_feed(client, clock, seq)
+    assert [new for new, _, _ in out] == [True, False, False, False, False]
+    assert all(withdrawn is None for _, _, withdrawn in out)
+
+
+def test_a_silence_after_the_stun_keeps_an_ability_card_waiting(client, clock):
+    # Counterexample: no Manta, the card names Doppelganger: a silence still
+    # blocks it, so the card keeps waiting for the end of the disable.
+    gank = _enemies_near("lion", "juggernaut")
+    items = _items(slot1=wand(8))
+    feed(client, clock, _calm(1500, 3, minimap=gank, items=items))
+    seq = [gsi(1503, stunned=True, debuff=True, hp=1300, minimap=gank, items=items)] * 3
+    seq += [gsi(1505, silenced=True, debuff=True, hp=1250, minimap=gank, items=items)] * 2
+    out = _disable_feed(client, clock, seq)
+    assert out[0] == (True, "The moment the disable ends, use Doppelganger.", None)
+    assert all(withdrawn is None for _, _, withdrawn in out)
+    assert [new for new, _, _ in out[1:]] == [False] * 4
+
+
 # 2. Ordinary enemy control with a ready answer still gets its card.
 
 
@@ -1266,6 +1409,25 @@ def test_after_a_kill_with_w_on_cooldown_the_card_says_what_to_hold(client, cloc
     actions = [action for _, action in _cards(feed.seen)]  # type: ignore[attr-defined]
     assert "After your kill: hold the next engage until Doppelganger is back in 5 s." in actions
     assert not any("go in again" in action for action in actions)
+
+
+def test_a_disable_card_just_before_the_kill_does_not_hold_the_readiness_card(client, clock):
+    # PL 18:10-18:17: a stun card in the fight, then the kill. With no TP
+    # for a minute and no HP pressure, both cards fall under the game state's
+    # post-laning category «carry a TP»; the readiness card was dropped as a
+    # duplicate of the stun card.
+    items = _items(slot0=manta(21), slot1=wand(20), teleport0={"name": "empty"})
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1030, 68, kills=3, hp=950, items=items))
+    stun = gsi(1098, kills=3, stunned=True, debuff=True, hp=950, items=items, minimap=gank)
+    feed(client, clock, [stun] * 3)
+    cards = _cards(feed.seen)  # type: ignore[attr-defined]
+    assert ("DISABLED_STATUS", "The moment the disable ends, use Doppelganger.") in cards
+    feed(client, clock, _calm(1100, 3, kills=3, hp=950, items=items, abilities=_abilities(w=7)))
+    kill = gsi(1103, kills=4, hp=950, items=items, abilities=_abilities(w=5), minimap=ENEMY_NEAR)
+    feed(client, clock, [kill] * 2)
+    actions = [action for _, action in _cards(feed.seen)]  # type: ignore[attr-defined]
+    assert "After your kill: hold the next engage until Doppelganger is back in 5 s." in actions
 
 
 def test_kills_in_a_row_are_one_readiness_moment(client, clock):

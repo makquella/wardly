@@ -40,9 +40,13 @@ def apply_ux_policy(
     now: datetime | None = None,
     action_type: str | None = None,
     moment: bool = False,
+    overtaken: bool = False,
 ) -> dict[str, Any]:
     """`moment`: a card useful for seconds only (readiness right after a kill or
-    a revive) passes the per-minute quota; the duplicate window still applies."""
+    a revive) passes the per-minute quota; the duplicate window still applies.
+    `overtaken`: the last card of this kind was withdrawn because more can be
+    done now (advice_validity `can_act_now`): the same action type may follow
+    at once in its new form; the same text still may not."""
     if not action_type:
         action_type = str(build_advice_policy({}, decision_point)["action_type"])
 
@@ -65,7 +69,7 @@ def apply_ux_policy(
     action = recommendation.action.strip()
     same_action = action.lower()
     for entry in reversed(recent_duplicates):
-        if entry.get("action_type") == action_type:
+        if entry.get("action_type") == action_type and not overtaken:
             return _suppressed("duplicate")
         if str(entry.get("action", "")).strip().lower() == same_action:
             return _suppressed("duplicate")
@@ -84,6 +88,7 @@ def apply_ux_policy(
         priority=recommendation.priority,
         time_window=recommendation.time_window,
         source=recommendation.source,
+        tool=recommendation.tool,
     )
     return {
         "recommendation": adjusted,

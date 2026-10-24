@@ -302,6 +302,7 @@ def apply_advice_policy(
         priority=policy["priority"],
         time_window=policy["time_window"],
         source=recommendation.source,
+        tool=recommendation.tool,
     )
 
 

@@ -216,12 +216,6 @@
     },
     {
       "path": "app/live_tools.py",
-      "message": "Incompatible types in assignment (expression has type \"str | None\", variable has type \"str\")",
-      "code": "assignment",
-      "count": 1
-    },
-    {
-      "path": "app/live_tools.py",
       "message": "Unsupported operand types for <= (\"int\" and \"None\")",
       "code": "operator",
       "count": 1

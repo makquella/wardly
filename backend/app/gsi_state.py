@@ -61,6 +61,8 @@ _ITEM_NAME_MAP = {
 }
 
 _EMPTY_ITEM_NAMES = {"", "empty", "item_empty", "item_unknown", "item_none"}
+# The backpack slots: items there are carried but give nothing until swapped in.
+BACKPACK_SLOTS = {"slot6", "slot7", "slot8"}
 
 
 def update_latest_gsi(
@@ -464,6 +466,8 @@ def _normalize_extra_context(
         # (bought, not delivered). None without an items block.
         "active_items": _slot_names(payload.get("items"), stash=False),
         "stash_items": _slot_names(payload.get("items"), stash=True),
+        # The backpack (slot6-8): carried, but neither pressable nor passive.
+        "backpack_items": _slot_names(payload.get("items"), stash=False, backpack=True),
         # Roshan kills and Aegis pickups (roshan_timer.py), and the player's Aegis.
         "gsi_events": _objective_events(payload.get("events")),
         # Enemy heroes on the player's minimap (enemy_heroes.py; None: no block).
@@ -598,8 +602,8 @@ def _without_own_hero(units: list[dict[str, Any]] | None, hero: str) -> list[dic
     return [unit for unit in units if unit.get("hero") != hero]
 
 
-def _slot_names(items: Any, *, stash: bool) -> list[str] | None:
-    """Item names in the stash slots, or in the six active slots."""
+def _slot_names(items: Any, *, stash: bool, backpack: bool = False) -> list[str] | None:
+    """Item names in the stash slots, the backpack, or the six active slots."""
     if not isinstance(items, dict) or not items:
         return None
     names = []
@@ -607,7 +611,10 @@ def _slot_names(items: Any, *, stash: bool) -> list[str] | None:
         name = item.get("name") if isinstance(item, dict) else None
         if not isinstance(name, str) or name in _EMPTY_ITEM_NAMES:
             continue
-        if str(slot).startswith("stash") if stash else active_slot(slot):
+        if backpack:
+            if str(slot) in BACKPACK_SLOTS:
+                names.append(name)
+        elif str(slot).startswith("stash") if stash else active_slot(slot):
             names.append(name)
     return names
 

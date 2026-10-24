@@ -499,24 +499,44 @@ TIPS = {
             "Нехай кур'єр привезе: поки предмета немає з вами, його не натиснути.",
         ),
     },
-    "plan_fight_tower": {
+    "plan_delivery_item": {
         "en": (
-            "Fight won {kills}–{lost}: their T{tier} {lane}",
-            "{allies} with you and their tower close: hit it now, while the dead respawn.",
+            "{item} is in your stash",
+            "Have the courier bring it: in the stash it gives you nothing.",
         ),
         "uk": (
-            "Бійку виграно {kills}–{lost}: їхня T{tier} {lane}",
-            "{allies} поруч, їхня вежа близько: бийте її зараз, поки загиблі відроджуються.",
+            "{item} у схованці",
+            "Нехай кур'єр привезе: у схованці предмет нічого вам не дає.",
+        ),
+    },
+    "plan_backpack": {
+        "en": (
+            "{item} is in your backpack",
+            "Swap it into the main slots: in the backpack it gives nothing and cannot be pressed.",
+        ),
+        "uk": (
+            "{item} у рюкзаку",
+            "Перекладіть в основні слоти: у рюкзаку предмет нічого не дає і не натискається.",
+        ),
+    },
+    "plan_fight_tower": {
+        "en": (
+            "You took part in {took} kills: their T{tier} {lane} is in reach",
+            "{allies} with you and no enemy in sight: hit the tower now.",
+        ),
+        "uk": (
+            "Ви взяли участь у {took} вбивствах: їхня T{tier} {lane} поруч",
+            "{allies} з вами, ворогів не видно: бийте вежу зараз.",
         ),
     },
     "plan_fight_recover": {
         "en": (
-            "Fight over {kills}–{lost}, {hp}% HP",
-            "Recover before the next one: heal or walk back while no enemy is in sight.",
+            "Fight over, {hp}% HP",
+            "{part}Recover before the next one: heal or walk back while no enemy is in sight.",
         ),
         "uk": (
-            "Бійка скінчилась {kills}–{lost}, HP {hp}%",
-            "Відновіться перед наступною: лікуйтеся чи відходьте, поки ворогів не видно.",
+            "Бійка скінчилась, HP {hp}%",
+            "{part}Відновіться перед наступною: лікуйтеся чи відходьте, поки ворогів не видно.",
         ),
     },
     "plan_aegis_team": {
@@ -894,8 +914,14 @@ def plan_params(plan: dict[str, Any], lang: str) -> tuple[str, dict[str, Any]] |
         }
     if goal == "deliver_item":
         label = basis.get("label_uk" if lang == "uk" else "label") or basis.get("item")
-        return "plan_delivery", {"item": label}
+        if plan.get("next") == "to_main_slots":
+            return "plan_backpack", {"item": label}
+        # A save presses; any other item (a passive, stats) just does nothing there.
+        return ("plan_delivery" if basis.get("save", True) else "plan_delivery_item"), {
+            "item": label
+        }
     if goal == "after_fight":
+        took = int(basis.get("took_part") or 0)
         if basis.get("next") == "tower" and isinstance(basis.get("tower"), dict):
             lane = str(basis["tower"].get("lane") or "base")
             lane_text = (
@@ -904,18 +930,20 @@ def plan_params(plan: dict[str, Any], lang: str) -> tuple[str, dict[str, Any]] |
                 else f"in the {PLACE_ZONES['en']['name'].get(lane, lane)}"
             )
             return "plan_fight_tower", {
-                "kills": basis.get("kills"),
-                "lost": basis.get("lost"),
+                "took": took,
                 "tier": basis["tower"].get("tier"),
                 "lane": lane_text,
                 "allies": _allies_text(int(basis.get("allies") or 0), lang).capitalize(),
             }
         if basis.get("next") == "recover":
-            return "plan_fight_recover", {
-                "kills": basis.get("kills"),
-                "lost": basis.get("lost"),
-                "hp": basis.get("hp"),
-            }
+            part = ""
+            if took:
+                part = (
+                    f"Ви взяли участь у {took} вбивствах. "
+                    if lang == "uk"
+                    else f"You took part in {took} {'kill' if took == 1 else 'kills'}. "
+                )
+            return "plan_fight_recover", {"hp": basis.get("hp"), "part": part}
         return None
     if goal == "aegis_window":
         allies = int(basis.get("allies") or 0)
