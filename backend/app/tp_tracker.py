@@ -34,6 +34,18 @@ def has_teleport(items: Any) -> bool | None:
     return False
 
 
+def teleport_in_stash(items: Any) -> bool | None:
+    """A TP scroll in the stash (bought, not yet delivered); None without an
+    items block."""
+    if not isinstance(items, dict) or not items:
+        return None
+    return any(
+        str(slot).startswith("stash")
+        and str((item.get("name") if isinstance(item, dict) else item) or "") in TP_ITEMS
+        for slot, item in items.items()
+    )
+
+
 def teleport_cooldown(items: Any) -> int | None:
     """Seconds until the TP scroll (or Boots of Travel) can be used: 0 ready;
     None when there is none or the block says nothing."""

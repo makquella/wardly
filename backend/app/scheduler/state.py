@@ -70,6 +70,18 @@ class SchedulerState:
     _last_updated: str | None = None
     _active_advice_until: datetime | None = None
     _is_pinned: bool = False
+    # What the held card depends on (advice_validity.advice_basis) and the
+    # last card withdrawn because it no longer held, with until when the
+    # overlay is told so.
+    _active_basis: dict[str, Any] | None = None
+    _withdrawn: dict[str, Any] | None = None
+    _withdrawn_until: datetime | None = None
+    withdrawn_count: int = 0
+    no_new_decision_count: int = 0
+    # Bumped for each card shown: an async refinement applies only to its card.
+    _card_serial: int = 0
+    # The kill or revive whose readiness card was shown (one per moment).
+    _readiness_shown_key: tuple[str, int] | None = None
     _last_seen_minute: int | None = None
 
     # --- LLM tracking (mutable) ---

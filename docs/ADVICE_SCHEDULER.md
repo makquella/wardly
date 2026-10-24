@@ -65,9 +65,42 @@ Wall-clock time is still used for:
 
 Display hold is separate from advice generation. The backend may return `active_advice` during cooldown so the overlay can keep showing the previous useful card without counting it as a new card.
 
+## Held-Card Validity
+
+A held card is re-checked against every new snapshot (`advice_validity.py`).
+Each new card stores a basis: the snapshot's clock and game time, whether the
+hero was alive, the tool its action names and the numbers it cites. The card is
+withdrawn when the basis no longer holds:
+
+- `life_lost` / `respawned`: the life changed (an Aegis revive included);
+- `action_done`: the named item or ability was used (cooldown started, charges
+  down, gone);
+- `cannot_act_now`: a «now» command while the hero is now stunned/hexed (or
+  muted for items); the low-HP episode may then speak again in the fitting form;
+- `stale_numbers` / `resolved`: cited buyback gold or cost moved, or the gold
+  is back; Magic Wand charges changed;
+- `recovered`: HP is back well above the low-HP card's line;
+- `not_a_threat`: the disable turned out to be the player's own phase;
+- `superseded_by_threat`: a calm card (farm, TP, smoke, item) when an enemy
+  disable or a fast HP fall starts.
+
+Withdrawn cards are neither shown nor spoken again: the response carries
+`withdrawn_advice` for 10 s and the overlay drops the card and cuts its speech.
+An async refinement applies only to the card it was started for. The basis is
+returned as `advice_basis` and recorded with each advice line of a match
+recording.
+
+Urgent disable cards bypass the post-laning farm-category dedup and the
+per-minute quota; a readiness card right after a kill or a revive passes the
+type cooldown, coaching spacing and quota once per moment. Generic «keep
+farming» lines with no decision are not shown.
+
 ## Known Limitations
 
 - The scheduler only uses signals available in the normalized state.
+- Statuses, deaths and done actions are inferred from GSI (no modifier names,
+  no caster, no combat log): see `status_source.py`, `action_feedback.py` and
+  [LIVE_ADVICE_AUDIT.md](LIVE_ADVICE_AUDIT.md).
 - It cannot know exact enemy positions, nearby allies/enemies, or team readiness unless those signals are provided.
 - Replay-derived GSI-like states may miss cooldowns, spendable gold, and exact objective context.
 - The scheduler is intentionally in-memory.

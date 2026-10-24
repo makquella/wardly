@@ -15,9 +15,10 @@ def test_purchase_below_buyback_cost_raises_the_signal_once():
     tracker.observe(1850, 5200, 2400, 0, True)
     tracker.observe(1855, 900, 2410, 0, True)  # bought an item
     signal = tracker.signal()
-    assert signal == {"clock": 1855, "gold": 900, "cost": 2410}
+    assert signal == {"clock": 1855, "gold": 900, "cost": 2410, "observed": 1855}
     tracker.observe(1900, 1500, 2410, 0, True)
-    assert tracker.signal() is not None  # still within the hold time
+    # Still within the hold time, with this snapshot's gold (not the purchase's).
+    assert tracker.signal() == {"clock": 1855, "gold": 1500, "cost": 2410, "observed": 1900}
     tracker.observe(1920, 1600, 2410, 0, True)
     assert tracker.signal() is None  # held for a minute
 

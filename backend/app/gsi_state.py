@@ -31,7 +31,7 @@ from app.map_hints import has_observer_ward, item_names, observer_charges, timer
 from app.minimap_units import towers, visible_ally_units
 from app.signal_capabilities import capability_summary, live_gsi_observed_capabilities
 from app.skill_tips import read_skills
-from app.tp_tracker import has_teleport, teleport_cooldown
+from app.tp_tracker import has_teleport, teleport_cooldown, teleport_in_stash
 
 _GSI = GSIRegister()
 
@@ -394,6 +394,11 @@ def _normalize_extra_context(
         "muted": _optional_bool(hero_block.get("muted")) or False,
         "break_status": _optional_bool(hero_block.get("break")) or False,
         "magicimmune": _optional_bool(hero_block.get("magicimmune")) or False,
+        # Any debuff on the hero (None when the payload has no such field):
+        # status_source.py tells an own hidden phase from an enemy stun with it.
+        "has_debuff": hero_block.get("has_debuff")
+        if isinstance(hero_block.get("has_debuff"), bool)
+        else None,
         "smoked": _optional_bool(hero_block.get("smoked")) or False,
         "buyback_cost": buyback_cost,
         "buyback_cooldown": buyback_cooldown,
@@ -444,6 +449,8 @@ def _normalize_extra_context(
         "has_buildings": has_buildings,
         # TP scroll in its slot or Boots of Travel (None: no items block).
         "has_tp": has_teleport(payload.get("items")),
+        # A TP scroll bought but still in the stash (None: no items block).
+        "tp_in_stash": teleport_in_stash(payload.get("items")),
         # Seconds until it can be used (0 ready; None: none or unknown).
         "tp_cooldown": teleport_cooldown(payload.get("items")),
         # Observer ward in the inventory (support tip; None: no items block).
@@ -463,9 +470,15 @@ def _normalize_extra_context(
         "enemy_units": visible_enemy_units(
             payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
         ),
-        # Allied heroes and the towers on the minimap (fight_summary.py).
-        "ally_units": visible_ally_units(
-            payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
+        # Allied heroes and the towers on the minimap (fight_summary.py). The
+        # player's own hero is left out: GSI sometimes draws it with the plain
+        # ally circle instead of `_self` (seen in 150 snapshots of one match),
+        # and the player is no ally of themselves. Own illusions use another icon.
+        "ally_units": _without_own_hero(
+            visible_ally_units(
+                payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
+            ),
+            hero_from_gsi(payload),
         ),
         "towers": towers(payload.get("minimap")),
         "has_aegis": _has_aegis(hero_block, payload.get("items")),
@@ -474,6 +487,11 @@ def _normalize_extra_context(
         # What can be pressed right now (live_tools.py: the survival advice names it).
         "ready_savers": _ready_savers(payload.get("items")),
         "own_castable_items": _own_castable_items(payload.get("items")),
+        # Cooldown and charges per active-slot item (None without an items
+        # block): an own cast (status_source.py), a consumable used
+        # (action_feedback.py).
+        "item_cooldowns": _active_item_numbers(payload.get("items"), "cooldown"),
+        "item_charges": _active_item_numbers(payload.get("items"), "charges", total=True),
         "wand_charges": wand_charges(payload.get("items")),
         "regen_items": regen_items(payload.get("items")),
         # The rune kept in the Bottle (an escape at low HP, a kill for the mid).
@@ -568,6 +586,31 @@ def _own_castable_items(items: Any) -> list[str] | None:
         and item.get("can_cast") is True
         and _optional_number(item.get("cooldown")) == 0
     ]
+
+
+def _without_own_hero(units: list[dict[str, Any]] | None, hero: str) -> list[dict[str, Any]] | None:
+    if units is None:
+        return None
+    return [unit for unit in units if unit.get("hero") != hero]
+
+
+def _active_item_numbers(items: Any, field: str, *, total: bool = False) -> dict[str, float] | None:
+    """{item name: field} over the six active slots, only where GSI sends a
+    number (`total`: summed over stacks of the same item, else the first)."""
+    if not isinstance(items, dict):
+        return None
+    numbers: dict[str, float] = {}
+    for slot, item in items.items():
+        if not active_slot(slot) or not isinstance(item, dict):
+            continue
+        name, value = item.get("name"), _optional_number(item.get(field))
+        if not isinstance(name, str) or name in _EMPTY_ITEM_NAMES or value is None:
+            continue
+        if total:
+            numbers[name] = numbers.get(name, 0) + value
+        else:
+            numbers.setdefault(name, value)
+    return numbers
 
 
 def _ready_savers(items: Any) -> list[str] | None:

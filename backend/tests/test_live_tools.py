@@ -288,7 +288,6 @@ def test_recent_death_passes_the_burst(client, monkeypatch):
 
 
 def test_deaths_in_different_places_are_counted():
-    from app.advice_i18n import translate_uk
     from app.player_service import _recent_deaths
 
     assert _recent_deaths([{"t": 600}], 600) is None
@@ -297,24 +296,18 @@ def test_deaths_in_different_places_are_counted():
         "count": 2,
         "minutes": 6,
     }
+    # Deaths in different places are several events, not one route: a count
+    # alone names no route to change, so the line of this death speaks.
     extra = _extra() | {
         "death_place": {"zone": "top", "side": "own", "count": 1, "minutes": 1},
         "recent_deaths": {"count": 3, "minutes": 7},
     }
     text = _fallback_text(_request(extra), "break_repeated_death_pattern")
-    assert text["action"] == "After respawn, change your route: 3 deaths in the last 7 minutes."
-    assert translate_uk(text["action"]) == "Після відродження змініть маршрут: 3 смерті за 7 хв."
-    # Deaths spread over the game: the total.
+    assert "change your route" not in text["action"]
+    assert text["action"].startswith("After respawn,")
     spread = _extra() | {"match_deaths": 4}
     text = _fallback_text(_request(spread), "break_repeated_death_pattern")
-    assert text["action"] == "After respawn, change your route: 4 deaths this game."
-    assert translate_uk(text["action"]) == "Після відродження змініть маршрут: 4 смерті за гру."
-    assert (
-        "change your route"
-        not in _fallback_text(_request(_extra() | {"match_deaths": 1}), "plan_safer_respawn_route")[
-            "action"
-        ]
-    )
+    assert "4 deaths" not in text["action"]
     # The escape and resource cards keep their own action.
     for action_type in ("respect_escape_cooldown_after_respawn", "reset_before_resources_collapse"):
         kept = _fallback_text(_request(spread), action_type)["action"]

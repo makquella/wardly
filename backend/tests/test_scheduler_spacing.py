@@ -83,7 +83,15 @@ def test_urgent_low_hp_can_interrupt_game_time_spacing(client):
     assert urgent["game_time_gap_since_previous_advice"] == 11.0
 
 
-def test_long_silence_can_trigger_safe_heartbeat_nudge(client):
+def _behind(state: dict) -> dict:
+    """Calm farm with something to decide: the team 11 kills behind."""
+    state["extra_context"].update({"team_name": "radiant", "radiant_score": 5, "dire_score": 16})
+    return state
+
+
+def test_calm_farm_with_nothing_to_decide_stays_silent(client):
+    # «Keep farming the safest route» is no decision: neither a card nor a
+    # heartbeat nudge after a long silence (advice_validity.FILLER_ACTIONS).
     first = _send_demo_state(
         client,
         1200,
@@ -93,6 +101,22 @@ def test_long_silence_can_trigger_safe_heartbeat_nudge(client):
         client,
         1381,
         _state(1381, game_state="calm farming", farm_quality="okay", last_hits=190),
+    )
+    assert first["new_advice"] is not True and first["recommendation"] is None
+    assert second["new_advice"] is not True
+    assert client.get("/overlay/stats").json()["heartbeat_nudge_count"] == 0
+
+
+def test_long_silence_can_trigger_safe_heartbeat_nudge(client):
+    first = _send_demo_state(
+        client,
+        1200,
+        _behind(_state(1200, game_state="calm farming", farm_quality="okay", last_hits=180)),
+    )
+    second = _send_demo_state(
+        client,
+        1381,
+        _behind(_state(1381, game_state="calm farming", farm_quality="okay", last_hits=190)),
     )
     stats = client.get("/overlay/stats").json()
 
@@ -125,12 +149,12 @@ def test_heartbeat_nudge_stays_non_aggressive(client):
     _send_demo_state(
         client,
         1200,
-        _state(1200, game_state="calm farming", farm_quality="okay", last_hits=180),
+        _behind(_state(1200, game_state="calm farming", farm_quality="okay", last_hits=180)),
     )
     heartbeat = _send_demo_state(
         client,
         1381,
-        _state(1381, game_state="calm farming", farm_quality="okay", last_hits=190),
+        _behind(_state(1381, game_state="calm farming", farm_quality="okay", last_hits=190)),
     )
     action = heartbeat["recommendation"]["action"].lower()
 

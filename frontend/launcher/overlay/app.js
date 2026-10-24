@@ -95,6 +95,7 @@ let hideTimer = null;
 let mutedUntil = 0;
 let lastAdviceKey = "";
 let lastVisibleAdvice = null;
+let lastSpokenKey = "";
 const speaker = window.OverlayVoice && window.speechSynthesis
   ? window.OverlayVoice.createSpeaker({ synth: window.speechSynthesis, Utterance: window.SpeechSynthesisUtterance })
   : null;
@@ -175,7 +176,26 @@ async function poll() {
 let currentHint = null;
 const spokenHints = new Set();
 
+// The backend withdrew the card on screen (the named item was used, a stun
+// landed, the life ended, the numbers changed): it must not come back from
+// lastVisibleAdvice on a cooldown poll, and its speech stops.
+function dropWithdrawnAdvice(withdrawn) {
+  const shown = lastVisibleAdvice?.recommendation;
+  if (!withdrawn || !shown) {
+    return;
+  }
+  const shownAction = shown.action_en || shown.action;
+  if (shownAction !== withdrawn.action) {
+    return;
+  }
+  speaker?.cancel(lastSpokenKey);
+  lastVisibleAdvice = null;
+  lastAdviceKey = "";
+  lastSpokenKey = "";
+}
+
 function renderOverlay(data) {
+  dropWithdrawnAdvice(data.withdrawn_advice);
   renderItems([]);
   renderStrip(data.post_game && data.post_game.main ? [] : data.timer_strip);
   // The score screen after a match: the summary of its review, nothing else.
@@ -367,6 +387,7 @@ function renderAdvice(data, options = { refreshTimer: true }) {
   // Spoken once per advice while it is still current (a tip skipped because
   // another one was being spoken gets its turn on a later poll).
   if (speaker && data.status === "active_advice") {
+    lastSpokenKey = key;
     speaker.say({
       key,
       text: recommendation.action,

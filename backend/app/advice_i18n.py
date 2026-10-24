@@ -297,6 +297,19 @@ _UK_EXACT: dict[str, str] = {
     "Low lane HP makes trades and last hits risky.": (
         "З низьким HP на лінії розміни й добивання ризиковані."
     ),
+    "Low mana limits your spells in the next fight.": (
+        "Мало мани: у наступній бійці здібностей буде менше."
+    ),
+    "You revived on the spot.": "Ви воскресли на місці.",
+    "Have the courier bring the TP scroll from your stash.": (
+        "Нехай кур'єр привезе свиток телепорту зі схованки."
+    ),
+    "It is bought but not in a slot: a fight or a tower across the map needs it there.": (
+        "Його куплено, але він не в слоті: для бійки чи вежі на іншому кінці карти він потрібен у вас."
+    ),
+    "Before it is back you have no way out if the fight turns.": (
+        "Поки вона не відновиться, вам нема чим вийти, якщо бій повернеться проти вас."
+    ),
     "Low mana limits escape, spell usage, and fight impact.": (
         "Мало мани: важче втекти, застосувати здібності й допомогти в бійці."
     ),
@@ -805,6 +818,33 @@ def _situational_tail(tail: str) -> str | None:
 _SITUATIONAL_TAIL_RE = r"(?P<tail>(?:\.|: \d+ gold to go.*|; its missing parts cost.*))$"
 
 
+def _allies_word(count: int) -> str:
+    if count % 10 == 1 and count % 100 != 11:
+        return "союзник"
+    if count % 10 in (2, 3, 4) and count % 100 not in (12, 13, 14):
+        return "союзники"
+    return "союзників"
+
+
+_AEGIS_LEFT = re.compile(r"^it expires in about (?P<left>\d+) s$")
+_AEGIS_ALLIES = re.compile(r"^(?P<n>\d+) (?:ally is|allies are) next to you$")
+
+
+def _aegis_facts(facts: str) -> str:
+    """live_tools.aegis_copy: «...; it expires in about N s and K allies are next to you»."""
+    parts = []
+    for fact in facts.split(" and "):
+        left, allies = _AEGIS_LEFT.match(fact), _AEGIS_ALLIES.match(fact)
+        if left:
+            parts.append(f"Aegis зникне приблизно за {left['left']} с")
+        elif allies:
+            count = int(allies["n"])
+            parts.append(f"поруч {count} {_allies_word(count)}")
+        else:
+            raise ValueError(fact)
+    return "Смерть зараз воскресить вас на місці; " + " і ".join(parts) + "."
+
+
 def _magic_reason(groups: dict[str, str]) -> str:
     """A lineup of magic damage (situational_items, why "magic")."""
     count = int(groups["count"])
@@ -936,6 +976,40 @@ _UK_FUNCTIONS: tuple[tuple[re.Pattern[str], Callable[[dict[str, str]], str]], ..
         lambda g: (
             f"За 5 секунд пішло {g['n']}% HP: у такому темпі у вас лічені секунди, ідіть зараз."
         ),
+    ),
+    (
+        re.compile(r"^You lost (?P<n>\d+)% HP in 5 seconds and it is still dropping\.$"),
+        lambda g: f"За 5 секунд пішло {g['n']}% HP, і воно далі падає.",
+    ),
+    (
+        re.compile(r"^A death now revives you on the spot; (?P<facts>.+)\.$"),
+        lambda g: _aegis_facts(g["facts"]),
+    ),
+    (
+        re.compile(r"^(?P<name>.+) is off cooldown but cannot be cast now: not enough mana\.$"),
+        lambda g: f"{g['name']} уже перезарядилась, але зараз її не застосувати: бракує мани.",
+    ),
+    (
+        re.compile(r"^Low mana can leave (?P<name>.+) uncastable in the next fight\.$"),
+        lambda g: f"Через брак мани {g['name']} може не спрацювати в наступній бійці.",
+    ),
+    (
+        re.compile(r"^Second life: go back in once (?P<name>.+) is back in (?P<n>\d+) s\.$"),
+        lambda g: f"Друге життя: повертайтеся в бій, коли {g['name']} відновиться за {g['n']} с.",
+    ),
+    (
+        re.compile(r"^After your kill: go in again once (?P<name>.+) is back in (?P<n>\d+) s\.$"),
+        lambda g: (
+            f"Після вашого вбивства: заходьте знову, коли {g['name']} відновиться за {g['n']} с."
+        ),
+    ),
+    (
+        re.compile(r"^(?P<name>[A-Z][A-Za-z' ]+) is back in (?P<n>\d+) s\.$"),
+        lambda g: f"{g['name']} відновиться за {g['n']} с.",
+    ),
+    (
+        re.compile(r"^(?P<name>[A-Z][A-Za-z' ]+) is ready\.$"),
+        lambda g: f"{g['name']} готовий.",
     ),
     (
         re.compile(

@@ -93,7 +93,22 @@ def _run_scenario() -> dict[str, object]:
 # frozen via the explicit `now` passed above. Do not update casually; if behavior
 # changes intentionally, re-capture and explain in the commit.
 _BASELINE: dict[str, object] = {
-    "_active_advice_until": "2026-01-01T00:00:24+00:00",
+    # 0.59: at 00:03:10 the hero is back at 90 % HP, so the 28 %-HP «Reset HP»
+    # card is withdrawn as recovered (advice_validity.py); before it stayed in
+    # _last_recommendation and was re-served on cooldown polls.
+    "_active_advice_until": None,
+    "_active_basis": None,
+    "_card_serial": 2,
+    "_readiness_shown_key": None,
+    "_withdrawn": {
+        "action": "Reset HP before showing on another lane.",
+        "card_clock": None,
+        "decision_point": "LOW_HP",
+        "reason": "recovered",
+    },
+    "_withdrawn_until": "2026-01-01T00:03:20+00:00",
+    "withdrawn_count": 1,
+    "no_new_decision_count": 0,
     "_advice_game_time_gaps_seconds": [0.0],
     "_advice_history": [
         {
@@ -171,14 +186,7 @@ _BASELINE: dict[str, object] = {
     "_last_post_laning_death_route_game_time": None,
     "_last_post_laning_safety_at": "2026-01-01T00:00:12+00:00",
     "_last_post_laning_safety_game_time": 900.0,
-    "_last_recommendation": {
-        "action": "Reset HP before showing on another lane.",
-        "priority": "high",
-        "reason": "At this HP, one more spell or rotation can turn into a death.",
-        "risk": "High risk if you show again before resetting HP.",
-        "source": "fallback",
-        "time_window": "immediate: next 10-15 seconds",
-    },
+    "_last_recommendation": None,
     "_last_seen_minute": 18,
     "_last_shown_action_hash": "e0ad389e6bb2",
     # 0.25: when a farm pace card was last shown (none in this sequence).

@@ -98,6 +98,29 @@
       <article data-doc="uk" lang="uk">
         <h1>Що нового</h1>
         <p class="doc-updated">Усі версії Wardly. Встановлений застосунок оновлюється сам, коли Дота закрита.</p>
+<section class="release" id="v0.59.0">
+<h2><a href="#v0.59.0">Версія 0.59.0</a></h2>
+<ul>
+  <li><strong>Ваші власні фази більше не вважаються контролем.</strong> Dota позначає героя оглушеним, коли він сам ховається: розділення Manta Style, Doppelganger у Phantom Lancer, Omnislash. Wardly приймав це за ворожий стан і казав «Щойно контроль закінчиться, натисніть Manta», хоча HP було повне. Тепер:</li>
+  <li>оглушення, що почалося разом із вашою перезарядкою, без дебафу й без втрати HP, картки не дає;</li>
+  <li>оглушення без дебафу й без шкоди (джерела не видно) не дає наказу витратити захисний предмет;</li>
+  <li>справжній стан одразу після вашої фази — з'явився дебаф або падає HP — і далі дає картку одразу: фільтр не ховає наступну загрозу;</li>
+  <li>Hex, німота й mute ніколи не вважаються вашою фазою.</li>
+  <li><strong>Aegis — не смерть.</strong> Життя, втрачене через Aegis чи Reincarnation (лічильник смертей не зростає, герой встає на місці), більше не рахується смертю: немає розбору смерті, «після відродження змініть маршрут», екрана смерті чи байбеку. Поки ви воскресаєте, Wardly мовчить, а картка попереднього життя зникає. Aegis, що зник живим (скінчився час), — теж не смерть.</li>
+  <li><strong>Повтор смертей — лише справжній повтор.</strong> Дві смерті в різних кінцях карти під одним ярликом «ліс біля річки» більше не «повторний маршрут»: потрібні смерті поруч одна з одною (або три в одній точці за гру). «Загинули з низьким ресурсом» тепер дивиться на HP, з яким ви почали бій, а не на останню мить перед смертю (вона завжди низька).</li>
+  <li><strong>Картки, що вже не відповідають грі, зникають і замовкають</strong> — на екрані й у голосі:</li>
+  <li>«натисніть Faerie Fire зараз», коли вас оглушили; коли стан мине, порада прийде знову;</li>
+  <li>«використайте Tango», коли ви його вже з'їли, і картка про низьке HP, коли ви вилікувалися;</li>
+  <li>картка смерті після відродження і картка живого героя після смерті;</li>
+  <li>картки про фарм, ТП чи Smoke, коли почалася бійка (ворожий стан або швидке падіння HP);</li>
+  <li>картка байбеку, коли її золото вже інше.</li>
+  <li><strong>Свіжі числа.</strong> Картка байбеку називає золото й ціну цієї миті (раніше могла назвати пару 40-секундної давності), а поки у вас Aegis, не забороняє покупку заради байбеку.</li>
+  <li><strong>Менше шуму.</strong> Немає карток «Бережіть себе: у вас серія вбивств», «Фарміть далі: N золота за хвилину» і загального «фарміть безпечно». «За 5 секунд пішло 40% HP» більше не обіцяє «лічені секунди» і приходить, лише поки HP і далі падає; зміна максимального HP (Armlet, Treads) — не шкода.</li>
+  <li><strong>Нові поради.</strong> Після вашого вбивства, коли втеча на перезарядці: «Після вашого вбивства: заходьте знову, коли Doppelganger відновиться за 5 с» і стан Manta. Після воскресіння з Aegis — те саме для другого життя. Мало мани — порада називає лише вивчену втечу. «ТП у схованці: нехай кур'єр привезе» замість «купіть ТП»; Nature's Prophet з Teleportation цієї поради не отримує. Глибоко на ворожій половині з союзниками поруч — більше не «не показуйтеся глибоко».</li>
+  <li><strong>Виправлено.</strong> Картки про німоту чи оглушення з готовою Manta губилися як повтор картки про фарм; Doppelganger у Phantom Lancer не розпізнавався як його втеча.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.59.0" rel="noopener">Завантажити й подробиці</a></p>
+</section>
 <section class="release" id="v0.58.0">
 <h2><a href="#v0.58.0">Версія 0.58.0</a></h2>
 <ul>
@@ -1557,6 +1580,29 @@
       <article data-doc="en" lang="en" hidden>
         <h1>What's new</h1>
         <p class="doc-updated">Every Wardly version. The installed app updates itself while Dota is closed.</p>
+<section class="release" id="v0.59.0">
+<h2><a href="#v0.59.0">Version 0.59.0</a></h2>
+<ul>
+  <li><strong>Your own phases are no longer a disable.</strong> Dota marks the hero as stunned while it hides itself: Manta Style's split, Phantom Lancer's Doppelganger, Omnislash. Wardly took that for an enemy stun and said «The moment the disable ends, use Manta» at full HP. Now:</li>
+  <li>a stun that starts as your own cooldown starts, with no debuff and no HP lost, gets no card;</li>
+  <li>a stun with no debuff and no damage (no visible source) gets no order to spend a defensive item;</li>
+  <li>a real stun right after your phase (a debuff appears or HP drops) still gets its card at once: the filter never hides the next threat;</li>
+  <li>a hex, silence or mute is never taken for your own phase.</li>
+  <li><strong>The Aegis is not a death.</strong> A life lost to the Aegis or Reincarnation (the death counter stays, the hero stands up on the spot) no longer counts as a death: no death review, no «after respawn, change your route», no death screen, no buyback. While you revive Wardly is quiet, and the card of the life just lost goes away. An Aegis that runs out while you live is no death either.</li>
+  <li><strong>Repeated deaths only when they repeat.</strong> Two deaths at opposite ends of the map under one label («the jungle by the river») are no longer «a repeated route»: the deaths must be close to each other (or three at one spot in a game). «You died with low resources» now looks at the HP you entered the fight with, not the last moment before the death (always low).</li>
+  <li><strong>Cards that no longer hold go away, on screen and in the voice:</strong></li>
+  <li>«use Faerie Fire now» once a stun lands; when it ends you are told again;</li>
+  <li>«use Tango» after you ate one, and a low-HP card once you healed;</li>
+  <li>a death card after the respawn, and a card of the living hero after a death;</li>
+  <li>farm, TP or Smoke cards once a fight starts (an enemy stun or HP falling fast);</li>
+  <li>the buyback card once its gold no longer matches.</li>
+  <li><strong>Fresh numbers.</strong> The buyback card quotes the gold and the cost of this moment (it could quote a pair from 40 seconds before), and while you hold the Aegis it does not hold a purchase back for the buyback.</li>
+  <li><strong>Less noise.</strong> No more «Stay alive: you are on a kill streak», «Keep farming: N gold per minute» or a generic «keep farming safely». «You lost 40% HP in 5 seconds» no longer promises «seconds left» and comes only while HP is still falling; a max-HP change (Armlet, Treads) is no damage.</li>
+  <li><strong>New advice.</strong> After your kill with your escape on cooldown: «After your kill: go in again once Doppelganger is back in 5 s», with your Manta's state. After an Aegis revive, the same for your second life. Low mana names only an escape you have learned. «TP in your stash: have the courier bring it» instead of «buy a TP»; Nature's Prophet with Teleportation does not get this card. Deep on the enemy side with allies next to you is no longer «do not show deep».</li>
+  <li><strong>Fixed.</strong> Silence and stun cards with Manta ready were swallowed as a repeat of a farm card; Phantom Lancer's Doppelganger was not recognized as his escape.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.59.0" rel="noopener">Download and details</a></p>
+</section>
 <section class="release" id="v0.58.0">
 <h2><a href="#v0.58.0">Version 0.58.0</a></h2>
 <ul>

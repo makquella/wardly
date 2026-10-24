@@ -17,6 +17,7 @@ from datetime import UTC, datetime
 from functools import wraps
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
+from app.action_feedback import ActionWatch
 from app.buyback_tracker import BuybackTracker
 from app.enemy_heroes import EnemyHeroes
 from app.enemy_lanes import EnemyLanes
@@ -29,6 +30,7 @@ from app.live_role import LiveRoleTracker
 from app.map_hints import RoleTips, timers
 from app.roshan_timer import RoshanTimer
 from app.skill_tips import SkillTips
+from app.status_source import StatusWatch
 from app.tp_tracker import TpTracker
 
 DEATH_DECISION_POINTS = {
@@ -60,6 +62,30 @@ PRE_GAME_STATES = {
 # the low-HP card came 1-6 s before a death. Live GSI only (wall-clock deltas).
 HP_FALL_FAST_POINTS = 30
 HP_FALL_CEILING = 70
+# ...and still falling over the last seconds: a burst that already ended (an
+# own phase, a finished combo, an HP-cost cast) is not projected forward.
+HP_STILL_FALLING_SECONDS = 2
+HP_STILL_FALLING_POINTS = 5
+
+# A previous death this close (world units) and this recent (minutes) makes a
+# repeated pattern: two deaths across the map are two events, not one mistake.
+# About a third of a lane: one area/route, not the same named zone.
+DEATH_PATTERN_RADIUS = 2500
+DEATH_PATTERN_MINUTES = 8
+# ...or this many deaths at one spot over the whole match, however spread out
+# (player_service.MATCH_PLACE_MIN: the same count names the place).
+DEATH_PATTERN_MATCH_COUNT = 3
+# The HP the hero entered the fatal fight with: the highest of these last
+# seconds before the death (the last tick before a death is always low).
+DEATH_ENTRY_SECONDS = 15
+# Alive lost with the death counter unchanged (Aegis, Reincarnation): the
+# revive is expected within this many game seconds; later the life loss stays
+# unexplained and is still not counted as a death.
+REVIVE_WAIT_SECONDS = 15
+# The next life after a revive: how long its readiness is offered.
+REVIVE_READY_SECONDS = 20
+# An own kill this recent: the fight was won, the next step is re-engage or not.
+RECENT_KILL_SECONDS = 15
 
 ESCAPE_OR_DEFENSIVE_FLAG_HINTS = (
     "escape",
@@ -142,10 +168,20 @@ class MatchMemory:
         self.hero: str | None = None
         self.is_demo_or_lobby = False
         self.started_at: str | None = None
-        self.last_states: deque[dict[str, Any]] = deque(maxlen=20)
+        # ~20 s of live GSI (about 2 payloads a second): the HP windows (5/10 s)
+        # and the fight entry before a death (DEATH_ENTRY_SECONDS).
+        self.last_states: deque[dict[str, Any]] = deque(maxlen=40)
         self.previous_alive_state: dict[str, Any] | None = None
         self.death_count = 0
         self.death_events: list[dict[str, Any]] = []
+        # Lives lost without a death counted (Aegis, Reincarnation) and other
+        # life-cycle events; never part of the death statistics.
+        self.life_events: list[dict[str, Any]] = []
+        self._pending_life_loss: dict[str, Any] | None = None
+        self._last_revive: dict[str, Any] | None = None
+        self._had_aegis: bool | None = None
+        self._last_kills: int | None = None
+        self._kill_at: int | None = None
         self.last_death_minute: int | None = None
         self.last_death_context = ""
         self.repeated_death_patterns: list[str] = []
@@ -168,6 +204,8 @@ class MatchMemory:
         self.enemy_lanes = EnemyLanes()
         self.fights = FightWatch()
         self.gameplay = HeroGameplay()
+        self.status = StatusWatch()
+        self.actions = ActionWatch()
 
     def observe_state(self, state: dict[str, Any]) -> dict[str, Any]:
         # Roshan/Aegis can need timer settings on the first observed event.
@@ -217,9 +255,16 @@ class MatchMemory:
         alive_transition_death = (
             previous_alive is True and current_alive is False and previous_alive_state is not None
         )
-        if track_deaths and (alive_transition_death or death_delta):
-            pre_death_state = previous_alive_state or self._best_previous_alive_state() or state
-            self._record_death_event(pre_death_state, state)
+        counter_known = current_deaths is not None and self._last_player_deaths is not None
+        if track_deaths:
+            self._observe_life(
+                state,
+                previous_alive_state,
+                alive_drop=alive_transition_death,
+                death_delta=death_delta,
+                counter_known=counter_known,
+                current_alive=current_alive,
+            )
 
         if track_deaths and current_alive is True:
             self.previous_alive_state = _copy_state(state)
@@ -230,6 +275,11 @@ class MatchMemory:
 
         self._annotate_recent_damage(state, now_ts)
         self._last_player_deaths = current_deaths
+        self._annotate_status_and_actions(state)
+        kills = _ctx_int_or_none(state, "kills")
+        if kills is not None and self._last_kills is not None and kills > self._last_kills:
+            self._kill_at = _game_clock(state)
+        self._last_kills = kills
         self.farm.observe(
             _game_clock(state),
             _ctx_int_or_none(state, "last_hits"),
@@ -417,6 +467,122 @@ class MatchMemory:
                 return _copy_state(state)
         return None
 
+    def _observe_life(
+        self,
+        state: dict[str, Any],
+        previous_alive_state: dict[str, Any] | None,
+        *,
+        alive_drop: bool,
+        death_delta: bool,
+        counter_known: bool,
+        current_alive: bool | None,
+    ) -> None:
+        """Ordinary deaths (the game's counter rose) vs a life lost with no death
+        counted (Aegis, Reincarnation) vs the legacy alive drop when the payload
+        has no counter. GSI reports an ordinary death's counter in the same
+        snapshot as alive=false; an Aegis revive leaves it unchanged."""
+        clock = _game_clock(state)
+        pending = self._pending_life_loss
+        if death_delta:
+            pre_death_state = (
+                previous_alive_state
+                or (pending or {}).get("pre_state")
+                or self._best_previous_alive_state()
+                or state
+            )
+            self._pending_life_loss = None
+            self._record_death_event(pre_death_state, state)
+        elif alive_drop and counter_known:
+            before = previous_alive_state or {}
+            self._pending_life_loss = {
+                "clock": clock,
+                "had_aegis": _ctx_value(before, "has_aegis") is True,
+                "reincarnation_ready": _reincarnation_ready(before),
+                "pre_state": _copy_state(before) if before else None,
+                "position": {"x": _ctx_value(before, "xpos"), "y": _ctx_value(before, "ypos")},
+            }
+        elif alive_drop:
+            # No death counter in the payload: the alive drop is the only sign.
+            pre_death_state = previous_alive_state or self._best_previous_alive_state() or state
+            self._record_death_event(pre_death_state, state, confidence="low")
+        pending = self._pending_life_loss
+        if pending is not None and current_alive is True:
+            has_aegis = _ctx_value(state, "has_aegis")
+            if pending["had_aegis"] and has_aegis is not True:
+                kind = "aegis_revive"
+            elif pending["reincarnation_ready"]:
+                kind = "reincarnation"
+            else:
+                kind = "revive_unknown"
+            event = {
+                "type": kind,
+                "lost_at": pending["clock"],
+                "revived_at": clock,
+                "position": pending["position"],
+            }
+            self.life_events.append(event)
+            self._last_revive = event
+            self._pending_life_loss = None
+        elif (
+            pending is not None
+            and clock is not None
+            and pending["clock"] is not None
+            and clock - pending["clock"] > REVIVE_WAIT_SECONDS
+        ):
+            # Dead for long with the counter unchanged: not a revive we can see,
+            # and still no death counted. Keep it out of the death statistics.
+            self.life_events.append({"type": "life_lost_unexplained", "lost_at": pending["clock"]})
+            self._pending_life_loss = None
+        has_aegis = _ctx_value(state, "has_aegis")
+        if (
+            self._had_aegis is True
+            and has_aegis is False
+            and current_alive is True
+            and self._pending_life_loss is None
+            and not (self._last_revive and self._last_revive.get("revived_at") == clock)
+        ):
+            # Gone while alive: expired (or the payload lost it); never a death.
+            self.life_events.append({"type": "aegis_gone_alive", "at": clock})
+        if isinstance(has_aegis, bool):
+            self._had_aegis = has_aegis
+
+    def _recent_kill_seconds(self, clock: int | None) -> int | None:
+        """Seconds since the player's own last kill, within RECENT_KILL_SECONDS."""
+        if clock is None or self._kill_at is None:
+            return None
+        ago = clock - self._kill_at
+        return ago if 0 <= ago <= RECENT_KILL_SECONDS else None
+
+    def _own_aegis_left(self, clock: int | None) -> int | None:
+        """Seconds the player's Aegis still lasts, only when its pickup time is
+        known (roshan_timer: the pickup event, or first seen with it after being
+        seen without); None otherwise (a late recording start)."""
+        expires = self.roshan.aegis_expires()
+        if expires is None or clock is None:
+            return None
+        left = expires - clock
+        return left if left > 0 else None
+
+    def _recent_revive(self, clock: int | None) -> dict[str, Any] | None:
+        revive = self._last_revive
+        if not revive or clock is None or not isinstance(revive.get("revived_at"), int):
+            return None
+        ago = clock - revive["revived_at"]
+        if not 0 <= ago <= REVIVE_READY_SECONDS:
+            return None
+        return {"type": revive["type"], "seconds_ago": ago}
+
+    def _annotate_status_and_actions(self, state: dict[str, Any]) -> None:
+        extra_context = state.setdefault("extra_context", {})
+        if not isinstance(extra_context, dict):
+            return
+        at = _ctx_int_or_none(state, "game_time")
+        if at is None:
+            at = _game_clock(state)
+        moment = None if at is None else float(at)
+        extra_context["status_source"] = self.status.observe(extra_context, moment)
+        extra_context.update(self.actions.observe(extra_context, moment))
+
     def _annotate_recent_damage(self, state: dict[str, Any], now_ts: float) -> None:
         extra_context = state.setdefault("extra_context", {})
         if not isinstance(extra_context, dict):
@@ -424,8 +590,12 @@ class MatchMemory:
             state["extra_context"] = extra_context
 
         hp_percent = _to_int(state.get("hp_percent"), 100)
-        hp_delta_5s = _hp_delta_from_recent_peak(self.last_states, hp_percent, now_ts, 5)
-        hp_delta_10s = _hp_delta_from_recent_peak(self.last_states, hp_percent, now_ts, 10)
+        hp_delta_5s = _hp_delta_from_recent_peak(self.last_states, state, now_ts, 5)
+        hp_delta_10s = _hp_delta_from_recent_peak(self.last_states, state, now_ts, 10)
+        hp_delta_recent = _hp_delta_from_recent_peak(
+            self.last_states, state, now_ts, HP_STILL_FALLING_SECONDS
+        )
+        hp_rise_3s = _hp_rise_from_recent_low(self.last_states, state, now_ts, 3)
         raw_laning = extra_context.get("laning_context")
         laning_context = raw_laning if isinstance(raw_laning, Mapping) else {}
         low_hp_threshold = _to_int(laning_context.get("low_hp_warning_threshold"), 50)
@@ -437,6 +607,7 @@ class MatchMemory:
             and _alive(state) is True
             and hp_delta_5s <= -HP_FALL_FAST_POINTS
             and hp_percent <= HP_FALL_CEILING
+            and hp_delta_recent <= -HP_STILL_FALLING_POINTS
             else None
         )
         overstay_warning = (
@@ -450,6 +621,8 @@ class MatchMemory:
                 "observed_at_epoch": now_ts,
                 "hp_delta_5s": hp_delta_5s,
                 "hp_delta_10s": hp_delta_10s,
+                # HP points regained over the last 3 s (0 while not recovering).
+                "hp_rise_3s": hp_rise_3s,
                 "recent_damage_taken": recent_damage_taken,
                 "hp_falling_fast": hp_falling_fast,
                 "recent_hp_low": hp_percent <= low_hp_threshold,
@@ -465,10 +638,13 @@ class MatchMemory:
         self,
         previous_state: Mapping[str, Any],
         current_state: Mapping[str, Any],
+        *,
+        confidence: str = "high",
     ) -> None:
         self.death_count += 1
         minute = _to_int(current_state.get("minute"), _to_int(previous_state.get("minute"), 0))
-        patterns = self._classify_death(previous_state, minute)
+        entry = self._fight_entry_state(previous_state)
+        patterns = self._classify_death(previous_state, minute, entry)
         context = _death_context(patterns)
         event = {
             "id": self.death_count,
@@ -476,6 +652,11 @@ class MatchMemory:
             "hero": str(previous_state.get("hero") or current_state.get("hero") or ""),
             "pre_death_hp_percent": _to_int(previous_state.get("hp_percent"), 100),
             "pre_death_mana_percent": _ctx_int(previous_state, "mana_percent", 100),
+            # What the hero entered the fatal fight with (DEATH_ENTRY_SECONDS).
+            "entry_hp_percent": _to_int(entry.get("hp_percent"), 100),
+            "entry_mana_percent": _ctx_int(entry, "mana_percent", 100),
+            "clock": _game_clock(current_state),
+            "confidence": confidence,
             "items": list(previous_state.get("items") or []),
             "position": {
                 "x": _ctx_value(previous_state, "xpos"),
@@ -496,19 +677,64 @@ class MatchMemory:
         self.last_death_context = context
         self.repeated_death_patterns = self._recent_death_patterns()
 
-    def _classify_death(self, previous_state: Mapping[str, Any], minute: int) -> list[str]:
-        patterns: list[str] = []
-        recent_deaths = [
-            event for event in self.death_events if minute - _to_int(event.get("minute"), -999) <= 8
+    def _fight_entry_state(self, previous_state: Mapping[str, Any]) -> Mapping[str, Any]:
+        """The alive state with the most HP in the DEATH_ENTRY_SECONDS before the
+        last alive one: what the hero entered the fight with. The reference time
+        is the last annotated alive state (the pre-death copy is taken before
+        its own annotation)."""
+        best: Mapping[str, Any] = previous_state
+        stamps = [
+            _number_or_none(_ctx_value(state, "observed_at_epoch"))
+            for state in self.last_states
+            if _alive(state) is True
         ]
-        if self.death_count >= 2 or recent_deaths:
+        known = [stamp for stamp in stamps if stamp is not None]
+        if not known:
+            return best
+        last_ts = max(known)
+        for state in self.last_states:
+            if _alive(state) is not True:
+                continue
+            age = last_ts - _number_or_zero(_ctx_value(state, "observed_at_epoch"))
+            if 0 <= age <= DEATH_ENTRY_SECONDS and _to_int(state.get("hp_percent"), 0) > _to_int(
+                best.get("hp_percent"), 0
+            ):
+                best = state
+        return best
+
+    def _classify_death(
+        self,
+        previous_state: Mapping[str, Any],
+        minute: int,
+        entry: Mapping[str, Any] | None = None,
+    ) -> list[str]:
+        patterns: list[str] = []
+        here = (_ctx_value(previous_state, "xpos"), _ctx_value(previous_state, "ypos"))
+        recent_deaths = [
+            event
+            for event in self.death_events
+            if minute - _to_int(event.get("minute"), -999) <= DEATH_PATTERN_MINUTES
+        ]
+        # The same area (and recent), or the same spot again and again over the
+        # match: one repeated mistake. Deaths far apart, or with no position,
+        # are only several deaths: no route claim from them.
+        same_spot = [e for e in self.death_events if _near(here, e.get("position"))]
+        if (
+            any(_near(here, event.get("position")) for event in recent_deaths)
+            or len(same_spot) + 1 >= DEATH_PATTERN_MATCH_COUNT
+        ):
             patterns.append("REPEATED_DEATHS")
+        elif recent_deaths:
+            patterns.append("MULTIPLE_DEATHS")
 
         if _had_escape_or_defensive_risk(previous_state):
             patterns.append("ESCAPE_ON_COOLDOWN_DEATH")
 
-        hp_percent = _to_int(previous_state.get("hp_percent"), 100)
-        mana_percent = _ctx_int(previous_state, "mana_percent", 100)
+        # Low HP at the last tick before a death proves nothing (it is always
+        # low): the fight entry decides whether the hero went in short.
+        start = entry if entry is not None else previous_state
+        hp_percent = _to_int(start.get("hp_percent"), 100)
+        mana_percent = _ctx_int(start, "mana_percent", 100)
         if hp_percent <= 40 or mana_percent <= 25:
             patterns.append("LOW_RESOURCE_DEATH")
 
@@ -544,6 +770,10 @@ class MatchMemory:
                 "buyback_spent": self.buyback.signal(),
                 "base_danger": self.danger,
                 "tp_missing": self.tp.signal(),
+                "life_state": "reviving" if self._pending_life_loss else None,
+                "own_aegis_left": self._own_aegis_left(_game_clock(state)),
+                "recent_kill_seconds": self._recent_kill_seconds(_game_clock(state)),
+                "recent_revive": self._recent_revive(_game_clock(state)),
             }
         )
 
@@ -596,6 +826,39 @@ def _game_clock(state: Mapping[str, Any]) -> int | None:
     if clock is None:
         clock = _ctx_int_or_none(state, "game_time")
     return clock
+
+
+def _number_or_zero(value: Any) -> float:
+    number = _number_or_none(value)
+    return 0.0 if number is None else number
+
+
+def _near(here: tuple[Any, Any], position: Any) -> bool:
+    if not isinstance(position, Mapping):
+        return False
+    x0, y0 = _number_or_none(here[0]), _number_or_none(here[1])
+    x1, y1 = _number_or_none(position.get("x")), _number_or_none(position.get("y"))
+    if None in (x0, y0, x1, y1):
+        return False
+    assert x0 is not None and y0 is not None and x1 is not None and y1 is not None
+    return (x0 - x1) ** 2 + (y0 - y1) ** 2 <= DEATH_PATTERN_RADIUS**2
+
+
+def _reincarnation_ready(state: Mapping[str, Any]) -> bool:
+    """A learned, ready passive revive (Wraith King's Reincarnation) before the
+    life was lost: its cooldown starting afterwards is the revive."""
+    abilities = _ctx_value(state, "abilities")
+    if not isinstance(abilities, list):
+        return False
+    for ability in abilities:
+        if (
+            isinstance(ability, Mapping)
+            and ability.get("raw_name") == "skeleton_king_reincarnation"
+            and _to_int(ability.get("level"), 0) > 0
+            and ability.get("cooldown") == 0
+        ):
+            return True
+    return False
 
 
 def _death_context(patterns: list[str]) -> str:
@@ -709,20 +972,63 @@ def _to_bool(value: Any) -> bool:
     return bool(value)
 
 
+def _health_points(state: Mapping[str, Any]) -> tuple[float, float] | None:
+    health = _number_or_none(_ctx_value(state, "health"))
+    max_health = _number_or_none(_ctx_value(state, "max_health"))
+    if health is None or not max_health or max_health <= 0:
+        return None
+    return health, max_health
+
+
+def _hp_change(before: Mapping[str, Any], now: Mapping[str, Any]) -> int:
+    """HP change from `before` to `now` in points of the current max HP (%).
+
+    With absolute health known, a max-HP change is taken out: Armlet toggled
+    off, Treads switched or an attribute shift moves health together with max
+    HP, which is no damage, and a max-HP rise alone is no heal. Without it the
+    reported percent is compared, as before."""
+    a, b = _health_points(before), _health_points(now)
+    if a is None or b is None:
+        return _to_int(now.get("hp_percent"), 100) - _to_int(before.get("hp_percent"), 100)
+    (hp0, max0), (hp1, max1) = a, b
+    delta = hp1 - hp0
+    max_delta = max1 - max0
+    if max_delta < 0 and delta < 0:
+        delta = min(0.0, delta - max_delta)  # the part the lower max explains
+    elif max_delta > 0 and delta > 0:
+        delta = max(0.0, delta - max_delta)  # the part the higher max explains
+    return round(delta / max1 * 100)
+
+
 def _hp_delta_from_recent_peak(
     states: deque[dict[str, Any]],
-    current_hp: int,
+    current: Mapping[str, Any],
     now_ts: float,
     seconds: int,
 ) -> int:
-    recent_hp_values = [
-        _to_int(state.get("hp_percent"), current_hp)
+    """The largest HP loss (negative) from any state of the last `seconds` to
+    now; 0 when HP did not go down."""
+    changes = [
+        _hp_change(state, current)
         for state in states
-        if _recent_state_age(now_ts, state) <= seconds
+        if _recent_state_age(now_ts, state) <= seconds and _alive(state) is not False
     ]
-    if not recent_hp_values:
-        return 0
-    return current_hp - max(recent_hp_values)
+    return min([0, *changes])
+
+
+def _hp_rise_from_recent_low(
+    states: deque[dict[str, Any]],
+    current: Mapping[str, Any],
+    now_ts: float,
+    seconds: int,
+) -> int:
+    """HP regained (points of max) from the lowest state of the last `seconds`."""
+    changes = [
+        _hp_change(state, current)
+        for state in states
+        if _recent_state_age(now_ts, state) <= seconds and _alive(state) is not False
+    ]
+    return max([0, *changes])
 
 
 def _has_recent_low_hp_or_damage(

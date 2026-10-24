@@ -85,6 +85,7 @@ from app.lane_duel import lane_records
 from app.map_analysis import map_side, zone
 from app.map_hints import SAVE_ITEMS
 from app.match_facts import facts_from_opendota, facts_from_timeline, merge_facts
+from app.match_memory import DEATH_PATTERN_RADIUS
 from app.match_records import MATCH_RECORDS
 from app.match_tracker import MatchTracker, account_from_gsi
 from app.next_item import (
@@ -222,13 +223,22 @@ def _death_place(death: dict[str, Any]) -> dict[str, Any] | None:
     def where(p: dict[str, Any]) -> tuple[str, str]:
         return zone(p["x"], p["y"]), map_side(p["x"], p["y"], radiant)
 
-    here = where(places[-1])
+    last = places[-1]
+    here = where(last)
+
+    def close(p: dict[str, Any]) -> bool:
+        # The same named zone is not the same place: «the jungle by the river»
+        # spans the map, and two deaths 6.7k units apart under one label are
+        # two events (match_memory.DEATH_PATTERN_RADIUS).
+        distance = ((p["x"] - last["x"]) ** 2 + (p["y"] - last["y"]) ** 2) ** 0.5
+        return where(p) == here and distance <= DEATH_PATTERN_RADIUS
+
     same = [
         p
         for p in places
-        if isinstance(p.get("t"), int) and death["t"] - p["t"] <= PLACE_WINDOW and where(p) == here
+        if isinstance(p.get("t"), int) and death["t"] - p["t"] <= PLACE_WINDOW and close(p)
     ]
-    in_match = sum(1 for p in places if where(p) == here)
+    in_match = sum(1 for p in places if close(p))
     return {
         "zone": here[0],
         "side": here[1],

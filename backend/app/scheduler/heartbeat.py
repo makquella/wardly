@@ -12,6 +12,12 @@ from typing import Any
 from app.scheduler.safety_predicates import _hp_pressure_state
 from app.scheduler.state_utils import _ctx_int, _ctx_value, _is_dead_or_respawning, _to_int
 from app.schemas import RecommendationResponse
+from app.team_context import nearby_allies
+
+
+def _extra(state: dict[str, Any]) -> dict[str, Any]:
+    extra = state.get("extra_context")
+    return extra if isinstance(extra, dict) else {}
 
 
 def _low_hp_pattern_recommendation() -> RecommendationResponse:
@@ -58,7 +64,9 @@ def _heartbeat_copy(state: dict[str, Any]) -> tuple[str, str, str]:
             "A short reset keeps the next farming route safer without forcing a fight.",
             "Medium risk if you keep showing while resources are low.",
         )
-    if position_risk == "high" or position_zone == "deep_enemy_side":
+    if (position_risk == "high" or position_zone == "deep_enemy_side") and not nearby_allies(
+        _extra(state)
+    ):
         return (
             "Farm closer to a safer zone until enemy positions are clearer.",
             "Enemy locations are not confirmed, so exposed farming is unnecessary risk.",

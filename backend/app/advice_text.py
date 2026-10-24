@@ -120,7 +120,8 @@ LOW_HP_TOOL_PREFIXES = (
 # The rule texts a LOW_HP reason may keep (live_tools.py: the tool that is ready,
 # HP falling fast, the repeat count); anything else becomes the standard line.
 LOW_HP_REASON_PATTERNS = (
-    re.compile(r"^You lost \d+% HP in 5 seconds: "),
+    re.compile(r"^You lost \d+% HP in 5 seconds and it is still dropping\.$"),
+    re.compile(r"^A death now revives you on the spot; "),
     re.compile(r"^Your HP has dropped this low \d+ times this game: "),
     re.compile(r"^Your HP is low and [^:]+ is ready: use it before the next hit"),
     re.compile(r"^[^:]+ is ready: it buys you the seconds to get away\.$"),

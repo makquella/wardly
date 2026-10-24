@@ -19,6 +19,8 @@ from app.live_tools import (
     insurance_copy,
     low_hp_copy,
     low_hp_repeat_reason,
+    low_mana_reason,
+    readiness_copy,
 )
 from app.post_laning_coach import build_post_laning_advice, spend_while_dead_sentence
 from app.schemas import GameSituationRequest, RecommendationResponse
@@ -201,6 +203,9 @@ def _fallback_text(req: GameSituationRequest, action_type: str) -> dict[str, str
         tool = disabled_copy(extra, req.hero)
     if tool is not None:
         text = {**text, "action": tool[0], "reason": tool[1]}
+    if action_type == "conserve_mana_or_reset":
+        # Name only the escape that is learned (W at 3:16 was not yet).
+        text = {**text, "reason": low_mana_reason(extra, req.hero)}
     if action_type in LOW_HP_ACTION_TYPES and insured is None:
         repeat = hp_falling_reason(extra) or low_hp_repeat_reason(extra)
         if repeat is not None:
@@ -451,7 +456,15 @@ def _ability_safety_fallback_text(req: GameSituationRequest) -> dict[str, str]:
         ability = str(inferred_laning_context.get("key_safety_ability") or "").strip()
 
     if ability:
-        return _ability_cooldown_text(ability, "", _cooldown_left(req, ability))
+        seconds = _cooldown_left(req, ability)
+        readiness = readiness_copy(context, ability, seconds)
+        if readiness is not None:
+            return {
+                "action": readiness[0],
+                "reason": readiness[1],
+                "risk": FALLBACK_TEXT["respect_defensive_ability_cooldown"]["risk"],
+            }
+        return _ability_cooldown_text(ability, "", seconds)
 
     return FALLBACK_TEXT["respect_defensive_ability_cooldown"]
 

@@ -199,6 +199,10 @@ class MatchRecords:
                         "action": recommendation.get("action"),
                         "reason": recommendation.get("reason"),
                         "priority": recommendation.get("priority"),
+                        # The snapshot the card was decided on (several GSI
+                        # payloads share one clock second): its clock, game
+                        # time, and the tool/numbers the card cites.
+                        "basis": response.get("advice_basis"),
                     },
                     default=str,
                 )

@@ -17,8 +17,12 @@ MAX_RISK_CHARS = 140
 REGULAR_ADVICE_INTERVAL_SECONDS = 45
 URGENT_ADVICE_INTERVAL_SECONDS = 15
 DUPLICATE_SUPPRESSION_SECONDS = 30
+# Urgent cards are never held back by the per-minute quota: a silence with
+# Manta ready was dropped because two calm cards had been shown that minute.
+# The same-action duplicate window below still applies to them.
 RATE_LIMIT_BYPASS_DECISIONS = {
     "LOW_HP",
+    "DISABLED_STATUS",
     "DEATH_REVIEW",
     "REPEATED_DEATH_PATTERN",
     "DEATH_WITH_ESCAPE_ON_COOLDOWN",
@@ -35,7 +39,10 @@ def apply_ux_policy(
     recent_advice_history: list[dict[str, Any]],
     now: datetime | None = None,
     action_type: str | None = None,
+    moment: bool = False,
 ) -> dict[str, Any]:
+    """`moment`: a card useful for seconds only (readiness right after a kill or
+    a revive) passes the per-minute quota; the duplicate window still applies."""
     if not action_type:
         action_type = str(build_advice_policy({}, decision_point)["action_type"])
 
@@ -45,7 +52,7 @@ def apply_ux_policy(
         for entry in recent_advice_history
         if _parse_time(entry.get("timestamp")) >= current_time - timedelta(seconds=60)
     ]
-    bypass_rate_limit = decision_point in RATE_LIMIT_BYPASS_DECISIONS
+    bypass_rate_limit = moment or decision_point in RATE_LIMIT_BYPASS_DECISIONS
     if not bypass_rate_limit and len(recent_minute) >= MAX_ADVICE_PER_MINUTE:
         return _suppressed("rate_limit")
 
@@ -149,6 +156,10 @@ def _coaching_action(action: str) -> str:
     if lowered.startswith(("step out", "leave", "walk out", "back off")):
         return action
     if lowered.startswith("after this item pickup"):
+        return action
+    # Readiness after a kill or a revive and the TP delivery are conditions or
+    # one concrete step already (live_tools.readiness_copy, post_laning TP).
+    if lowered.startswith(("second life:", "after your kill:", "have the courier")):
         return action
     # "Consider: farm back your gold" (with a colon: the action stays an imperative;
     # "Consider farm back" is not English). Ukrainian: «Подумайте: …».

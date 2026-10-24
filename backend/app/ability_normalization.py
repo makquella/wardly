@@ -48,6 +48,13 @@ _ABILITY_NAME_MAP = {
     "kez_switch_weapons": "Switch Weapons",
     "slardar_sprint": "Guardian Sprint",
     "bounty_hunter_wind_walk": "Shadow Walk",
+    # Internal names that share no word with the in-game one: without these the
+    # profiles' key abilities were never found (Phantom Lancer's escape was
+    # invisible to every escape rule).
+    "phantom_lancer_doppelwalk": "Doppelganger",
+    "obsidian_destroyer_sanity_eclipse": "Sanity's Eclipse",
+    "nevermore_requiem": "Requiem of Souls",
+    "pangolier_gyroshell": "Rolling Thunder",
 }
 
 

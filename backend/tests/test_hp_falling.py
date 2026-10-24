@@ -26,13 +26,12 @@ def test_hp_falling_fast_raises_the_urgent_card_before_it_is_critical(client):
     body = client.get("/overlay/recommendation").json()
     assert body["decision_point"] == "LOW_HP"
     assert body["advice_mode"] == "urgent"
+    # What was measured, no projection: a finished combo is not a constant DPS.
     assert body["recommendation"]["reason"] == (
-        "You lost 40% HP in 5 seconds: at this rate you have seconds left, leave now."
+        "You lost 40% HP in 5 seconds and it is still dropping."
     )
     ukrainian = client.get("/overlay/recommendation?lang=uk").json()["recommendation"]
-    assert ukrainian["reason"] == (
-        "За 5 секунд пішло 40% HP: у такому темпі у вас лічені секунди, ідіть зараз."
-    )
+    assert ukrainian["reason"] == "За 5 секунд пішло 40% HP, і воно далі падає."
 
 
 def test_a_slow_drop_or_a_high_hp_is_not_a_fall(client):
@@ -56,7 +55,7 @@ def test_the_low_hp_card_keeps_its_rule_reasons():
     from app.advice_text import clean_reason_text
 
     kept = [
-        "You lost 40% HP in 5 seconds: at this rate you have seconds left, leave now.",
+        "You lost 40% HP in 5 seconds and it is still dropping.",
         "Your HP has dropped this low 3 times this game: heal up fully before you go back.",
         "Your HP is low and Blink Dagger is ready: use it before the next hit, not after.",
         "Blade Fury is ready: it buys you the seconds to get away.",

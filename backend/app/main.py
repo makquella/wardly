@@ -125,7 +125,7 @@ app = LocalApiApp(
     lifespan=_lifespan,
     title="Wardly",
     description="MVP-1: rule-based carry coach with local knowledge-base RAG.",
-    version="0.58.0",
+    version="0.59.0",
 )
 app.include_router(player_router)
 
@@ -161,7 +161,7 @@ if _DEBUG_PAGES is not None:
 @app.get("/", summary="Health check")
 def root():
     """Simple health-check endpoint."""
-    return {"status": "ok", "service": "Wardly", "version": "0.58.0"}
+    return {"status": "ok", "service": "Wardly", "version": "0.59.0"}
 
 
 @app.get("/health", summary="Health check")
@@ -1084,6 +1084,10 @@ def _overlay_response(
         "timestamp": gsi_timestamp,
         "event": scheduled.decision_point,
         "hero_gameplay": scheduled.hero_gameplay,
+        # What the card stands on (advice_validity.py) and the card just
+        # withdrawn because the game moved on: the overlay drops and mutes it.
+        "advice_basis": scheduled.basis,
+        "withdrawn_advice": scheduled.withdrawn_advice,
         **_overlay_live_context(state or {}),
     }
     if log_filename:
@@ -1523,6 +1527,7 @@ def _overlay_status(
         response["message"] = message
     response.update(
         {
+            "withdrawn_advice": ADVICE_SCHEDULER.withdrawn_advice(),
             "advice_count": ADVICE_SCHEDULER.stats(now=now)["advice_count"],
             "llm_used": False,
             "source": "none",
