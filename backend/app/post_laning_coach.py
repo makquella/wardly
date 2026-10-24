@@ -11,7 +11,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from app.team_context import nearby_allies
+from app.team_context import grouped_with_team
 
 POST_LANING_REPEAT_WINDOW_SECONDS = 120
 POST_LANING_SAME_ACTION_WINDOW_SECONDS = 330
@@ -62,8 +62,10 @@ def build_post_laning_advice(
     )
     # Holding the Aegis, the next death revives on the spot: the buyback is
     # not the first thing a purchase risks (and the card would block an item
-    # bought for the push the Aegis is for).
-    if buyback_spent is not None and extra.get("has_aegis") is True:
+    # bought for the push the Aegis is for). Only while the Aegis is known to
+    # last (its pickup seen) and the base is not on the line; an Aegis of
+    # unknown age may run out any second, so the card stays.
+    if buyback_spent is not None and _aegis_covers_buyback(extra):
         buyback_spent = None
     tp_missing = extra.get("tp_missing") if isinstance(extra.get("tp_missing"), Mapping) else None
     if tp_missing is not None and _has_global_travel(extra):
@@ -83,7 +85,7 @@ def build_post_laning_advice(
         buyback_spent=buyback_spent is not None,
         buyback_danger=bool((buyback_spent or {}).get("danger")),
         tp_missing=tp_missing is not None,
-        grouped=bool(nearby_allies(extra)),
+        grouped=grouped_with_team(extra),
     )
     if category is None:
         return None
@@ -200,6 +202,22 @@ def objective_context_is_missing(extra: Mapping[str, Any]) -> bool:
             "exact_roshan_context",
         }
         & missing
+    )
+
+
+# The Aegis must last at least this long for a purchase below the buyback
+# cost to wait for the card: a fight started now ends within it.
+AEGIS_COVERS_SECONDS = 60
+
+
+def _aegis_covers_buyback(extra: Mapping[str, Any]) -> bool:
+    left = extra.get("own_aegis_left")
+    return (
+        extra.get("has_aegis") is True
+        and isinstance(left, int)
+        and not isinstance(left, bool)
+        and left >= AEGIS_COVERS_SECONDS
+        and not extra.get("base_danger")
     )
 
 

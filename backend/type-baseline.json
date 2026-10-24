@@ -371,30 +371,6 @@
       "count": 1
     },
     {
-      "path": "app/match_records.py",
-      "message": "Argument 2 to \"_start_locked\" of \"MatchRecords\" has incompatible type \"Any | dict[Any, Any] | None\"; expected \"dict[str, Any]\"",
-      "code": "arg-type",
-      "count": 1
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Item \"None\" of \"Any | dict[Any, Any] | None\" has no attribute \"get\"",
-      "code": "union-attr",
-      "count": 6
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Unsupported right operand type for in (\"Any | dict[Any, Any] | None\")",
-      "code": "operator",
-      "count": 1
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Value of type \"Any | dict[Any, Any] | None\" is not indexable",
-      "code": "index",
-      "count": 2
-    },
-    {
       "path": "app/opendota.py",
       "message": "Item \"None\" of \"Any | None\" has no attribute \"__iter__\" (not iterable)",
       "code": "union-attr",

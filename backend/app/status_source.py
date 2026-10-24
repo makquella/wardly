@@ -7,9 +7,12 @@ Omnislash and others hide the hero for a moment with the same flag an enemy stun
 sets. GSI names no modifier and no caster, so the source is inferred from what
 it does show, and the result says how sure it is:
 
-- own_phase: an own ability or item went on cooldown at the onset (within
-  OWN_CAST_WINDOW) and no HP is being lost. The "disable" is the player's own
-  cast; nothing needs dispelling. It holds at most OWN_PHASE_MAX_SECONDS.
+- own_phase: an own hiding ability or item (OWN_PHASES: only mechanics whose
+  `stunned` flag was seen in recordings) went on cooldown at the onset, and no
+  HP is being lost. It holds only for that mechanic's own duration plus the
+  sampling tolerance; a status that outlasts it is judged again without the
+  cast. Any other own cast next to a stun (Spirit Lance, a Wand, Blade Fury…)
+  proves nothing about the stun's source.
 - enemy: HP is being lost during the status, or a debuff appeared at or after
   its onset (a debuff already there before it, from a slow, proves nothing).
   Once seen in an episode it stays: a real stun right after an own phase is
@@ -21,7 +24,15 @@ it does show, and the result says how sure it is:
   status; the callers keep the legacy treatment (a possible enemy disable).
 
 The tracker keeps only the last snapshot and the casts of the last seconds; it
-never reads the future. Times are game seconds (map.game_time, else clock).
+never reads the future. Durations are measured on the observation clock in
+seconds (match_memory passes the snapshot's wall time; game time only ticks
+whole seconds, too coarse for a one-second phase).
+
+Measured in three recordings (wall time from the onset snapshot to the first
+clear one, payloads about 0.5 s apart): Doppelganger 23 times 0.5-1.4 s with no
+HP lost; Manta 15 times up to 0.8 s, and twice longer with an enemy stun on top
+(476 and 766 HP lost); Metamorphosis 3 times up to 0.6 s. Omnislash never set
+`stunned` in the Juggernaut recording, so it is not listed.
 """
 
 from __future__ import annotations
@@ -31,12 +42,20 @@ from collections.abc import Mapping
 from typing import Any
 
 BLOCKING_FLAGS = ("stunned", "hexed", "silenced", "muted")
-# An own cooldown starting this many game seconds before (or at) the onset, or
-# in the first seconds of the status (GSI can report the cooldown a tick late).
-OWN_CAST_WINDOW = 1.5
-# The longest own phase the inference covers (Omnislash with talents ~3-4 s);
-# past it the status is judged again without the cast.
-OWN_PHASE_MAX_SECONDS = 5.0
+# Own mechanics that hide the hero and show as `stunned`, with the game's own
+# duration of that phase in seconds (patch 7.3x): Doppelganger's 1 s delay,
+# Manta's 0.1 s split, Metamorphosis' 0.35 s transformation.
+OWN_PHASES = {
+    "phantom_lancer_doppelwalk": 1.0,
+    "item_manta": 0.1,
+    "terrorblade_metamorphosis": 0.35,
+}
+# Payloads come about every 0.5 s and a cooldown can show a tick late: the
+# phase is allowed this much longer than its duration before it is re-judged.
+SAMPLING_TOLERANCE = 0.6
+# The own cooldown must start this close to the onset (before / after it).
+OWN_CAST_BEFORE = 1.0
+OWN_CAST_AFTER = 0.6
 # The flags an own hidden/invulnerable phase shows: GSI reports Manta's split,
 # Doppelganger and Omnislash as `stunned`. A hex, silence or mute is never one.
 OWN_PHASE_FLAGS = frozenset({"stunned"})
@@ -116,6 +135,7 @@ class StatusWatch:
         self._cooldowns: dict[str, float] = {}
         self._casts: deque[tuple[float, str]] = deque(maxlen=16)
         self._debuff_before: bool | None = None
+        self._health_before: tuple[float | None, float | None] | None = None
         self._episode: dict[str, Any] | None = None
 
     def observe(self, extra: Mapping[str, Any], at: float | None) -> dict[str, Any]:
@@ -131,13 +151,17 @@ class StatusWatch:
         if not flags or extra.get("alive") is False:
             self._episode = None
             self._debuff_before = debuff
+            self._health_before = health if extra.get("alive") is not False else None
             return {"kind": "none"}
         episode = self._episode
         if episode is None:
+            # HP from the last snapshot before the status: the damage that
+            # landed with it (a stun and a nuke together) belongs to it.
+            before = self._health_before
             episode = self._episode = {
                 "since": at,
                 "flags": flags,
-                "health": health,
+                "health": before if before is not None and before[0] is not None else health,
                 "debuff_before": self._debuff_before,
                 "enemy": False,
             }
@@ -145,19 +169,15 @@ class StatusWatch:
         since = episode["since"]
         elapsed = at - since if at is not None and since is not None else None
         own_cast = None
-        if (
-            since is not None
-            and (elapsed is None or elapsed <= OWN_PHASE_MAX_SECONDS)
-            and set(flags) <= OWN_PHASE_FLAGS
-        ):
-            own_cast = next(
-                (
-                    key
-                    for t, key in reversed(self._casts)
-                    if since - OWN_CAST_WINDOW <= t <= since + OWN_CAST_WINDOW
-                ),
-                None,
-            )
+        if since is not None and set(flags) <= OWN_PHASE_FLAGS:
+            for t, key in reversed(self._casts):
+                duration = OWN_PHASES.get(key.split(":", 1)[1])
+                if duration is None or not since - OWN_CAST_BEFORE <= t <= since + OWN_CAST_AFTER:
+                    continue
+                # Only while that phase can still last: then judged again.
+                if elapsed is None or elapsed <= duration + SAMPLING_TOLERANCE:
+                    own_cast = key
+                    break
         lost = hp_lost(episode["health"], health)
         evidence: list[str] = []
         if _damaging(lost, health[1]):
@@ -193,6 +213,9 @@ class StatusWatch:
         }
         if own_cast:
             result["own_cast"] = own_cast.split(":", 1)[1]
+        if lost is not None and health[1]:
+            # Share of max HP lost since the onset (how much the status costs).
+            result["hp_lost_share"] = round(max(0.0, lost) / health[1], 3)
         return result
 
 

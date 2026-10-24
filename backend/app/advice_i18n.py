@@ -994,13 +994,21 @@ _UK_FUNCTIONS: tuple[tuple[re.Pattern[str], Callable[[dict[str, str]], str]], ..
         lambda g: f"Через брак мани {g['name']} може не спрацювати в наступній бійці.",
     ),
     (
-        re.compile(r"^Second life: go back in once (?P<name>.+) is back in (?P<n>\d+) s\.$"),
-        lambda g: f"Друге життя: повертайтеся в бій, коли {g['name']} відновиться за {g['n']} с.",
+        re.compile(
+            r"^Second life: hold the next engage until (?P<name>.+) is back in (?P<n>\d+) s\.$"
+        ),
+        lambda g: (
+            f"Друге життя: не починайте нову бійку, доки {g['name']} не відновиться"
+            f" (за {g['n']} с)."
+        ),
     ),
     (
-        re.compile(r"^After your kill: go in again once (?P<name>.+) is back in (?P<n>\d+) s\.$"),
+        re.compile(
+            r"^After your kill: hold the next engage until (?P<name>.+) is back in (?P<n>\d+) s\.$"
+        ),
         lambda g: (
-            f"Після вашого вбивства: заходьте знову, коли {g['name']} відновиться за {g['n']} с."
+            f"Після вашого вбивства: не починайте нову бійку, доки {g['name']} не відновиться"
+            f" (за {g['n']} с)."
         ),
     ),
     (

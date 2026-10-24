@@ -12,7 +12,7 @@ from typing import Any
 from app.scheduler.safety_predicates import _hp_pressure_state
 from app.scheduler.state_utils import _ctx_int, _ctx_value, _is_dead_or_respawning, _to_int
 from app.schemas import RecommendationResponse
-from app.team_context import nearby_allies
+from app.team_context import grouped_with_team
 
 
 def _extra(state: dict[str, Any]) -> dict[str, Any]:
@@ -64,7 +64,7 @@ def _heartbeat_copy(state: dict[str, Any]) -> tuple[str, str, str]:
             "A short reset keeps the next farming route safer without forcing a fight.",
             "Medium risk if you keep showing while resources are low.",
         )
-    if (position_risk == "high" or position_zone == "deep_enemy_side") and not nearby_allies(
+    if (position_risk == "high" or position_zone == "deep_enemy_side") and not grouped_with_team(
         _extra(state)
     ):
         return (

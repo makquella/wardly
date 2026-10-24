@@ -33,7 +33,7 @@ from app.last_moments import (
     saver_label,
 )
 from app.status_source import is_threat
-from app.team_context import nearby_allies
+from app.team_context import contest_near, steady_allies
 
 # Low HP: first a way out, then an instant heal.
 ESCAPES = (
@@ -421,13 +421,17 @@ def _defensive_item_state(extra: Mapping[str, Any]) -> tuple[str, int] | None:
 def readiness_copy(
     extra: Mapping[str, Any], ability: str, seconds: int | None
 ) -> tuple[str, str] | None:
-    """After an own kill moments ago (not proof the fight is over) or a revive, the next step is
-    whether to go in again: when the key ability is back and what the main
-    defensive item says. Only cooldowns GSI reports; no claim about enemies,
-    and no order to leave or to fight."""
+    """After an own kill moments ago (not proof the fight is over) or a revive,
+    with a fight still around (team_context.contest_near): the constraint on
+    the next engage while the key ability is down, and what the main defensive
+    item says. A cooldown coming back is availability, not a reason to go in:
+    the card says what to hold until then, never «go in». Only cooldowns GSI
+    reports; no claim about enemies' state."""
     after_kill = isinstance(extra.get("recent_kill_seconds"), int)
     revive = extra.get("recent_revive")
     if not after_kill and not isinstance(revive, Mapping) or not seconds:
+        return None
+    if not contest_near(extra):
         return None
     item = _defensive_item_state(extra)
     item_line = ""
@@ -436,11 +440,11 @@ def readiness_copy(
         item_line = f" {label} is ready." if left == 0 else f" {label} is back in {left} s."
     if isinstance(revive, Mapping) and revive.get("type") in {"aegis_revive", "reincarnation"}:
         return (
-            f"Second life: go back in once {ability} is back in {seconds} s.",
+            f"Second life: hold the next engage until {ability} is back in {seconds} s.",
             f"You revived on the spot.{item_line}",
         )
     return (
-        f"After your kill: go in again once {ability} is back in {seconds} s.",
+        f"After your kill: hold the next engage until {ability} is back in {seconds} s.",
         f"Before it is back you have no way out if the fight turns.{item_line}",
     )
 
@@ -452,7 +456,7 @@ def aegis_copy(extra: Mapping[str, Any]) -> tuple[str, str]:
     enemies and commands no fight."""
     action, reason = INSURANCE_COPY["item_aegis"]
     left = extra.get("own_aegis_left")
-    allies = nearby_allies(extra)
+    allies = steady_allies(extra)
     facts = []
     if isinstance(left, int) and not isinstance(left, bool) and 0 < left <= 300:
         facts.append(f"it expires in about {left} s")
@@ -574,12 +578,35 @@ def disabled_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str]
     name = _label(tool) if tool else (own[0] if own else None)
     if name is None and _first(ready, ESCAPES):
         name = _label(_first(ready, ESCAPES) or "")
-    if not blocked or not name:
+    if not blocked or not name or not _disable_endangers(extra):
         return None
     return (
         f"The moment the disable ends, use {name}.",
         f"{name} is ready: the second after a disable is when most kills finish.",
     )
+
+
+# «The moment the disable ends, use X» only when the disable puts the life at
+# stake: HP at or below this share of max, or this share of max HP lost since
+# its onset (status_source `hp_lost_share`). In the Phantom Lancer recording
+# the 6 post-disable cards with something at stake (HP falling to 7-51 %
+# around the stun) were all above these marks; the 7 short stuns at 82-94 %
+# HP losing 0-13 % had nothing after them, and a card at +0.5 s on a 0.6 s
+# stun arrives when it is over. Checked again every snapshot of the status:
+# HP lost later in it brings the card then.
+DISABLE_DANGER_HP_SHARE = 0.70
+DISABLE_DANGER_LOST_SHARE = 0.15
+
+
+def _disable_endangers(extra: Mapping[str, Any]) -> bool:
+    health, max_health = _number(extra.get("health")), _number(extra.get("max_health"))
+    if health is None or not max_health:
+        return True  # unknown HP: the legacy card
+    if health / max_health <= DISABLE_DANGER_HP_SHARE:
+        return True
+    source = extra.get("status_source")
+    lost = _number(source.get("hp_lost_share")) if isinstance(source, Mapping) else None
+    return lost is not None and lost >= DISABLE_DANGER_LOST_SHARE
 
 
 ZONES = {"top": "top lane", "mid": "mid lane", "bot": "bottom lane", "jungle": "jungle"}
@@ -615,7 +642,16 @@ def death_copy(extra: Mapping[str, Any], *, route: bool = True) -> tuple[str | N
     item is the lesson and wins the reason."""
     action = reason = None
     place = extra.get("death_place")
-    if isinstance(place, Mapping) and place.get("zone") in ZONES and place.get("side") in SIDES:
+    # A spot where the hero died with allies staying next to it is where the
+    # team fought, not a route taken alone: no «stay away until your team is
+    # there» (match_memory REPEATED_PLACE).
+    with_team = extra.get("last_death_with_team") is True
+    if (
+        isinstance(place, Mapping)
+        and place.get("zone") in ZONES
+        and place.get("side") in SIDES
+        and not with_team
+    ):
         where = f"{ZONES[place['zone']]} {SIDES[place['side']]}"
         count = place.get("count") if isinstance(place.get("count"), int) else 1
         minutes = place.get("minutes") if isinstance(place.get("minutes"), int) else 1

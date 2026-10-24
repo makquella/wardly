@@ -11,6 +11,7 @@ from app.hero_safety import evaluate_hero_safety
 from app.item_timing import contains_meaningful_item_reference, is_meaningful_item_timing
 from app.match_memory import DEATH_DECISION_POINTS, MATCH_MEMORY
 from app.status_source import is_threat
+from app.team_context import contest_near
 
 DecisionPoint = Literal[
     "LOW_HP",
@@ -422,7 +423,8 @@ def detect_decision_point(state: Mapping[str, Any] | None) -> DecisionPoint:
         laning_context,
         hp_percent=hp_percent,
         fight_pressure=fight_pressure,
-        readiness_moment=_ctx_value(state, "recent_revive") is not None,
+        readiness_moment=_ctx_value(state, "recent_revive") is not None
+        and contest_near(_extra_context(state)),
     ):
         return "ABILITY_SAFETY_COOLDOWN"
 

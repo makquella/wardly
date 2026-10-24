@@ -312,6 +312,9 @@ def _process_gsi(payload: dict[str, Any]) -> dict[str, Any]:
 
 def _receive_gsi_payload(payload: dict[str, Any]) -> dict[str, Any]:
     # This entire path (including census, SQLite and recording) runs off ASGI.
+    # The arrival time stamps the recording: a card decided on this snapshot
+    # (published below) can then never look older than it.
+    received = monotonic()
     with LIVE_PATH_METRICS.measure("gsi.prepare"):
         prior = _prepare_gsi_prior(payload)
     with LIVE_PATH_METRICS.measure("gsi.policy"), live_operation():
@@ -321,7 +324,7 @@ def _receive_gsi_payload(payload: dict[str, Any]) -> dict[str, Any]:
     with LIVE_PATH_METRICS.measure("gsi.persistence"):
         GSI_CENSUS.observe(payload)
         GSI_CENSUS.save_due(PLAYER_SERVICE.data_dir / CENSUS_FILE)
-        MATCH_RECORDS.record_gsi(payload)
+        MATCH_RECORDS.record_gsi(payload, now=received, snapshot=result.get("timestamp"))
         # Whole-match recording + Steam account detection (never breaks the live path).
         try:
             PLAYER_SERVICE.observe_gsi(payload)

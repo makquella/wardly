@@ -31,6 +31,7 @@ from app.map_hints import RoleTips, timers
 from app.roshan_timer import RoshanTimer
 from app.skill_tips import SkillTips
 from app.status_source import StatusWatch
+from app.team_context import TeamSupport
 from app.tp_tracker import TpTracker
 
 DEATH_DECISION_POINTS = {
@@ -68,20 +69,44 @@ HP_STILL_FALLING_SECONDS = 2
 HP_STILL_FALLING_POINTS = 5
 
 # A previous death this close (world units) and this recent (minutes) makes a
-# repeated pattern: two deaths across the map are two events, not one mistake.
-# About a third of a lane: one area/route, not the same named zone.
+# repeated place: two deaths across the map are two events, not one mistake.
+# About a third of a lane (a camp and its approaches): one area/route, not the
+# same named zone. Eight minutes is a few respawn cycles in the mid game
+# (respawn 30-60 s): the same trip taken again, not the next phase of the game.
 DEATH_PATTERN_RADIUS = 2500
 DEATH_PATTERN_MINUTES = 8
 # ...or this many deaths at one spot over the whole match, however spread out
-# (player_service.MATCH_PLACE_MIN: the same count names the place).
+# (player_service.MATCH_PLACE_MIN: the same count names the place). Two at a
+# contested spot (a tier-2 tower, the Roshan side of the river) are common in
+# any game; three is a habit worth naming.
 DEATH_PATTERN_MATCH_COUNT = 3
+# A repeated place is a repeated mistake (REPEATED_DEATHS, «reset your route»)
+# only for deaths taken alone, away from an objective: dying at the same spot
+# in team fights or at an objective (REPEATED_PLACE) is where the game was, not
+# a route to change. Alone = the minimap showed no ally staying next to the
+# hero (team_context.TeamSupport); unknown (no minimap) claims no mistake.
 # The HP the hero entered the fatal fight with: the highest of these last
 # seconds before the death (the last tick before a death is always low).
 DEATH_ENTRY_SECONDS = 15
-# Alive lost with the death counter unchanged (Aegis, Reincarnation): the
-# revive is expected within this many game seconds; later the life loss stays
-# unexplained and is still not counted as a death.
-REVIVE_WAIT_SECONDS = 15
+# A life lost with the death counter unchanged is unresolved until an
+# observation settles it (_observe_life). The game's own revive delays are
+# Aegis 5 s and Reincarnation 3 s: with a revive expected (Aegis held,
+# Reincarnation ready) the hero must be back within REVIVE_WAIT_SECONDS of game
+# time; without one the counter normally rises in the same snapshot, so a dead
+# hero still uncounted after COUNTER_WAIT_SECONDS is a death the counter is
+# late on. A respawn timer longer than any revive delay is a death at once.
+REVIVE_WAIT_SECONDS = 8
+COUNTER_WAIT_SECONDS = 3
+REVIVE_DELAY_MAX = 5
+# A revive stands the hero up where it fell (measured: 42 units after an Aegis
+# revive); coming back farther than this is a respawn at the fountain.
+REVIVE_RADIUS = 600
+# A death inferred without the counter is confirmed (not counted again) by a
+# counter rise within this many game seconds.
+RECONCILE_SECONDS = 120
+# Game seconds between two snapshots that make a gap: a death counted across
+# it has no known place (the last alive position is from before the gap).
+SNAPSHOT_GAP_SECONDS = 10
 # The next life after a revive: how long its readiness is offered.
 REVIVE_READY_SECONDS = 20
 # An own kill this recent: the fight was won, the next step is re-engage or not.
@@ -178,6 +203,7 @@ class MatchMemory:
         # life-cycle events; never part of the death statistics.
         self.life_events: list[dict[str, Any]] = []
         self._pending_life_loss: dict[str, Any] | None = None
+        self._inferred_death_at: int | None = None
         self._last_revive: dict[str, Any] | None = None
         self._had_aegis: bool | None = None
         self._last_kills: int | None = None
@@ -206,6 +232,7 @@ class MatchMemory:
         self.gameplay = HeroGameplay()
         self.status = StatusWatch()
         self.actions = ActionWatch()
+        self.team = TeamSupport()
 
     def observe_state(self, state: dict[str, Any]) -> dict[str, Any]:
         # Roshan/Aegis can need timer settings on the first observed event.
@@ -245,10 +272,21 @@ class MatchMemory:
         previous_alive = _alive(previous_alive_state) if previous_alive_state is not None else None
         current_alive = _alive(state)
         current_deaths = _ctx_int_or_none(state, "deaths")
-        death_delta = (
-            current_deaths is not None
+        # The last counter seen, kept across payloads without it (a reconnect,
+        # a partial payload): a rise is measured against it when it returns.
+        deaths_added = (
+            current_deaths - self._last_player_deaths
+            if current_deaths is not None
             and self._last_player_deaths is not None
             and current_deaths > self._last_player_deaths
+            else 0
+        )
+        last_clock = _game_clock(self.last_states[-1]) if self.last_states else None
+        clock_now = _game_clock(state)
+        gap = (
+            last_clock is not None
+            and clock_now is not None
+            and clock_now - last_clock > SNAPSHOT_GAP_SECONDS
         )
 
         track_deaths = not current_demo or self.allow_demo_history
@@ -261,9 +299,10 @@ class MatchMemory:
                 state,
                 previous_alive_state,
                 alive_drop=alive_transition_death,
-                death_delta=death_delta,
+                deaths_added=deaths_added,
                 counter_known=counter_known,
                 current_alive=current_alive,
+                gap=gap,
             )
 
         if track_deaths and current_alive is True:
@@ -274,7 +313,8 @@ class MatchMemory:
             self.previous_alive_state = None
 
         self._annotate_recent_damage(state, now_ts)
-        self._last_player_deaths = current_deaths
+        if current_deaths is not None:
+            self._last_player_deaths = current_deaths
         self._annotate_status_and_actions(state)
         kills = _ctx_int_or_none(state, "kills")
         if kills is not None and self._last_kills is not None and kills > self._last_kills:
@@ -473,17 +513,28 @@ class MatchMemory:
         previous_alive_state: dict[str, Any] | None,
         *,
         alive_drop: bool,
-        death_delta: bool,
+        deaths_added: int,
         counter_known: bool,
         current_alive: bool | None,
+        gap: bool = False,
     ) -> None:
-        """Ordinary deaths (the game's counter rose) vs a life lost with no death
-        counted (Aegis, Reincarnation) vs the legacy alive drop when the payload
-        has no counter. GSI reports an ordinary death's counter in the same
-        snapshot as alive=false; an Aegis revive leaves it unchanged."""
+        """Ordinary deaths vs lives lost with no death counted, reconciled over
+        snapshots. GSI usually reports an ordinary death's counter in the same
+        snapshot as alive=false and an Aegis revive leaves it unchanged, but the
+        counter can be late, missing for a while (a reconnect) or jump across a
+        gap. An alive drop without a counter rise is unresolved (life_state)
+        until an observation settles it:
+        - the counter rises: a death (from the last alive state before the drop);
+        - the hero stands up where it fell: an Aegis revive (the Aegis is gone),
+          Reincarnation (its cooldown started), or an unconfirmed revive (no
+          second-life claim);
+        - a respawn timer longer than any revive, the waiting time over, or a
+          return at the fountain: a death the counter has not shown, recorded
+          as inferred and confirmed (not counted again) by a later rise.
+        Never a revive without the hero coming back on the spot."""
         clock = _game_clock(state)
         pending = self._pending_life_loss
-        if death_delta:
+        if deaths_added > 0:
             pre_death_state = (
                 previous_alive_state
                 or (pending or {}).get("pre_state")
@@ -491,48 +542,45 @@ class MatchMemory:
                 or state
             )
             self._pending_life_loss = None
-            self._record_death_event(pre_death_state, state)
-        elif alive_drop and counter_known:
+            inferred = self._unconfirmed_death(clock)
+            if inferred is not None:
+                inferred["counter"] = "confirmed_late"
+                deaths_added -= 1
+            for index in range(deaths_added):
+                # Deaths across a gap, or several in one jump, happened where
+                # and when no snapshot shows: counted, with no place.
+                unseen = gap and pending is None or index > 0
+                self._record_death_event(
+                    pre_death_state,
+                    state,
+                    confidence="low" if unseen else "high",
+                    counter="gap" if unseen else ("late" if pending else "same_snapshot"),
+                    place_known=not unseen,
+                )
+            return
+        if alive_drop:
             before = previous_alive_state or {}
+            had_aegis = _ctx_value(before, "has_aegis") is True
+            reincarnation_ready = _reincarnation_ready(before)
+            if not counter_known and not had_aegis and not reincarnation_ready:
+                # No death counter in the payload and no revive possible: the
+                # alive drop is the only sign; an inferred death.
+                self._record_death_event(
+                    before or state, state, confidence="low", counter="missing"
+                )
+                self._inferred_death_at = clock
+                return
             self._pending_life_loss = {
                 "clock": clock,
-                "had_aegis": _ctx_value(before, "has_aegis") is True,
-                "reincarnation_ready": _reincarnation_ready(before),
+                "had_aegis": had_aegis,
+                "reincarnation_ready": reincarnation_ready,
+                "revive_expected": had_aegis or reincarnation_ready,
                 "pre_state": _copy_state(before) if before else None,
                 "position": {"x": _ctx_value(before, "xpos"), "y": _ctx_value(before, "ypos")},
             }
-        elif alive_drop:
-            # No death counter in the payload: the alive drop is the only sign.
-            pre_death_state = previous_alive_state or self._best_previous_alive_state() or state
-            self._record_death_event(pre_death_state, state, confidence="low")
         pending = self._pending_life_loss
-        if pending is not None and current_alive is True:
-            has_aegis = _ctx_value(state, "has_aegis")
-            if pending["had_aegis"] and has_aegis is not True:
-                kind = "aegis_revive"
-            elif pending["reincarnation_ready"]:
-                kind = "reincarnation"
-            else:
-                kind = "revive_unknown"
-            event = {
-                "type": kind,
-                "lost_at": pending["clock"],
-                "revived_at": clock,
-                "position": pending["position"],
-            }
-            self.life_events.append(event)
-            self._last_revive = event
-            self._pending_life_loss = None
-        elif (
-            pending is not None
-            and clock is not None
-            and pending["clock"] is not None
-            and clock - pending["clock"] > REVIVE_WAIT_SECONDS
-        ):
-            # Dead for long with the counter unchanged: not a revive we can see,
-            # and still no death counted. Keep it out of the death statistics.
-            self.life_events.append({"type": "life_lost_unexplained", "lost_at": pending["clock"]})
-            self._pending_life_loss = None
+        if pending is not None:
+            self._settle_life_loss(pending, state, clock, current_alive)
         has_aegis = _ctx_value(state, "has_aegis")
         if (
             self._had_aegis is True
@@ -545,6 +593,76 @@ class MatchMemory:
             self.life_events.append({"type": "aegis_gone_alive", "at": clock})
         if isinstance(has_aegis, bool):
             self._had_aegis = has_aegis
+
+    def _settle_life_loss(
+        self,
+        pending: dict[str, Any],
+        state: dict[str, Any],
+        clock: int | None,
+        current_alive: bool | None,
+    ) -> None:
+        """Settle an unresolved life loss on this snapshot, or leave it pending."""
+        position = pending["position"]
+        here = (_ctx_value(state, "xpos"), _ctx_value(state, "ypos"))
+        pre_state = pending.get("pre_state") or state
+        if current_alive is True:
+            on_spot = _near(here, position, REVIVE_RADIUS)
+            far = _distance(here, position)
+            if on_spot and pending["had_aegis"] and _ctx_value(state, "has_aegis") is not True:
+                kind = "aegis_revive"
+            elif on_spot and pending["reincarnation_ready"] and _reincarnation_started(state):
+                kind = "reincarnation"
+            elif on_spot:
+                kind = "revive_unconfirmed"
+            elif far is not None:
+                # Back somewhere else (the fountain) with no death counted.
+                self._pending_life_loss = None
+                self._record_death_event(
+                    pre_state, state, confidence="low", counter="not_seen", minute_state=pre_state
+                )
+                self._inferred_death_at = pending["clock"]
+                return
+            else:
+                kind = "life_lost_unresolved"
+            event = {
+                "type": kind,
+                "lost_at": pending["clock"],
+                "revived_at": clock,
+                "position": position,
+            }
+            self.life_events.append(event)
+            if kind in {"aegis_revive", "reincarnation"}:
+                self._last_revive = event
+            self._pending_life_loss = None
+            return
+        waited = (
+            clock - pending["clock"] if clock is not None and pending["clock"] is not None else None
+        )
+        respawn = _ctx_int_or_none(state, "respawn_seconds")
+        limit = REVIVE_WAIT_SECONDS if pending["revive_expected"] else COUNTER_WAIT_SECONDS
+        if (respawn is not None and respawn > REVIVE_DELAY_MAX + 1) or (
+            waited is not None and waited > limit
+        ):
+            # Dead for longer than any revive takes: a death the counter has
+            # not shown yet (late or missing). Counted once; a later counter
+            # rise confirms it instead of adding another.
+            self._pending_life_loss = None
+            self._record_death_event(pre_state, state, confidence="medium", counter="not_seen")
+            self._inferred_death_at = pending["clock"]
+
+    def _unconfirmed_death(self, clock: int | None) -> dict[str, Any] | None:
+        """The last death inferred without a counter rise, while a rise can
+        still be its own late counter (RECONCILE_SECONDS)."""
+        at = self._inferred_death_at
+        if at is None or not self.death_events:
+            return None
+        self._inferred_death_at = None
+        event = self.death_events[-1]
+        if event.get("counter") not in {"not_seen", "missing"}:
+            return None
+        if clock is not None and clock - at > RECONCILE_SECONDS:
+            return None
+        return event
 
     def _recent_kill_seconds(self, clock: int | None) -> int | None:
         """Seconds since the player's own last kill, within RECENT_KILL_SECONDS."""
@@ -580,8 +698,17 @@ class MatchMemory:
         if at is None:
             at = _game_clock(state)
         moment = None if at is None else float(at)
-        extra_context["status_source"] = self.status.observe(extra_context, moment)
+        # A one-second phase needs a finer clock than game time's whole seconds:
+        # the snapshot's observation time (wall clock, MatchMemory's own).
+        observed = _number_or_none(extra_context.get("observed_at_epoch"))
+        extra_context["status_source"] = self.status.observe(
+            extra_context, observed if observed is not None else moment
+        )
         extra_context.update(self.actions.observe(extra_context, moment))
+        if extra_context.get("source_type") == "live_gsi":
+            extra_context["team_support"] = self.team.observe(
+                extra_context, observed if observed is not None else moment
+            )
 
     def _annotate_recent_damage(self, state: dict[str, Any], now_ts: float) -> None:
         extra_context = state.setdefault("extra_context", {})
@@ -640,11 +767,23 @@ class MatchMemory:
         current_state: Mapping[str, Any],
         *,
         confidence: str = "high",
+        counter: str = "same_snapshot",
+        place_known: bool = True,
+        minute_state: Mapping[str, Any] | None = None,
     ) -> None:
+        """One death the game counted (or, with `counter` not_seen/missing, one
+        inferred without its counter). Without a known place (a death across a
+        snapshot gap) no position is stored and no place pattern is claimed."""
         self.death_count += 1
-        minute = _to_int(current_state.get("minute"), _to_int(previous_state.get("minute"), 0))
-        entry = self._fight_entry_state(previous_state)
-        patterns = self._classify_death(previous_state, minute, entry)
+        timing = minute_state if minute_state is not None else current_state
+        minute = _to_int(timing.get("minute"), _to_int(previous_state.get("minute"), 0))
+        entry = self._fight_entry_state(previous_state) if place_known else previous_state
+        circumstance = self._death_circumstance() if place_known else {}
+        patterns = (
+            self._classify_death(previous_state, minute, entry, circumstance)
+            if place_known
+            else ["UNKNOWN_DEATH"]
+        )
         context = _death_context(patterns)
         event = {
             "id": self.death_count,
@@ -655,13 +794,18 @@ class MatchMemory:
             # What the hero entered the fatal fight with (DEATH_ENTRY_SECONDS).
             "entry_hp_percent": _to_int(entry.get("hp_percent"), 100),
             "entry_mana_percent": _ctx_int(entry, "mana_percent", 100),
-            "clock": _game_clock(current_state),
+            "clock": _game_clock(timing),
             "confidence": confidence,
+            # How the game's counter showed it: same_snapshot, late, gap (the
+            # death fell in a gap), not_seen/missing (inferred), confirmed_late.
+            "counter": counter,
             "items": list(previous_state.get("items") or []),
             "position": {
                 "x": _ctx_value(previous_state, "xpos"),
                 "y": _ctx_value(previous_state, "ypos"),
-            },
+            }
+            if place_known
+            else None,
             "gpm": _ctx_value(previous_state, "gpm"),
             "last_hits": _ctx_value(previous_state, "last_hits"),
             "ability_risks": _ctx_list(previous_state, "hero_safety_flags"),
@@ -671,11 +815,31 @@ class MatchMemory:
             "status_effects": _ctx_list(previous_state, "status_effects"),
             "context": context,
             "patterns": patterns,
+            # Allies that stayed next to the hero just before (None: no
+            # minimap) and the enemies visible around.
+            "with_team": circumstance.get("with_team"),
+            "enemies_near": circumstance.get("enemies_near"),
         }
         self.death_events.append(event)
         self.last_death_minute = minute
         self.last_death_context = context
         self.repeated_death_patterns = self._recent_death_patterns()
+
+    def _death_circumstance(self) -> dict[str, Any]:
+        """Who was around in the last annotated alive snapshot (TeamSupport):
+        with_team True/False, None when the minimap was not there."""
+        for state in reversed(self.last_states):
+            if _alive(state) is not True:
+                continue
+            support = _ctx_value(state, "team_support")
+            if not isinstance(support, Mapping) or support.get("known") is not True:
+                return {"with_team": None, "enemies_near": None}
+            steady = support.get("steady")
+            return {
+                "with_team": bool(steady),
+                "enemies_near": support.get("enemies_near"),
+            }
+        return {"with_team": None, "enemies_near": None}
 
     def _fight_entry_state(self, previous_state: Mapping[str, Any]) -> Mapping[str, Any]:
         """The alive state with the most HP in the DEATH_ENTRY_SECONDS before the
@@ -707,6 +871,7 @@ class MatchMemory:
         previous_state: Mapping[str, Any],
         minute: int,
         entry: Mapping[str, Any] | None = None,
+        circumstance: Mapping[str, Any] | None = None,
     ) -> list[str]:
         patterns: list[str] = []
         here = (_ctx_value(previous_state, "xpos"), _ctx_value(previous_state, "ypos"))
@@ -719,11 +884,18 @@ class MatchMemory:
         # match: one repeated mistake. Deaths far apart, or with no position,
         # are only several deaths: no route claim from them.
         same_spot = [e for e in self.death_events if _near(here, e.get("position"))]
-        if (
-            any(_near(here, event.get("position")) for event in recent_deaths)
-            or len(same_spot) + 1 >= DEATH_PATTERN_MATCH_COUNT
-        ):
+        near_recent = [e for e in recent_deaths if _near(here, e.get("position"))]
+        repeated_place = bool(near_recent) or len(same_spot) + 1 >= DEATH_PATTERN_MATCH_COUNT
+        objective = _to_bool(previous_state.get("near_objective")) or _objective_context(
+            previous_state
+        )
+        circumstance = circumstance or {}
+        lone = circumstance.get("with_team") is False and not objective
+        earlier = near_recent or same_spot
+        if repeated_place and lone and not any(e.get("with_team") is True for e in earlier):
             patterns.append("REPEATED_DEATHS")
+        elif repeated_place:
+            patterns.append("REPEATED_PLACE")
         elif recent_deaths:
             patterns.append("MULTIPLE_DEATHS")
 
@@ -765,17 +937,29 @@ class MatchMemory:
                 "last_death_context": self.last_death_context,
                 "death_review_available": bool(self.death_events),
                 "last_death_event_id": self.death_events[-1]["id"] if self.death_events else None,
+                "last_death_with_team": self.death_events[-1].get("with_team")
+                if self.death_events
+                else None,
                 "death_review_decision": self.death_review_decision(),
                 "farm_stall": self.farm.stall(),
                 "buyback_spent": self.buyback.signal(),
                 "base_danger": self.danger,
                 "tp_missing": self.tp.signal(),
-                "life_state": "reviving" if self._pending_life_loss else None,
+                "life_state": self._life_state(),
                 "own_aegis_left": self._own_aegis_left(_game_clock(state)),
                 "recent_kill_seconds": self._recent_kill_seconds(_game_clock(state)),
                 "recent_revive": self._recent_revive(_game_clock(state)),
             }
         )
+
+    def _life_state(self) -> str | None:
+        """reviving: a life lost with a revive expected (Aegis, Reincarnation);
+        unresolved: lost with no counter rise yet and no revive possible (a
+        late counter); None otherwise."""
+        pending = self._pending_life_loss
+        if pending is None:
+            return None
+        return "reviving" if pending["revive_expected"] else "unresolved"
 
     def _recent_death_patterns(self) -> list[str]:
         if not self.death_events:
@@ -833,15 +1017,19 @@ def _number_or_zero(value: Any) -> float:
     return 0.0 if number is None else number
 
 
-def _near(here: tuple[Any, Any], position: Any) -> bool:
+def _distance(here: tuple[Any, Any], position: Any) -> float | None:
     if not isinstance(position, Mapping):
-        return False
+        return None
     x0, y0 = _number_or_none(here[0]), _number_or_none(here[1])
     x1, y1 = _number_or_none(position.get("x")), _number_or_none(position.get("y"))
-    if None in (x0, y0, x1, y1):
-        return False
-    assert x0 is not None and y0 is not None and x1 is not None and y1 is not None
-    return (x0 - x1) ** 2 + (y0 - y1) ** 2 <= DEATH_PATTERN_RADIUS**2
+    if x0 is None or y0 is None or x1 is None or y1 is None:
+        return None
+    return float(((x0 - x1) ** 2 + (y0 - y1) ** 2) ** 0.5)
+
+
+def _near(here: tuple[Any, Any], position: Any, radius: float = DEATH_PATTERN_RADIUS) -> bool:
+    distance = _distance(here, position)
+    return distance is not None and distance <= radius
 
 
 def _reincarnation_ready(state: Mapping[str, Any]) -> bool:
@@ -861,9 +1049,24 @@ def _reincarnation_ready(state: Mapping[str, Any]) -> bool:
     return False
 
 
+def _reincarnation_started(state: Mapping[str, Any]) -> bool:
+    """Reincarnation's cooldown is running: the revive just used it."""
+    abilities = _ctx_value(state, "abilities")
+    if not isinstance(abilities, list):
+        return False
+    return any(
+        isinstance(ability, Mapping)
+        and ability.get("raw_name") == "skeleton_king_reincarnation"
+        and _to_int(ability.get("cooldown"), 0) > 0
+        for ability in abilities
+    )
+
+
 def _death_context(patterns: list[str]) -> str:
     if "REPEATED_DEATHS" in patterns:
         return "Multiple recent deaths detected; reset the next route after respawn."
+    if "REPEATED_PLACE" in patterns:
+        return "Several deaths at this spot, with the team or at an objective."
     if "ESCAPE_ON_COOLDOWN_DEATH" in patterns:
         return "Death followed a state where a key escape or defensive tool was unavailable."
     if "LOW_RESOURCE_DEATH" in patterns:

@@ -17,8 +17,11 @@ tool it names, the numbers it cites), the status classification
 (status_source.py) and how old the snapshot data was. `--review` writes a
 Markdown table that sets each card the recording itself logged (`k=advice`,
 what the version that played the match said) next to what the current code
-decides at that moment: kept, changed or not shown, with the evidence of the
-nearest preceding snapshot (never a later one: `w` orders the lines).
+shows at that very moment (an extra poll at the card's `w`) and the nearest new
+card of the same family with its own evidence. The evidence is the nearest
+preceding snapshot (never a later one: `w` orders the lines); recordings made
+before 0.60 stamped GSI lines after publishing them, so a snapshot stamped up
+to 0.05 s after the card is shown as the other candidate.
 
 The wall time of each payload is replayed through a fake clock (the advice
 scheduler reads datetime.now), so cooldowns hold as in the real match. No
@@ -100,44 +103,90 @@ def _evidence(payload: dict[str, Any]) -> str:
     return ", ".join(parts)
 
 
-def _review(logged: list[dict[str, Any]], audit: list[dict[str, Any]], window: int = 4) -> str:
-    """Markdown: each logged card next to the current decision at that moment."""
+FAMILIES = {
+    "DISABLED_STATUS": "disable",
+    "LOW_HP": "danger",
+    "LOW_HP_WARNING": "danger",
+    "RECENT_DAMAGE_WARNING": "danger",
+    "OVERSTAY_WARNING": "danger",
+    "ABILITY_SAFETY_COOLDOWN": "danger",
+    "HERO_SURVIVABILITY_RISK": "danger",
+    "DEATH_REVIEW": "death",
+    "DEATH_LOW_RESOURCE": "death",
+    "DEATH_WITH_ESCAPE_ON_COOLDOWN": "death",
+    "REPEATED_DEATH_PATTERN": "death",
+}
+
+
+def _family(decision_point: Any) -> str:
+    return FAMILIES.get(str(decision_point), "other")
+
+
+def _shown(answer: dict[str, Any] | None) -> str:
+    """What the overlay shows for one poll answer."""
+    if not answer:
+        return "?"
+    advice = answer.get("recommendation")
+    if isinstance(advice, dict) and advice.get("action"):
+        kind = "new" if answer.get("new_advice") else "held"
+        action = advice.get("action_en") or advice.get("action")
+        return f"{kind} [{answer.get('decision_point')}] {action}"
+    return f"nothing ({answer.get('status')}: {answer.get('suppressed_reason') or '-'})"
+
+
+def _review(logged: list[dict[str, Any]], audit: list[dict[str, Any]], window: int = 10) -> str:
+    """Markdown: each logged card next to what the current code shows at that
+    very moment (a poll at the card's `w`), and the nearest new card of the
+    same family with its own evidence: a card a few seconds away can be a
+    different episode (another stun, another fall), never silently «kept»."""
     new_cards = [row for row in audit if row["kind"] == "advice"]
-    used: set[int] = set()
     lines = [
-        "| Clock | Logged card (old) | Current decision | Evidence (nearest earlier snapshot) |",
-        "| --- | --- | --- | --- |",
+        "| Clock | Logged card (old) | Deciding snapshot | Current code at that moment "
+        "| Nearest new card of this family |",
+        "| --- | --- | --- | --- | --- |",
     ]
+    paired: set[int] = set()
     for card in logged:
         clock = card.get("clock")
-        match = next(
+        family = _family(card.get("dp"))
+        nearest = min(
             (
-                (index, row)
+                (abs(row["clock"] - clock), index, row)
                 for index, row in enumerate(new_cards)
-                if index not in used
-                and isinstance(clock, int)
+                if isinstance(clock, int)
                 and isinstance(row.get("clock"), int)
                 and abs(row["clock"] - clock) <= window
+                and _family(row.get("decision_point")) == family
             ),
-            None,
+            default=None,
+            key=lambda item: (item[0], item[1]),
         )
-        if match is None:
-            now = "not shown"
+        if nearest is None:
+            near = "—"
         else:
-            used.add(match[0])
-            row = match[1]
-            same = row["action"] == card.get("action") and row["reason"] == card.get("reason")
-            now = ("kept: " if same else "changed: ") + f"[{row['decision_point']}] {row['action']}"
-            if not same:
-                now += f" — {row['reason']}"
+            _, index, row = nearest
+            paired.add(index)
+            near = f"{_clock_label(row['clock'])} [{row['decision_point']}] {row['action']}"
+            source = row.get("status_source") or {}
+            if source.get("kind") not in (None, "none"):
+                near += f" (status {source.get('kind')}: {', '.join(source.get('evidence') or [])})"
+            near += f"; {row.get('evidence', '')}"
+        evidence = card.get("evidence", "")
+        if card.get("race_evidence"):
+            evidence += (
+                f" — or, published {card['race_gap']} s after the card's stamp (old "
+                f"recordings stamp GSI after publication): {card['race_evidence']}"
+            )
         old = f"[{card.get('dp')}] {card.get('action')} — {card.get('reason')}"
-        lines.append(f"| {_clock_label(clock)} | {old} | {now} | {card.get('evidence', '')} |")
-    added = [row for index, row in enumerate(new_cards) if index not in used]
+        lines.append(
+            f"| {_clock_label(clock)} | {old} | {evidence} | {_shown(card.get('moment'))} | {near} |"
+        )
+    added = [row for index, row in enumerate(new_cards) if index not in paired]
     if added:
-        lines += ["", "Cards the current code adds:", ""]
+        lines += ["", "Cards the current code adds (no logged card of the family within 10 s):", ""]
         lines += [
             f"- {_clock_label(row['clock'])} [{row['decision_point']}] {row['action']} — "
-            f"{row['reason']}"
+            f"{row['reason']} ({row.get('evidence', '')})"
             for row in added
         ]
     withdrawn = [row for row in audit if row["kind"] == "withdrawn"]
@@ -237,22 +286,80 @@ def main() -> int:
     withdrawn_seen: dict[str, Any] | None = None
     first: float | None = None
     polled: float | None = None
+
+    def poll(wall: float, clock: Any) -> dict[str, Any]:
+        nonlocal withdrawn_seen
+        answer = client.get(f"/overlay/recommendation?lang={args.lang}").json()
+        withdrawn = answer.get("withdrawn_advice")
+        if withdrawn and withdrawn != withdrawn_seen:
+            audit.append({"kind": "withdrawn", "clock": clock, "w": wall, **withdrawn})
+        withdrawn_seen = withdrawn
+        advice = answer.get("recommendation")
+        if answer.get("new_advice") and isinstance(advice, dict):
+            basis = answer.get("advice_basis") or {}
+            state = client.get("/state/current").json().get("state") or {}
+            extra = state.get("extra_context") or {}
+            observed = basis.get("observed_at")
+            audit.append(
+                {
+                    "kind": "advice",
+                    "clock": clock,
+                    "w": wall,
+                    "decision_point": answer.get("decision_point"),
+                    "action": advice.get("action_en") or advice.get("action"),
+                    "reason": advice.get("reason"),
+                    "basis": basis,
+                    "status_source": extra.get("status_source"),
+                    # Seconds between the snapshot the card stands on and
+                    # this poll (replay clock).
+                    "data_age_s": round(
+                        (BASE + timedelta(seconds=NOW["t"])).timestamp() - observed, 2
+                    )
+                    if isinstance(observed, (int, float))
+                    else None,
+                    "evidence": _evidence(last_raw or {}),
+                }
+            )
+        for kind, card_id, title, text in _cards(answer):
+            if (kind, card_id) in seen:
+                continue
+            seen.add((kind, card_id))
+            rows.append({"clock": clock, "kind": kind, "id": card_id, "title": title, "text": text})
+        return answer
+
+    racing: list[dict[str, Any]] = []
+    last_clock: Any = None
     with _open(args.recording) as lines:
         for line in lines:
             record = json.loads(line)
             if record.get("k") == "advice":
                 # What the version that played the match showed, with the
-                # nearest preceding snapshot (by `w`) as its evidence.
-                logged.append({**record, "evidence": _evidence(last_raw or {})})
+                # nearest preceding snapshot (by `w`) as its evidence, and what
+                # the current code shows at that moment (the overlay polled then).
+                entry = {**record, "evidence": _evidence(last_raw or {})}
+                if first is not None and isinstance(record.get("w"), (int, float)):
+                    NOW["t"] = float(record["w"]) - first
+                    entry["moment"] = poll(float(record["w"]), last_clock)
+                logged.append(entry)
+                racing.append(entry)
                 continue
             if record.get("k") != "gsi":
                 continue
             wall = float(record["w"])
+            for entry in racing:
+                # Recordings before 0.60 stamped a GSI line after publishing it:
+                # a card stamped a few ms before this line may stand on it.
+                gap = round(wall - float(entry.get("w") or 0), 2)
+                if not entry.get("snap") and 0 <= gap <= 0.05:
+                    entry["race_evidence"] = _evidence(record["p"])
+                    entry["race_gap"] = gap
+            racing = []
             first = wall if first is None else first
             NOW["t"] = wall - first
             payload = dict(record["p"])
             last_raw = record["p"]
             clock = (payload.get("map") or {}).get("clock_time")
+            last_clock = clock
             if until is not None and isinstance(clock, int) and clock > until:
                 break
             payload["auth"] = {"token": token}
@@ -260,44 +367,7 @@ def main() -> int:
             if polled is not None and wall - polled < 1.0:
                 continue
             polled = wall
-            answer = client.get(f"/overlay/recommendation?lang={args.lang}").json()
-            withdrawn = answer.get("withdrawn_advice")
-            if withdrawn and withdrawn != withdrawn_seen:
-                audit.append({"kind": "withdrawn", "clock": clock, "w": wall, **withdrawn})
-            withdrawn_seen = withdrawn
-            advice = answer.get("recommendation")
-            if answer.get("new_advice") and isinstance(advice, dict):
-                basis = answer.get("advice_basis") or {}
-                state = client.get("/state/current").json().get("state") or {}
-                extra = state.get("extra_context") or {}
-                observed = basis.get("observed_at")
-                audit.append(
-                    {
-                        "kind": "advice",
-                        "clock": clock,
-                        "w": wall,
-                        "decision_point": answer.get("decision_point"),
-                        "action": advice.get("action_en") or advice.get("action"),
-                        "reason": advice.get("reason"),
-                        "basis": basis,
-                        "status_source": extra.get("status_source"),
-                        # Seconds between the snapshot the card stands on and
-                        # this poll (replay clock).
-                        "data_age_s": round(
-                            (BASE + timedelta(seconds=NOW["t"])).timestamp() - observed, 2
-                        )
-                        if isinstance(observed, (int, float))
-                        else None,
-                        "evidence": _evidence(last_raw),
-                    }
-                )
-            for kind, card_id, title, text in _cards(answer):
-                if (kind, card_id) in seen:
-                    continue
-                seen.add((kind, card_id))
-                rows.append(
-                    {"clock": clock, "kind": kind, "id": card_id, "title": title, "text": text}
-                )
+            poll(wall, clock)
     for row in rows:
         clock = row["clock"] if isinstance(row["clock"], int) else 0
         if clock < since:

@@ -40,7 +40,13 @@ from app.advice_text import clean_recommendation_text
 from app.advice_ux_policy import (
     apply_ux_policy,
 )
-from app.advice_validity import FILLER_ACTIONS, advice_basis, is_filler, withdraw_reason
+from app.advice_validity import (
+    FILLER_ACTIONS,
+    advice_basis,
+    is_filler,
+    refreshed_reason,
+    withdraw_reason,
+)
 from app.config import ADVICE_FREQUENCY, USE_LLM
 from app.hero_gameplay import rule_valid
 from app.laning_coach import (
@@ -129,11 +135,14 @@ from app.scheduler.text import (
 )
 from app.scheduler.types import OverlaySource, OverlayStatus, ScheduledAdvice
 from app.schemas import GameSituationRequest, RecommendationResponse
+from app.team_context import contest_near
 
 # A withdrawn card is reported to the overlay for this long (it may poll late).
 WITHDRAWN_NOTICE = timedelta(seconds=10)
 # HP regained over 3 s that counts as recovering (points of max HP).
 LOW_HP_RECOVERING_POINTS = 5
+# Game seconds between two readiness moments that may skip the usual gates.
+READINESS_BYPASS_GAP = 60
 
 # Public types, constants, and the ScheduledAdvice DTO now live in leaf modules app.scheduler.types and app.scheduler.constants. They are imported below and re-exported by this facade for backwards compatibility.
 
@@ -1767,7 +1776,10 @@ class AdviceScheduler:
         """The kill or revive a readiness card (live_tools.readiness_copy) is
         about, while its first card is not shown yet: such a card is useful for
         seconds, so it passes the type cooldown, coaching spacing and the minute
-        quota once; the next one waits as usual."""
+        quota once; the next one waits as usual. Only with a fight still around
+        (team_context.contest_near), and at most once per READINESS_BYPASS_GAP
+        of game time: a multi-kill or a kill right after a revive is one
+        moment, not one spoken card each."""
         if decision_point != "ABILITY_SAFETY_COOLDOWN":
             return None
         raw_extra = state.get("extra_context")
@@ -1782,6 +1794,11 @@ class AdviceScheduler:
         elif isinstance(extra.get("recent_kill_seconds"), int):
             key = ("kill", clock - extra["recent_kill_seconds"])
         if key is None or key == self.state._readiness_shown_key:
+            return None
+        shown = self.state._readiness_shown_key
+        if shown is not None and 0 <= key[1] - shown[1] < READINESS_BYPASS_GAP:
+            return None
+        if not contest_near(extra):
             return None
         return key
 
@@ -1807,6 +1824,12 @@ class AdviceScheduler:
             return
         reason = withdraw_reason(basis, state)
         if reason is None:
+            # Still valid: the numbers it quotes are this snapshot's.
+            refreshed = refreshed_reason(basis, recommendation.reason, state)
+            if refreshed is not None:
+                self.state._last_recommendation = recommendation.model_copy(
+                    update={"reason": refreshed}
+                )
             return
         self.state.withdrawn_count += 1
         self.state._withdrawn = {

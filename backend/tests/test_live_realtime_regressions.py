@@ -321,6 +321,87 @@ def test_a_hex_is_never_an_own_phase():
     assert hexed["kind"] == "enemy"
 
 
+# 1b. Counterexamples for the own phase: an own cooldown next to a stun is
+#     not proof by itself; the phase lasts only as long as its mechanic.
+
+
+def _pl_extra(q: float = 0, w: float = 0, **flags: Any) -> dict[str, Any]:
+    abilities = [
+        {"raw_name": "phantom_lancer_spirit_lance", "level": 4, "cooldown": q},
+        {"raw_name": "phantom_lancer_doppelwalk", "level": 3, "cooldown": w},
+    ]
+    base = {"alive": True, "health": 1400, "max_health": 1400, "has_debuff": False}
+    return {**base, "abilities": abilities, "item_cooldowns": {"item_manta": 0}, **flags}
+
+
+def test_a_spirit_lance_cast_next_to_a_stun_is_not_an_own_phase():
+    # Real recordings: Spirit Lance, a Wand, Blade Fury started next to enemy
+    # stuns. Only mechanics that hide the hero (OWN_PHASES) explain one.
+    watch = StatusWatch()
+    watch.observe(_pl_extra(), 100.0)
+    status = watch.observe(_pl_extra(q=7, stunned=True), 100.5)
+    assert status["kind"] != "own_phase"
+
+
+def test_a_doppelganger_stun_that_outlasts_the_phase_is_judged_again():
+    watch = StatusWatch()
+    watch.observe(_pl_extra(), 100.0)
+    assert watch.observe(_pl_extra(w=25, stunned=True), 100.5)["kind"] == "own_phase"
+    assert watch.observe(_pl_extra(w=24, stunned=True), 101.5)["kind"] == "own_phase"
+    # 2.5 s after the onset: longer than Doppelganger's 1 s plus the sampling
+    # tolerance. Still no debuff and no damage: unexplained, not own.
+    late = watch.observe(_pl_extra(w=23, stunned=True), 103.0)
+    assert late["kind"] == "unexplained"
+    hit = watch.observe(_pl_extra(w=23, stunned=True, health=1100), 103.5)
+    assert hit["kind"] == "enemy"
+
+
+def test_manta_with_an_enemy_stun_on_top_is_enemy():
+    # Recording 9042382595: Manta pressed into a stun, 476 HP lost meanwhile.
+    watch = StatusWatch()
+    ready = _pl_extra()
+    watch.observe(ready, 100.0)
+    pressed = {**ready, "item_cooldowns": {"item_manta": 45}, "stunned": True}
+    assert watch.observe(pressed, 100.5)["kind"] == "own_phase"
+    hurt = watch.observe({**pressed, "health": 924}, 101.0)
+    assert hurt["kind"] == "enemy" and "hp_lost" in hurt["evidence"]
+
+
+def test_an_own_cast_long_before_the_stun_explains_nothing():
+    watch = StatusWatch()
+    watch.observe(_pl_extra(), 100.0)
+    watch.observe(_pl_extra(w=25), 100.5)
+    status = watch.observe(_pl_extra(w=22, stunned=True), 103.5)
+    assert status["kind"] == "unexplained"
+
+
+def test_a_short_stun_at_high_hp_with_little_damage_gets_no_post_disable_card(client, clock):
+    # PL 33:52: a 0.6 s stun at 89 % HP, nothing lost; 14:03: 1.1 s at 93 %,
+    # 6 % lost. The status is still an enemy disable (classification), but
+    # «the moment it ends, use Doppelganger» has nothing at stake.
+    feed(client, clock, _calm(1300, 3, hp=1250))
+    feed(client, clock, [gsi(1303, stunned=True, debuff=True, hp=1200)] * 2)
+    source = client.get("/state/current").json()["state"]["extra_context"]["status_source"]
+    assert source["kind"] == "enemy"
+    assert not any(dp == "DISABLED_STATUS" for dp, _ in _cards(feed.seen))  # type: ignore[attr-defined]
+    # The same stun with a nuke on top (more than 15 % of max HP lost since
+    # the onset): the card comes during the stun.
+    feed(client, clock, [gsi(1304, stunned=True, debuff=True, hp=950)] * 2)
+    assert ("DISABLED_STATUS", "The moment the disable ends, use Manta Style.") in _cards(
+        feed.seen  # type: ignore[attr-defined]
+    )
+
+
+def test_one_disable_card_per_stun_even_a_long_chain(client, clock):
+    # 18 s of chained stuns with HP sinking: one card, not one per type
+    # cooldown (the held card and the tactical-state dedup hold it).
+    feed(client, clock, _calm(1400, 3, hp=900))
+    chain = [gsi(1403 + i // 2, stunned=True, debuff=True, hp=700 - 2 * i) for i in range(36)]
+    feed(client, clock, chain)
+    disables = [c for c in _cards(feed.seen) if c[0] == "DISABLED_STATUS"]  # type: ignore[attr-defined]
+    assert len(disables) == 1, disables
+
+
 # 2. Ordinary enemy control with a ready answer still gets its card.
 
 
@@ -382,19 +463,44 @@ def test_an_aegis_revive_is_no_death_and_no_death_pattern(client, clock):
     assert extra["recent_revive"]["type"] == "aegis_revive"
 
 
+ENEMY_NEAR = {
+    "e0": {
+        "image": "minimap_enemyicon",
+        "unitname": "npc_dota_hero_juggernaut",
+        "team": 3,
+        "xpos": -4400,
+        "ypos": -4700,
+    }
+}
+
+
 def test_the_second_life_gets_its_readiness(client, clock):
-    # PL 33:13: revived on the spot, Manta ready, W back in about 3 s.
+    # PL 33:13: revived on the spot in the fight (an enemy hero visible next
+    # to him), Manta ready, W back in about 3 s: what to hold until then.
     bar = _abilities(w=5)
     held = _aegis_items()
     feed(client, clock, [gsi(1980 + i // 2, items=held, hp=300, abilities=bar) for i in range(6)])
     gone = _items(slot0=manta(), slot1=wand(8))
     feed(client, clock, [gsi(1983, alive=False, hp=0, items=gone, abilities=bar)] * 4)
-    feed(client, clock, [gsi(1985, items=gone, abilities=_abilities(w=3))] * 3)
+    revived = gsi(1985, items=gone, abilities=_abilities(w=3), minimap=ENEMY_NEAR)
+    feed(client, clock, [revived] * 3)
     cards = _cards(feed.seen)  # type: ignore[attr-defined]
     assert (
         "ABILITY_SAFETY_COOLDOWN",
-        "Second life: go back in once Doppelganger is back in 3 s.",
+        "Second life: hold the next engage until Doppelganger is back in 3 s.",
     ) in cards
+
+
+def test_a_second_life_with_no_fight_around_gets_no_readiness(client, clock):
+    # Counterexample: revived with no enemy in sight and no damage coming: the
+    # cooldown alone answers no question.
+    bar = _abilities(w=5)
+    feed(client, clock, [gsi(1980 + i // 2, items=_aegis_items(), abilities=bar) for i in range(6)])
+    gone = _items(slot0=manta(), slot1=wand(8))
+    feed(client, clock, [gsi(1983, alive=False, hp=0, items=gone, abilities=bar)] * 4)
+    feed(client, clock, [gsi(1985, items=gone, abilities=_abilities(w=3))] * 3)
+    cards = _cards(feed.seen)  # type: ignore[attr-defined]
+    assert not any(dp == "ABILITY_SAFETY_COOLDOWN" for dp, _ in cards), cards
 
 
 def test_an_ordinary_death_still_counts(client, clock):
@@ -450,6 +556,58 @@ def test_two_deaths_across_the_map_are_not_one_repeated_route(client, clock):
     assert MATCH_MEMORY.death_review_decision() != "REPEATED_DEATH_PATTERN"
 
 
+ALLY_NEAR = {
+    "a0": {
+        "image": "minimap_herocircle",
+        "unitname": "npc_dota_hero_axe",
+        "team": 2,
+        "xpos": 3200,
+        "ypos": 3000,
+    }
+}
+
+
+def _death_at(client, clock, start: int, deaths: int, minimap: dict[str, Any] | None) -> None:
+    alive = [gsi(start + i // 2, deaths=deaths, xy=(3000, 3000), minimap=minimap) for i in range(8)]
+    dead = gsi(start + 4, alive=False, hp=0, deaths=deaths + 1, xy=(3000, 3000), respawn=30)
+    feed(client, clock, alive + [dead] * 2)
+
+
+def test_deaths_at_one_spot_with_the_team_are_a_place_not_a_route_mistake(client, clock):
+    # Three deaths at one tower, each with an ally staying next to the hero:
+    # where the team fought (REPEATED_PLACE), no «reset your route».
+    for n, start in enumerate((1200, 1400, 1600)):
+        _death_at(client, clock, start, 2 + n, ALLY_NEAR)
+    last = MATCH_MEMORY.death_events[-1]
+    assert last["with_team"] is True
+    assert "REPEATED_PLACE" in last["patterns"] and "REPEATED_DEATHS" not in last["patterns"]
+    assert MATCH_MEMORY.death_review_decision() != "REPEATED_DEATH_PATTERN"
+
+
+def test_lone_deaths_at_one_spot_are_a_repeated_mistake(client, clock):
+    # The same spot, alone each time (the minimap shows no ally next to him).
+    for n, start in enumerate((1200, 1400)):
+        _death_at(client, clock, start, 2 + n, {})
+    last = MATCH_MEMORY.death_events[-1]
+    assert last["with_team"] is False
+    assert "REPEATED_DEATHS" in last["patterns"]
+
+
+def test_without_a_minimap_no_route_mistake_is_claimed(client, clock):
+    def bare(payload: dict[str, Any]) -> dict[str, Any]:
+        payload = copy.deepcopy(payload)
+        payload.pop("minimap")
+        return payload
+
+    for n, start in enumerate((1200, 1400)):
+        alive = [bare(gsi(start + i // 2, deaths=2 + n, xy=(3000, 3000))) for i in range(8)]
+        dead = bare(gsi(start + 4, alive=False, hp=0, deaths=3 + n, xy=(3000, 3000), respawn=30))
+        feed(client, clock, alive + [dead] * 2)
+    last = MATCH_MEMORY.death_events[-1]
+    assert last["with_team"] is None
+    assert "REPEATED_DEATHS" not in last["patterns"] and "REPEATED_PLACE" in last["patterns"]
+
+
 def test_low_hp_at_the_last_tick_does_not_make_a_low_resource_death(client, clock):
     # PL 09:10-09:22: 81 % HP when the fight starts, a burst, the death.
     entry = [gsi(550 + i // 2, hp=1134, max_hp=1400, deaths=0) for i in range(8)]
@@ -458,6 +616,91 @@ def test_low_hp_at_the_last_tick_does_not_make_a_low_resource_death(client, cloc
     death = MATCH_MEMORY.death_events[-1]
     assert death["entry_hp_percent"] >= 80
     assert "LOW_RESOURCE_DEATH" not in death["patterns"]
+
+
+# 3b. Counterexamples for the life cycle: a late, missing or jumping counter,
+#     a gap, a stand-up with no revive item. An alive drop is a revive only
+#     when the hero stands up where it fell; a death only once an observation
+#     shows it; never counted twice.
+
+
+def _without_counter(payload: dict[str, Any]) -> dict[str, Any]:
+    payload = copy.deepcopy(payload)
+    payload["player"].pop("deaths")
+    return payload
+
+
+def test_a_late_counter_is_one_death_after_an_unresolved_moment(client, clock):
+    feed(client, clock, _calm(1100, 2))
+    feed(client, clock, [gsi(1102, alive=False, hp=0, deaths=2)])
+    extra = client.get("/state/current").json()["state"]["extra_context"]
+    assert extra["life_state"] == "unresolved"
+    assert MATCH_MEMORY.death_count == 0
+    feed(client, clock, [gsi(1102, alive=False, hp=0, deaths=3, respawn=40)] * 2)
+    assert MATCH_MEMORY.death_count == 1
+    assert MATCH_MEMORY.death_events[-1]["counter"] == "late"
+    assert MATCH_MEMORY.life_events == []
+
+
+def test_a_death_the_counter_never_shows_is_inferred_once_and_confirmed_later(client, clock):
+    feed(client, clock, _calm(1100, 2))
+    feed(client, clock, [gsi(1102 + i // 2, alive=False, hp=0, deaths=2) for i in range(10)])
+    assert MATCH_MEMORY.death_count == 1
+    assert MATCH_MEMORY.death_events[-1]["counter"] == "not_seen"
+    # The counter catches up much later: the same death, not a second one.
+    feed(client, clock, [gsi(1130, alive=False, hp=0, deaths=3, respawn=20)] * 2)
+    assert MATCH_MEMORY.death_count == 1
+    assert MATCH_MEMORY.death_events[-1]["counter"] == "confirmed_late"
+
+
+def test_a_respawn_timer_longer_than_any_revive_is_a_death_at_once(client, clock):
+    feed(client, clock, [gsi(1500 + i // 2, items=_aegis_items(), hp=200) for i in range(4)])
+    feed(client, clock, [gsi(1502, alive=False, hp=0, items=_aegis_items(), respawn=45)])
+    assert MATCH_MEMORY.death_count == 1
+    assert MATCH_MEMORY.life_events == []
+
+
+def test_a_counter_missing_for_a_while_is_not_a_second_death(client, clock):
+    # A reconnect: the player block comes back without `deaths` for a while.
+    feed(client, clock, _calm(1200, 2))
+    feed(client, clock, [_without_counter(gsi(1202))] * 2)
+    feed(client, clock, [_without_counter(gsi(1203, alive=False, hp=0))] * 2)
+    assert MATCH_MEMORY.death_count == 1
+    assert MATCH_MEMORY.death_events[-1]["counter"] == "missing"
+    feed(client, clock, [gsi(1204, alive=False, hp=0, deaths=3, respawn=30)] * 2)
+    assert MATCH_MEMORY.death_count == 1
+
+
+def test_deaths_across_a_gap_are_counted_without_a_place(client, clock):
+    # 50 s with no payload, then the counter is two higher: two deaths whose
+    # place no snapshot shows; no route or place claim from them.
+    feed(client, clock, _calm(1300, 2, xy=(-4000, 4000)))
+    feed(client, clock, [gsi(1350, deaths=4, xy=(7100, 6376))] * 2)
+    assert MATCH_MEMORY.death_count == 2
+    assert all(event["position"] is None for event in MATCH_MEMORY.death_events)
+    assert all("REPEATED_DEATHS" not in event["patterns"] for event in MATCH_MEMORY.death_events)
+
+
+def test_standing_up_with_no_revive_item_is_no_second_life(client, clock):
+    # Alive drops and returns on the spot two seconds later, counter unchanged,
+    # no Aegis, no Reincarnation: neither a death nor a confirmed revive.
+    feed(client, clock, _calm(1400, 2, abilities=_abilities(w=8)))
+    feed(client, clock, [gsi(1402, alive=False, hp=0, abilities=_abilities(w=7))] * 2)
+    feed(client, clock, [gsi(1403, hp=600, abilities=_abilities(w=6))] * 3)
+    assert MATCH_MEMORY.death_count == 0
+    assert [e["type"] for e in MATCH_MEMORY.life_events] == ["revive_unconfirmed"]
+    extra = client.get("/state/current").json()["state"]["extra_context"]
+    assert extra["recent_revive"] is None
+    assert not any("Second life" in action for _, action in _cards(feed.seen))  # type: ignore[attr-defined]
+
+
+def test_coming_back_at_the_fountain_with_no_counter_is_a_death_not_a_revive(client, clock):
+    feed(client, clock, _calm(1600, 2, xy=(-4000, 4000)))
+    feed(client, clock, [gsi(1602, alive=False, hp=0, xy=(-4000, 4000))])
+    feed(client, clock, [gsi(1603, xy=(7100, 6376))] * 2)
+    assert MATCH_MEMORY.death_count == 1
+    assert MATCH_MEMORY.death_events[-1]["counter"] == "not_seen"
+    assert MATCH_MEMORY.life_events == []
 
 
 # 5. Stale numbers and late async answers.
@@ -484,10 +727,39 @@ def test_the_buyback_card_quotes_this_snapshot_not_the_purchase():
     advice = build_post_laning_advice(state, "SAFE_FARMING")
     assert advice is not None and "566 gold" in advice.reason and "1905" in advice.reason
     assert "1338" not in advice.reason
-    # Holding the Aegis the next death revives: no buyback lock on items.
-    aegis = {**state, "extra_context": {**state["extra_context"], "has_aegis": True}}
+    # Holding an Aegis that still lasts (pickup seen, 83 s left at 32:28) the
+    # next death revives: no buyback lock on items.
+    extra = state["extra_context"]
+    aegis = {**state, "extra_context": {**extra, "has_aegis": True, "own_aegis_left": 83}}
     held = build_post_laning_advice(aegis, "SAFE_FARMING")
     assert held is None or "buyback" not in held.reason
+
+
+def test_an_aegis_of_unknown_age_or_about_to_expire_keeps_the_buyback_card():
+    # Counterexamples: the timer is unknown (recording started after the
+    # pickup), it ends in 20 s, or the base is on the line.
+    signal = {"clock": 1948, "gold": 566, "cost": 1905, "observed": 1948}
+    base = {
+        "buyback_spent": signal,
+        "available_gold": 566,
+        "buyback_cost": 1905,
+        "advisor_coverage": "full",
+        "has_aegis": True,
+    }
+    for extra in (
+        base,
+        {**base, "own_aegis_left": 20},
+        {
+            **base,
+            "buyback_spent": {**signal, "danger": "own_base_down"},
+            "own_aegis_left": 200,
+            "base_danger": "own_base_down",
+        },
+    ):
+        advice = build_post_laning_advice(
+            {"minute": 32, "hp_percent": 100, "extra_context": extra}, "SAFE_FARMING"
+        )
+        assert advice is not None and advice.category == "post_laning_buyback_reserve", extra
 
 
 def test_a_held_card_with_old_numbers_is_withdrawn():
@@ -503,6 +775,47 @@ def test_a_held_card_with_old_numbers_is_withdrawn():
     assert withdraw_reason(basis, now) == "stale_numbers"
     back = {"hp_percent": 100, "extra_context": {"available_gold": 2000, "buyback_cost": 1905}}
     assert withdraw_reason(basis, back) == "resolved"
+
+
+def test_a_held_card_within_tolerance_shows_this_snapshots_numbers():
+    # The decision tolerates 100 gold of drift; the card does not quote the
+    # old 1338 while the player has 1438.
+    from datetime import UTC, datetime
+
+    from app.advice_scheduler import ADVICE_SCHEDULER
+    from app.schemas import RecommendationResponse
+
+    reason = "You have 1338 gold and buyback costs 1824; after minute 30 a death costs more."
+    then = {"hp_percent": 100, "extra_context": {"available_gold": 1338, "buyback_cost": 1824}}
+    action = "Farm back your buyback gold before the next purchase."
+    card = RecommendationResponse(
+        action=action, reason=reason, risk="", priority="medium", time_window="now"
+    )
+    ADVICE_SCHEDULER.state._last_recommendation = card
+    ADVICE_SCHEDULER.state._active_basis = advice_basis("SAFE_FARMING", action, reason, then)
+    now = {"hp_percent": 100, "extra_context": {"available_gold": 1438, "buyback_cost": 1830}}
+    with ADVICE_SCHEDULER._lock:
+        ADVICE_SCHEDULER._revalidate_active_locked(now, datetime.now(UTC))
+    shown = ADVICE_SCHEDULER.state._last_recommendation
+    assert shown is not None and shown.action == action
+    assert "1438 gold" in shown.reason and "1830" in shown.reason and "1338" not in shown.reason
+    # The decision still measures drift from the numbers it was made on.
+    assert ADVICE_SCHEDULER.state._active_basis["facts"]["gold"] == 1338
+
+
+def test_more_wand_charges_refresh_the_number_and_spent_ones_withdraw():
+    from app.advice_validity import refreshed_reason
+
+    reason = "Magic Wand has 8 charges: that HP is yours right now."
+    then = {"hp_percent": 30, "extra_context": {"wand_charges": 8}}
+    basis = advice_basis("LOW_HP", "Use Magic Wand now.", reason, then)
+    more = {"hp_percent": 30, "extra_context": {"wand_charges": 10}}
+    assert withdraw_reason(basis, more) is None
+    assert refreshed_reason(basis, reason, more) == (
+        "Magic Wand has 10 charges: that HP is yours right now."
+    )
+    spent = {"hp_percent": 45, "extra_context": {"wand_charges": 0}}
+    assert withdraw_reason(basis, spent) == "action_done"
 
 
 def test_a_late_llm_answer_does_not_overwrite_a_newer_card(monkeypatch):
@@ -721,6 +1034,48 @@ def test_deep_with_allies_next_to_you_is_not_a_lone_deep_showing():
     assert advice is None or advice.category != "post_laning_risky_showing"
 
 
+def _deep(clock_time: int, allies: list[dict[str, Any]], enemies: int = 0) -> dict[str, Any]:
+    minimap = {
+        f"o{i}": {
+            "image": "minimap_herocircle",
+            "unitname": f"npc_dota_hero_{name}",
+            "team": 2,
+            "xpos": x,
+            "ypos": y,
+        }
+        for i, (name, x, y) in enumerate((a["hero"], a["x"], a["y"]) for a in allies)
+    }
+    for i in range(enemies):
+        minimap[f"e{i}"] = {
+            "image": "minimap_enemyicon",
+            "unitname": f"npc_dota_hero_{('lion', 'lina', 'tusk', 'sven')[i]}",
+            "team": 3,
+            "xpos": 4300 + 50 * i,
+            "ypos": 4300,
+        }
+    return gsi(clock_time, xy=(4000, 4000), minimap=minimap)
+
+
+def test_an_ally_crossing_for_one_tick_is_not_a_group(client, clock):
+    axe = {"hero": "axe", "x": 4200, "y": 4000}
+    feed(client, clock, [_deep(1800, [])] * 4 + [_deep(1802, [axe])])
+    support = client.get("/state/current").json()["state"]["extra_context"]["team_support"]
+    assert support["allies"] and not support["steady"]
+    # Staying with the hero for seconds: a group.
+    feed(client, clock, [_deep(1803 + i // 2, [axe]) for i in range(6)])
+    support = client.get("/state/current").json()["state"]["extra_context"]["team_support"]
+    assert support["steady"] == support["allies"]
+
+
+def test_a_steady_ally_against_more_visible_enemies_is_not_grouped():
+    from app.team_context import grouped_with_team
+
+    support = {"known": True, "allies": ["Axe"], "steady": ["Axe"], "enemies_near": 3}
+    assert not grouped_with_team({"team_support": support})
+    assert grouped_with_team({"team_support": {**support, "enemies_near": 2}})
+    assert not grouped_with_team({"team_support": {"known": False}})
+
+
 def test_the_own_hero_on_the_ally_circle_is_not_an_ally(client, clock):
     # GSI sometimes draws the player with `minimap_herocircle` (not `_self`).
     minimap = {
@@ -864,14 +1219,44 @@ def test_the_overlay_is_told_which_card_was_withdrawn(client, clock):
 # 5.4 / 5.7: readiness after a kill or a revive.
 
 
-def test_after_a_kill_with_w_on_cooldown_the_card_names_when_to_go_again(client, clock):
-    # PL 18:25: 62 % HP, a fresh kill, W back in 5 s, Manta in 21 s.
+def test_after_a_kill_with_w_on_cooldown_the_card_says_what_to_hold(client, clock):
+    # PL 18:25: 62 % HP, a fresh kill with an enemy still in sight, W back in
+    # 5 s, Manta in 21 s. W coming back is availability, not «go in»: the card
+    # names what to hold until then.
     items = _items(slot0=manta(21), slot1=wand(20))
     # Above the 70 % line during the exchange (no card), then the kill at 62 %.
     feed(client, clock, _calm(1100, 3, kills=3, hp=1050, items=items, abilities=_abilities(w=7)))
-    feed(client, clock, [gsi(1103, kills=4, hp=868, items=items, abilities=_abilities(w=5))] * 2)
+    kill = gsi(1103, kills=4, hp=868, items=items, abilities=_abilities(w=5), minimap=ENEMY_NEAR)
+    feed(client, clock, [kill] * 2)
     actions = [action for _, action in _cards(feed.seen)]  # type: ignore[attr-defined]
-    assert "After your kill: go in again once Doppelganger is back in 5 s." in actions
+    assert "After your kill: hold the next engage until Doppelganger is back in 5 s." in actions
+    assert not any("go in again" in action for action in actions)
+
+
+def test_kills_in_a_row_are_one_readiness_moment(client, clock):
+    # A double kill eight seconds apart: the second kill does not skip the
+    # gates again (one spoken readiness card per fight, not per kill).
+    from app.advice_scheduler import ADVICE_SCHEDULER
+
+    items = _items(slot0=manta(21), slot1=wand(20))
+    feed(client, clock, _calm(1100, 3, kills=3, hp=1050, items=items, abilities=_abilities(w=9)))
+    first = gsi(1103, kills=4, hp=868, items=items, abilities=_abilities(w=7), minimap=ENEMY_NEAR)
+    feed(client, clock, [first] * 2)
+    assert ADVICE_SCHEDULER.state._readiness_shown_key == ("kill", 1103)
+    later = [
+        gsi(
+            1104 + i // 2,
+            kills=4,
+            hp=868,
+            items=items,
+            abilities=_abilities(w=6),
+            minimap=ENEMY_NEAR,
+        )
+        for i in range(14)
+    ]
+    second = gsi(1111, kills=5, hp=800, items=items, abilities=_abilities(w=2), minimap=ENEMY_NEAR)
+    feed(client, clock, later + [second] * 2)
+    assert ADVICE_SCHEDULER.state._readiness_shown_key == ("kill", 1103)
 
 
 # 18. A prefix of a match decides exactly what the full run decided up to it.

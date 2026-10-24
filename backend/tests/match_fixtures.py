@@ -404,7 +404,9 @@ def gsi_match_stream(
     """Raw GSI payloads for a whole match of Juggernaut on Radiant.
 
     positions=True adds hero world coordinates: the bottom lane until 10:00,
-    the Dire jungle from 17:00 to 21:00 (the late deaths), Radiant jungle otherwise."""
+    the Dire jungle from 17:00 to 21:00 (the late deaths), Radiant jungle
+    otherwise; and the minimap block Wardly's GSI config always requests,
+    showing no other hero (the player is alone: no ally next to them)."""
     payloads = []
     deaths = 0
     items = {"slot0": {"name": "item_tango"}}
@@ -456,6 +458,7 @@ def gsi_match_stream(
         if positions:
             x, y = _world_position(t)
             payloads[-1]["hero"].update({"xpos": x, "ypos": y})
+            payloads[-1]["minimap"] = {}
     final = copy.deepcopy(payloads[-1])
     final["map"]["game_state"] = "DOTA_GAMERULES_STATE_POST_GAME"
     final["map"]["win_team"] = "radiant" if win else "dire"

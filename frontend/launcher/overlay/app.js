@@ -367,6 +367,15 @@ function renderAdvice(data, options = { refreshTimer: true }) {
     data.match_death_count || 0,
     data.last_death_minute || ""
   ].join("|");
+  // Only the action is spoken: a held card whose quoted numbers were
+  // refreshed (gold, Wand charges) is the same card for the voice.
+  const speechKey = [
+    data.decision_point,
+    recommendation.action,
+    recommendation.priority,
+    data.match_death_count || 0,
+    data.last_death_minute || ""
+  ].join("|");
 
   shell.className = [
     "overlay-shell",
@@ -387,9 +396,9 @@ function renderAdvice(data, options = { refreshTimer: true }) {
   // Spoken once per advice while it is still current (a tip skipped because
   // another one was being spoken gets its turn on a later poll).
   if (speaker && data.status === "active_advice") {
-    lastSpokenKey = key;
+    lastSpokenKey = speechKey;
     speaker.say({
-      key,
+      key: speechKey,
       text: recommendation.action,
       fallbackText: recommendation.action_en,
       adviceMode,

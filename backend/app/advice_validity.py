@@ -25,6 +25,7 @@ Rules (each from what the card itself claims):
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -164,6 +165,34 @@ def _cannot_press_now(tool: Mapping[str, Any], state: Mapping[str, Any]) -> bool
     return extra.get("silenced") is True
 
 
+BUYBACK_FACT = re.compile(r"You have \d+ gold and buyback costs \d+")
+WAND_FACT = re.compile(r"Magic Wand has \d+ charges")
+
+
+def refreshed_reason(
+    basis: Mapping[str, Any] | None, reason: str, state: Mapping[str, Any]
+) -> str | None:
+    """The held card's reason with the exact numbers of this snapshot, or None
+    when it already quotes them. The decision tolerance (GOLD_DRIFT, a rise in
+    Wand charges) decides whether the card still holds; it never lets the card
+    show a number that is no longer true."""
+    if not isinstance(basis, Mapping) or not reason:
+        return None
+    extra = _extra(state)
+    text = reason
+    if isinstance(basis.get("facts"), Mapping):
+        gold, cost = _number(extra.get("available_gold")), _number(extra.get("buyback_cost"))
+        if gold is not None and cost is not None:
+            text = BUYBACK_FACT.sub(
+                f"You have {int(gold)} gold and buyback costs {int(cost)}", text, count=1
+            )
+    if "wand_charges" in basis:
+        charges = _number(extra.get("wand_charges"))
+        if charges is not None:
+            text = WAND_FACT.sub(f"Magic Wand has {int(charges)} charges", text, count=1)
+    return text if text != reason else None
+
+
 def withdraw_reason(basis: Mapping[str, Any] | None, state: Mapping[str, Any]) -> str | None:
     """Why the held card no longer holds for this snapshot; None while it does."""
     if not isinstance(basis, Mapping):
@@ -201,8 +230,10 @@ def withdraw_reason(basis: Mapping[str, Any] | None, state: Mapping[str, Any]) -
             return "stale_numbers"
     if "wand_charges" in basis:
         before, now = _number(basis.get("wand_charges")), _number(extra.get("wand_charges"))
-        if before is not None and now != before:
-            return "action_done" if now is None or now < before else "stale_numbers"
+        if before is not None and (now is None or now < before):
+            # Charges spent: the Wand was pressed. More charges change only the
+            # number the card quotes (refreshed_reason), not the decision.
+            return "action_done"
     if decision_point in LOW_HP_DECISIONS:
         hp_then, hp_now = _number(basis.get("hp_percent")), _number(state.get("hp_percent"))
         if (
