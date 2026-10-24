@@ -152,7 +152,32 @@ was read against the mechanic, no test), **unchecked** (nothing yet).
 
 ### Juggernaut and Terrorblade, 0.60.0
 
-JUGG_TB_PLACEHOLDER
+Both replayed on the final 0.60.0 code (`--audit`), each disable card checked
+against the recording: how long the status lasted, when the card came, HP
+around it, whether the named tool was pressed within 5 s after it.
+
+| Measure | Juggernaut 9042382595, 0.59.0 → 0.60.0 | Terrorblade 9042342539, 0.59.0 → 0.60.0 |
+| --- | --- | --- |
+| Cards | 56 → 55 | 35 → 35 |
+| Disable cards | 10 → 8 | 3 → 2 |
+| Readiness cards | 3 → 2 («hold the next engage until Blade Fury is back», with an enemy in sight) | 0 → 0 |
+| Plan cards | 0 (no stalled lane; 14 fight ends seen, none with a steady ally and an enemy tower in reach, HP above 50 % after) | 0 (11 fight ends, same) |
+| Withdrawn while held | 19 → 22 (7 done, 5 respawned, 4 overtaken by a fight, 3 recovered, 3 cannot act now) | 12 → 14 |
+
+Juggernaut's 8 disable cards: 5 had the life at stake (22:25, 27:21, 32:13,
+39:06, 41:01: HP down to 0-60 % within 5 s; Manta pressed 0-1.8 s after in 3;
+at 39:06 he died 3.1 s into the stun, Manta pressed 3.9 s after, too late; at
+41:01, 48 % lost, nothing pressed). 3 are silences at 92-98 % HP (26:06,
+33:07, 36:38; Manta pressed 0.0 s after only at 36:38): «Use Manta now: it
+removes the silence» is a press-now card, not a post-disable one, and is kept
+on purpose (the dispel gives Blade Fury, his escape, back; the danger gate
+covers only the post-disable wording); 2 of 3 unused is the open question for
+it. The cards are
+54-292 s apart: no repeat within 20 s, one per status episode. Terrorblade's
+2 are the 6 s and 4 s stuns he died in; the card came 1.5-1.6 s into them
+(the onset snapshot had little HP lost yet), not pressed. The voice load the
+0.59 review saw (Juggernaut's disable cards 5 → 10) came mostly from cards
+the old gates dropped; the 2 cards removed now were short stuns at high HP.
 
 
 ## Data and limits of the conclusions (0.59.0)
