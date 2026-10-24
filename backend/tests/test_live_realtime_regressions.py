@@ -402,6 +402,22 @@ def test_one_disable_card_per_stun_even_a_long_chain(client, clock):
     assert len(disables) == 1, disables
 
 
+def test_the_same_disable_card_two_minutes_later_is_a_new_stun(client, clock):
+    # PL 07:18 and 09:13: two real stuns 115 s apart with HP falling, the same
+    # words. The second is not a repeat to space out.
+    new_cards = []
+    for start in (430, 549):
+        feed(client, clock, _calm(start, 3, hp=1300))
+        for hp in (1000, 900, 880, 860):
+            clock["t"] += 0.5
+            client.post("/gsi", json=gsi(start + 3, stunned=True, debuff=True, hp=hp))
+            answer = client.get("/overlay/recommendation").json()
+            if answer.get("new_advice") and answer["decision_point"] == "DISABLED_STATUS":
+                new_cards.append(start)
+        feed(client, clock, _calm(start + 4, 112, hp=1300))
+    assert new_cards == [430, 549], new_cards
+
+
 # 2. Ordinary enemy control with a ready answer still gets its card.
 
 

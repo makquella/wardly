@@ -1956,7 +1956,10 @@ class AdviceScheduler:
             return 0, None
 
         gap = max(0.0, game_time_seconds - self.state._last_shown_game_time_seconds)
-        if decision_point in {"LOW_HP", *DEATH_REVIEW_DECISIONS}:
+        # A disable card comes only with the life at stake (live_tools
+        # _disable_endangers) and once per stun: the same words two minutes
+        # later are a new stun, not a repeat (PL 09:13 waited out the 07:18 one).
+        if decision_point in {"LOW_HP", "DISABLED_STATUS", *DEATH_REVIEW_DECISIONS}:
             return 0, gap
         if self._readiness_moment_locked(decision_point, state) is not None:
             return 0, gap
