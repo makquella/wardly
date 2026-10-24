@@ -153,6 +153,8 @@ GROUP_EVERY = 180
 # A fight the player is not in (fight_summary.py): shown FIGHT_SHOW seconds, at
 # most once per FIGHT_EVERY.
 FIGHT_SHOW = 12
+# A plan card (live_plan.py) stays this long from the snapshot it started.
+PLAN_SHOW = 12
 FIGHT_EVERY = 60
 DENY_MIN_LAST_HITS = 8
 # A power rune kept in the Bottle this long (clock seconds, alive) → use it.
@@ -473,6 +475,70 @@ TIPS = {
             "{status}Іти чи ні — вирішуйте з командою.",
         ),
     },
+    # The short-term plan (live_plan.py): started only when the best action
+    # changes; the facts it rests on, the next step, and what is unknown.
+    "plan_lane": {
+        "en": (
+            "+{lh} last {hits} from {start} to {end}",
+            "{why}Stay by your tower for the last hits that reach it and ask a support to "
+            "come. Leave the lane only for camps you know your hero clears at this level.",
+        ),
+        "uk": (
+            "Добивань: +{lh} з {start} до {end}",
+            "{why}Тримайтеся біля вежі й добивайте кріпів, що до неї доходять, і покличте "
+            "саппорта. Ідіть з лінії лише до таборів, які ваш герой точно зачистить на цьому рівні.",
+        ),
+    },
+    "plan_delivery": {
+        "en": (
+            "{item} is in your stash",
+            "Have the courier bring it: until it is with you it is not a button you can press.",
+        ),
+        "uk": (
+            "{item} у схованці",
+            "Нехай кур'єр привезе: поки предмета немає з вами, його не натиснути.",
+        ),
+    },
+    "plan_fight_tower": {
+        "en": (
+            "Fight won {kills}–{lost}: their T{tier} {lane}",
+            "{allies} with you and their tower close: hit it now, while the dead respawn.",
+        ),
+        "uk": (
+            "Бійку виграно {kills}–{lost}: їхня T{tier} {lane}",
+            "{allies} поруч, їхня вежа близько: бийте її зараз, поки загиблі відроджуються.",
+        ),
+    },
+    "plan_fight_recover": {
+        "en": (
+            "Fight over {kills}–{lost}, {hp}% HP",
+            "Recover before the next one: heal or walk back while no enemy is in sight.",
+        ),
+        "uk": (
+            "Бійка скінчилась {kills}–{lost}, HP {hp}%",
+            "Відновіться перед наступною: лікуйтеся чи відходьте, поки ворогів не видно.",
+        ),
+    },
+    "plan_aegis_team": {
+        "en": (
+            "Aegis until {until}",
+            "{allies} with you: take the next tower or objective while it lasts.",
+        ),
+        "uk": (
+            "Аегіс до {until}",
+            "{allies} з вами: беріть наступну вежу чи ціль, поки він діє.",
+        ),
+    },
+    "plan_aegis_alone": {
+        "en": (
+            "Aegis until {until}",
+            "Group with your team: alone it covers only one mistake.",
+        ),
+        "uk": (
+            "Аегіс до {until}",
+            "Збирайтеся з командою: самому він прощає лише одну помилку.",
+        ),
+    },
     # Enemies seen together far away (enemy_group): no one goes there alone.
     "enemy_group": {
         "en": (
@@ -790,6 +856,78 @@ def fight_params(fight: dict[str, Any], lang: str) -> dict[str, Any]:
     }
 
 
+def _allies_text(count: int, lang: str) -> str:
+    if lang == "uk":
+        return f"{count} {_ru_plural(count, 'союзник', 'союзники', 'союзників')}"
+    return f"{count} {'ally' if count == 1 else 'allies'}"
+
+
+def plan_params(plan: dict[str, Any], lang: str) -> tuple[str, dict[str, Any]] | None:
+    """(TIPS key, params) of a plan card in `lang`; None for a plan without one."""
+    from app.analysis_texts import PLACE_ZONES
+
+    basis = plan.get("basis") or {}
+    goal = plan.get("goal")
+    if goal == "lane_recover":
+        facts = []
+        if basis.get("hp_min") is not None and basis["hp_min"] <= 50:
+            facts.append(
+                f"HP впало до {basis['hp_min']}%"
+                if lang == "uk"
+                else f"HP down to {basis['hp_min']}%"
+            )
+        if basis.get("enemies", 0) >= 2:
+            facts.append(
+                f"ворогів поруч: {basis['enemies']}"
+                if lang == "uk"
+                else f"{basis['enemies']} enemies around you"
+            )
+        why = (", ".join(facts) + ". ") if facts else ""
+        why = why[:1].upper() + why[1:]
+        lh = int(basis.get("last_hits") or 0)
+        return "plan_lane", {
+            "lh": lh,
+            "hits": "hit" if lh == 1 else "hits",
+            "start": basis.get("from"),
+            "end": basis.get("to"),
+            "why": why,
+        }
+    if goal == "deliver_item":
+        label = basis.get("label_uk" if lang == "uk" else "label") or basis.get("item")
+        return "plan_delivery", {"item": label}
+    if goal == "after_fight":
+        if basis.get("next") == "tower" and isinstance(basis.get("tower"), dict):
+            lane = str(basis["tower"].get("lane") or "base")
+            lane_text = (
+                PLACE_ZONES["uk"]["in"].get(lane, "")
+                if lang == "uk"
+                else f"in the {PLACE_ZONES['en']['name'].get(lane, lane)}"
+            )
+            return "plan_fight_tower", {
+                "kills": basis.get("kills"),
+                "lost": basis.get("lost"),
+                "tier": basis["tower"].get("tier"),
+                "lane": lane_text,
+                "allies": _allies_text(int(basis.get("allies") or 0), lang).capitalize(),
+            }
+        if basis.get("next") == "recover":
+            return "plan_fight_recover", {
+                "kills": basis.get("kills"),
+                "lost": basis.get("lost"),
+                "hp": basis.get("hp"),
+            }
+        return None
+    if goal == "aegis_window":
+        allies = int(basis.get("allies") or 0)
+        if allies:
+            return "plan_aegis_team", {
+                "until": basis.get("until"),
+                "allies": _allies_text(allies, lang).capitalize(),
+            }
+        return "plan_aegis_alone", {"until": basis.get("until")}
+    return None
+
+
 def strip_item(kind: str, at: int, clock: int, lang: str, **extra: Any) -> dict[str, Any]:
     uk, en = STRIP_LABELS[kind]
     return {
@@ -1027,6 +1165,17 @@ class RoleTips:
         self._shown["fight"] = clock
         self._shown_fight = {key: fight_params(fight, key) for key in ("en", "uk")}
         return _tip("fight", f"fight@{clock}", lang, **self._shown_fight[lang])
+
+    def plan(self, clock: int, lang: str, plan: dict[str, Any] | None) -> dict[str, Any] | None:
+        """The card of a short-term plan (live_plan.py) for PLAN_SHOW seconds
+        from its start; one card per plan."""
+        if not plan or not 0 <= clock - int(plan.get("since", -(10**6))) <= PLAN_SHOW:
+            return None
+        rendered = plan_params(plan, lang)
+        if rendered is None:
+            return None
+        key, params = rendered
+        return _tip(key, f"plan_{plan['goal']}@{plan['since']}", lang, **params)
 
     def enemy_group(
         self, clock: int, lang: str, group: dict[str, Any] | None
@@ -1567,6 +1716,7 @@ def map_hint(
     plan_note: dict[str, Any] | None = None,
     enemy_group: dict[str, Any] | None = None,
     fight: dict[str, Any] | None = None,
+    plan: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """A timer, but a role tip over a minor one (runes, lotus); None before the
     horn or without a role. `objective`: a Roshan / Aegis timer (roshan_timer.py),
@@ -1592,6 +1742,10 @@ def map_hint(
     grouped = tips.enemy_group(clock, lang, enemy_group if alive else None)
     if grouped is not None:
         return grouped
+    # The short-term plan that just changed (live_plan.py), over scheduled timers.
+    planned = tips.plan(clock, lang, plan if alive else None)
+    if planned is not None:
+        return planned
     timer = next_timer(clock, role, lang)
     if objective is not None and (
         timer is None

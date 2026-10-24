@@ -635,10 +635,22 @@ _UK_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
         "Використайте {name} зараз, щоб піти, потім відновіть HP.",
     ),
     (
+        re.compile(r"^Use (?P<name>.+) now to get out, then Magic Wand\.$"),
+        "Використайте {name} зараз, щоб піти, потім Magic Wand.",
+    ),
+    (
         re.compile(
             r"^Your HP is low and (?P<name>.+) is ready: use it before the next hit, not after\.$"
         ),
         "HP мало, а {name} готовий: натисніть його до наступного удару, а не після.",
+    ),
+    (
+        re.compile(
+            r"^Your HP is low and (?P<name>.+) is ready: use it before the next hit\. "
+            r"Magic Wand has (?P<n>\d+) charges: press it on the way out\.$"
+        ),
+        "HP мало, а {name} готовий: натисніть його до наступного удару. "
+        "У Magic Wand {n} зарядів: натисніть її дорогою.",
     ),
     (
         re.compile(r"^Use (?P<name>.+) now, then step back\.$"),

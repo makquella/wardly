@@ -460,6 +460,10 @@ def _normalize_extra_context(
         "skills": read_skills(payload),
         # Item names in the inventory and stash (role tips such as the mid's Bottle).
         "item_names": item_names(payload.get("items")),
+        # Where each item is: the six active slots (pressable), the stash
+        # (bought, not delivered). None without an items block.
+        "active_items": _slot_names(payload.get("items"), stash=False),
+        "stash_items": _slot_names(payload.get("items"), stash=True),
         # Roshan kills and Aegis pickups (roshan_timer.py), and the player's Aegis.
         "gsi_events": _objective_events(payload.get("events")),
         # Enemy heroes on the player's minimap (enemy_heroes.py; None: no block).
@@ -592,6 +596,20 @@ def _without_own_hero(units: list[dict[str, Any]] | None, hero: str) -> list[dic
     if units is None:
         return None
     return [unit for unit in units if unit.get("hero") != hero]
+
+
+def _slot_names(items: Any, *, stash: bool) -> list[str] | None:
+    """Item names in the stash slots, or in the six active slots."""
+    if not isinstance(items, dict) or not items:
+        return None
+    names = []
+    for slot, item in items.items():
+        name = item.get("name") if isinstance(item, dict) else None
+        if not isinstance(name, str) or name in _EMPTY_ITEM_NAMES:
+            continue
+        if str(slot).startswith("stash") if stash else active_slot(slot):
+            names.append(name)
+    return names
 
 
 def _active_item_numbers(items: Any, field: str, *, total: bool = False) -> dict[str, float] | None:

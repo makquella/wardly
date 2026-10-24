@@ -113,6 +113,7 @@ def render_live_hints(
             draft_item=inputs.draft_item,
             plan_note=inputs.plan_note,
             fight=_fight(memory, extra, trackers, inputs, clock),
+            plan=extra.get("live_plan") if isinstance(extra.get("live_plan"), dict) else None,
             enemy_group=enemy_group(
                 extra.get("enemy_units") if isinstance(extra.get("enemy_units"), list) else None,
                 extra.get("xpos"),

@@ -1216,6 +1216,25 @@ def test_the_overlay_is_told_which_card_was_withdrawn(client, clock):
     )
 
 
+def test_a_charged_wand_is_named_next_to_the_escape(client, clock):
+    # PL 12:30: low HP, Doppelganger ready and the Wand charged: the escape
+    # first, the Wand's HP on the way out (it was lost from the card).
+    feed(client, clock, _calm(740, 3, items=_items(slot0=wand(12))))
+    hit = [gsi(743, hp=v, items=_items(slot0=wand(12))) for v in (1000, 700, 420, 400)]
+    feed(client, clock, hit)
+    actions = [a for _, a in _cards(feed.seen)]  # type: ignore[attr-defined]
+    assert "Use Doppelganger now to get out, then Magic Wand." in actions, actions
+
+
+def test_a_wand_with_two_charges_is_not_worth_naming(client, clock):
+    feed(client, clock, _calm(740, 3, items=_items(slot0=wand(2))))
+    feed(
+        client, clock, [gsi(743, hp=v, items=_items(slot0=wand(2))) for v in (1000, 700, 420, 400)]
+    )
+    actions = [a for _, a in _cards(feed.seen)]  # type: ignore[attr-defined]
+    assert actions and not any("Magic Wand" in a for a in actions), actions
+
+
 # 5.4 / 5.7: readiness after a kill or a revive.
 
 

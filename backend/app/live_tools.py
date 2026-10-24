@@ -467,6 +467,10 @@ def aegis_copy(extra: Mapping[str, Any]) -> tuple[str, str]:
     return action, reason
 
 
+# A Wand with this many charges heals enough to name next to an escape.
+WAND_WORTH_CHARGES = 5
+
+
 def low_hp_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str] | None:
     """(action, reason) naming the tool to press at low HP; None without one.
     Stunned, hexed or muted, no item can be pressed: the post-disable wording."""
@@ -476,6 +480,15 @@ def low_hp_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str] |
     if own:
         name, kind = own[0]
         if kind == "escape":
+            charges = _count(extra.get("wand_charges"))
+            if "item_magic_wand" in (_ready(extra) or []) and charges >= WAND_WORTH_CHARGES:
+                # The escape first, and the charged Wand is HP on the way out
+                # (PL 12:30: Doppelganger ready, the Wand with charges).
+                return (
+                    f"Use {name} now to get out, then Magic Wand.",
+                    f"Your HP is low and {name} is ready: use it before the next hit. "
+                    f"Magic Wand has {charges} charges: press it on the way out.",
+                )
             return (
                 f"Use {name} now to get out, then reset HP.",
                 f"Your HP is low and {name} is ready: use it before the next hit, not after.",
@@ -588,13 +601,13 @@ def disabled_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str]
 
 # «The moment the disable ends, use X» only when the disable puts the life at
 # stake: HP at or below this share of max, or this share of max HP lost since
-# its onset (status_source `hp_lost_share`). In the Phantom Lancer recording
-# the 6 post-disable cards with something at stake (HP falling to 7-51 %
-# around the stun) were all above these marks; the 7 short stuns at 82-94 %
-# HP losing 0-13 % had nothing after them, and a card at +0.5 s on a 0.6 s
-# stun arrives when it is over. Checked again every snapshot of the status:
-# HP lost later in it brings the card then.
-DISABLE_DANGER_HP_SHARE = 0.70
+# its onset (status_source `hp_lost_share`, from the snapshot before it). In
+# the Phantom Lancer recording the 6 post-disable cards with something at
+# stake had HP at 7-51 % around the stun or lost 29-60 % in it; the short stuns
+# at 67-94 % HP losing 0-13 % had nothing after them, and a card at +0.5 s on
+# a 0.6 s stun arrives when it is over. Checked again every snapshot of the
+# status: HP lost later in it brings the card then.
+DISABLE_DANGER_HP_SHARE = 0.50
 DISABLE_DANGER_LOST_SHARE = 0.15
 
 

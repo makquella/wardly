@@ -83,26 +83,31 @@ def _label(name: str) -> str:
 
 def named_tool(action: str, state: Mapping[str, Any]) -> dict[str, Any] | None:
     """The item or own ability a card's action tells the player to use, from
-    the tools this snapshot reports (so a label maps back to one GSI name)."""
+    the tools this snapshot reports (so a label maps back to one GSI name).
+    With two named («Doppelganger…, then Magic Wand») the first is the card's."""
     extra = _extra(state)
     lowered = action.lower()
+    mode = "after_disable" if lowered.startswith("the moment the disable ends") else "now"
+    found: list[tuple[int, dict[str, Any]]] = []
     candidates: list[str] = []
     for key in ("ready_savers", "regen_items"):
         values = extra.get(key)
         if isinstance(values, list):
             candidates.extend(v for v in values if isinstance(v, str))
     for name in candidates:
-        if _label(name).lower() in lowered:
-            mode = "after_disable" if lowered.startswith("the moment the disable ends") else "now"
+        at = lowered.find(_label(name).lower())
+        if at >= 0:
             charges = extra.get("item_charges")
             count = charges.get(name) if isinstance(charges, Mapping) else None
-            return {"kind": "item", "name": name, "mode": mode, "charges": _number(count)}
+            found.append(
+                (at, {"kind": "item", "name": name, "mode": mode, "charges": _number(count)})
+            )
     tools = hero_tools(state.get("hero"), extra.get("abilities"))
     for name, _ in tools["ready"]:
-        if name.lower() in lowered:
-            mode = "after_disable" if lowered.startswith("the moment the disable ends") else "now"
-            return {"kind": "ability", "name": name, "mode": mode}
-    return None
+        at = lowered.find(name.lower())
+        if at >= 0:
+            found.append((at, {"kind": "ability", "name": name, "mode": mode}))
+    return min(found, key=lambda pair: pair[0])[1] if found else None
 
 
 def advice_basis(

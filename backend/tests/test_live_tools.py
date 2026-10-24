@@ -152,6 +152,11 @@ def test_every_new_text_has_ukrainian():
         "The moment the disable ends, use Black King Bar.",
         "Black King Bar is ready: the second after a disable is when most kills finish.",
         "You died with Eul's Scepter ready: next time use it at the first big hit.",
+        "Use Doppelganger now to get out, then Magic Wand.",
+        "Your HP is low and Doppelganger is ready: use it before the next hit. "
+        "Magic Wand has 12 charges: press it on the way out.",
+        "After your kill: hold the next engage until Doppelganger is back in 5 s.",
+        "Second life: hold the next engage until Doppelganger is back in 3 s.",
     ]
     for text in texts:
         assert translate_uk(text), text

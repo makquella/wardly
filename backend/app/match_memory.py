@@ -26,6 +26,7 @@ from app.fight_summary import FightWatch
 from app.gold_tips import GoldTips
 from app.hero_gameplay import HeroGameplay
 from app.live_hints import LiveHintInputs, render_live_hints
+from app.live_plan import LivePlan
 from app.live_role import LiveRoleTracker
 from app.map_hints import RoleTips, timers
 from app.roshan_timer import RoshanTimer
@@ -233,6 +234,7 @@ class MatchMemory:
         self.status = StatusWatch()
         self.actions = ActionWatch()
         self.team = TeamSupport()
+        self.plan = LivePlan()
 
     def observe_state(self, state: dict[str, Any]) -> dict[str, Any]:
         # Roshan/Aegis can need timer settings on the first observed event.
@@ -369,6 +371,11 @@ class MatchMemory:
             )
         self.last_states.append(_copy_state(state))
         self._annotate_state(state)
+        if extra.get("source_type") == "live_gsi" and isinstance(state.get("extra_context"), dict):
+            role = self.role.role()
+            state["extra_context"]["live_plan"] = self.plan.observe(
+                state["extra_context"], role.get("role") if role else None
+            )
         self.gameplay.observe(state)
         return state
 
