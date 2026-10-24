@@ -182,7 +182,9 @@ const readingAt = (id, f) => {
 };
 const pairs = maxV > 0 ? want.filter((f) => f + 1 < Number(lenArg)) : []; // f -> f+1
 const byFrame = new Map();
-for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
+for (const raw of fs.readFileSync(log, 'utf8').split('\n')) {
+  // a CI log is coloured (GitHub Actions turns colour on): the JSON ends in an escape sequence
+  const line = raw.replace(/\x1b\[[0-9;]*m/g, '');
   const TAG = 'CINETIC_AUDIT ';
   const i = line.indexOf(TAG);
   if (i < 0) continue;
