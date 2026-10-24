@@ -75,5 +75,12 @@
   "format": "hero",
   "topic": "sniper",
   "hook": 1
+ },
+ {
+  "id": "163bb46f024ecce2",
+  "date": "2026-10-24",
+  "format": "meta",
+  "topic": "2026-10-10",
+  "hook": 2
  }
 ]
