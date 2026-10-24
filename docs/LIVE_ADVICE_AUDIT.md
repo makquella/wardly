@@ -1,8 +1,200 @@
-# Live advice audit (0.59.0, re-audited in 0.60.0)
+# Live advice audit (0.59.0, re-audited in 0.60.0 and 0.60.1)
 
 Audit of the realtime coach against a review of match `9054793282` (Phantom
 Lancer, 28 logged cards) and two other real recordings. What was changed, which
 causes are confirmed, what stays open, and how to re-run the check.
+
+## 0.60.1: replay check corrected, five behaviours re-checked
+
+The same three recordings (Phantom Lancer `9054793282`, Juggernaut
+`9042382595`, Terrorblade `9042342539`) replayed on the final 0.60.1 code with
+`--audit`. They are also the recordings the rules were tuned on: there is no
+independent set, so nothing below shows that a threshold transfers to other
+matches. An offline replay never shows the player's reaction to a new card
+(the player of the recording never saw it): the delays below are when the
+recorded player used the tool, not a response to the card.
+
+### 1. Card vs recorded use (`scripts/replay_outcomes.py`)
+
+Cause of the «Manta pressed 0.0 s after» at 23:52 in the 0.60.0 report: the
+scratch script measured from the **end of the silence**, not from the card,
+and the silence ended in the same snapshot where Manta's cooldown first
+appears. Raw data: 23:52 `w=4577.56` silenced, Manta cooldown 0; 23:55
+`w=4580.45` silenced, cooldown 0; 23:56 `w=4580.95` not silenced, cooldown 34.
+
+Now each `--audit` card naming a tool carries `historical`, computed after the
+replay and never fed to a decision: decision snapshot, formed/shown (the poll
+that returned it), voice (not observable offline, always `null`), and the use
+as the interval between the last unused and the first used snapshot of that
+tool, inside the card's episode only (status end + 5 s, or 15 s with no
+status). A use before the card is `already_done` with its negative delay; a use
+in the snapshot where the status ends has an unknown order with it.
+`test_replay_outcomes.py` copies the 23:51-23:56 rows and fails on the old
+measure.
+
+The 23:52 card, corrected: decision `w=4577.56` (first silenced snapshot),
+shown at the same poll; the recorded Manta use lies in
+`(4580.45, 4580.95]`, **2.89-3.39 s after the decision**; the silence ended in
+that same snapshot (order unknown); voice start not observable.
+
+Every tool card of the three replays (0.60.1 card times):
+
+| Card | Recorded use after the card (s) | Note |
+| --- | --- | --- |
+| PL 07:18 Doppelganger after the stun | 0.50-1.02 | |
+| PL 09:14 Doppelganger after the stun | 2.33-2.86 | 0.60.0 said «0.5 s» |
+| PL 12:40 Doppelganger after the stun | 1.65-2.18 | 0.60.0 said «0.5 s» |
+| PL 12:30 Doppelganger + Wand | 10.93-11.46 | outside the 0-0.5 claim |
+| PL 18:10 Manta after the stun / 18:11 Manta now (silence) | 1.61-1.87 / 0.55-0.81 | silence ended in that snapshot |
+| PL 18:13 Wand | 2.36-2.89 | |
+| PL 23:51 Manta after the stun / 23:52 Manta now (silence) | 4.31-4.81 / 2.89-3.39 | silence ended in that snapshot |
+| PL 23:54 Manta to get out | 0.76-1.26 | silence ended in that snapshot |
+| PL 01:17, 05:14, 05:17, 05:44, 06:27 | no use in the episode | |
+| Jugg 22:25 Manta after the stun; Blade Fury | 0.00-0.55; -0.07-0.50 | the use lies in the sampling interval of the card: order unknown, not «pressed after» |
+| Jugg 27:20 / 27:22 Manta (stun, then silence) | 5.70-5.98 / 3.62-3.90 | |
+| Jugg 33:23 Blade Fury | 0.00-0.50 | same sampling interval |
+| Jugg 36:37 / 36:38 Manta | 1.07-1.64 / 0.00-0.57 | stun+silence ended in that snapshot |
+| Jugg 39:04 Manta | 6.40-6.92 | |
+| Jugg 41:00 / 41:02 Blade Fury | 5.10-5.61 / 3.07-3.58 | |
+| Jugg 33:57 Manta; 05:49 Tango | 11.55-12.08; 4.93-5.46 | |
+| Jugg 26:06, 32:12, 33:07, 27:26 | no use in the episode | |
+| Jugg 04:22, 39:08 | died before any use | |
+| TB 22:46 Manta | 10.85-11.39 | |
+| TB 24:50 Manta; 28:08 Pike; 29:50 Manta | no use; died; died | |
+
+None of the 0.60.0 «0-0.5 s» claims holds as a press after a card: the
+uses within 0.5 s are the ones whose sampling interval contains the card.
+
+### 2. Disable cards before the HP is gone
+
+The noise filter (HP ≤ 50 %, or ≥ 15 % of max lost in the status) was set on
+the PL recording and only checked on the other two. It stays. A second,
+independent way in: a **confirmed immediate threat** — the status source is
+`enemy` with `high` confidence (status_source.py) and enemy heroes are on the
+minimap within 1200 units: two or more, or one with no ally staying next to
+the hero (team_context). No other input (no invented damage, no assumed
+duration; «nothing happened after the stun» is never an input).
+
+| Case (test) | Card |
+| --- | --- |
+| High HP, enemy stun with debuff, two enemies next to him | yes, at the onset |
+| Same, one enemy, hero alone | yes |
+| One enemy with an ally staying next to the hero | waits for damage |
+| Own phase (Doppelganger) next to enemies | no defensive order |
+| Status of unknown source next to enemies | no confident order |
+| A new enemy stun right after an own cast | yes, not suppressed |
+| Stun at high HP with nobody in sight | waits for damage (filter kept) |
+
+In the replays, all at 80-96 % HP at the onset with two enemies in sight: 6
+disable cards came 1.0-2.0 s earlier, at the onset instead of after the HP
+drop (Jugg 27:21 → 27:20, 32:13 → 32:12, 39:06 → 39:04, 41:01 → 41:00; TB
+28:09 → 28:08, 29:51 → 29:50; in both TB stuns he died either way); 3 stun
+cards were added before a silence card that already existed (PL 18:10 before
+18:11, PL 23:51 before 23:52, Jugg 36:37 before 36:38); 1 was added alone (TB
+24:50, 85 % HP, 14.9 % lost in a 0.8 s stun, Manta not used), and Jugg 27:22
+«Manta now: it removes the silence» follows the 27:20 stun card. The short
+stuns 0.60.0 removed did not come back (no visible enemy, or an ally next to
+the hero).
+
+Found while checking: an earlier stun card stayed up through the silence that
+followed it («the moment the disable ends» while Manta could be pressed and
+would remove the silence), so 0.60.1 at first lost the 18:11 and 23:52
+press-now cards. Now a «the moment the disable ends, use X» card is withdrawn
+(`can_act_now`) once the stun or hex is over and only a silence or mute X goes
+through is left, and the next card of that kind is not held by its own
+cooldown or duplicate gates. With an ability (silence blocks it) or a disable
+that simply ends, the card stays. Second side effect found: the stun card at
+PL 18:10 was filed under the game state's post-laning category («carry a TP»)
+and dropped the readiness card of the kill at 18:17 as its duplicate; a
+readiness moment (already one per kill or revive) now skips that category
+duplicate. Both have a test that fails without the fix.
+
+### 3. Actions during an assumed TP channel (`app/channel_rules.py`)
+
+The channel stays an inference (TP cooldown started 0 → > 0 with the hero
+within 150 units; measured in 4 casts: arrival 2.9-5.1 s after the start). It
+ends on arrival (TP slot empty), a stun/hex/mute, a move, a data gap > 3 s or
+6 s. Whether a card's action breaks it comes from structured data, never a
+word in the text: the card's tool (`ToolCopy.tool`, item or ability) and the
+policy action type; items that ignore channels from Valve's items.txt
+(`DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL`, 18 items in
+`data/live/channel_ignore_items.json`). Any ability, any other item and any
+move order break it.
+
+| Case (test) | Result |
+| --- | --- |
+| TP completes | channel ends on arrival (`tp_gone`) |
+| TP cancelled, hero still standing | ends after 6 s at most (`window_over`): no endless hold |
+| Stunned or walked away | ends (`interrupted`, `moved`) |
+| Start missed, or a data gap | no channel assumed / ends (`data_gap`) |
+| Doppelganger, Manta, Wand, BKB during it | held |
+| Glimmer Cape, Shadow Blade | pass (ignore the channel) |
+| A constraint card (nothing to press) | passes |
+| An escape item with HP falling fast | passes (danger observed) |
+| «Step back» with HP falling fast | held: walking cancels the TP taking him out |
+
+Ability channels (Black Hole, Freezing Field…) are not recognised.
+
+### 4. Fight result (`after_fight` in live_plan.py)
+
+The team score counts kills anywhere on the map, so it is no longer read as
+the local result: the plan reads the player's own counters (kills + assists,
+deaths) over the fight; the team score is kept only as `team_interval`
+(labelled, map-wide), a data gap > 10 s drops the fight, a later tower fall is
+never evidence. Tower step: ≥ 2 kills taken part in, a steady ally and an
+enemy tower in reach (each checked on its own); else at ≤ 50 % HP: recover.
+
+Counterexample (test): two fights elsewhere put the team 4 kills up while the
+player, next to a tower with an ally, took part in none: no tower card; at
+low HP the plan is to recover. Fails on 0.60.0 (it planned the tower).
+
+Replays: PL 24:34 «Fight over, 43 % HP — you took part in 4 kills» (team
+interval 5-1); PL 32:17 «You took part in 6 kills: their T3 mid is in reach»
+(team interval 6-0; the 0.60.0 text «Fight won 6–0» read the team score, and
+the «tower fell 17 s later» proved nothing about the card). New: Jugg 00:08
+and TB 25:41 «Fight over, 23 % / 45 % HP — recover» with no kill taken part in
+(0.60.0 needed a score change).
+
+### 5. Major items received (`live_plan.py`)
+
+Stages kept apart: stash (bought), backpack or recipe not assembled
+(delivered, not usable), main slots (carried), ready (cooldown 0, saves only).
+Each receipt reassesses the current plan (`reassessment` rows in the audit):
+the delivery plan of that item ends or changes its step; any other plan stays;
+the effect is named only for a save tool, otherwise `unknown`; no item makes
+«go fight». Being passive no longer excludes an item from the delivery plan.
+
+| Case (test) | Result |
+| --- | --- |
+| Manta delivered into a full inventory, left in the backpack 10 s | next step changes: «swap it into the main slots» (fails on 0.60.0) |
+| Assembled in the main slots | delivery plan done, no new card |
+| Recipe delivered, not assembled | ends as such, no claim about the missing part |
+| Skadi in the stash 30 s | delivery card without a «press» claim (fails on 0.60.0) |
+| Skadi received in the Aegis window | plan kept, no card, effect unknown |
+| Manta / Aghanim's with no plan | recorded, no card |
+| First snapshot, a missing items block, a slot empty for one snapshot | no receipt |
+
+PL replay: Manta 16:14 (carried, ready, no plan, no card), Aghanim's 23:08
+(effect unknown, no plan, no card; a one-snapshot empty slot at 24:09 no longer
+counts as a second receipt), Skadi 29:04 inside the Aegis window from 28:51
+(plan kept, no card), Bloodthorn 33:41 (no plan). No backpack case in the
+three recordings: the backpack step is covered by tests only.
+
+### Load, repeats, withdrawals (0.60.0 → 0.60.1)
+
+| | PL | Jugg | TB |
+| --- | --- | --- | --- |
+| New advice cards | 36 → 37 | 55 → 57 | 35 → 35 |
+| Disable cards | 6 → 8 | 8 → 10 | 2 → 3 |
+| Withdrawn while held | 20 → 18 | 22 → 18 | 14 → 12 |
+| Same card again within 20 s | 0 | 0 | 0 |
+| Most cards in any 60 s | 6 | 4 | 4 |
+
+Costs seen: PL 24:53 «Use Doppelganger now to get out» is gone (the
+per-minute quota, 2, was used by the 23:51-23:54 cards; OVERSTAY_WARNING does
+not bypass it), TB 25:05 «avoid risky trades until Sunder is ready» is held
+by the shared cooldown after the new 24:50 card. The added disable cards are
+the earlier ones above. A count of cards says nothing by itself.
 
 ## 0.60.0: the Phantom Lancer recording, rules re-audited
 
@@ -48,7 +240,7 @@ as they were written (that version did not have the recording).
 | 12:30 | Wand + leave, 16 charges | Use Doppelganger now to get out, then Magic Wand | 0.59 had lost the Wand; it is named with the escape |
 | 14:20 | Reset before another lane, -32 % | kept | kept |
 | 16:50 | Keep farming: 422 GPM | nothing | filler (a statistic, no decision) |
-| 18:10 | Manta after the disable | 18:11 Use Manta Style now: it removes the silence | the status at 18:11 is a silence: Manta is pressable now (pressed 0.0 s after) |
+| 18:10 | Manta after the disable | 18:11 Use Manta Style now: it removes the silence | the status at 18:11 is a silence: Manta is pressable now (0.60.1: the recorded use came 0.55-0.81 s after, in the snapshot the silence ended) |
 | 18:13 | Wand + leave, 20 charges | Use Magic Wand now, then step back | kept (0.59 had lost it) |
 | 18:33 | Two deaths in the jungle by the river | Use the respawn time to choose a safer route | 6.7k units apart: no repeated-place claim |
 | 19:21 | Manta after the disable (own W) | nothing | own phase (Doppelganger, 0.5 s, no HP lost) |
@@ -65,14 +257,16 @@ as they were written (that version did not have the recording).
 
 Cards the current code adds in that match (no logged card of the family
 within 10 s): post-disable cards at 05:17, 07:18, 09:14 and 12:40 (each a
-real stun with HP falling to 7-51 %; Doppelganger pressed 0.5 s after at
-09:14 and 12:40),
+real stun with HP falling to 7-51 %; corrected in 0.60.1: the recorded
+Doppelganger use came 2.33-2.86 s after the 09:14 card and 1.65-2.18 s after
+the 12:40 one),
 readiness at 18:17, 31:36, 33:14, the TP cards at 20:33 and 26:53, the kill
 lead at 29:53, and a buyback card at 33:52 (Aegis gone, 1160/2066). Plan
 cards (map hints): 06:35 «+1 last hit from 5:05 to 6:35, HP down to 12 %, 2
 enemies around you», 24:34 «Fight over 5–1, 43 % HP», 28:51 «Aegis until
 33:51, 3 allies with you», 32:17 «Fight won 6–0: their T3 in the mid lane»
-(the tower fell 17 s later). Withdrawn while held: 20 cards (7 superseded by
+(0.60.1: the 5–1 and 6–0 were the map-wide team score, not this fight's
+result, and a later tower fall is no evidence; see the 0.60.1 section). Withdrawn while held: 20 cards (7 superseded by
 a fight, 6 action done, 3 recovered, 2 respawned, 1 cannot act now, 1 life
 lost). Cards in the match: 39 in 0.59.0, 36 now (a count says nothing by
 itself; the table above is the check).
@@ -80,7 +274,9 @@ itself; the table above is the check).
 Disable cards in this match, 0.59.0 → 0.60.0: 13 → 6. The 7 removed were
 short stuns (0.6-1.6 s) at 80-94 % HP losing 0-13 % with nothing after
 them. The 6 kept all had HP at 7-51 % around the stun or 29-60 % lost in it;
-in 4 of them the named tool was pressed 0-0.5 s after the stun. An
+(0.60.1: the «pressed 0-0.5 s after the stun» claim measured from the
+status end; recomputed from the card, the recorded uses came 0.50-4.81 s
+after, see the 0.60.1 table). An
 intermediate build lost the 09:14 one: the danger gate correctly waited for
 HP to drop, and then the same-action game-time spacing (meant for coaching
 repeats) held it 116 s after the 07:18 card; disable cards are now exempt
@@ -113,13 +309,16 @@ starts, that is when the best action changes.
 | Plan | Starts when | Next step | Ends when | Not done (and why) |
 | --- | --- | --- | --- | --- |
 | `lane_recover` | a core, 3:00-10:00, ≤ 1 last hit in 90 s alive, HP ≤ 50 % or 2+ enemies within 1600 | the tower's last hits, ask a support | 3 last hits in a minute (done), laning over, death | no «go to the jungle»: GSI shows neither the creep equilibrium nor whether the hero clears camps at its level (both named in `basis.unknown`) |
-| `deliver_item` | an active item (`SAVERS`) or its recipe 30 s in the stash, alive | the courier | out of the stash, 3 min | passive or stat items (Skadi, an Aghanim's that changes no press) start nothing |
-| `after_fight` | no enemy within 2500 for 6 s after one was (within 30 s), the kill score moved | won ≥ 2 kills with a steady ally and an enemy tower within 3000: the tower; else at ≤ 50 % HP: recover | tower down, HP back to 80 %, 45 s, enemies back in number, death | no result from missing markers; the score counts kills anywhere on the map, so a fight's tally can include a kill elsewhere |
+| `deliver_item` | a major item (a save or a completed build item) or its recipe 30 s in the stash, alive (0.60.1: passive items included); delivered into the backpack and left there 10 s | the courier; then «swap it into the main slots» | in the main slots, 3 min, the item gone | 0.60.0 excluded passive and stat items; the effect of a non-save item is not claimed |
+| `after_fight` | no enemy within 2500 for 6 s after one was (within 30 s) | 0.60.1: ≥ 2 kills taken part in (own kills + assists) with a steady ally and an enemy tower within 3000: the tower; else at ≤ 50 % HP: recover | tower down, HP back to 80 %, 45 s, enemies back in number, death | no result from missing markers; 0.60.0 read the team score, which counts kills anywhere on the map: now only a labelled `team_interval` |
 | `aegis_window` | the Aegis picked up with its timer known (≥ 60 s) | with steady allies: the next tower or objective; alone: group up | the Aegis gone | a second life after its revive is the readiness card's |
 
 TP channel: GSI has no channel flag; a TP whose cooldown just started with the
 hero standing (≤ 150 units, ≤ 4 s) is channelling (`teleporting`). Cards that
-name no tool, urgent or not, wait; a card naming a tool still passes.
+name no tool, urgent or not, wait; a card naming a tool still passes. (0.60.1:
+replaced by `channel_rules.py`, which decides from the card's tool and Valve's
+channel-ignoring items, and lets a breaking tool through only with danger
+observed; see the 0.60.1 section.)
 
 ### Hero and mechanic coverage (0.60.0)
 
@@ -145,7 +344,7 @@ was read against the mechanic, no test), **unchecked** (nothing yet).
 | Clones, linked units | Meepo, Arc Warden, Lone Druid | — | own clone on the minimap is no ally | Spirit Bear, Meepo linked death: unchecked | main hero only; counter decides |
 | Illusions | PL, Naga, TB | PL (illusions not in GSI) | — | limit | no illusion micro advice |
 | Ability swaps, refresh | Rubick, Invoker, Refresher | — | swapped-in spell on cooldown is no cast; refresh is no cast | Morphling morph: review | casts only from ready → running |
-| Channels | TP, Black Hole, Freezing Field | — | TP channel seen (cooldown start + standing); no-tool cards wait | ability channels: unchecked (no flag, no cooldown shape) | `teleporting` holds move cards |
+| Channels | TP, Black Hole, Freezing Field | — | TP channel inferred (cooldown start + standing), its end (arrival, interrupt, move, gap, 6 s); each action's effect on it (channel_rules) | ability channels: unchecked (no flag, no cooldown shape) | an action that breaks the assumed TP waits, unless it names a tool and danger is observed |
 | Global travel | Nature's Prophet | — | (0.59) | Io, Underlord: review | Teleportation replaces the TP card |
 | Roles | core / support | PL offlane, Jugg, TB | support gets no lane plan | — | lane plan only for cores |
 
@@ -165,10 +364,10 @@ around it, whether the named tool was pressed within 5 s after it.
 | Withdrawn while held | 19 → 22 (7 done, 5 respawned, 4 overtaken by a fight, 3 recovered, 3 cannot act now) | 12 → 14 |
 
 Juggernaut's 8 disable cards: 5 had the life at stake (22:25, 27:21, 32:13,
-39:06, 41:01: HP down to 0-60 % within 5 s; Manta pressed 0-1.8 s after in 3;
-at 39:06 he died 3.1 s into the stun, Manta pressed 3.9 s after, too late; at
-41:01, 48 % lost, nothing pressed). 3 are silences at 92-98 % HP (26:06,
-33:07, 36:38; Manta pressed 0.0 s after only at 36:38): «Use Manta now: it
+39:06, 41:01: HP down to 0-60 % within 5 s; delays as measured
+in 0.60.0, from the status end, superseded by the 0.60.1 table). 3 are silences at 92-98 % HP (26:06,
+33:07, 36:38; Manta used only around 36:38, in the sampling interval of the
+card: order unknown): «Use Manta now: it
 removes the silence» is a press-now card, not a post-disable one, and is kept
 on purpose (the dispel gives Blade Fury, his escape, back; the danger gate
 covers only the post-disable wording); 2 of 3 unused is the open question for

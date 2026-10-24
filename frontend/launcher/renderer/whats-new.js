@@ -9,6 +9,12 @@
 
   const TEXT = {
     en: {
+      "0.60.1": [
+        "A disable with enemies on you is warned at once: «the moment the disable ends, use X» also comes at high HP when the enemy disable is confirmed and two enemy heroes are in sight, or one with no ally staying next to you. Your own phases and statuses of unknown origin still get no order.",
+        "During a TP an item that does not break the channel (Glimmer Cape, Shadow Blade, Blade Mail, Phase Boots and the others Valve marks so) is no longer held back; a spell, another item or a step back waits until the TP is over, unless HP is falling fast. A cancelled TP holds nothing for long.",
+        "After a fight Wardly reads your own kills, assists and deaths, not the team score, which counts kills anywhere on the map: «You took part in 3 kills: their T2 in the mid lane is in reach».",
+        "Big items: a passive one waiting in the stash (Skadi, Aghanim's) is no longer skipped, and an item left in the backpack gets «swap it into the main slots». A new item never turns into «go fight»."
+      ],
       "0.60.0": [
         "A short plan instead of separate cards: one near-term goal with what it rests on, the next step, and when it is done or called off. It changes only when the best action changes: a lane that gives nothing («+1 last hit from 5:05 to 6:35, HP down to 12%»: the tower's last hits and a support, not an automatic jungle), an active item waiting in the stash, a fight that is over (from the score, never from enemies leaving the minimap: «hit their tower now» with the team, or recover), the Aegis with the team until when it lasts.",
         "Deaths and revives by observation: a life lost without the counter rising is «not known yet» until the game shows a late counter (a death), a stand-up on the spot with the Aegis or Reincarnation (a revive) or a return at the fountain (a death the counter missed, never counted twice). Several deaths at one spot with allies or at an objective are no longer «change your route».",
@@ -578,6 +584,12 @@
       ]
     },
     uk: {
+      "0.60.1": [
+        "Контроль, коли на вас вороги, — одразу: «щойно контроль закінчиться, натисніть X» приходить і на високому HP, коли ворожий контроль підтверджено і видно двох ворожих героїв або одного, а союзника поруч немає. Ваші власні фази й стани невідомого походження й далі наказу не дають.",
+        "Під час телепорту предмет, що не перериває його (Glimmer Cape, Shadow Blade, Blade Mail, Phase Boots та інші, які так позначає Valve), більше не затримується; закляття, інший предмет чи «відійдіть» чекають кінця ТП, якщо HP не падає швидко. Скасований ТП нічого довго не тримає.",
+        "Після бійки Wardly дивиться на ваші вбивства, допомоги й смерті, а не на рахунок команди, у якому вбивства по всій карті: «Ви взяли участь у 3 вбивствах: їхня T2 на міді поруч».",
+        "Великі предмети: пасивний у схованці (Skadi, Aghanim's) більше не пропускається, а предмет, що лишився в рюкзаку, — «перекладіть в основні слоти». Новий предмет ніколи не означає «йдіть битися»."
+      ],
       "0.60.0": [
         "Короткий план замість окремих карток: одна найближча мета — на чому стоїть, наступний крок, коли виконана чи скасована. Змінюється лише тоді, коли змінюється найкраща дія: лінія не дає нічого («+1 добивання з 5:05 до 6:35, HP падало до 12%»: добивати біля вежі й кликати саппорта, а не автоматично ліс), активний предмет чекає в схованці, бійка скінчилась (за рахунком, а не за тим, що вороги зникли з мінікарти: «бийте їхню вежу зараз» з командою або відновіться), Aegis з командою — до котрої хвилини він діє.",
         "Смерть і воскресіння за спостереженнями: втрачене життя без зростання лічильника — «ще невідомо», доки гра не покаже лічильник, що запізнився (смерть), підйом на місці з Aegis чи Reincarnation (воскресіння) чи появу біля фонтану (смерть, яку лічильник не показав; двічі не рахується). Кілька смертей в одній точці з союзниками чи біля цілі більше не «змініть маршрут».",
