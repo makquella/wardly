@@ -17,7 +17,7 @@
     "test": "node --test test/steam-locator.test.js test/overlay-visibility.test.js test/overlay-placement.test.js test/dota-watcher.test.js test/updater.test.js test/problem-report.test.js test/voice.test.js test/i18n.test.js test/whats-new.test.js test/app-texts.test.js test/match-texts.test.js test/match-contract.test.js test/finding-evidence.test.js test/match-navigation.test.js test/match-requests.test.js test/match-list-requests.test.js test/career-requests.test.js test/player-status-requests.test.js test/profile-requests.test.js test/dota-assets.test.js test/dota-icons.test.js test/history-transfer.test.js test/transfer-code.test.js test/discord-presence.test.js test/discord-weekly.test.js test/advice-stats.test.js test/tour.test.js test/package-files.test.js test/gsi-config.test.js test/local-api.test.js test/renderer-security.test.js test/friends.test.js test/skill-arrow-placement.test.js test/settings-search.test.js test/settings.test.js"
   },
   "devDependencies": {
-    "electron": "44.7.0",
+    "electron": "44.9.0",
     "electron-builder": "26.17.0"
   },
   "build": {
