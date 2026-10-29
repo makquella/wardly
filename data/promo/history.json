@@ -82,5 +82,12 @@
   "format": "meta",
   "topic": "2026-10-10",
   "hook": 2
+ },
+ {
+  "id": "702602e48850aae4",
+  "date": "2026-10-29",
+  "format": "coach",
+  "topic": "drow_ranger",
+  "hook": 0
  }
 ]
