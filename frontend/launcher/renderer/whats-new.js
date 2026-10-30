@@ -9,6 +9,9 @@
 
   const TEXT = {
     en: {
+      "0.60.2": [
+        "A second stun that is already costing HP gets its «the moment the disable ends, use X» card even right after an earlier one: an early warning no longer holds the next card back. The early warning itself now needs two enemy heroes in sight; one enemy at high HP waits for the damage, as before 0.60.1."
+      ],
       "0.60.1": [
         "A disable with enemies on you is warned at once: «the moment the disable ends, use X» also comes at high HP when the enemy disable is confirmed and two enemy heroes are in sight, or one with no ally staying next to you. Your own phases and statuses of unknown origin still get no order.",
         "During a TP an item that does not break the channel (Glimmer Cape, Shadow Blade, Blade Mail, Phase Boots and the others Valve marks so) is no longer held back; a spell, another item or a step back waits until the TP is over, unless HP is falling fast. A cancelled TP holds nothing for long.",
@@ -584,6 +587,9 @@
       ]
     },
     uk: {
+      "0.60.2": [
+        "Друге оглушення, що вже забирає HP, отримує свою картку «щойно контроль закінчиться, натисніть X» навіть одразу після попередньої: раннє попередження більше не затримує наступну картку. Саме раннє попередження тепер потребує двох видимих ворожих героїв; один ворог на високому HP, як і до 0.60.1, чекає шкоди."
+      ],
       "0.60.1": [
         "Контроль, коли на вас вороги, — одразу: «щойно контроль закінчиться, натисніть X» приходить і на високому HP, коли ворожий контроль підтверджено і видно двох ворожих героїв або одного, а союзника поруч немає. Ваші власні фази й стани невідомого походження й далі наказу не дають.",
         "Під час телепорту предмет, що не перериває його (Glimmer Cape, Shadow Blade, Blade Mail, Phase Boots та інші, які так позначає Valve), більше не затримується; закляття, інший предмет чи «відійдіть» чекають кінця ТП, якщо HP не падає швидко. Скасований ТП нічого довго не тримає.",

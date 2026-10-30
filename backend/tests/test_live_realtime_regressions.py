@@ -451,11 +451,45 @@ def test_caught_at_high_hp_by_visible_enemies_gets_the_card_before_half_hp(clien
     assert _disable_cards(client, clock, stun) == ["The moment the disable ends, use Manta Style."]
 
 
-def test_one_visible_enemy_next_to_a_lone_hero_is_a_threat(client, clock):
+def test_one_visible_enemy_next_to_a_lone_hero_waits_for_damage(client, clock):
+    # 0.60.1 counted one enemy when no ally stayed: on two later recordings
+    # (Jugg 9061316351, AM 9061396945) it gave 5 cards at 85-100 % HP, none
+    # followed by danger within 5 s. Removed; damage still brings the card.
     lone = _enemies_near("lion")
     feed(client, clock, _calm(1500, 3, minimap=lone))
     stun = [gsi(1503, stunned=True, debuff=True, hp=1300, minimap=lone)] * 3
-    assert _disable_cards(client, clock, stun)
+    assert _disable_cards(client, clock, stun) == []
+    hit = [gsi(1505, stunned=True, debuff=True, hp=1000, minimap=lone)] * 2
+    assert _disable_cards(client, clock, hit) == ["The moment the disable ends, use Manta Style."]
+
+
+def _gank_then_second_stun(client, clock, second_hp: int) -> list[str]:
+    # AM 34:39 / 34:51: an early card for a stun at full HP with enemies in
+    # sight; Manta used; 12 s later a new stun.
+    gank = _enemies_near("lion", "juggernaut")
+    feed(client, clock, _calm(1500, 3, minimap=gank))
+    first = _disable_cards(
+        client, clock, [gsi(1503, stunned=True, debuff=True, hp=1380, minimap=gank)] * 2
+    )
+    used = _items(slot0=manta(40), slot1=wand(8))
+    feed(client, clock, _calm(1504, 11, minimap=gank, items=used))
+    second = [gsi(1515, stunned=True, debuff=True, hp=second_hp, minimap=gank, items=used)] * 3
+    return first + _disable_cards(client, clock, second)
+
+
+def test_an_early_disable_card_does_not_hold_back_the_next_stun_that_costs_hp(client, clock):
+    cards = _gank_then_second_stun(client, clock, second_hp=640)
+    assert cards == [
+        "The moment the disable ends, use Manta Style.",
+        "The moment the disable ends, use Doppelganger.",
+    ]
+
+
+def test_a_second_stun_with_no_damage_stays_behind_the_card_cooldown(client, clock):
+    # Counterexample: the new stun costs nothing yet; the cooldown still
+    # spaces the cards (the gate opens for damage, not for any new stun).
+    cards = _gank_then_second_stun(client, clock, second_hp=1380)
+    assert cards == ["The moment the disable ends, use Manta Style."]
 
 
 def test_one_visible_enemy_with_an_ally_staying_next_to_the_hero_waits_for_damage(client, clock):

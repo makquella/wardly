@@ -648,39 +648,50 @@ def disabled_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str]
 # stake, from what this snapshot shows (never from what came after it):
 # - HP at or below DISABLE_DANGER_HP_SHARE of max, or DISABLE_DANGER_LOST_SHARE
 #   of max lost since its onset (status_source `hp_lost_share`, measured from
-#   the snapshot before it): the damage is already landing;
+#   the snapshot before it): the damage is already landing
+#   (disable_damage_shown);
 # - or a confirmed threat before the damage: an enemy disable classified with
-#   high confidence (a debuff that appeared, or HP lost) and enemy heroes
-#   visible next to the hero on this snapshot's minimap: THREAT_ENEMIES of
-#   them, or one when no ally stays next to the hero (team_context). Caught by
-#   a gank, the burst comes after the stun starts; nothing is assumed about
-#   enemies the minimap does not show, the burst or the stun's length.
+#   high confidence (a debuff that appeared, or HP lost) and THREAT_ENEMIES or
+#   more enemy heroes visible next to the hero on this snapshot's minimap.
+#   Caught by a gank, the burst comes after the stun starts; nothing is
+#   assumed about enemies the minimap does not show, the burst or the stun's
+#   length.
 # The HP marks are a noise filter: a control at high HP with nobody in sight
 # (a lane harass, a stray stun) asks for no defensive item. They were set on
 # one recording (Phantom Lancer, 9054793282) and checked on two more
-# (Juggernaut, Terrorblade); no independent set of recordings was available.
+# (Juggernaut 9042382595, Terrorblade 9042342539). 0.60.1 also let one
+# visible enemy count when no ally stayed next to the hero; on two later
+# recordings (Juggernaut 9061316351, Anti-Mage 9061396945, not used to set
+# anything before) that branch gave 5 cards at 85-100 % HP, none followed by
+# a death or HP under 60 % within 5 s, and one of them held back, by the
+# card cooldown, the card of a later stun he died in. It is gone; those two
+# recordings are no longer an independent check of this rule.
 # Checked again every snapshot of the status.
 DISABLE_DANGER_HP_SHARE = 0.50
 DISABLE_DANGER_LOST_SHARE = 0.15
 THREAT_ENEMIES = 2
 
 
-def _disable_endangers(extra: Mapping[str, Any]) -> bool:
+def disable_damage_shown(extra: Mapping[str, Any]) -> bool:
+    """The disable is already costing HP on this snapshot (or HP is unknown,
+    the legacy card): at or under the HP mark, or the share lost in it."""
     health, max_health = _number(extra.get("health")), _number(extra.get("max_health"))
     if health is None or not max_health:
-        return True  # unknown HP: the legacy card
+        return True
     if health / max_health <= DISABLE_DANGER_HP_SHARE:
         return True
     source = extra.get("status_source")
     lost = _number(source.get("hp_lost_share")) if isinstance(source, Mapping) else None
-    if lost is not None and lost >= DISABLE_DANGER_LOST_SHARE:
-        return True
-    return _confirmed_threat(extra)
+    return lost is not None and lost >= DISABLE_DANGER_LOST_SHARE
+
+
+def _disable_endangers(extra: Mapping[str, Any]) -> bool:
+    return disable_damage_shown(extra) or _confirmed_threat(extra)
 
 
 def _confirmed_threat(extra: Mapping[str, Any]) -> bool:
-    """An enemy disable sure to be one (high confidence) with enemy heroes
-    visible next to the hero now (see DISABLE_DANGER_HP_SHARE)."""
+    """An enemy disable sure to be one (high confidence) with THREAT_ENEMIES
+    enemy heroes visible next to the hero now (see DISABLE_DANGER_HP_SHARE)."""
     source = extra.get("status_source")
     if (
         not isinstance(source, Mapping)
@@ -688,10 +699,7 @@ def _confirmed_threat(extra: Mapping[str, Any]) -> bool:
         or source.get("confidence") != "high"
     ):
         return False
-    enemies = visible_enemies_near(extra)
-    if not enemies:
-        return False
-    return len(enemies) >= THREAT_ENEMIES or not steady_allies(extra)
+    return len(visible_enemies_near(extra)) >= THREAT_ENEMIES
 
 
 ZONES = {"top": "top lane", "mid": "mid lane", "bot": "bottom lane", "jungle": "jungle"}

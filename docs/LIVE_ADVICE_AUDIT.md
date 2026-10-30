@@ -1,8 +1,59 @@
-# Live advice audit (0.59.0, re-audited in 0.60.0 and 0.60.1)
+# Live advice audit (0.59.0, re-audited in 0.60.0, 0.60.1 and 0.60.2)
 
 Audit of the realtime coach against a review of match `9054793282` (Phantom
 Lancer, 28 logged cards) and two other real recordings. What was changed, which
 causes are confirmed, what stays open, and how to re-run the check.
+
+## 0.60.2: two held-out recordings
+
+Juggernaut `9061316351` (27 min, 3572 snapshots) and Anti-Mage `9061396945`
+(41 min, 5212 snapshots), recorded by 0.58, were the first recordings not
+used to set any rule. Both replayed on 0.60.0, 0.60.1 and 0.60.2 with
+`--audit`; every blocking-status episode was listed offline with HP before
+it, HP lost in it, the lowest HP within 5 s after it and whether he died
+(this reads the future and serves only to judge the rules). 4 episodes in
+the Juggernaut match, 29 in the Anti-Mage one.
+
+What 0.60.1 did on them, against 0.60.0:
+
+- The confirmed-threat rule added 7 disable cards (Jugg 17:35, 18:56, 24:30;
+  AM 11:32, 27:59, 34:39, 39:30), all at 77-100 % HP; none was followed by a
+  death or HP under 60 % within 5 s (lowest 64-86 %). 5 of the 7 came from
+  the «one enemy, no ally staying» branch, which never fired on the three
+  tuning recordings.
+- AM 34:51 (64 % HP, 26 % lost in the stun, five enemies around, died): 0.60.0
+  showed «the moment the disable ends, use Blink»; 0.60.1 showed nothing. The
+  34:39 card (100 % HP, one enemy) had started the disable card cooldown and
+  held this one back (`cooldown`).
+- The episodes he died in or nearly did with no disable card in any version
+  (AM 04:27, 07:09, 17:30, 29:59, 38:42) had nothing ready to press (Blink
+  and Manta on cooldown); the low-HP card came when the stun ended.
+- Silence after a stun (`can_act_now`) once; no backpack case; item receipts
+  (Battle Fury, Manta, Butterfly, Aghanim's, Skadi, Abyssal) changed no plan;
+  fight plans rest on own kills (tower plans at Jugg 24:59 with 2 taken part
+  in, AM 39:05 with 4), 7 recover plans at 25-44 % HP.
+
+0.60.2:
+
+- The «one enemy» branch is gone: the threat rule needs two enemy heroes in
+  sight (`test_one_visible_enemy_next_to_a_lone_hero_waits_for_damage`).
+- A disable card for a new status episode that already shows damage
+  (`live_tools.disable_damage_shown`: HP ≤ 50 % or ≥ 15 % lost in it) passes
+  the type cooldown and duplicate gates an earlier disable card left
+  (`test_an_early_disable_card_does_not_hold_back_the_next_stun_that_costs_hp`
+  fails without it; `…second_stun_with_no_damage…` is the invariant that the
+  gate opens for damage only).
+
+On 0.60.2: AM 34:51 has its card again (the recorded Blink use lies 0.81-1.39 s
+after it); the 18:56, 27:59 and 34:39 cards are gone; Jugg 17:35 comes 2.0 s
+into the stun instead of 0.9 s, AM 11:32 1.1 s in (15 % lost), and Jugg
+24:30 and AM 39:30 (two enemies) stay. Cards: Jugg 23 → 25 → 24, AM 59 → 61
+→ 58 (0.60.0 → 0.60.1 → 0.60.2); no card repeated within 20 s; at most 4
+in any 60 s. Recorded uses after tool cards: Jugg 5 of 14 within the
+episode, AM 9 of 16 (4 died before any use).
+
+These two recordings informed 0.60.2, so they are no longer a held-out check
+of the threat rule; the next recordings are.
 
 ## 0.60.1: replay check corrected, five behaviours re-checked
 

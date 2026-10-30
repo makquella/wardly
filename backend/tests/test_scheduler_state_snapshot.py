@@ -108,6 +108,7 @@ _BASELINE: dict[str, object] = {
     },
     "_withdrawn_until": "2026-01-01T00:03:20+00:00",
     "_overtaken_type": None,
+    "_disable_card_since": None,
     "withdrawn_count": 1,
     "no_new_decision_count": 0,
     "_advice_game_time_gaps_seconds": [0.0],

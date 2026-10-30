@@ -55,6 +55,7 @@ from app.laning_coach import (
     build_laning_advice,
     important_laning_context_changed,
 )
+from app.live_tools import disable_damage_shown
 from app.llm_provider import generate_llm_recommendation, is_llm_provider_enabled
 from app.post_laning_coach import (
     OBJECTIVE_REPEAT_WINDOW_SECONDS,
@@ -449,6 +450,7 @@ class AdviceScheduler:
         cooldown_remaining: int,
         state_hash: str,
         tactical_hash: str,
+        gates_open: bool = False,
     ) -> ScheduledAdvice | None:
         # Phase 4B extract (S3): duplicate gate. Runs under the evaluate lock.
         # cooldown_remaining is hoisted into evaluate (unconditional pure read,
@@ -456,10 +458,7 @@ class AdviceScheduler:
         # S2/S4/S5/S6 (all return a bare ScheduledAdvice | None). On a duplicate
         # it keeps an active advice visible or returns a cooldown result; None
         # to fall through. Early-return preserved.
-        duplicate = (
-            self.state._last_advice_state_hash == state_hash
-            and decision_point != self.state._overtaken_type
-        )
+        duplicate = self.state._last_advice_state_hash == state_hash and not gates_open
         if duplicate:
             self.state.duplicate_suppressed_count += 1
             suppressed_reason = (
@@ -695,7 +694,7 @@ class AdviceScheduler:
             now=current_time,
             action_type=policy["action_type"],
             moment=self._readiness_moment_locked(decision_point, state) is not None,
-            overtaken=decision_point == self.state._overtaken_type,
+            overtaken=self._type_gates_open_locked(decision_point, state),
         )
         if ux_result["recommendation"] is None:
             reason = ux_result["suppressed_reason"] or "cooldown"
@@ -982,9 +981,10 @@ class AdviceScheduler:
             if _no_advice is not None:
                 return _no_advice
 
+            gates_open = self._type_gates_open_locked(decision_point, state)
             cooldown_remaining = (
                 0
-                if self._readiness_moment_locked(decision_point, state) is not None
+                if gates_open or self._readiness_moment_locked(decision_point, state) is not None
                 else self._cooldown_remaining_locked(
                     decision_point,
                     current_time,
@@ -997,6 +997,7 @@ class AdviceScheduler:
                 cooldown_remaining=cooldown_remaining,
                 state_hash=state_hash,
                 tactical_hash=tactical_hash,
+                gates_open=gates_open,
             )
             if _duplicate is not None:
                 return _duplicate
@@ -1848,6 +1849,33 @@ class AdviceScheduler:
         self.state._withdrawn = None
         self.state._withdrawn_until = None
         self.state._overtaken_type = None
+        if decision_point == "DISABLED_STATUS":
+            source = (state.get("extra_context") or {}).get("status_source")
+            self.state._disable_card_since = (
+                source.get("since") if isinstance(source, dict) else None
+            )
+
+    def _type_gates_open_locked(self, decision_point: str, state: dict[str, Any]) -> bool:
+        """The next card of this type passes its own cooldown and duplicate
+        gates: the last one was overtaken (`can_act_now`), or this is a
+        disable card for a new status episode that already shows damage
+        (live_tools.disable_damage_shown). An earlier disable card, perhaps an
+        early warning with no damage yet, must not hold back the card of the
+        next disable that is costing HP."""
+        if decision_point == self.state._overtaken_type:
+            return True
+        if decision_point != "DISABLED_STATUS":
+            return False
+        extra = state.get("extra_context")
+        if not isinstance(extra, dict):
+            return False
+        source = extra.get("status_source")
+        since = source.get("since") if isinstance(source, dict) else None
+        return (
+            since is not None
+            and since != self.state._disable_card_since
+            and disable_damage_shown(extra)
+        )
 
     def _revalidate_active_locked(self, state: dict[str, Any], now: datetime) -> None:
         """Drop the held card once the snapshot no longer supports it
@@ -2196,7 +2224,7 @@ class AdviceScheduler:
         now: datetime,
         game_time_seconds: float | None,
     ) -> int:
-        if self.state.last_advice_at is None or decision_point == self.state._overtaken_type:
+        if self.state.last_advice_at is None:
             return 0
 
         if (
