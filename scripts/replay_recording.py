@@ -31,7 +31,8 @@ the recording and runs after the replay: it never feeds a decision, and it
 says when the recorded player used the tool, not that a card made them.
 The audit ends with the plan record (live_plan.py): `plan` rows (each plan and
 how it ended) and `reassessment` rows (each major item received and what it
-did to the current plan).
+did to the current plan); and `farm` rows (farm_map.py: each farm target, its
+estimate and how it ended).
 
 The wall time of each payload is replayed through a fake clock (the advice
 scheduler reads datetime.now), so cooldowns hold as in the real match. No
@@ -385,12 +386,21 @@ def main() -> int:
             client.post("/gsi", json=payload)
             # The plan's own record (live_plan.py), kept as it grows (the
             # match memory resets after the game): how each plan ended and
-            # each reassessment after a major item was received.
-            plan = memory_module.MATCH_MEMORY.plan
-            for kind, entries in (("plan", plan.history), ("reassessment", plan.reassessments)):
+            # each reassessment after a major item was received; and each farm
+            # target (farm_map.py) with how it ended.
+            memory = memory_module.MATCH_MEMORY
+            plan = memory.plan
+            for kind, entries in (
+                ("plan", plan.history),
+                ("reassessment", plan.reassessments),
+                ("farm", memory.farm_map.history),
+            ):
                 for entry in list(entries)[-3:]:  # at most a few new per snapshot
                     key = json.dumps([kind, entry], sort_keys=True, default=str)
-                    plan_rows.setdefault(key, {"kind": kind, **entry})
+                    row = {"kind": kind, **entry}
+                    if kind == "farm":  # the target's own kind is wave or camp
+                        row = {**entry, "target": entry.get("kind"), "kind": kind}
+                    plan_rows.setdefault(key, row)
             normalized = normalize_gsi_payload(record["p"])
             snapshots.append(
                 snapshot_row(wall, normalized.get("extra_context") or {}, normalized.get("hero"))

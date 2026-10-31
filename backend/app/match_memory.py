@@ -21,9 +21,11 @@ from app.action_feedback import ActionWatch
 from app.buyback_tracker import BuybackTracker
 from app.enemy_heroes import EnemyHeroes
 from app.enemy_lanes import EnemyLanes
+from app.farm_map import FarmMap
 from app.farm_tracker import FarmTracker
 from app.fight_summary import FightWatch
 from app.gold_tips import GoldTips
+from app.gsi_snapshot import TRANSIENT_KEYS
 from app.hero_gameplay import HeroGameplay
 from app.live_hints import LiveHintInputs, render_live_hints
 from app.live_plan import LivePlan
@@ -235,6 +237,7 @@ class MatchMemory:
         self.actions = ActionWatch()
         self.team = TeamSupport()
         self.plan = LivePlan()
+        self.farm_map = FarmMap()
 
     def observe_state(self, state: dict[str, Any]) -> dict[str, Any]:
         # Roshan/Aegis can need timer settings on the first observed event.
@@ -245,6 +248,9 @@ class MatchMemory:
     @_owned
     def _observe_state(self, state: dict[str, Any]) -> dict[str, Any]:
         self._generation += 1
+        # The minimap creep lists feed the farm tip only: out of every stored
+        # and published copy of the state (up to ~176 entries a payload).
+        farm_view = _pop_farm_view(state)
         now_dt = datetime.now(UTC)
         now = now_dt.isoformat()
         now_ts = now_dt.timestamp()
@@ -373,8 +379,12 @@ class MatchMemory:
         self._annotate_state(state)
         if extra.get("source_type") == "live_gsi" and isinstance(state.get("extra_context"), dict):
             role = self.role.role()
+            role_name = role.get("role") if role else None
             state["extra_context"]["live_plan"] = self.plan.observe(
-                state["extra_context"], role.get("role") if role else None
+                state["extra_context"], role_name
+            )
+            state["extra_context"]["farm_target"] = self.farm_map.observe(
+                {**state["extra_context"], **farm_view}, role_name
             )
         self.gameplay.observe(state)
         return state
@@ -1118,6 +1128,13 @@ def _looks_like_deep_farming_risk(state: Mapping[str, Any]) -> bool:
 def _objective_context(state: Mapping[str, Any]) -> bool:
     context = str(state.get("objective_context") or "").strip().lower()
     return bool(context and context != "unknown")
+
+
+def _pop_farm_view(state: Mapping[str, Any]) -> dict[str, Any]:
+    extra = state.get("extra_context")
+    if not isinstance(extra, dict):
+        return {}
+    return {key: extra.pop(key) for key in TRANSIENT_KEYS if key in extra}
 
 
 def _copy_state(state: Mapping[str, Any]) -> dict[str, Any]:

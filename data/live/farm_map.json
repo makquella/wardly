@@ -1,0 +1,688 @@
+{
+ "source": {
+  "camps": "neutral spawns and idle groups seen on the player's own match recordings (scripts/build_farm_map.py); a camp missing here is unknown, not absent",
+  "units": "Valve unit definitions, a saved copy of dotabuff/d2vpkr master dota/scripts/npc/npc_units.txt (npc_units.txt), read 2026-10-31"
+ },
+ "built": "2026-10-31",
+ "recordings": 2,
+ "camps": [
+  {
+   "x": 13896,
+   "y": 20316,
+   "side": "dire",
+   "ancient": false,
+   "gold": 74,
+   "hp": 2200,
+   "spawns_seen": 4,
+   "idle_seen": 7,
+   "minutes": 9,
+   "recordings": 1,
+   "id": "c01"
+  },
+  {
+   "x": 15537,
+   "y": 21293,
+   "side": "dire",
+   "ancient": false,
+   "gold": 164,
+   "hp": 3750,
+   "spawns_seen": 6,
+   "idle_seen": 20,
+   "minutes": 17,
+   "recordings": 2,
+   "id": "c02"
+  },
+  {
+   "x": 16784,
+   "y": 24032,
+   "side": "dire",
+   "ancient": false,
+   "gold": 98,
+   "hp": 2250,
+   "spawns_seen": 1,
+   "idle_seen": 3,
+   "minutes": 4,
+   "recordings": 1,
+   "id": "c03"
+  },
+  {
+   "x": 17478,
+   "y": 18982,
+   "side": "dire",
+   "ancient": false,
+   "gold": 95,
+   "hp": 1800,
+   "spawns_seen": 8,
+   "idle_seen": 14,
+   "minutes": 13,
+   "recordings": 2,
+   "id": "c04"
+  },
+  {
+   "x": 17622,
+   "y": 20555,
+   "side": "dire",
+   "ancient": false,
+   "gold": 71,
+   "hp": 1800,
+   "spawns_seen": 5,
+   "idle_seen": 15,
+   "minutes": 13,
+   "recordings": 2,
+   "id": "c05"
+  },
+  {
+   "x": 18248,
+   "y": 24197,
+   "side": "dire",
+   "ancient": false,
+   "gold": 74,
+   "hp": 1600,
+   "spawns_seen": 5,
+   "idle_seen": 2,
+   "minutes": 7,
+   "recordings": 1,
+   "id": "c06"
+  },
+  {
+   "x": 19776,
+   "y": 14994,
+   "side": "dire",
+   "ancient": false,
+   "gold": 75,
+   "hp": 1900,
+   "spawns_seen": 3,
+   "idle_seen": 11,
+   "minutes": 12,
+   "recordings": 2,
+   "id": "c07"
+  },
+  {
+   "x": 20713,
+   "y": 16427,
+   "side": "dire",
+   "ancient": true,
+   "gold": 169,
+   "hp": 3300,
+   "spawns_seen": 14,
+   "idle_seen": 14,
+   "minutes": 20,
+   "recordings": 2,
+   "id": "c08"
+  },
+  {
+   "x": 24772,
+   "y": 17638,
+   "side": "dire",
+   "ancient": false,
+   "gold": 68,
+   "hp": 1450,
+   "spawns_seen": 7,
+   "idle_seen": 2,
+   "minutes": 5,
+   "recordings": 2,
+   "id": "c09"
+  },
+  {
+   "x": 11368,
+   "y": 16299,
+   "side": "radiant",
+   "ancient": true,
+   "gold": 158,
+   "hp": 3750,
+   "spawns_seen": 4,
+   "idle_seen": 8,
+   "minutes": 8,
+   "recordings": 2,
+   "id": "c10"
+  },
+  {
+   "x": 12385,
+   "y": 17354,
+   "side": "radiant",
+   "ancient": false,
+   "gold": 74,
+   "hp": 1800,
+   "spawns_seen": 4,
+   "idle_seen": 7,
+   "minutes": 8,
+   "recordings": 2,
+   "id": "c11"
+  },
+  {
+   "x": 12894,
+   "y": 16296,
+   "side": "radiant",
+   "ancient": true,
+   "gold": 245,
+   "hp": 5200,
+   "spawns_seen": 5,
+   "idle_seen": 0,
+   "minutes": 4,
+   "recordings": 1,
+   "id": "c12"
+  },
+  {
+   "x": 16580,
+   "y": 11224,
+   "side": "radiant",
+   "ancient": false,
+   "gold": 147,
+   "hp": 3700,
+   "spawns_seen": 2,
+   "idle_seen": 5,
+   "minutes": 3,
+   "recordings": 1,
+   "id": "c13"
+  },
+  {
+   "x": 18302,
+   "y": 12438,
+   "side": "radiant",
+   "ancient": false,
+   "gold": 78,
+   "hp": 2200,
+   "spawns_seen": 1,
+   "idle_seen": 2,
+   "minutes": 3,
+   "recordings": 1,
+   "id": "c14"
+  },
+  {
+   "x": 19128,
+   "y": 8048,
+   "side": "radiant",
+   "ancient": false,
+   "gold": 79,
+   "hp": 2025,
+   "spawns_seen": 0,
+   "idle_seen": 4,
+   "minutes": 4,
+   "recordings": 2,
+   "id": "c15"
+  },
+  {
+   "x": 20729,
+   "y": 8075,
+   "side": "radiant",
+   "ancient": false,
+   "gold": 74,
+   "hp": 1450,
+   "spawns_seen": 0,
+   "idle_seen": 4,
+   "minutes": 3,
+   "recordings": 2,
+   "id": "c16"
+  },
+  {
+   "x": 11553,
+   "y": 20296,
+   "side": "river",
+   "ancient": false,
+   "gold": 83,
+   "hp": 1775,
+   "spawns_seen": 3,
+   "idle_seen": 7,
+   "minutes": 10,
+   "recordings": 2,
+   "id": "c17"
+  },
+  {
+   "x": 12455,
+   "y": 21254,
+   "side": "river",
+   "ancient": false,
+   "gold": 40,
+   "hp": 1060,
+   "spawns_seen": 3,
+   "idle_seen": 6,
+   "minutes": 7,
+   "recordings": 2,
+   "id": "c18"
+  },
+  {
+   "x": 20356,
+   "y": 11352,
+   "side": "river",
+   "ancient": false,
+   "gold": 58,
+   "hp": 1422,
+   "spawns_seen": 7,
+   "idle_seen": 6,
+   "minutes": 11,
+   "recordings": 2,
+   "id": "c19"
+  },
+  {
+   "x": 21049,
+   "y": 12683,
+   "side": "river",
+   "ancient": false,
+   "gold": 95,
+   "hp": 1650,
+   "spawns_seen": 4,
+   "idle_seen": 7,
+   "minutes": 9,
+   "recordings": 2,
+   "id": "c20"
+  }
+ ],
+ "units": {
+  "npc_dota_creep_goodguys_flagbearer": {
+   "bounty": [
+    34,
+    39
+   ],
+   "hp": 550,
+   "ancient": false
+  },
+  "npc_dota_creep_goodguys_melee": {
+   "bounty": [
+    34,
+    39
+   ],
+   "hp": 550,
+   "ancient": false
+  },
+  "npc_dota_creep_goodguys_ranged": {
+   "bounty": [
+    43,
+    52
+   ],
+   "hp": 300,
+   "ancient": false
+  },
+  "npc_dota_goodguys_siege": {
+   "bounty": [
+    59,
+    72
+   ],
+   "hp": 935,
+   "ancient": false
+  },
+  "npc_dota_neutral_alpha_wolf": {
+   "bounty": [
+    32,
+    34
+   ],
+   "hp": 600,
+   "ancient": false
+  },
+  "npc_dota_neutral_ancient_frog": {
+   "bounty": [
+    53,
+    56
+   ],
+   "hp": 1250,
+   "ancient": true
+  },
+  "npc_dota_neutral_ancient_frog_mage": {
+   "bounty": [
+    53,
+    56
+   ],
+   "hp": 1250,
+   "ancient": true
+  },
+  "npc_dota_neutral_big_thunder_lizard": {
+   "bounty": [
+    76,
+    80
+   ],
+   "hp": 1700,
+   "ancient": true
+  },
+  "npc_dota_neutral_black_dragon": {
+   "bounty": [
+    76,
+    80
+   ],
+   "hp": 2000,
+   "ancient": true
+  },
+  "npc_dota_neutral_black_drake": {
+   "bounty": [
+    37,
+    43
+   ],
+   "hp": 950,
+   "ancient": true
+  },
+  "npc_dota_neutral_centaur_khan": {
+   "bounty": [
+    54,
+    60
+   ],
+   "hp": 1100,
+   "ancient": false
+  },
+  "npc_dota_neutral_centaur_outrunner": {
+   "bounty": [
+    16,
+    18
+   ],
+   "hp": 350,
+   "ancient": false
+  },
+  "npc_dota_neutral_dark_troll": {
+   "bounty": [
+    17,
+    19
+   ],
+   "hp": 500,
+   "ancient": false
+  },
+  "npc_dota_neutral_dark_troll_warlord": {
+   "bounty": [
+    40,
+    46
+   ],
+   "hp": 1100,
+   "ancient": false
+  },
+  "npc_dota_neutral_elder_jungle_stalker": {
+   "bounty": [
+    108,
+    121
+   ],
+   "hp": 2000,
+   "ancient": true
+  },
+  "npc_dota_neutral_enraged_wildkin": {
+   "bounty": [
+    58,
+    64
+   ],
+   "hp": 950,
+   "ancient": false
+  },
+  "npc_dota_neutral_fel_beast": {
+   "bounty": [
+    16,
+    18
+   ],
+   "hp": 400,
+   "ancient": false
+  },
+  "npc_dota_neutral_forest_troll_berserker": {
+   "bounty": [
+    18,
+    20
+   ],
+   "hp": 500,
+   "ancient": false
+  },
+  "npc_dota_neutral_forest_troll_high_priest": {
+   "bounty": [
+    18,
+    20
+   ],
+   "hp": 450,
+   "ancient": false
+  },
+  "npc_dota_neutral_froglet": {
+   "bounty": [
+    25,
+    29
+   ],
+   "hp": 700,
+   "ancient": false
+  },
+  "npc_dota_neutral_froglet_mage": {
+   "bounty": [
+    25,
+    29
+   ],
+   "hp": 700,
+   "ancient": false
+  },
+  "npc_dota_neutral_frostbitten_golem": {
+   "bounty": [
+    37,
+    43
+   ],
+   "hp": 900,
+   "ancient": true
+  },
+  "npc_dota_neutral_ghost": {
+   "bounty": [
+    23,
+    25
+   ],
+   "hp": 500,
+   "ancient": false
+  },
+  "npc_dota_neutral_giant_wolf": {
+   "bounty": [
+    18,
+    22
+   ],
+   "hp": 500,
+   "ancient": false
+  },
+  "npc_dota_neutral_gnoll_assassin": {
+   "bounty": [
+    16,
+    18
+   ],
+   "hp": 400,
+   "ancient": false
+  },
+  "npc_dota_neutral_granite_golem": {
+   "bounty": [
+    76,
+    80
+   ],
+   "hp": 1500,
+   "ancient": true
+  },
+  "npc_dota_neutral_grown_frog": {
+   "bounty": [
+    37,
+    41
+   ],
+   "hp": 900,
+   "ancient": false
+  },
+  "npc_dota_neutral_grown_frog_mage": {
+   "bounty": [
+    37,
+    41
+   ],
+   "hp": 900,
+   "ancient": false
+  },
+  "npc_dota_neutral_harpy_scout": {
+   "bounty": [
+    14,
+    16
+   ],
+   "hp": 400,
+   "ancient": false
+  },
+  "npc_dota_neutral_harpy_storm": {
+   "bounty": [
+    25,
+    27
+   ],
+   "hp": 500,
+   "ancient": false
+  },
+  "npc_dota_neutral_ice_shaman": {
+   "bounty": [
+    76,
+    80
+   ],
+   "hp": 1500,
+   "ancient": true
+  },
+  "npc_dota_neutral_jungle_stalker": {
+   "bounty": [
+    36,
+    49
+   ],
+   "hp": 1600,
+   "ancient": true
+  },
+  "npc_dota_neutral_kobold": {
+   "bounty": [
+    3,
+    5
+   ],
+   "hp": 240,
+   "ancient": false
+  },
+  "npc_dota_neutral_kobold_taskmaster": {
+   "bounty": [
+    19,
+    21
+   ],
+   "hp": 400,
+   "ancient": false
+  },
+  "npc_dota_neutral_kobold_tunneler": {
+   "bounty": [
+    12,
+    14
+   ],
+   "hp": 325,
+   "ancient": false
+  },
+  "npc_dota_neutral_mud_golem": {
+   "bounty": [
+    19,
+    21
+   ],
+   "hp": 750,
+   "ancient": false
+  },
+  "npc_dota_neutral_mud_golem_split": {
+   "bounty": [
+    6,
+    10
+   ],
+   "hp": 250,
+   "ancient": false
+  },
+  "npc_dota_neutral_mud_golem_split_doom": {
+   "bounty": [
+    6,
+    10
+   ],
+   "hp": 250,
+   "ancient": false
+  },
+  "npc_dota_neutral_ogre_magi": {
+   "bounty": [
+    28,
+    32
+   ],
+   "hp": 600,
+   "ancient": false
+  },
+  "npc_dota_neutral_ogre_mauler": {
+   "bounty": [
+    22,
+    26
+   ],
+   "hp": 800,
+   "ancient": false
+  },
+  "npc_dota_neutral_polar_furbolg_champion": {
+   "bounty": [
+    30,
+    38
+   ],
+   "hp": 700,
+   "ancient": false
+  },
+  "npc_dota_neutral_polar_furbolg_ursa_warrior": {
+   "bounty": [
+    62,
+    66
+   ],
+   "hp": 950,
+   "ancient": false
+  },
+  "npc_dota_neutral_prowler_acolyte": {
+   "bounty": [
+    37,
+    43
+   ],
+   "hp": 750,
+   "ancient": true
+  },
+  "npc_dota_neutral_prowler_shaman": {
+   "bounty": [
+    76,
+    80
+   ],
+   "hp": 1400,
+   "ancient": true
+  },
+  "npc_dota_neutral_rock_golem": {
+   "bounty": [
+    37,
+    43
+   ],
+   "hp": 800,
+   "ancient": true
+  },
+  "npc_dota_neutral_satyr_hellcaller": {
+   "bounty": [
+    60,
+    66
+   ],
+   "hp": 1100,
+   "ancient": false
+  },
+  "npc_dota_neutral_satyr_soulstealer": {
+   "bounty": [
+    18,
+    22
+   ],
+   "hp": 600,
+   "ancient": false
+  },
+  "npc_dota_neutral_satyr_trickster": {
+   "bounty": [
+    12,
+    14
+   ],
+   "hp": 300,
+   "ancient": false
+  },
+  "npc_dota_neutral_small_thunder_lizard": {
+   "bounty": [
+    42,
+    49
+   ],
+   "hp": 800,
+   "ancient": true
+  },
+  "npc_dota_neutral_tadpole": {
+   "bounty": [
+    17,
+    19
+   ],
+   "hp": 400,
+   "ancient": false
+  },
+  "npc_dota_neutral_warpine_raider": {
+   "bounty": [
+    48,
+    50
+   ],
+   "hp": 850,
+   "ancient": false
+  },
+  "npc_dota_neutral_wildkin": {
+   "bounty": [
+    16,
+    18
+   ],
+   "hp": 350,
+   "ancient": false
+  }
+ }
+}

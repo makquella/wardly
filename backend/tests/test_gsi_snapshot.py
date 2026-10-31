@@ -240,3 +240,52 @@ def test_debug_file_io_cannot_hold_writer_or_publication_ownership(
         worker.join(5)
     assert not worker.is_alive() and not errors
     assert len(list(tmp_path.glob("*.json"))) == 2
+
+
+def _creep_minimap() -> dict[str, Any]:
+    return {
+        "o1": {
+            "image": "minimap_creep",
+            "unitname": "npc_dota_creep_goodguys_melee",
+            "team": 2,
+            "xpos": -4000,
+            "ypos": -6000,
+            "visionrange": 750,
+        },
+        "o2": {
+            "image": "minimap_siege",
+            "unitname": "npc_dota_badguys_siege",
+            "team": 3,
+            "xpos": -3000,
+            "ypos": -6000,
+        },
+        "o3": {
+            "image": "minimap_creep",
+            "unitname": "npc_dota_neutral_kobold",
+            "team": 4,
+            "xpos": -2000,
+            "ypos": -3000,
+        },
+    }
+
+
+def test_minimap_creep_lists_are_read_once_and_never_published(client: TestClient) -> None:
+    # Up to ~176 creeps a payload: farm_map.py reads them; the published state,
+    # the previous context and the memory's last_states keep only farm_target.
+    from app.gsi_snapshot import TRANSIENT_KEYS
+    from app.match_memory import MATCH_MEMORY
+
+    for clock in (600, 601):
+        packet = _packet()
+        packet["map"]["clock_time"] = clock
+        packet["player"]["team_name"] = "radiant"
+        packet["minimap"] = _creep_minimap()
+        assert client.post("/gsi", json=packet).status_code == 200
+    extra = client.get("/state/current").json()["state"]["extra_context"]
+    assert not TRANSIENT_KEYS & extra.keys()
+    assert "farm_target" in extra
+    debug = client.get("/gsi/debug/latest").json()["latest_normalized_state"]["extra_context"]
+    assert not TRANSIENT_KEYS & debug.keys()
+    snapshot = gsi_state._GSI.capture()
+    assert snapshot is not None and not TRANSIENT_KEYS & snapshot.previous_context.keys()
+    assert all(not TRANSIENT_KEYS & s["extra_context"].keys() for s in MATCH_MEMORY.last_states)

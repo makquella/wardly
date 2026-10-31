@@ -8,6 +8,15 @@ is `minimap_herocircle_self`) and the towers still standing
 returned in absolute replay units (centre MAP_CENTER), as enemy_heroes does.
 An icon at (0, 0) is not placed on the map yet and says nothing. Used by
 fight_summary.py.
+
+The same block also lists creeps (`minimap_creep`, siege creeps
+`minimap_siege`; checked on real recordings): the player's own lane creeps
+always, the enemy's lane creeps and the neutral creeps (`team` 4,
+`npc_dota_neutral_*`) only while the team sees them; and every own unit
+carries its `visionrange`. Entry keys (`o123`) are NOT a unit's identity: one
+key names another unit a moment later (4103 of 18 000 consecutive neutral
+pairs on one recording), so a unit is followed by its name and position.
+Read by farm_map.py; a creep in the fog is not there, never assumed.
 """
 
 from __future__ import annotations
@@ -22,6 +31,10 @@ from app.enemy_heroes import HERO_PREFIX, MAX_COORDINATE, TEAMS
 ALLY_ICON = "minimap_herocircle"
 TOWER = re.compile(r"^npc_dota_(goodguys|badguys)_tower([1-4])(?:_(top|mid|bot))?$")
 TOWER_TEAMS = {"goodguys": "radiant", "badguys": "dire"}
+CREEP_ICONS = {"minimap_creep", "minimap_siege"}
+NEUTRAL_TEAM = 4
+NEUTRAL_PREFIX = "npc_dota_neutral_"
+LANE_CREEP = re.compile(r"^npc_dota_(?:creep_)?(goodguys|badguys)_")
 
 
 def _position(unit: dict[str, Any]) -> tuple[float, float] | None:
@@ -87,4 +100,69 @@ def towers(minimap: Any) -> list[dict[str, Any]] | None:
                 "y": position[1],
             }
         )
+    return found
+
+
+def _creep_kind(name: str) -> str | None:
+    for kind in ("siege", "ranged", "flag", "melee"):
+        if kind in name:
+            return kind
+    return None
+
+
+def lane_creeps(minimap: Any, team_name: Any) -> list[dict[str, Any]] | None:
+    """[{team: own|enemy, kind: melee|ranged|siege|flag, x, y}] of the lane
+    creeps on the minimap; None without a minimap block or a known team."""
+    own = TEAMS.get(str(team_name or "").strip().lower())
+    if not isinstance(minimap, dict) or own is None:
+        return None
+    found: list[dict[str, Any]] = []
+    for unit in minimap.values():
+        if not isinstance(unit, dict) or unit.get("image") not in CREEP_ICONS:
+            continue
+        name, team = unit.get("unitname"), unit.get("team")
+        if not isinstance(name, str) or team not in (2, 3) or not LANE_CREEP.match(name):
+            continue
+        kind, position = _creep_kind(name), _position(unit)
+        if kind is None or position is None:
+            continue
+        side = "own" if team == own else "enemy"
+        found.append({"team": side, "kind": kind, "x": position[0], "y": position[1]})
+    return found
+
+
+def neutral_units(minimap: Any) -> list[dict[str, Any]] | None:
+    """[{unit, x, y}] of the neutral creeps the team sees; None without a
+    minimap block."""
+    if not isinstance(minimap, dict):
+        return None
+    found: list[dict[str, Any]] = []
+    for unit in minimap.values():
+        if not isinstance(unit, dict) or unit.get("team") != NEUTRAL_TEAM:
+            continue
+        name = unit.get("unitname")
+        if not isinstance(name, str) or not name.startswith(NEUTRAL_PREFIX):
+            continue
+        position = _position(unit)
+        if position is not None:
+            found.append({"unit": name, "x": position[0], "y": position[1]})
+    return found
+
+
+def vision_sources(minimap: Any, team_name: Any) -> list[tuple[float, float, float]] | None:
+    """(x, y, vision range) of the player's team's units that see; None without
+    a minimap block or a known team. Trees and high ground are not in it."""
+    own = TEAMS.get(str(team_name or "").strip().lower())
+    if not isinstance(minimap, dict) or own is None:
+        return None
+    found: list[tuple[float, float, float]] = []
+    for unit in minimap.values():
+        if not isinstance(unit, dict) or unit.get("team") != own:
+            continue
+        radius = unit.get("visionrange")
+        if isinstance(radius, bool) or not isinstance(radius, (int, float)) or radius <= 0:
+            continue
+        position = _position(unit)
+        if position is not None:
+            found.append((position[0], position[1], float(radius)))
     return found

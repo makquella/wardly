@@ -28,7 +28,13 @@ from app.item_timing import normalize_item_name
 from app.last_moments import active_slot, ready_savers
 from app.live_tools import bottle_rune, regen_items, wand_charges
 from app.map_hints import has_observer_ward, item_names, observer_charges, timers
-from app.minimap_units import towers, visible_ally_units
+from app.minimap_units import (
+    lane_creeps,
+    neutral_units,
+    towers,
+    visible_ally_units,
+    vision_sources,
+)
 from app.signal_capabilities import capability_summary, live_gsi_observed_capabilities
 from app.skill_tips import read_skills
 from app.tp_tracker import has_teleport, teleport_cooldown, teleport_in_stash
@@ -314,6 +320,18 @@ def normalize_gsi_payload(
     return state
 
 
+GOLD_SOURCES = ("creep_kills", "hero_kills", "income", "shared", "summon_kills")
+
+
+def _gold_sources(player_block: dict[str, Any]) -> dict[str, int] | None:
+    found = {
+        name: value
+        for name in GOLD_SOURCES
+        if (value := _optional_int(player_block.get(f"gold_from_{name}"))) is not None
+    }
+    return found or None
+
+
 def _map_coordinate(value: Any) -> float | int | None:
     """Live GSI reports world coordinates (map centre 0, about ±8000); the replay-derived
     states and advice_context.py use the replay's absolute ones (centre MAP_CENTER)."""
@@ -420,6 +438,9 @@ def _normalize_extra_context(
         "denies": _optional_int(player_block.get("denies")),
         "gpm": _optional_int(player_block.get("gpm")),
         "xpm": _optional_int(player_block.get("xpm")),
+        # Where the gold came from (cumulative): lane creeps only in
+        # gold_from_creep_kills; neutral gold shows in the total alone.
+        "gold_sources": _gold_sources(player_block),
         "player_slot": _optional_int(player_block.get("player_slot")),
         "team_name": _optional_str(player_block.get("team_name")),
         "team_slot": _optional_int(player_block.get("team_slot")),
@@ -489,6 +510,11 @@ def _normalize_extra_context(
             hero_from_gsi(payload),
         ),
         "towers": towers(payload.get("minimap")),
+        # Creeps and own vision on the minimap (farm_map.py): consumed by
+        # MatchMemory and dropped there, never kept in the stored states.
+        "lane_creeps": lane_creeps(payload.get("minimap"), player_block.get("team_name")),
+        "neutral_units": neutral_units(payload.get("minimap")),
+        "vision_sources": vision_sources(payload.get("minimap"), player_block.get("team_name")),
         "has_aegis": _has_aegis(hero_block, payload.get("items")),
         # The player's tier-3 towers and barracks still standing (None: no block).
         "own_base": _own_base(payload.get("buildings"), player_block.get("team_name")),

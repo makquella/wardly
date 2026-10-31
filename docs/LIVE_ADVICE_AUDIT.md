@@ -1,8 +1,69 @@
-# Live advice audit (0.59.0, re-audited in 0.60.0, 0.60.1 and 0.60.2)
+# Live advice audit (0.59.0, re-audited in 0.60.0, 0.60.1 and 0.60.2; farm tip 0.61.0)
 
 Audit of the realtime coach against a review of match `9054793282` (Phantom
 Lancer, 28 logged cards) and two other real recordings. What was changed, which
 causes are confirmed, what stays open, and how to re-run the check.
+
+## 0.61.0: the farm tip («Farm now: …»)
+
+A text card in the map hint slot (no voice, cores only, from 10:00) naming the
+visible wave or the camp that pays most per second right now
+(`backend/app/farm_map.py`, card text in `map_hints.py`).
+
+What GSI sends, checked on Jugg `9061316351` and AM `9061396945` (the repo
+code and samples had never read it; `signals.json` and the 0.59 table above
+called it unavailable):
+
+- the player's `minimap` block lists `minimap_creep` (siege: `minimap_siege`)
+  entries with position, team and unit name: own lane creeps always, the
+  enemy's lane creeps and the neutrals (team 4) only in the team's vision;
+  own units carry `visionrange`;
+- entry keys are not a unit's identity (4103 of ~18 000 consecutive neutral
+  pairs on AM change unit under the same key), so units are followed by name
+  and position;
+- `gold_from_creep_kills` counts lane creeps only and moves in batches;
+  neutral gold shows only in the total `gold`. Neutral gold is measured as the
+  rise of `gold` less income, hero, shared and summon gold, on seconds with a
+  neutral kill next to the hero and no lane creep near, item changes skipped.
+
+What the tip uses and what it leaves unknown:
+
+- waves: enemy lane creeps in sight, clustered, not next to an enemy tower;
+- camps: `data/live/farm_map.json`, 20 spots built from the two recordings
+  by `scripts/build_farm_map.py` (spawns at the minute and idle groups; gold
+  and HP from Valve `npc_units.txt`); 9 Dire, 7 Radiant, 4 river, out of
+  about 30 on the map. A camp missing from the file is never named;
+- a camp is named only after the player cleared one this match, only if its
+  HP is at most 1.2 × the biggest camp he cleared, ancients only after an
+  ancient clear, never on the enemy half, and only when seen full or due back
+  after his own clear (respawn on the minute);
+- travel = straight distance × 1.25 / measured move speed (300 until 10
+  samples); no path data;
+- no card while dead, under 50 % HP, stunned, hexed or teleporting, in a
+  fight, in an after-fight or Aegis plan, or with an enemy hero visible within
+  2500 of him or of the target. Unknown: creeps in the fog, camp state out of
+  vision, stacks, creep HP, path length, enemies not on the minimap.
+
+Offline check (`replay_recording.py --audit`, then `scripts/farm_outcomes.py`,
+which reads the future of the recording; the recorded player never saw these
+cards). Both recordings also built the camp map and set the radii, so this is
+**not a held-out check**:
+
+| Recording | Targets | Per 10 min after 10:00 | Shown in the slot | He went there | Target there on arrival | Travel actual / estimate (median) |
+|---|---|---|---|---|---|---|
+| AM `9061396945` | 14 (8 camps, 6 waves) | 4.5 | 12 | 5 | 4 of 5 | 2.33 |
+| Jugg `9061316351` | 6 (1 camp, 5 waves) | 3.4 | 2 | 4 | 4 of 4 | 0.55 |
+
+- Waves: all 7 visits found the wave there; travel within a few seconds of
+  the estimate (1-12 s actual vs 4-11 s estimated).
+- Camps: 2 of 8 AM camp targets visited, travel 54 s vs 22 s and 28 s vs 12 s
+  (paths through trees, or he did something else on the way); one camp was
+  gone on arrival. The camp travel estimate is too short; 2 samples are too
+  few to retune `PATH_FACTOR`.
+- The 4 Jugg targets not shown came while an advice card or a fight / enemy
+  group hint held the slot (TP card at 17:12, fight at 21:12-21:26).
+- Re-check on recordings that did not build the map (phase B): re-run the
+  builder on all recordings, then `farm_outcomes.py` on the new ones only.
 
 ## 0.60.2: two held-out recordings
 
@@ -613,7 +674,7 @@ all the generic rules above apply to them.
 | --- | --- |
 | Illusion/wave micro for PL («take the dangerous wave with illusions») | GSI does not report controlled units, their HP or orders. |
 | Plan memory for the next 30–90 s (5.3) | Not built: intent cannot be read from GSI with confidence; the readiness card is the only forward-looking step. |
-| Lane stagnation detector beyond the existing farm stall (5.1) | Not extended in this change; wave and creep state are not in GSI. |
+| Lane stagnation detector beyond the existing farm stall (5.1) | Not extended in this change. (Corrected in 0.61.0: the player's minimap does list lane creeps and, in vision, neutrals; see «0.61.0: the farm tip».) |
 | Item delivery vs readiness beyond TP | Only TP in the stash is handled; other stash items are simply not "ready" (active slots only). |
 | Exact Aegis timer from a late recording start | Pickup time unknown → no timer (existing `roshan_timer` rule). |
 | Channel-safe wording | No channeling field in GSI. |

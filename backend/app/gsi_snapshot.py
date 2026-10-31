@@ -12,6 +12,9 @@ from typing import Any
 State = dict[str, Any]
 Normalizer = Callable[[State, State | None], Mapping[str, Any]]
 
+# Normalized keys used on their own payload only (minimap creeps for farm_map.py).
+TRANSIENT_KEYS = frozenset({"lane_creeps", "neutral_units", "vision_sources"})
+
 
 @dataclass(frozen=True)
 class GSISnapshot:
@@ -53,7 +56,15 @@ class GSIRegister:
             previous = self.capture()
             # Adapt the typed normalized mapping to the mutable enrichment port.
             state = dict(normalizer(raw, previous.previous_context if previous else None))
-            context = deepcopy(state.get("extra_context") or {})
+            # The minimap creep lists are read once by the farm tip
+            # (farm_map.py) and never kept as the previous context.
+            context = deepcopy(
+                {
+                    key: value
+                    for key, value in (state.get("extra_context") or {}).items()
+                    if key not in TRANSIENT_KEYS
+                }
+            )
             if enrich is not None:
                 enrich(state)
             new = GSISnapshot(raw, state, datetime.now(UTC).isoformat(), context)

@@ -9,6 +9,9 @@
 
   const TEXT = {
     en: {
+      "0.61.0": [
+        "Farm now: for carry, mid and offlane from 10:00, the hint card names the wave or camp that pays most per second right now, with the gold, the seconds to get there and the next stop: «Farm now: the wave in the bottom lane on your side — 4 creeps in sight, ~180 gold, ~6 s away». Only what the minimap shows: a wave in sight, a camp seen full or one you cleared that is due back, never a camp bigger than the ones you cleared this match, never on the enemy half and never with an enemy hero in sight near you or the target. Text only, no voice; the map marker comes later."
+      ],
       "0.60.2": [
         "A second stun that is already costing HP gets its «the moment the disable ends, use X» card even right after an earlier one: an early warning no longer holds the next card back. The early warning itself now needs two enemy heroes in sight; one enemy at high HP waits for the damage, as before 0.60.1."
       ],
@@ -587,6 +590,9 @@
       ]
     },
     uk: {
+      "0.61.0": [
+        "Фарм зараз: для керрі, міду й хардлайну з 10:00 картка підказки називає хвилю чи табір, що дає найбільше золота за секунду саме зараз, з золотом, секундами дороги й наступною зупинкою: «Фарм зараз: хвиля на нижній лінії на своїй половині — видно кріпів: 4, ~180 золота, ~6 с дороги». Лише те, що показує мінікарта: хвиля у видимості, табір, який видно повним, або взятий вами, що вже мав відродитися; ніколи табір більший за ті, що ви брали цього матчу, ніколи на половині ворога і ніколи, коли поруч з вами чи з ціллю видно ворожого героя. Лише текст, без голосу; позначка на карті буде пізніше."
+      ],
       "0.60.2": [
         "Друге оглушення, що вже забирає HP, отримує свою картку «щойно контроль закінчиться, натисніть X» навіть одразу після попередньої: раннє попередження більше не затримує наступну картку. Саме раннє попередження тепер потребує двох видимих ворожих героїв; один ворог на високому HP, як і до 0.60.1, чекає шкоди."
       ],
