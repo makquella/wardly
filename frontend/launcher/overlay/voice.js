@@ -103,6 +103,20 @@
       return choice.fallback ? "spoken_en" : "spoken";
     }
 
+    // The card being spoken was withdrawn (the game moved on): stop it, and
+    // only it. Returns whether something was cut.
+    function cancel(key) {
+      if (!synth || !key || key !== lastKey) {
+        return false;
+      }
+      const speaking = Boolean(synth.speaking);
+      if (speaking) {
+        synth.cancel();
+      }
+      lastKey = "";
+      return speaking;
+    }
+
     function reset() {
       lastKey = "";
       lastAt = -Infinity;
@@ -111,7 +125,7 @@
       }
     }
 
-    return { say, reset };
+    return { say, cancel, reset };
   }
 
   return { MODES, MIN_GAP_MS, createSpeaker, normalizeMode, pickVoice, speechChoice, speechText, wantsSpeech };

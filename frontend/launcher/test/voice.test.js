@@ -119,3 +119,37 @@ test("a repeat asked by the player is spoken again at once, but never when the v
   assert.equal(synth.cancels, 2);
   assert.equal(voice.say({ ...tip, mode: "off", repeat: true }), "off");
 });
+
+test("a withdrawn card stops only its own speech", () => {
+  const synth = fakeSynth();
+  const clock = { t: 0 };
+  const voice = speaker(synth, clock);
+  const say = (key) =>
+    voice.say({ key, text: "Use Magic Wand now, then step back.", adviceMode: "urgent", mode: "all", locale: "en" });
+  assert.equal(say("wand"), "spoken");
+  synth.speaking = true;
+  // Another card's key: nothing is cut.
+  assert.equal(voice.cancel("blink"), false);
+  assert.equal(synth.cancels, 1); // the urgent say itself cancels once
+  // Its own key while speaking: cut, and the same card could be said again.
+  assert.equal(voice.cancel("wand"), true);
+  assert.equal(synth.cancels, 2);
+  synth.speaking = false;
+  clock.t += 10_000;
+  assert.equal(say("wand"), "spoken");
+});
+
+test("a tip skipped while busy is never spoken by itself later", () => {
+  // No queue: a tip that found the voice busy is spoken only if a later poll
+  // still returns it (the backend revalidated it); a withdrawn tip never is.
+  const synth = fakeSynth();
+  const clock = { t: 0 };
+  const voice = speaker(synth, clock);
+  synth.speaking = true;
+  const tip = { key: "farm|1", text: "Farm the bottom wave.", adviceMode: "coaching", mode: "all", locale: "en" };
+  assert.equal(voice.say(tip), "busy");
+  synth.speaking = false;
+  clock.t += 10_000;
+  assert.equal(synth.spoken.length, 0);
+  assert.equal(voice.say(tip), "spoken");
+});

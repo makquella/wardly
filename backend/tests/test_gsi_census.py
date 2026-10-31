@@ -213,3 +213,20 @@ def test_a_broken_census_file_is_ignored(client):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("{not json", encoding="utf-8")
     assert "previous_run" not in client.get("/diagnostics").json()["gsi_census"]
+
+
+def test_minimap_creeps_and_neutrals_are_counted(repo_root):
+    # farm_map.py needs them; a feed without them leaves the farm tip off.
+    census = GsiCensus()
+    payload = _real(repo_root)
+    payload["minimap"] = {
+        "o1": {"image": "minimap_siege", "unitname": "npc_dota_goodguys_siege", "team": 2},
+        "o2": {"image": "minimap_creep", "unitname": "npc_dota_neutral_kobold", "team": 4},
+    }
+    census.observe(payload)
+    only_heroes = _real(repo_root)
+    only_heroes["minimap"] = {"o1": {"unitname": "npc_dota_hero_beastmaster", "team": 3}}
+    census.observe(only_heroes)
+    minimap = census.summary()["minimap"]
+    assert minimap["payloads_with_lane_creeps"] == 1
+    assert minimap["payloads_with_neutrals"] == 1

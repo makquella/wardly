@@ -111,6 +111,10 @@ class GsiCensus:
         self.minimap_units_max = 0
         self.own_heroes_max = 0
         self.enemy_hero_payloads = 0
+        # Payloads whose minimap had lane creeps / neutral creeps (farm_map.py
+        # needs them; a feed without them leaves the farm tip off).
+        self.lane_creep_payloads = 0
+        self.neutral_payloads = 0
         self.enemy_heroes: set[str] = set()
         self.match_id: str | None = None
         self.matches = 0
@@ -209,10 +213,14 @@ class GsiCensus:
         own_heroes = 0
         own_names: set[str] = set()
         enemy = False
+        creeps = neutrals = False
         for unit in minimap.values():
             if not isinstance(unit, dict):
                 continue
             name = unit.get("unitname")
+            if unit.get("image") in ("minimap_creep", "minimap_siege") and isinstance(name, str):
+                creeps = creeps or unit.get("team") in TEAMS.values()
+                neutrals = neutrals or unit.get("team") == 4
             if not isinstance(name, str) or not name.startswith(HERO_PREFIX):
                 continue
             image = unit.get("image")
@@ -229,6 +237,8 @@ class GsiCensus:
         self.own_hero_names_max = max(self.own_hero_names_max, len(own_names))
         if enemy:
             self.enemy_hero_payloads += 1
+        self.lane_creep_payloads += creeps
+        self.neutral_payloads += neutrals
 
     def save_due(self, path: Path, *, now: float | None = None) -> bool:
         """Acknowledge only a successful replacement; failed saves retry after 5s."""
@@ -325,6 +335,8 @@ class GsiCensus:
                 "own_hero_names_max": self.own_hero_names_max,
                 "hero_images": dict(self.hero_images),
                 "payloads_with_enemy_heroes": self.enemy_hero_payloads,
+                "payloads_with_lane_creeps": self.lane_creep_payloads,
+                "payloads_with_neutrals": self.neutral_payloads,
                 "enemy_heroes_seen": sorted(self.enemy_heroes),
             },
             "paths": dict(sorted(self.paths.items())),

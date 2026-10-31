@@ -10,6 +10,8 @@ from app.hero_profiles import evaluate_laning_context, farm_pace
 from app.hero_safety import evaluate_hero_safety
 from app.item_timing import contains_meaningful_item_reference, is_meaningful_item_timing
 from app.match_memory import DEATH_DECISION_POINTS, MATCH_MEMORY
+from app.status_source import is_threat
+from app.team_context import contest_near
 
 DecisionPoint = Literal[
     "LOW_HP",
@@ -211,10 +213,16 @@ def has_low_farm_pressure_signal(state: Mapping[str, Any]) -> bool:
 
 
 def has_disabled_status(state: Mapping[str, Any]) -> bool:
-    return any(
-        _ctx_bool(state, field)
-        for field in ("stunned", "silenced", "hexed", "disarmed", "muted", "break_status")
-    )
+    """A status that may be an enemy disable. A stun/hex/silence/mute the live
+    tracker classified as the player's own phase (Manta, Doppelganger,
+    Omnislash...) or as unexplained (no debuff, no HP lost) is not one
+    (status_source.py); a disarm or break has no own-phase source and stays."""
+    if any(_ctx_bool(state, field) for field in ("disarmed", "break_status")):
+        return True
+    if not any(_ctx_bool(state, field) for field in ("stunned", "silenced", "hexed", "muted")):
+        return False
+    source = _extra_context(state).get("status_source")
+    return source is None or is_threat(source)
 
 
 def has_fight_pressure(state: Mapping[str, Any]) -> bool:
@@ -279,10 +287,13 @@ def has_ability_safety_cooldown(
     *,
     hp_percent: int,
     fight_pressure: bool,
+    readiness_moment: bool = False,
 ) -> bool:
+    """The key escape is on cooldown and it matters: HP is down, a fight is
+    around, or the next step after a won fight or a revive is being chosen."""
     if laning_context.get("key_safety_available") is not False:
         return False
-    return hp_percent <= 70 or fight_pressure
+    return hp_percent <= 70 or fight_pressure or readiness_moment
 
 
 def has_laning_farm_check(laning_context: Mapping[str, Any], *, minute: int) -> bool:
@@ -358,6 +369,12 @@ def detect_decision_point(state: Mapping[str, Any] | None) -> DecisionPoint:
     if _ctx_bool(state, "paused"):
         return "NO_ADVICE"
 
+    if not alive_bool and _ctx_value(state, "life_state") == "reviving":
+        # The life went with no death counted (Aegis, Reincarnation): the hero
+        # is coming back on the spot. No death review, no buyback; the card of
+        # the life just lost is withdrawn by the scheduler.
+        return "NO_ADVICE"
+
     if not alive_bool or respawn_seconds > 0:
         if _has_conservative_buyback_context(
             state,
@@ -403,7 +420,11 @@ def detect_decision_point(state: Mapping[str, Any] | None) -> DecisionPoint:
         return "HERO_SURVIVABILITY_RISK"
 
     if has_ability_safety_cooldown(
-        laning_context, hp_percent=hp_percent, fight_pressure=fight_pressure
+        laning_context,
+        hp_percent=hp_percent,
+        fight_pressure=fight_pressure,
+        readiness_moment=_ctx_value(state, "recent_revive") is not None
+        and contest_near(_extra_context(state)),
     ):
         return "ABILITY_SAFETY_COOLDOWN"
 

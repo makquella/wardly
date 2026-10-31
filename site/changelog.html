@@ -98,6 +98,91 @@
       <article data-doc="uk" lang="uk">
         <h1>Що нового</h1>
         <p class="doc-updated">Усі версії Wardly. Встановлений застосунок оновлюється сам, коли Дота закрита.</p>
+<section class="release" id="v0.61.0">
+<h2><a href="#v0.61.0">Версія 0.61.0</a></h2>
+<ul>
+  <li><strong>Фарм зараз.</strong> Для керрі, міду й хардлайну з 10:00 картка підказки називає хвилю або табір, які саме зараз дають найбільше золота за секунду: місце, золото, секунди дороги й наступну зупинку поруч. Приклад: «Фарм зараз: хвиля на нижній лінії на своїй половині — видно кріпів: 4, ~180 золота, ~6 с дороги». Лише текст, без голосу; позначка на мінікарті буде наступним кроком.</li>
+  <li><strong>Лише те, що видно.</strong> Хвиля має бути у видимості. Табір називається, тільки якщо його видно повним або ви самі його взяли і він уже мав відродитися. Він не може бути більшим за ті, що ви брали цього матчу; древні — лише після того, як ви вже брали древніх. Таборів на половині ворога немає. Ворожий герой, видимий поруч з вами чи з ціллю, прибирає картку; її також немає, коли ви мертві, маєте менше половини HP, під контролем, телепортуєтеся, у бійці або в плані після бійки чи з Аегісом.</li>
+  <li><strong>Звідки дані.</strong> Мінікарта Dota показує ваших кріпів завжди, а ворожих і нейтральних — лише у видимості вашої команди. Табори на карті Wardly зібрано з ваших записів матчів; табору, якого там немає, Wardly не називає. Швидкість руху й золото за кріпа міряються в цьому ж матчі.</li>
+  <li><strong>Перевірка.</strong> На двох записах (Anti-Mage, Juggernaut) 20 цілей, 3–5 на 10 хвилин. Хвиля була на місці у всіх 7 випадках, коли гравець туди пішов. Дорогу до таборів через ліс оцінка поки занижує приблизно вдвічі. Ці записи використано й для побудови карти таборів, тому це ще не незалежна перевірка; її дадуть нові записи.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.61.0" rel="noopener">Завантажити й подробиці</a></p>
+</section>
+<section class="release" id="v0.60.2">
+<h2><a href="#v0.60.2">Версія 0.60.2</a></h2>
+<ul>
+  <li><strong>Друге оглушення не губиться.</strong> Якщо одразу після попереднього контролю приходить новий, що вже забирає HP (до 50% або мінус 15% за цей контроль), картка «щойно контроль закінчиться, натисніть X» приходить, навіть коли попередня картка була кілька секунд тому. Раніше раннє попередження займало місце і наступна, важливіша картка не з'являлася.</li>
+  <li><strong>Раннє попередження — лише з двома ворогами.</strong> Картку до того, як піде HP, тепер дає лише підтверджений ворожий контроль і щонайменше два видимі ворожі герої поруч. Один ворог на високому HP, як і до 0.60.1, чекає, доки контроль почне забирати HP. На двох нових матчах (Juggernaut, Anti-Mage) варіант «один ворог, а союзника поруч немає» дав п'ять карток на 85–100% HP, і після жодної з них за 5 секунд не було ні смерті, ні падіння HP нижче 60%.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.2" rel="noopener">Завантажити й подробиці</a></p>
+</section>
+<section class="release" id="v0.60.1">
+<h2><a href="#v0.60.1">Версія 0.60.1</a></h2>
+<ul>
+  <li><strong>Контроль, коли на вас вороги, — одразу.</strong> «Щойно контроль закінчиться, натисніть X» тепер приходить і на високому HP, коли ворожий контроль підтверджено і поруч видно двох ворожих героїв або одного, а союзника, що лишається поруч, немає. Без видимих ворогів картка, як і раніше, чекає, доки під контролем піде HP. Ваші власні фази й стани невідомого походження наказу не дають, а новий ворожий контроль одразу після вашого закляття — дає. Коли оглушення змінюється німотою, а Manta її знімає, картка одразу стає «Натисніть Manta Style зараз».</li>
+  <li><strong>Телепорт і дії.</strong> Wardly не бачить каналу напряму і вважає ТП каналом лише за ознакою «перезарядка ТП почалася, герой стоїть». Під час нього:</li>
+  <li>предмет, що не перериває канал (Glimmer Cape, Shadow Blade, Blade Mail, Phase Boots та інші, які так позначає Valve), більше не затримується;</li>
+  <li>закляття, інший предмет чи «відійдіть» чекають кінця ТП;</li>
+  <li>картка з предметом чи закляттям проходить одразу, якщо HP падає швидко або поруч видно ворога і пішло 15% HP.</li>
+  <li>Скасований ТП нічого довго не тримає: ознака зникає, щойно герой рушив, його оглушили, ТП зник або минуло 6 секунд.</li>
+  <li><strong>Результат бійки — ваш, а не команди.</strong> Рахунок команди рахує вбивства по всій карті (дві бійки водночас, пік на іншій лінії), тож результатом цієї бійки він більше не вважається. Wardly дивиться на ваші вбивства, допомоги й смерті: «Ви взяли участь у 3 вбивствах: їхня T2 на міді поруч». Розрив у даних під час бійки — без висновку.</li>
+  <li><strong>Великі предмети.</strong></li>
+  <li>Пасивний предмет у схованці (Skadi, Aghanim's) більше не пропускається: у схованці він нічого не дає.</li>
+  <li>Предмет, що лишився в рюкзаку 10 секунд: «перекладіть в основні слоти» — у рюкзаку він не натискається і не діє.</li>
+  <li>Отриманий предмет перевіряє поточний план: план доставки закінчується чи змінює крок, інший план лишається як був. Що предмет змінює в бійці, Wardly не вигадує, і «йдіть битися» через покупку не каже.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.1" rel="noopener">Завантажити й подробиці</a></p>
+</section>
+<section class="release" id="v0.60.0">
+<h2><a href="#v0.60.0">Версія 0.60.0</a></h2>
+<ul>
+  <li><strong>Короткий план замість окремих карток.</strong> Wardly тримає одну найближчу мету: на чому вона стоїть, який наступний крок, коли вона виконана і коли скасована. Нова мета з'являється лише тоді, коли змінюється найкраща дія:</li>
+  <li><strong>Лінія не дає нічого.</strong> Наприклад: «+1 добивання з 5:05 до 6:35, HP падало до 12%, ворогів поруч: 2». Тоді — добивати біля вежі й кликати саппорта, а не автоматично «йти в ліс»: Wardly не бачить, чи ваш герой зачистить табори на цьому рівні, і прямо це каже.</li>
+  <li><strong>Активний предмет чекає в схованці</strong> (Manta, BKB, Blink… чи рецепт до них): поки його не привезли, його не натиснути.</li>
+  <li><strong>Бійка скінчилась</strong> — за рахунком, а не за тим, що вороги зникли з мінікарти. Виграли з командою біля їхньої вежі: «Бийте її зараз». Мало HP: відновіться.</li>
+  <li><strong>Aegis з командою</strong> — до котрої хвилини він діє і що ним брати; без команди він прощає лише одну помилку.</li>
+  <li><strong>Смерть і воскресіння за спостереженнями.</strong> Втрачене життя без зростання лічильника — «ще невідомо», доки гра не покаже:</li>
+  <li>лічильник, що запізнився, — це звичайна смерть;</li>
+  <li>підйом на місці з Aegis чи Reincarnation — це воскресіння;</li>
+  <li>довгий таймер відродження чи поява біля фонтану — це смерть, яку лічильник не показав (її не порахують двічі).</li>
+  <li>Підйом на місці без Aegis і Reincarnation — не «друге життя».</li>
+  <li>Смерті в розриві даних рахуються, але без місця.</li>
+  <li><strong>Повтор місця — ще не повтор помилки.</strong> Кілька смертей в одній точці разом із союзниками чи біля цілі — це місце бійок, а не маршрут, який треба міняти.</li>
+  <li><strong>Союзники поруч — ті, хто лишається поруч.</strong> Союзник, що пробіг повз за одну мить, — не команда, і команда, яку видимих ворогів довкола більше, — теж. Aegis знімає картку байбеку лише тоді, коли відомо, що він діятиме ще хвилину, і база не під загрозою.</li>
+  <li><strong>Менше голосу.</strong></li>
+  <li>«Щойно контроль закінчиться, натисніть X» — лише коли під контролем справді є що втрачати: HP до 50% чи мінус 15% максимального HP за цей контроль. Коротке оглушення на повному HP картки не дає.</li>
+  <li>Після вбивства — не «заходьте знову», а «не починайте нову бійку, доки Doppelganger не відновиться», і лише коли ворог поруч чи вас б'ють. Серія вбивств — одна така картка.</li>
+  <li>Під час телепорту картки «відійдіть» не приходять.</li>
+  <li><strong>Свіжі числа.</strong> Картка, що ще діє, показує золото, ціну байбеку і заряди Wand саме цієї миті; голос не повторює її через нове число.</li>
+  <li><strong>Виправлено.</strong></li>
+  <li>Власна фаза визначається за виміряною тривалістю кожної механіки (Doppelganger, Manta, Metamorphosis), а не за будь-якою вашою перезарядкою поруч з оглушенням.</li>
+  <li>Заряджений Magic Wand знову названо поруч із втечею: «Використайте Doppelganger, щоб піти, потім Magic Wand».</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.0" rel="noopener">Завантажити й подробиці</a></p>
+</section>
+<section class="release" id="v0.59.0">
+<h2><a href="#v0.59.0">Версія 0.59.0</a></h2>
+<ul>
+  <li><strong>Ваші власні фази більше не вважаються контролем.</strong> Dota позначає героя оглушеним, коли він сам ховається: розділення Manta Style, Doppelganger у Phantom Lancer, Omnislash. Wardly приймав це за ворожий стан і казав «Щойно контроль закінчиться, натисніть Manta», хоча HP було повне. Тепер:</li>
+  <li>оглушення, що почалося разом із вашою перезарядкою, без дебафу й без втрати HP, картки не дає;</li>
+  <li>оглушення без дебафу й без шкоди (джерела не видно) не дає наказу витратити захисний предмет;</li>
+  <li>справжній стан одразу після вашої фази — з'явився дебаф або падає HP — і далі дає картку одразу: фільтр не ховає наступну загрозу;</li>
+  <li>Hex, німота й mute ніколи не вважаються вашою фазою.</li>
+  <li><strong>Aegis — не смерть.</strong> Життя, втрачене через Aegis чи Reincarnation (лічильник смертей не зростає, герой встає на місці), більше не рахується смертю: немає розбору смерті, «після відродження змініть маршрут», екрана смерті чи байбеку. Поки ви воскресаєте, Wardly мовчить, а картка попереднього життя зникає. Aegis, що зник живим (скінчився час), — теж не смерть.</li>
+  <li><strong>Повтор смертей — лише справжній повтор.</strong> Дві смерті в різних кінцях карти під одним ярликом «ліс біля річки» більше не «повторний маршрут»: потрібні смерті поруч одна з одною (або три в одній точці за гру). «Загинули з низьким ресурсом» тепер дивиться на HP, з яким ви почали бій, а не на останню мить перед смертю (вона завжди низька).</li>
+  <li><strong>Картки, що вже не відповідають грі, зникають і замовкають</strong> — на екрані й у голосі:</li>
+  <li>«натисніть Faerie Fire зараз», коли вас оглушили; коли стан мине, порада прийде знову;</li>
+  <li>«використайте Tango», коли ви його вже з'їли, і картка про низьке HP, коли ви вилікувалися;</li>
+  <li>картка смерті після відродження і картка живого героя після смерті;</li>
+  <li>картки про фарм, ТП чи Smoke, коли почалася бійка (ворожий стан або швидке падіння HP);</li>
+  <li>картка байбеку, коли її золото вже інше.</li>
+  <li><strong>Свіжі числа.</strong> Картка байбеку називає золото й ціну цієї миті (раніше могла назвати пару 40-секундної давності), а поки у вас Aegis, не забороняє покупку заради байбеку.</li>
+  <li><strong>Менше шуму.</strong> Немає карток «Бережіть себе: у вас серія вбивств», «Фарміть далі: N золота за хвилину» і загального «фарміть безпечно». «За 5 секунд пішло 40% HP» більше не обіцяє «лічені секунди» і приходить, лише поки HP і далі падає; зміна максимального HP (Armlet, Treads) — не шкода.</li>
+  <li><strong>Нові поради.</strong> Після вашого вбивства, коли втеча на перезарядці: «Після вашого вбивства: заходьте знову, коли Doppelganger відновиться за 5 с» і стан Manta. Після воскресіння з Aegis — те саме для другого життя. Мало мани — порада називає лише вивчену втечу. «ТП у схованці: нехай кур'єр привезе» замість «купіть ТП»; Nature's Prophet з Teleportation цієї поради не отримує. Глибоко на ворожій половині з союзниками поруч — більше не «не показуйтеся глибоко».</li>
+  <li><strong>Виправлено.</strong> Картки про німоту чи оглушення з готовою Manta губилися як повтор картки про фарм; Doppelganger у Phantom Lancer не розпізнавався як його втеча.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.59.0" rel="noopener">Завантажити й подробиці</a></p>
+</section>
 <section class="release" id="v0.58.0">
 <h2><a href="#v0.58.0">Версія 0.58.0</a></h2>
 <ul>
@@ -1557,6 +1642,91 @@
       <article data-doc="en" lang="en" hidden>
         <h1>What's new</h1>
         <p class="doc-updated">Every Wardly version. The installed app updates itself while Dota is closed.</p>
+<section class="release" id="v0.61.0">
+<h2><a href="#v0.61.0">Version 0.61.0</a></h2>
+<ul>
+  <li><strong>Farm now.</strong> For carry, mid and offlane from 10:00, the hint card names the wave or camp that pays most gold per second right now: the place, the gold, the seconds to get there and the next stop nearby. Example: «Farm now: the wave in the bottom lane on your side — 4 creeps in sight, ~180 gold, ~6 s away». Text only, no voice; a marker on the minimap is the next step.</li>
+  <li><strong>Only what is seen.</strong> A wave must be in sight. A camp is named only when it is seen full, or when you cleared it yourself and it is due back. It is never bigger than the camps you cleared this match, and ancients come only after you have taken ancients. Camps on the enemy half are never named. An enemy hero in sight near you or the target removes the card; so does being dead, under half HP, disabled, teleporting, in a fight, or in an after-fight or Aegis plan.</li>
+  <li><strong>Where the data comes from.</strong> Dota's minimap shows your own creeps always, and enemy and neutral creeps only in your team's vision. Wardly's camp map is built from your match recordings; a camp missing from it is never named. Move speed and gold per creep are measured in the same match.</li>
+  <li><strong>Check.</strong> On two recordings (Anti-Mage, Juggernaut): 20 targets, 3–5 per 10 minutes. The wave was there all 7 times the player went to it. The travel estimate to camps through the trees is still about half the real time. These recordings also built the camp map, so this is not an independent check yet; new recordings will provide one.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.61.0" rel="noopener">Download and details</a></p>
+</section>
+<section class="release" id="v0.60.2">
+<h2><a href="#v0.60.2">Version 0.60.2</a></h2>
+<ul>
+  <li><strong>A second stun is not lost.</strong> When a new disable right after an earlier one is already costing HP (down to 50%, or 15% of max lost in it), its «the moment the disable ends, use X» card comes even if the last card was a few seconds ago. Before, an early warning took the slot and the next, more important card did not come.</li>
+  <li><strong>The early warning needs two enemies.</strong> A card before the HP goes now needs a confirmed enemy disable and at least two enemy heroes in sight next to you. One enemy at high HP waits until the disable costs HP, as before 0.60.1. On two new matches (Juggernaut, Anti-Mage) the «one enemy, no ally next to you» case gave five cards at 85–100% HP, none followed by a death or HP under 60% within 5 seconds.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.2" rel="noopener">Download and details</a></p>
+</section>
+<section class="release" id="v0.60.1">
+<h2><a href="#v0.60.1">Version 0.60.1</a></h2>
+<ul>
+  <li><strong>A disable with enemies on you is warned at once.</strong> «The moment the disable ends, use X» now also comes at high HP when the enemy disable is confirmed and two enemy heroes are in sight next to you, or one with no ally staying next to you. With no enemy in sight the card still waits for HP to go in the disable. Your own phases and statuses of unknown origin get no order; a new enemy disable right after your own cast does. When a stun gives way to a silence that Manta removes, the card turns into «Use Manta Style now» at once.</li>
+  <li><strong>TP and actions.</strong> Wardly cannot see a channel and takes a TP for one only from «the TP cooldown started and the hero stands». During it:</li>
+  <li>an item that does not break the channel (Glimmer Cape, Shadow Blade, Blade Mail, Phase Boots and the others Valve marks so) is no longer held back;</li>
+  <li>a spell, another item or «step back» waits until the TP is over;</li>
+  <li>a card naming an item or a spell passes at once when HP is falling fast, or an enemy is in sight and 15% HP is gone.</li>
+  <li>A cancelled TP holds nothing for long: the sign ends as soon as the hero moves, is stunned, the TP is gone or 6 seconds pass.</li>
+  <li><strong>The fight result is yours, not the team's.</strong> The team score counts kills anywhere on the map (two fights at once, a pick in another lane), so it is no longer read as this fight's result. Wardly reads your own kills, assists and deaths: «You took part in 3 kills: their T2 in the mid lane is in reach». A data gap during the fight gives no result.</li>
+  <li><strong>Big items.</strong></li>
+  <li>A passive item in the stash (Skadi, Aghanim's) is no longer skipped: it gives nothing there.</li>
+  <li>An item left in the backpack for 10 seconds: «swap it into the main slots» — there it neither presses nor works.</li>
+  <li>A received item reassesses the current plan: the delivery plan ends or changes its step, any other plan stays as it was. Wardly does not invent what the item changes in a fight, and a purchase never turns into «go fight».</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.1" rel="noopener">Download and details</a></p>
+</section>
+<section class="release" id="v0.60.0">
+<h2><a href="#v0.60.0">Version 0.60.0</a></h2>
+<ul>
+  <li><strong>A short plan instead of separate cards.</strong> Wardly keeps one near-term goal: what it rests on, the next step, when it is done and when it is called off. A new one comes only when the best action changes:</li>
+  <li><strong>The lane gives you nothing.</strong> For example: «+1 last hit from 5:05 to 6:35, HP down to 12%, 2 enemies around you». The answer is the tower's last hits and calling a support, not an automatic «go to the jungle»: Wardly cannot see whether your hero clears camps at this level, and it says so.</li>
+  <li><strong>An active item waits in the stash</strong> (Manta, BKB, Blink… or their recipe): until it is delivered you cannot press it.</li>
+  <li><strong>A fight is over</strong> — read from the score, never from enemies leaving the minimap. Won with the team next to their tower: «hit it now». Low on HP: recover.</li>
+  <li><strong>The Aegis with the team</strong> — until when it lasts and what to take with it; without the team it covers one mistake.</li>
+  <li><strong>Death and revive by observation.</strong> A life lost without the counter rising is «not known yet» until the game shows it:</li>
+  <li>a late counter is an ordinary death;</li>
+  <li>standing up on the spot with the Aegis or Reincarnation is a revive;</li>
+  <li>a long respawn timer or a return at the fountain is a death the counter missed (never counted twice).</li>
+  <li>Standing up on the spot without the Aegis or Reincarnation is no «second life».</li>
+  <li>Deaths inside a data gap are counted, without a place.</li>
+  <li><strong>The same place is not yet the same mistake.</strong> Several deaths at one spot with allies next to you or at an objective are where the fights were, not a route to change.</li>
+  <li><strong>Allies near means allies who stay.</strong> An ally passing by for one moment is not a team, and neither is a group outnumbered by the visible enemies around. The Aegis holds the buyback card back only when it is known to last another minute and the base is safe.</li>
+  <li><strong>Less voice.</strong></li>
+  <li>«The moment the disable ends, use X» only when the disable puts something at stake: HP at or under 50%, or 15% of max HP lost in it. A short stun at full HP gets no card.</li>
+  <li>After a kill: not «go in again» but «hold the next engage until Doppelganger is back», and only with an enemy close or damage coming. A kill streak is one such card.</li>
+  <li>No «step back» cards while a TP channels.</li>
+  <li><strong>Fresh numbers.</strong> A card still up shows this moment's gold, buyback cost and Wand charges; the voice does not repeat it for a new number.</li>
+  <li><strong>Fixed.</strong></li>
+  <li>An own phase is judged by each mechanic's measured length (Doppelganger, Manta, Metamorphosis), not by any own cooldown next to a stun.</li>
+  <li>A charged Magic Wand is named again next to the escape: «Use Doppelganger now to get out, then Magic Wand».</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.60.0" rel="noopener">Download and details</a></p>
+</section>
+<section class="release" id="v0.59.0">
+<h2><a href="#v0.59.0">Version 0.59.0</a></h2>
+<ul>
+  <li><strong>Your own phases are no longer a disable.</strong> Dota marks the hero as stunned while it hides itself: Manta Style's split, Phantom Lancer's Doppelganger, Omnislash. Wardly took that for an enemy stun and said «The moment the disable ends, use Manta» at full HP. Now:</li>
+  <li>a stun that starts as your own cooldown starts, with no debuff and no HP lost, gets no card;</li>
+  <li>a stun with no debuff and no damage (no visible source) gets no order to spend a defensive item;</li>
+  <li>a real stun right after your phase (a debuff appears or HP drops) still gets its card at once: the filter never hides the next threat;</li>
+  <li>a hex, silence or mute is never taken for your own phase.</li>
+  <li><strong>The Aegis is not a death.</strong> A life lost to the Aegis or Reincarnation (the death counter stays, the hero stands up on the spot) no longer counts as a death: no death review, no «after respawn, change your route», no death screen, no buyback. While you revive Wardly is quiet, and the card of the life just lost goes away. An Aegis that runs out while you live is no death either.</li>
+  <li><strong>Repeated deaths only when they repeat.</strong> Two deaths at opposite ends of the map under one label («the jungle by the river») are no longer «a repeated route»: the deaths must be close to each other (or three at one spot in a game). «You died with low resources» now looks at the HP you entered the fight with, not the last moment before the death (always low).</li>
+  <li><strong>Cards that no longer hold go away, on screen and in the voice:</strong></li>
+  <li>«use Faerie Fire now» once a stun lands; when it ends you are told again;</li>
+  <li>«use Tango» after you ate one, and a low-HP card once you healed;</li>
+  <li>a death card after the respawn, and a card of the living hero after a death;</li>
+  <li>farm, TP or Smoke cards once a fight starts (an enemy stun or HP falling fast);</li>
+  <li>the buyback card once its gold no longer matches.</li>
+  <li><strong>Fresh numbers.</strong> The buyback card quotes the gold and the cost of this moment (it could quote a pair from 40 seconds before), and while you hold the Aegis it does not hold a purchase back for the buyback.</li>
+  <li><strong>Less noise.</strong> No more «Stay alive: you are on a kill streak», «Keep farming: N gold per minute» or a generic «keep farming safely». «You lost 40% HP in 5 seconds» no longer promises «seconds left» and comes only while HP is still falling; a max-HP change (Armlet, Treads) is no damage.</li>
+  <li><strong>New advice.</strong> After your kill with your escape on cooldown: «After your kill: go in again once Doppelganger is back in 5 s», with your Manta's state. After an Aegis revive, the same for your second life. Low mana names only an escape you have learned. «TP in your stash: have the courier bring it» instead of «buy a TP»; Nature's Prophet with Teleportation does not get this card. Deep on the enemy side with allies next to you is no longer «do not show deep».</li>
+  <li><strong>Fixed.</strong> Silence and stun cards with Manta ready were swallowed as a repeat of a farm card; Phantom Lancer's Doppelganger was not recognized as his escape.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.59.0" rel="noopener">Download and details</a></p>
+</section>
 <section class="release" id="v0.58.0">
 <h2><a href="#v0.58.0">Version 0.58.0</a></h2>
 <ul>

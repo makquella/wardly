@@ -216,12 +216,6 @@
     },
     {
       "path": "app/live_tools.py",
-      "message": "Incompatible types in assignment (expression has type \"str | None\", variable has type \"str\")",
-      "code": "assignment",
-      "count": 1
-    },
-    {
-      "path": "app/live_tools.py",
       "message": "Unsupported operand types for <= (\"int\" and \"None\")",
       "code": "operator",
       "count": 1
@@ -369,30 +363,6 @@
       "message": "Value of type \"tuple[int, int] | None\" is not indexable",
       "code": "index",
       "count": 1
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Argument 2 to \"_start_locked\" of \"MatchRecords\" has incompatible type \"Any | dict[Any, Any] | None\"; expected \"dict[str, Any]\"",
-      "code": "arg-type",
-      "count": 1
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Item \"None\" of \"Any | dict[Any, Any] | None\" has no attribute \"get\"",
-      "code": "union-attr",
-      "count": 6
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Unsupported right operand type for in (\"Any | dict[Any, Any] | None\")",
-      "code": "operator",
-      "count": 1
-    },
-    {
-      "path": "app/match_records.py",
-      "message": "Value of type \"Any | dict[Any, Any] | None\" is not indexable",
-      "code": "index",
-      "count": 2
     },
     {
       "path": "app/opendota.py",

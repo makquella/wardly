@@ -42,12 +42,16 @@ on:
         type: boolean
         default: true
       beta_campaign:
-        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs"
+        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs; hook-review: the hook-format test pair; sfx: ElevenLabs sound effects and a music bed for the cut; film: render films/wardly-next-step for review; film-shorts: send a reviewed film run with the Shorts button"
         type: choice
-        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments]
+        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review, sfx, film, film-shorts]
         default: "off"
       beta_run_id:
-        description: "Reviewed artifact run ID (required for deliver/shorts/series)"
+        description: "Reviewed artifact run ID (required for deliver/shorts/series/film-shorts; hook-review: the build whose narration to reuse)"
+        type: string
+        default: ""
+      sfx_run_id:
+        description: "hook-review: the beta_campaign=sfx run whose effects and music to mix in"
         type: string
         default: ""
 
@@ -64,7 +68,8 @@ env:
 jobs:
   video:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # the film's motion-blurred render takes about 20 minutes on its own
+    timeout-minutes: ${{ inputs.beta_campaign == 'film' && 120 || 30 }}
     permissions:
       contents: write
       actions: read
@@ -95,7 +100,7 @@ jobs:
           ffmpeg_version="$("$ffmpeg_exe" -version)"
           echo "${ffmpeg_version%%$'\n'*}"
       - uses: actions/setup-node@v6
-        if: inputs.beta_campaign == 'audit' || inputs.beta_campaign == 'outreach'
+        if: inputs.beta_campaign == 'audit' || inputs.beta_campaign == 'outreach' || inputs.beta_campaign == 'film'
         with:
           node-version-file: .node-version
       - name: Audit published beta Shorts (read only)
@@ -205,11 +210,30 @@ jobs:
             echo "::error title=Beta build::$(tail -n 1 beta-stderr.log)"
             exit "$status"
           fi
+      - name: Restore the narration and effects for the hook cut
+        if: inputs.beta_campaign == 'hook-review'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BETA_RUN_ID: ${{ inputs.beta_run_id }}
+          SFX_RUN_ID: ${{ inputs.sfx_run_id }}
+        run: |
+          if ! [[ "$SFX_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::sfx_run_id must be a beta_campaign=sfx run ID"
+            exit 1
+          fi
+          gh run download "$SFX_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "promo-$SFX_RUN_ID" --dir promo-out
+          if [[ "$BETA_RUN_ID" =~ ^[0-9]+$ ]]; then
+            gh run download "$BETA_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "promo-$BETA_RUN_ID" --dir prior
+            for lang in uk en; do
+              mkdir -p "promo-out/$lang"
+              cp "prior/$lang/narration.wav" "prior/$lang/alignment.json" "prior/$lang/narration-config.json" "promo-out/$lang/"
+            done
+          fi
       - name: Build a creative pair (0.57 release, carry beta)
         # scripts/promo/release_carry.py, carry_beta.py: built and checked like a
         # beta pair, then beta_campaign=shorts with this run's ID sends it with the
         # YouTube button (the carry-beta pairs carry their own YouTube time).
-        if: inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments'
+        if: inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments' || inputs.beta_campaign == 'hook-review'
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           CAMPAIGN: ${{ inputs.beta_campaign }}
@@ -218,6 +242,7 @@ jobs:
             release) creative=carry-plans-0.57 ;;
             carry-review) creative=carry-match-review ;;
             carry-moments) creative=carry-decisive-moments ;;
+            hook-review) creative=review-who-threw ;;
           esac
           status=0
           python -m scripts.promo.beta --out promo-out --creative "$creative" 2> release-stderr.log || status=$?
@@ -226,13 +251,52 @@ jobs:
             echo "::error title=Release build::$(tail -n 1 release-stderr.log)"
             exit "$status"
           fi
+      - name: Render the film (films/wardly-next-step)
+        # Its own README: the soundtrack from the committed ElevenLabs takes, the film's gates,
+        # the motion-blurred master with its sync/spec checks, the layout audit. The two
+        # accept-cut ranges are the flash on the hit and the blade's cut (a flash and a mask wipe).
+        if: inputs.beta_campaign == 'film'
+        working-directory: films/wardly-next-step
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install numpy scipy soundfile pyloudnorm opencv-python-headless
+          # Playwright's Chromium headless shell (the Install step), the browser the film was made
+          # with: the layout audit reads the page's console, which Remotion's own download keeps.
+          REMOTION_BROWSER="$(find "$HOME/.cache/ms-playwright" -path '*chromium_headless_shell-*' -type f \( -name headless_shell -o -name chrome-headless-shell \) | head -n 1)"
+          if [ -z "$REMOTION_BROWSER" ]; then
+            echo "::error::Playwright's Chromium headless shell is missing"
+            exit 1
+          fi
+          export REMOTION_BROWSER
+          echo "browser: $REMOTION_BROWSER"
+          npm ci --no-audit --no-fund
+          npx tsx audio/export-cues.ts
+          python audio/build_soundtrack.py --cues out/cues.json --out public/audio/soundtrack.wav --stems out/stems --json out/qa/score.json
+          npm run check
+          bash scripts/layout-audit.sh Film --copy --safe feed9x16
+          bash scripts/render.sh Film out/film.mp4 --blur --accept-cut 15-17 --accept-cut 58-60
+      - name: Package the film for review
+        # scripts/promo/film.py: the MP4, a cover, its checks; the narration recognised
+        # independently (faster-whisper with the PyAV it was built against).
+        if: inputs.beta_campaign == 'film'
+        run: |
+          python -m pip install faster-whisper==1.2.1 "av<14"
+          python -m scripts.promo.film --out promo-out --package
+          python -m scripts.promo.film --out promo-out --speech-check
+      - name: Generate sound effects and a music bed
+        # scripts/promo/sound_effects.py: MP3s in the artifact (promo-out/sfx).
+        if: inputs.beta_campaign == 'sfx'
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python -m scripts.promo.sound_effects --out promo-out/sfx
       - name: Check beta narration independently
-        if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments'
+        if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments' || inputs.beta_campaign == 'hook-review'
         run: |
           python -m pip install faster-whisper==1.2.1
           python -m scripts.promo.beta --out promo-out --speech-check
       - name: Restore the reviewed beta pair
-        if: inputs.beta_campaign == 'deliver' || inputs.beta_campaign == 'shorts'
+        if: inputs.beta_campaign == 'deliver' || inputs.beta_campaign == 'shorts' || inputs.beta_campaign == 'film-shorts'
         env:
           GH_TOKEN: ${{ github.token }}
           BETA_RUN_ID: ${{ inputs.beta_run_id }}
@@ -255,6 +319,14 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID || vars.TELEGRAM_CHAT_ID }}
         run: python -m scripts.promo.beta --out promo-out --shorts-approval
+      - name: Send the reviewed film with the YouTube Shorts button
+        # The exact MP4 of a beta_campaign=film run, with its publish time (scripts/promo/film.py).
+        if: inputs.beta_campaign == 'film-shorts' && inputs.send
+        env:
+          API_ADMIN_TOKEN: ${{ secrets.API_ADMIN_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID || vars.TELEGRAM_CHAT_ID }}
+        run: python -m scripts.promo.film --out promo-out --send
       - uses: actions/upload-artifact@v4
         if: always()
         with:

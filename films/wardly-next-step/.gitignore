@@ -1,0 +1,6 @@
+# Build outputs: renders, QA reports, stills, the generated soundtrack and its stems.
+out/
+deliver/
+public/audio/
+node_modules/
+__pycache__/

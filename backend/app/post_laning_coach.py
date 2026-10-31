@@ -11,6 +11,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from app.team_context import grouped_with_team
+
 POST_LANING_REPEAT_WINDOW_SECONDS = 120
 POST_LANING_SAME_ACTION_WINDOW_SECONDS = 330
 POST_LANING_RECENT_SAFETY_WINDOW_SECONDS = 150
@@ -58,7 +60,17 @@ def build_post_laning_advice(
     buyback_spent = (
         extra.get("buyback_spent") if isinstance(extra.get("buyback_spent"), Mapping) else None
     )
+    # Holding the Aegis, the next death revives on the spot: the buyback is
+    # not the first thing a purchase risks (and the card would block an item
+    # bought for the push the Aegis is for). Only while the Aegis is known to
+    # last (its pickup seen) and the base is not on the line; an Aegis of
+    # unknown age may run out any second, so the card stays.
+    if buyback_spent is not None and _aegis_covers_buyback(extra):
+        buyback_spent = None
     tp_missing = extra.get("tp_missing") if isinstance(extra.get("tp_missing"), Mapping) else None
+    if tp_missing is not None and _has_global_travel(extra):
+        # A learned global teleport of the hero's own is the TP's job done.
+        tp_missing = None
 
     category = _category_for_state(
         decision_point=decision_point,
@@ -73,6 +85,7 @@ def build_post_laning_advice(
         buyback_spent=buyback_spent is not None,
         buyback_danger=bool((buyback_spent or {}).get("danger")),
         tp_missing=tp_missing is not None,
+        grouped=grouped_with_team(extra),
     )
     if category is None:
         return None
@@ -81,9 +94,15 @@ def build_post_laning_advice(
     if category == "post_laning_farm_stall" and farm_stall:
         reason = _farm_stall_reason(farm_stall)
     elif category == "post_laning_buyback_reserve" and buyback_spent:
-        reason = _buyback_reason(buyback_spent)
+        reason = _buyback_reason(buyback_spent, extra)
     elif category == "post_laning_carry_tp" and tp_missing:
         reason = _tp_reason(tp_missing)
+        if extra.get("tp_in_stash") is True:
+            # Bought already: the missing step is the delivery, not a purchase.
+            action = "Have the courier bring the TP scroll from your stash."
+            reason = (
+                "It is bought but not in a slot: a fight or a tower across the map needs it there."
+            )
     elif category == "post_laning_farm_recovery":
         # The numbers in the action: it is the line the card shows large.
         action, reason = _farm_pace_copy(state, extra) or (action, reason)
@@ -186,6 +205,22 @@ def objective_context_is_missing(extra: Mapping[str, Any]) -> bool:
     )
 
 
+# The Aegis must last at least this long for a purchase below the buyback
+# cost to wait for the card: a fight started now ends within it.
+AEGIS_COVERS_SECONDS = 60
+
+
+def _aegis_covers_buyback(extra: Mapping[str, Any]) -> bool:
+    left = extra.get("own_aegis_left")
+    return (
+        extra.get("has_aegis") is True
+        and isinstance(left, int)
+        and not isinstance(left, bool)
+        and left >= AEGIS_COVERS_SECONDS
+        and not extra.get("base_danger")
+    )
+
+
 def _category_for_state(
     *,
     decision_point: str,
@@ -200,6 +235,7 @@ def _category_for_state(
     buyback_spent: bool = False,
     buyback_danger: bool = False,
     tp_missing: bool = False,
+    grouped: bool = False,
 ) -> str | None:
     # Phase 3 fix: death_route_reset is gated by the factual death_context (derived
     # from GSI state: alive/respawn_seconds/near_player_death/death_count_changed),
@@ -219,7 +255,9 @@ def _category_for_state(
     if decision_point == "OBJECTIVE_FIGHT_CHECK":
         return "post_laning_objective_caution"
 
-    if position_risk == "high" or position_zone == "deep_enemy_side":
+    # Deep with allies next to you (minimap) is a push or a fight with the
+    # team, not a lone deep showing: «don't show deep» does not fit it.
+    if (position_risk == "high" or position_zone == "deep_enemy_side") and not grouped:
         return "post_laning_risky_showing"
 
     # A purchase just took the gold below the buyback cost late in the game
@@ -427,8 +465,6 @@ def _next_item_copy(state: Mapping[str, Any], extra: Mapping[str, Any]) -> tuple
     return f"Keep farming toward {name} on the safest waves and camps.", reason + "."
 
 
-# From this kill streak the player's bounty is worth protecting.
-STREAK_BOUNTY = 3
 # A kill score gap this big (after SCORE_GAP_MINUTE) changes how to farm.
 SCORE_GAP = 8
 SCORE_GAP_MINUTE = 12
@@ -438,17 +474,13 @@ def _situational_farm_copy(
     state: Mapping[str, Any], extra: Mapping[str, Any]
 ) -> tuple[str, str] | None:
     """The safe-farm card with this game's facts instead of the same generic
-    line every time: the player's kill streak, the kill score, else the pace.
-    A core's card only: a support or a safety-only hero gets no farm pace."""
+    line every time: the kill score gap, which changes how to play. A core's
+    card only. «Stay alive: you are on a streak» and «Keep farming: N gold per
+    minute» were dropped: a statistic or a moral is no decision, and neither
+    says what to do differently now."""
     coverage = extra.get("advisor_coverage")
     if coverage is not None and coverage != "full":
         return None
-    streak = _to_int(extra.get("kill_streak"), 0)
-    if streak >= STREAK_BOUNTY:
-        return (
-            f"Stay alive: you are on a {streak}-kill streak.",
-            "Your bounty grows with the streak: farm near your team and skip dark, unwarded areas.",
-        )
     minute = _to_int(state.get("minute"), 0)
     team = str(extra.get("team_name") or "").strip().lower()
     radiant, dire = extra.get("radiant_score"), extra.get("dire_score")
@@ -472,15 +504,6 @@ def _situational_farm_copy(
                 "farming alone.",
                 "A kill lead fades unless it turns into towers and map control.",
             )
-    gpm = _to_int(extra.get("gpm"), 0)
-    last_hits = extra.get("last_hits")
-    if gpm > 0 and isinstance(last_hits, int) and minute > 0:
-        # The numbers go in the action: it is the line the card shows large and
-        # the voice reads, and the plain route line came several times a game.
-        return (
-            f"Keep farming: {gpm} gold per minute, {last_hits} last hits at minute {minute}.",
-            "Keep taking the safest waves and camps: this pace grows without risky fights.",
-        )
     return None
 
 
@@ -522,9 +545,12 @@ BUYBACK_DANGER = {
 }
 
 
-def _buyback_reason(signal: Mapping[str, Any]) -> str:
-    gold = _to_int(signal.get("gold"), 0)
-    cost = _to_int(signal.get("cost"), 0)
+def _buyback_reason(signal: Mapping[str, Any], extra: Mapping[str, Any] | None = None) -> str:
+    """The numbers of this snapshot (the card can come long after the purchase);
+    the signal's own only when the snapshot has none."""
+    extra = extra or {}
+    gold = _to_int(extra.get("available_gold", signal.get("gold")), 0)
+    cost = _to_int(extra.get("buyback_cost", signal.get("cost")), 0)
     danger = BUYBACK_DANGER.get(str(signal.get("danger")))
     if danger:
         return (
@@ -534,6 +560,25 @@ def _buyback_reason(signal: Mapping[str, Any]) -> str:
     return (
         f"You have {gold} gold and buyback costs {cost}; "
         "after minute 30 one death without buyback can decide the game."
+    )
+
+
+# The hero's own learned ability that does a TP scroll's job across the map.
+# Only Nature's Prophet's Teleportation is listed: other travel spells (Io's
+# Relocate, Underlord's portal, Spirit Breaker's charge) need an ally, a
+# target or a long cast, and are not a plain replacement for the scroll.
+GLOBAL_TRAVEL_ABILITIES = frozenset({"furion_teleportation"})
+
+
+def _has_global_travel(extra: Mapping[str, Any]) -> bool:
+    abilities = extra.get("abilities")
+    if not isinstance(abilities, list):
+        return False
+    return any(
+        isinstance(a, Mapping)
+        and a.get("raw_name") in GLOBAL_TRAVEL_ABILITIES
+        and _to_int(a.get("level"), 0) > 0
+        for a in abilities
     )
 
 

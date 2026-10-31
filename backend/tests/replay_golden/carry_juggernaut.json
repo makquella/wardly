@@ -6,8 +6,7 @@
  "cards": [
   "03:00 MAP_HINT hint",
   "07:01 DEATH_REVIEW status",
-  "12:01 SAFE_FARMING coaching",
-  "14:01 REPEATED_DEATH_PATTERN coaching",
+  "14:01 DEATH_REVIEW status",
   "14:40 MAP_HINT hint",
   "15:01 REPEATED_DEATH_PATTERN coaching",
   "17:32 SAFE_FARMING coaching",

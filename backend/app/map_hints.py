@@ -153,6 +153,10 @@ GROUP_EVERY = 180
 # A fight the player is not in (fight_summary.py): shown FIGHT_SHOW seconds, at
 # most once per FIGHT_EVERY.
 FIGHT_SHOW = 12
+# A plan card (live_plan.py) stays this long from the snapshot it started.
+PLAN_SHOW = 12
+# The farm card (farm_map.py): shown for this long from the target it names.
+FARM_SHOW = 25
 FIGHT_EVERY = 60
 DENY_MIN_LAST_HITS = 8
 # A power rune kept in the Bottle this long (clock seconds, alive) → use it.
@@ -473,6 +477,110 @@ TIPS = {
             "{status}Іти чи ні — вирішуйте з командою.",
         ),
     },
+    # The short-term plan (live_plan.py): started only when the best action
+    # changes; the facts it rests on, the next step, and what is unknown.
+    "plan_lane": {
+        "en": (
+            "+{lh} last {hits} from {start} to {end}",
+            "{why}Stay by your tower for the last hits that reach it and ask a support to "
+            "come. Leave the lane only for camps you know your hero clears at this level.",
+        ),
+        "uk": (
+            "Добивань: +{lh} з {start} до {end}",
+            "{why}Тримайтеся біля вежі й добивайте кріпів, що до неї доходять, і покличте "
+            "саппорта. Ідіть з лінії лише до таборів, які ваш герой точно зачистить на цьому рівні.",
+        ),
+    },
+    "plan_delivery": {
+        "en": (
+            "{item} is in your stash",
+            "Have the courier bring it: until it is with you it is not a button you can press.",
+        ),
+        "uk": (
+            "{item} у схованці",
+            "Нехай кур'єр привезе: поки предмета немає з вами, його не натиснути.",
+        ),
+    },
+    "plan_delivery_item": {
+        "en": (
+            "{item} is in your stash",
+            "Have the courier bring it: in the stash it gives you nothing.",
+        ),
+        "uk": (
+            "{item} у схованці",
+            "Нехай кур'єр привезе: у схованці предмет нічого вам не дає.",
+        ),
+    },
+    "plan_backpack": {
+        "en": (
+            "{item} is in your backpack",
+            "Swap it into the main slots: in the backpack it gives nothing and cannot be pressed.",
+        ),
+        "uk": (
+            "{item} у рюкзаку",
+            "Перекладіть в основні слоти: у рюкзаку предмет нічого не дає і не натискається.",
+        ),
+    },
+    "plan_fight_tower": {
+        "en": (
+            "You took part in {took} kills: their T{tier} {lane} is in reach",
+            "{allies} with you and no enemy in sight: hit the tower now.",
+        ),
+        "uk": (
+            "Ви взяли участь у {took} вбивствах: їхня T{tier} {lane} поруч",
+            "{allies} з вами, ворогів не видно: бийте вежу зараз.",
+        ),
+    },
+    "plan_fight_recover": {
+        "en": (
+            "Fight over, {hp}% HP",
+            "{part}Recover before the next one: heal or walk back while no enemy is in sight.",
+        ),
+        "uk": (
+            "Бійка скінчилась, HP {hp}%",
+            "{part}Відновіться перед наступною: лікуйтеся чи відходьте, поки ворогів не видно.",
+        ),
+    },
+    "plan_aegis_team": {
+        "en": (
+            "Aegis until {until}",
+            "{allies} with you: take the next tower or objective while it lasts.",
+        ),
+        "uk": (
+            "Аегіс до {until}",
+            "{allies} з вами: беріть наступну вежу чи ціль, поки він діє.",
+        ),
+    },
+    # The farm that pays most right now (farm_map.py): the place, the gold and
+    # the way there, all measured or seen; what is not, is named.
+    "farm_wave": {
+        "en": (
+            "Farm now: the wave {place}",
+            "{n} creeps in sight, ~{gold} gold, ~{travel} s away.{then}",
+        ),
+        "uk": (
+            "Фарм зараз: хвиля {place}",
+            "Видно кріпів: {n}, ~{gold} золота, ~{travel} с дороги.{then}",
+        ),
+    },
+    "farm_camp": {
+        "en": ("Farm now: the camp {place}", "{state} ~{gold} gold, ~{travel} s away.{then}"),
+        "uk": ("Фарм зараз: табір {place}", "{state} ~{gold} золота, ~{travel} с дороги.{then}"),
+    },
+    "farm_ancients": {
+        "en": ("Farm now: the ancients {place}", "{state} ~{gold} gold, ~{travel} s away.{then}"),
+        "uk": ("Фарм зараз: древні {place}", "{state} ~{gold} золота, ~{travel} с дороги.{then}"),
+    },
+    "plan_aegis_alone": {
+        "en": (
+            "Aegis until {until}",
+            "Group with your team: alone it covers only one mistake.",
+        ),
+        "uk": (
+            "Аегіс до {until}",
+            "Збирайтеся з командою: самому він прощає лише одну помилку.",
+        ),
+    },
     # Enemies seen together far away (enemy_group): no one goes there alone.
     "enemy_group": {
         "en": (
@@ -743,6 +851,66 @@ FIGHT_WORDS = {
 }
 
 
+FARM_WORDS = {
+    "uk": {
+        "label": "Фарм",
+        "seen_full": "Видно, що повний.",
+        "expected": "Відродження о {at}; після вашої зачистки ще не видно.",
+        "then_wave": " Потім хвиля поруч.",
+        "then_camp": " Потім табір поруч.",
+        "then_ancients": " Потім древні поруч.",
+    },
+    "en": {
+        "label": "Farm",
+        "seen_full": "Seen full.",
+        "expected": "Back since {at}; not seen since your clear.",
+        "then_wave": " Then the wave next to it.",
+        "then_camp": " Then the camp next to it.",
+        "then_ancients": " Then the ancients next to it.",
+    },
+}
+
+
+def farm_place(where: dict[str, Any], lang: str) -> str:
+    """«at your T1 in the bottom lane» / «in the jungle on your side»."""
+    from app.analysis_texts import PLACE_ZONES
+
+    tower = where.get("tower")
+    if isinstance(tower, dict) and tower.get("lane"):
+        lane = str(tower["lane"])
+        lane_text = (
+            PLACE_ZONES["uk"]["in"].get(lane, "")
+            if lang == "uk"
+            else f"in the {PLACE_ZONES['en']['name'].get(lane, lane)}"
+        )
+        side = "own" if tower.get("team") == where.get("team") else "enemy"
+        return FIGHT_WORDS[lang][side].format(tier=tower.get("tier"), lane=lane_text)
+    return group_place({"zone": where.get("zone"), "side": where.get("side")}, lang)
+
+
+def farm_params(farm: dict[str, Any], lang: str) -> tuple[str, dict[str, Any]]:
+    """(TIPS key, params) of the farm card in `lang`."""
+    words = FARM_WORDS["uk" if lang == "uk" else "en"]
+    lang = "uk" if lang == "uk" else "en"
+    then = farm.get("then")
+    then_text = ""
+    if isinstance(then, dict):
+        kind = "ancients" if then.get("ancient") else str(then.get("kind"))
+        then_text = words.get(f"then_{kind}", "")
+    params: dict[str, Any] = {
+        "place": farm_place(farm.get("where") or {}, lang),
+        "gold": farm.get("gold"),
+        "travel": farm.get("travel_s"),
+        "then": then_text,
+    }
+    if farm.get("kind") == "wave":
+        return "farm_wave", {**params, "n": farm.get("creeps")}
+    state = words["expected"].format(at=clock_label(int(farm.get("respawn") or 0)))
+    if farm.get("state") != "expected":
+        state = words["seen_full"]
+    return ("farm_ancients" if farm.get("ancient") else "farm_camp"), {**params, "state": state}
+
+
 def fight_params(fight: dict[str, Any], lang: str) -> dict[str, Any]:
     """{place, a, e, status} for the fight card in `lang`."""
     from app.analysis_texts import PLACE_ZONES
@@ -788,6 +956,86 @@ def fight_params(fight: dict[str, Any], lang: str) -> dict[str, Any]:
         "e": len(fight.get("enemies") or []),
         "status": status,
     }
+
+
+def _allies_text(count: int, lang: str) -> str:
+    if lang == "uk":
+        return f"{count} {_ru_plural(count, 'союзник', 'союзники', 'союзників')}"
+    return f"{count} {'ally' if count == 1 else 'allies'}"
+
+
+def plan_params(plan: dict[str, Any], lang: str) -> tuple[str, dict[str, Any]] | None:
+    """(TIPS key, params) of a plan card in `lang`; None for a plan without one."""
+    from app.analysis_texts import PLACE_ZONES
+
+    basis = plan.get("basis") or {}
+    goal = plan.get("goal")
+    if goal == "lane_recover":
+        facts = []
+        if basis.get("hp_min") is not None and basis["hp_min"] <= 50:
+            facts.append(
+                f"HP впало до {basis['hp_min']}%"
+                if lang == "uk"
+                else f"HP down to {basis['hp_min']}%"
+            )
+        if basis.get("enemies", 0) >= 2:
+            facts.append(
+                f"ворогів поруч: {basis['enemies']}"
+                if lang == "uk"
+                else f"{basis['enemies']} enemies around you"
+            )
+        why = (", ".join(facts) + ". ") if facts else ""
+        why = why[:1].upper() + why[1:]
+        lh = int(basis.get("last_hits") or 0)
+        return "plan_lane", {
+            "lh": lh,
+            "hits": "hit" if lh == 1 else "hits",
+            "start": basis.get("from"),
+            "end": basis.get("to"),
+            "why": why,
+        }
+    if goal == "deliver_item":
+        label = basis.get("label_uk" if lang == "uk" else "label") or basis.get("item")
+        if plan.get("next") == "to_main_slots":
+            return "plan_backpack", {"item": label}
+        # A save presses; any other item (a passive, stats) just does nothing there.
+        return ("plan_delivery" if basis.get("save", True) else "plan_delivery_item"), {
+            "item": label
+        }
+    if goal == "after_fight":
+        took = int(basis.get("took_part") or 0)
+        if basis.get("next") == "tower" and isinstance(basis.get("tower"), dict):
+            lane = str(basis["tower"].get("lane") or "base")
+            lane_text = (
+                PLACE_ZONES["uk"]["in"].get(lane, "")
+                if lang == "uk"
+                else f"in the {PLACE_ZONES['en']['name'].get(lane, lane)}"
+            )
+            return "plan_fight_tower", {
+                "took": took,
+                "tier": basis["tower"].get("tier"),
+                "lane": lane_text,
+                "allies": _allies_text(int(basis.get("allies") or 0), lang).capitalize(),
+            }
+        if basis.get("next") == "recover":
+            part = ""
+            if took:
+                part = (
+                    f"Ви взяли участь у {took} вбивствах. "
+                    if lang == "uk"
+                    else f"You took part in {took} {'kill' if took == 1 else 'kills'}. "
+                )
+            return "plan_fight_recover", {"hp": basis.get("hp"), "part": part}
+        return None
+    if goal == "aegis_window":
+        allies = int(basis.get("allies") or 0)
+        if allies:
+            return "plan_aegis_team", {
+                "until": basis.get("until"),
+                "allies": _allies_text(allies, lang).capitalize(),
+            }
+        return "plan_aegis_alone", {"until": basis.get("until")}
+    return None
 
 
 def strip_item(kind: str, at: int, clock: int, lang: str, **extra: Any) -> dict[str, Any]:
@@ -1027,6 +1275,27 @@ class RoleTips:
         self._shown["fight"] = clock
         self._shown_fight = {key: fight_params(fight, key) for key in ("en", "uk")}
         return _tip("fight", f"fight@{clock}", lang, **self._shown_fight[lang])
+
+    def farm(self, clock: int, lang: str, farm: dict[str, Any] | None) -> dict[str, Any] | None:
+        """The farm card (farm_map.py) for FARM_SHOW seconds from the target it
+        names; one card per target, gone with the target."""
+        if not farm or not 0 <= clock - int(farm.get("since", -(10**6))) <= FARM_SHOW:
+            return None
+        key, params = farm_params(farm, lang)
+        tip = _tip(key, f"farm@{farm['since']}", lang, **params)
+        tip["label"] = FARM_WORDS["uk" if lang == "uk" else "en"]["label"]
+        return tip
+
+    def plan(self, clock: int, lang: str, plan: dict[str, Any] | None) -> dict[str, Any] | None:
+        """The card of a short-term plan (live_plan.py) for PLAN_SHOW seconds
+        from its start; one card per plan."""
+        if not plan or not 0 <= clock - int(plan.get("since", -(10**6))) <= PLAN_SHOW:
+            return None
+        rendered = plan_params(plan, lang)
+        if rendered is None:
+            return None
+        key, params = rendered
+        return _tip(key, f"plan_{plan['goal']}@{plan['since']}", lang, **params)
 
     def enemy_group(
         self, clock: int, lang: str, group: dict[str, Any] | None
@@ -1567,6 +1836,8 @@ def map_hint(
     plan_note: dict[str, Any] | None = None,
     enemy_group: dict[str, Any] | None = None,
     fight: dict[str, Any] | None = None,
+    plan: dict[str, Any] | None = None,
+    farm: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """A timer, but a role tip over a minor one (runes, lotus); None before the
     horn or without a role. `objective`: a Roshan / Aegis timer (roshan_timer.py),
@@ -1592,6 +1863,10 @@ def map_hint(
     grouped = tips.enemy_group(clock, lang, enemy_group if alive else None)
     if grouped is not None:
         return grouped
+    # The short-term plan that just changed (live_plan.py), over scheduled timers.
+    planned = tips.plan(clock, lang, plan if alive else None)
+    if planned is not None:
+        return planned
     timer = next_timer(clock, role, lang)
     if objective is not None and (
         timer is None
@@ -1625,6 +1900,10 @@ def map_hint(
             timer["hint"] = TIPS["mid_rune_bottle"]["uk" if lang == "uk" else "en"][1]
     if timer is not None and not timer["minor"]:
         return timer
+    # The farm that pays most right now (farm_map.py), over the role tips.
+    farmed = tips.farm(clock, lang, farm if alive and role in CORE_ROLES else None)
+    if farmed is not None:
+        return farmed
     tip = tips.tip(
         clock,
         role,

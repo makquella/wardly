@@ -32,6 +32,8 @@ from app.last_moments import (
     is_saver,
     saver_label,
 )
+from app.status_source import is_threat
+from app.team_context import contest_near, steady_allies, visible_enemies_near
 
 # Low HP: first a way out, then an instant heal.
 ESCAPES = (
@@ -267,11 +269,13 @@ LOW_HP_REPEAT_FROM = 2  # low-HP cards before this one
 
 def hp_falling_reason(extra: Mapping[str, Any]) -> str | None:
     """The reason of a low-HP card raised by HP falling fast (match_memory
-    hp_falling_fast) rather than by HP already under the line."""
+    hp_falling_fast) rather than by HP already under the line. It states what
+    was measured (the loss, and that it has not stopped) and projects nothing:
+    a finished combo is not a constant DPS, so no «seconds left»."""
     lost = extra.get("hp_falling_fast")
     if not isinstance(lost, int) or isinstance(lost, bool) or lost <= 0:
         return None
-    return f"You lost {lost}% HP in 5 seconds: at this rate you have seconds left, leave now."
+    return f"You lost {lost}% HP in 5 seconds and it is still dropping."
 
 
 def low_hp_repeat_reason(extra: Mapping[str, Any]) -> str | None:
@@ -353,11 +357,140 @@ def insurance_copy(extra: Mapping[str, Any], hp_percent: Any = None) -> tuple[st
             ):
                 return INSURANCE_COPY[raw_name]
     if extra.get("has_aegis") is True:
-        return INSURANCE_COPY["item_aegis"]
+        return aegis_copy(extra)
     # Reincarnation triggers on its own (passive): its cooldown is the signal.
     if _learned_off_cooldown(_ability_by_raw_name(abilities, "skeleton_king_reincarnation")):
         return INSURANCE_COPY["skeleton_king_reincarnation"]
     return None
+
+
+def _running_regen(extra: Mapping[str, Any]) -> set[str]:
+    """Healing items whose effect is still running (action_feedback.py): the
+    player already used them, so the card does not ask for them again."""
+    active = extra.get("regen_active")
+    running = {n for n in active if isinstance(n, str)} if isinstance(active, list) else set()
+    if "item_tango" in running or "item_tango_single" in running:
+        running |= {"item_tango", "item_tango_single"}
+    return running
+
+
+def learned_escapes(hero: Any, abilities: Any) -> list[dict[str, Any]]:
+    """The hero's profile escape abilities that are learned (level > 0), with
+    their live fields: what a low-mana card may name."""
+    if not isinstance(hero, str) or not hero or not isinstance(abilities, list):
+        return []
+    found = []
+    for name in get_key_safety_abilities(hero)["escape"]:
+        ability = find_ability(abilities, name)
+        if ability and (_number(ability.get("level")) or 0) > 0:
+            found.append({**ability, "label": name})
+    return found
+
+
+def low_mana_reason(extra: Mapping[str, Any], hero: Any = None) -> str:
+    """Why low mana matters now, from what is learned: an escape that is off
+    cooldown yet not castable (and no silence/stun) is short of mana right now;
+    a learned escape may be next; with none learned yet no escape is named."""
+    escapes = learned_escapes(hero, extra.get("abilities"))
+    blocked = _abilities_blocked(extra)
+    for ability in escapes:
+        if (
+            not blocked
+            and _number(ability.get("cooldown")) == 0
+            and ability.get("can_cast") is False
+        ):
+            return f"{ability['label']} is off cooldown but cannot be cast now: not enough mana."
+    if escapes:
+        return f"Low mana can leave {escapes[0]['label']} uncastable in the next fight."
+    return "Low mana limits your spells in the next fight."
+
+
+def _defensive_item_state(extra: Mapping[str, Any]) -> tuple[str, int] | None:
+    """(label, seconds left; 0 = ready) of the first escape/dispel item in the
+    active slots, from its reported cooldown."""
+    cooldowns = extra.get("item_cooldowns")
+    if not isinstance(cooldowns, Mapping):
+        return None
+    for name in (*DISPELS, *ESCAPES):
+        cooldown = _number(cooldowns.get(name))
+        if cooldown is not None:
+            return _label(name), int(-(-cooldown // 1))
+    return None
+
+
+def readiness_copy(
+    extra: Mapping[str, Any], ability: str, seconds: int | None
+) -> tuple[str, str] | None:
+    """After an own kill moments ago (not proof the fight is over) or a revive,
+    with a fight still around (team_context.contest_near): the constraint on
+    the next engage while the key ability is down, and what the main defensive
+    item says. A cooldown coming back is availability, not a reason to go in:
+    the card says what to hold until then, never «go in». Only cooldowns GSI
+    reports; no claim about enemies' state."""
+    after_kill = isinstance(extra.get("recent_kill_seconds"), int)
+    revive = extra.get("recent_revive")
+    if not after_kill and not isinstance(revive, Mapping) or not seconds:
+        return None
+    if not contest_near(extra):
+        return None
+    item = _defensive_item_state(extra)
+    item_line = ""
+    if item is not None:
+        label, left = item
+        item_line = f" {label} is ready." if left == 0 else f" {label} is back in {left} s."
+    if isinstance(revive, Mapping) and revive.get("type") in {"aegis_revive", "reincarnation"}:
+        return (
+            f"Second life: hold the next engage until {ability} is back in {seconds} s.",
+            f"You revived on the spot.{item_line}",
+        )
+    return (
+        f"After your kill: hold the next engage until {ability} is back in {seconds} s.",
+        f"Before it is back you have no way out if the fight turns.{item_line}",
+    )
+
+
+def aegis_copy(extra: Mapping[str, Any]) -> tuple[str, str]:
+    """The Aegis card at critical HP with what GSI confirms: how long it still
+    lasts (only when its pickup was seen, roshan_timer.py) and the allies on
+    the minimap next to the hero; else the plain line. It claims nothing about
+    enemies and commands no fight."""
+    action, reason = INSURANCE_COPY["item_aegis"]
+    left = extra.get("own_aegis_left")
+    allies = steady_allies(extra)
+    facts = []
+    if isinstance(left, int) and not isinstance(left, bool) and 0 < left <= 300:
+        facts.append(f"it expires in about {left} s")
+    if allies:
+        facts.append(f"{len(allies)} {'ally is' if len(allies) == 1 else 'allies are'} next to you")
+    if facts:
+        reason = f"A death now revives you on the spot; {' and '.join(facts)}."
+    return action, reason
+
+
+class ToolCopy(tuple):  # type: ignore[type-arg]
+    """(action, reason) with the tool the action orders, as data:
+    {kind: "item", name: GSI item name} or {kind: "ability", name: the
+    profile name}. Unpacks as the plain pair; `.tool` is what channel and
+    validity checks read instead of the words of the action."""
+
+    tool: dict[str, str] | None
+
+    def __new__(cls, action: str, reason: str, tool: dict[str, str] | None = None) -> ToolCopy:
+        copy = super().__new__(cls, (action, reason))
+        copy.tool = tool
+        return copy
+
+
+def _item(name: str) -> dict[str, str]:
+    return {"kind": "item", "name": name}
+
+
+def _ability(name: str) -> dict[str, str]:
+    return {"kind": "ability", "name": name}
+
+
+# A Wand with this many charges heals enough to name next to an escape.
+WAND_WORTH_CHARGES = 5
 
 
 def low_hp_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str] | None:
@@ -369,13 +502,25 @@ def low_hp_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str] |
     if own:
         name, kind = own[0]
         if kind == "escape":
-            return (
+            charges = _count(extra.get("wand_charges"))
+            if "item_magic_wand" in (_ready(extra) or []) and charges >= WAND_WORTH_CHARGES:
+                # The escape first, and the charged Wand is HP on the way out
+                # (PL 12:30: Doppelganger ready, the Wand with charges).
+                return ToolCopy(
+                    f"Use {name} now to get out, then Magic Wand.",
+                    f"Your HP is low and {name} is ready: use it before the next hit. "
+                    f"Magic Wand has {charges} charges: press it on the way out.",
+                    _ability(name),
+                )
+            return ToolCopy(
                 f"Use {name} now to get out, then reset HP.",
                 f"Your HP is low and {name} is ready: use it before the next hit, not after.",
+                _ability(name),
             )
-        return (
+        return ToolCopy(
             f"Use {name} now and walk out of the fight.",
             f"{name} is ready: it buys you the seconds to get away.",
+            _ability(name),
         )
     if _items_blocked(extra):  # muted: the items wait until it ends
         return disabled_copy(extra, hero)
@@ -384,66 +529,88 @@ def low_hp_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str] |
     escape = _first(ready, ESCAPES)
     if escape:
         name = _label(escape)
-        return (
+        return ToolCopy(
             f"Use {name} now to get out, then reset HP.",
             f"Your HP is low and {name} is ready: use it before the next hit, not after.",
+            _item(escape),
         )
     rune = extra.get("bottle_rune")
     if rune in RUNE_ESCAPES:
-        return (
+        return ToolCopy(
             f"Use the {rune} rune from your Bottle and run.",
             f"The {rune} rune in your Bottle is ready: use it before the next hit, not after.",
+            _item("item_bottle"),
         )
     heal = _first(ready, INSTANT_HEALS)
     if heal == "item_magic_wand":
         charges = _count(extra.get("wand_charges"))
-        return (
+        return ToolCopy(
             "Use Magic Wand now, then step back.",
             f"Magic Wand has {charges} charges: that HP is yours right now."
             if charges
             else "Magic Wand is charged: that HP is yours right now.",
+            _item(heal),
         )
     if heal:
         name = _label(heal)
-        return (f"Use {name} now, then step back.", f"{name} is ready and heals you at once.")
+        return ToolCopy(
+            f"Use {name} now, then step back.",
+            f"{name} is ready and heals you at once.",
+            _item(heal),
+        )
     regen = extra.get("regen_items")
-    regen = [n for n in regen if isinstance(n, str)] if isinstance(regen, list) else []
+    running = _running_regen(extra)
+    regen = (
+        [n for n in regen if isinstance(n, str) and n not in running]
+        if isinstance(regen, list)
+        else []
+    )
     if "item_bottle" in regen and rune == "Water":
-        return (
+        return ToolCopy(
             "Use the Water rune from your Bottle now, then step back.",
             "The Water rune in your Bottle heals you at once.",
+            _item("item_bottle"),
         )
     instant = next((n for n in regen if n in REGEN_INSTANT), None)
     if instant:
         name = _label(instant)
-        return (f"Use {name} now, then step back.", f"{name} heals you at once.")
+        return ToolCopy(
+            f"Use {name} now, then step back.", f"{name} heals you at once.", _item(instant)
+        )
     over_time = next((n for n in regen if n in REGEN_OVER_TIME), None)
     if over_time == "item_bottle" and rune == "Regeneration":
-        return (
+        return ToolCopy(
             "Step out of enemy range and use the Regeneration rune from your Bottle.",
             "The Regeneration rune heals fast but stops at the first hit: "
             "use it where enemies cannot reach you.",
+            _item("item_bottle"),
         )
     if over_time:
         name = _label(over_time)
-        return (
+        return ToolCopy(
             f"Step out of enemy range and use {name}.",
             f"{name} heals over time: use it where enemies cannot hit you.",
+            _item(over_time),
         )
     return None
 
 
 def disabled_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str] | None:
     """(action, reason) for a disable when a dispel or escape is ready: a dispel
-    item, then the hero's own escape or defensive ability, then an escape item."""
+    item, then the hero's own escape or defensive ability, then an escape item.
+    None for a status that is the player's own phase or unexplained (no debuff,
+    no HP lost; status_source.py): nothing to dispel, no item to spend."""
+    if not is_threat(extra.get("status_source", {"kind": "unknown"})):
+        return None
     ready = _ready(extra) or []
     blocked = _items_blocked(extra)
     tool = _first(ready, DISPELS)
     if not blocked and extra.get("silenced") is True and tool:
         name = _label(tool)
-        return (
+        return ToolCopy(
             f"Use {name} now: it removes the silence.",
             "A silence does not stop items: get rid of it before the next spell lands.",
+            _item(tool),
         )
     own = [name for name, _ in _own_ready(extra, hero)]
     if (
@@ -453,21 +620,86 @@ def disabled_copy(extra: Mapping[str, Any], hero: Any = None) -> tuple[str, str]
         and not (extra.get("stunned") is True or extra.get("hexed") is True)
     ):
         # Muted only: items wait, the hero's spells do not.
-        return (
+        return ToolCopy(
             f"Use {own[0]} now: a mute blocks items, not spells.",
             f"{own[0]} is ready: it buys you the seconds to get away.",
+            _ability(own[0]),
         )
     if not own:
         own = [n for n, _ in hero_tools(hero, extra.get("abilities"))["ready"]]
-    name = _label(tool) if tool else (own[0] if own else None)
-    if name is None and _first(ready, ESCAPES):
-        name = _label(_first(ready, ESCAPES) or "")
-    if not blocked or not name:
+    chosen: dict[str, str] | None = None
+    if tool:
+        chosen = _item(tool)
+    elif own:
+        chosen = _ability(own[0])
+    elif _first(ready, ESCAPES):
+        chosen = _item(_first(ready, ESCAPES) or "")
+    if not blocked or chosen is None or not _disable_endangers(extra):
         return None
-    return (
+    name = _label(chosen["name"]) if chosen["kind"] == "item" else chosen["name"]
+    return ToolCopy(
         f"The moment the disable ends, use {name}.",
         f"{name} is ready: the second after a disable is when most kills finish.",
+        chosen,
     )
+
+
+# «The moment the disable ends, use X» only when the disable puts the life at
+# stake, from what this snapshot shows (never from what came after it):
+# - HP at or below DISABLE_DANGER_HP_SHARE of max, or DISABLE_DANGER_LOST_SHARE
+#   of max lost since its onset (status_source `hp_lost_share`, measured from
+#   the snapshot before it): the damage is already landing
+#   (disable_damage_shown);
+# - or a confirmed threat before the damage: an enemy disable classified with
+#   high confidence (a debuff that appeared, or HP lost) and THREAT_ENEMIES or
+#   more enemy heroes visible next to the hero on this snapshot's minimap.
+#   Caught by a gank, the burst comes after the stun starts; nothing is
+#   assumed about enemies the minimap does not show, the burst or the stun's
+#   length.
+# The HP marks are a noise filter: a control at high HP with nobody in sight
+# (a lane harass, a stray stun) asks for no defensive item. They were set on
+# one recording (Phantom Lancer, 9054793282) and checked on two more
+# (Juggernaut 9042382595, Terrorblade 9042342539). 0.60.1 also let one
+# visible enemy count when no ally stayed next to the hero; on two later
+# recordings (Juggernaut 9061316351, Anti-Mage 9061396945, not used to set
+# anything before) that branch gave 5 cards at 85-100 % HP, none followed by
+# a death or HP under 60 % within 5 s, and one of them held back, by the
+# card cooldown, the card of a later stun he died in. It is gone; those two
+# recordings are no longer an independent check of this rule.
+# Checked again every snapshot of the status.
+DISABLE_DANGER_HP_SHARE = 0.50
+DISABLE_DANGER_LOST_SHARE = 0.15
+THREAT_ENEMIES = 2
+
+
+def disable_damage_shown(extra: Mapping[str, Any]) -> bool:
+    """The disable is already costing HP on this snapshot (or HP is unknown,
+    the legacy card): at or under the HP mark, or the share lost in it."""
+    health, max_health = _number(extra.get("health")), _number(extra.get("max_health"))
+    if health is None or not max_health:
+        return True
+    if health / max_health <= DISABLE_DANGER_HP_SHARE:
+        return True
+    source = extra.get("status_source")
+    lost = _number(source.get("hp_lost_share")) if isinstance(source, Mapping) else None
+    return lost is not None and lost >= DISABLE_DANGER_LOST_SHARE
+
+
+def _disable_endangers(extra: Mapping[str, Any]) -> bool:
+    return disable_damage_shown(extra) or _confirmed_threat(extra)
+
+
+def _confirmed_threat(extra: Mapping[str, Any]) -> bool:
+    """An enemy disable sure to be one (high confidence) with THREAT_ENEMIES
+    enemy heroes visible next to the hero now (see DISABLE_DANGER_HP_SHARE)."""
+    source = extra.get("status_source")
+    if (
+        not isinstance(source, Mapping)
+        or source.get("kind") != "enemy"
+        or source.get("confidence") != "high"
+    ):
+        return False
+    return len(visible_enemies_near(extra)) >= THREAT_ENEMIES
 
 
 ZONES = {"top": "top lane", "mid": "mid lane", "bot": "bottom lane", "jungle": "jungle"}
@@ -503,7 +735,16 @@ def death_copy(extra: Mapping[str, Any], *, route: bool = True) -> tuple[str | N
     item is the lesson and wins the reason."""
     action = reason = None
     place = extra.get("death_place")
-    if isinstance(place, Mapping) and place.get("zone") in ZONES and place.get("side") in SIDES:
+    # A spot where the hero died with allies staying next to it is where the
+    # team fought, not a route taken alone: no «stay away until your team is
+    # there» (match_memory REPEATED_PLACE).
+    with_team = extra.get("last_death_with_team") is True
+    if (
+        isinstance(place, Mapping)
+        and place.get("zone") in ZONES
+        and place.get("side") in SIDES
+        and not with_team
+    ):
         where = f"{ZONES[place['zone']]} {SIDES[place['side']]}"
         count = place.get("count") if isinstance(place.get("count"), int) else 1
         minutes = place.get("minutes") if isinstance(place.get("minutes"), int) else 1
@@ -525,21 +766,9 @@ def death_copy(extra: Mapping[str, Any], *, route: bool = True) -> tuple[str | N
                 f"You died in the {ZONES[place['zone']]} on the enemy side: "
                 "farm your own half until your team is with you."
             )
-    # How many deaths: only in place of a route line (`route`), never over the
-    # escape or resource advice.
-    recent = extra.get("recent_deaths") if route else None
-    if action is None and isinstance(recent, Mapping):
-        # Deaths in different places (or no place known): how many, how fast.
-        count, minutes = recent.get("count"), recent.get("minutes")
-        if isinstance(count, int) and count >= 2 and isinstance(minutes, int) and minutes >= 1:
-            action = (
-                f"After respawn, change your route: {count} deaths in the last {minutes} "
-                f"{'minute' if minutes == 1 else 'minutes'}."
-            )
-    total = extra.get("match_deaths") if route else None
-    if action is None and isinstance(total, int) and total >= 2:
-        # Spread over the game: the count still says this is a pattern.
-        action = f"After respawn, change your route: {total} deaths this game."
+    # Deaths in different places are several events, not one repeated route:
+    # a count alone («3 deaths this game») names no route to change, so the
+    # single-death line (where it was, how fast it came) speaks instead.
     if action is None and route:
         action, reason = _single_death_copy(extra, place, reason)
     return action, death_items_reason(extra) or reason

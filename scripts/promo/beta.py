@@ -22,6 +22,7 @@ from . import (
     beta_shorts,
     carry_beta,
     experiments,
+    hook_review,
     media,
     release_carry,
     render,
@@ -150,12 +151,14 @@ def storyboard(
     lengths: tuple[float, ...] = (3.2, 3.8, 3.5, 2.5, 4, 2.8, 3)
     if len(texts) != len(lengths):
         # Another scene count: about as long as the words take to say.
-        lengths = tuple(max(2.5, 0.45 * len(text.split()) + 1.0) for text in texts)
+        per_word, per_scene = getattr(story, "DRAFT_PACE", (0.45, 1.0))
+        lengths = tuple(max(2.5, per_word * len(text.split()) + per_scene) for text in texts)
     words, at = [], 0.0
     for text, span in zip(texts, lengths, strict=True):
         words.extend(scenes.estimated_words(text, at + 0.05, at + span - 0.2))
         at += span
-    return timings(texts, words, at, minimum=20, maximum=27, tail=0.8)
+    maximum = getattr(story, "MAX_SECONDS", 27)
+    return timings(texts, words, at, minimum=20, maximum=maximum, tail=0.8)
 
 
 def srt(captions: list[dict[str, Any]]) -> str:
@@ -337,6 +340,11 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
         story = release_carry.profile()
         revision = release_carry.REVISION
         claims["release"] = release_carry.verify()
+    elif creative == hook_review.CREATIVE:
+        # The test Short in the dynamic hook format (docs/marketing/shorts-rules.md).
+        story = hook_review.profile()
+        revision = hook_review.REVISION
+        claims["hook_review"] = hook_review.verify()
     elif creative in carry_beta.CREATIVES:
         # The scheduled carry-beta pairs: claims from the app's own texts.
         story = carry_beta.profile(creative)
@@ -354,6 +362,9 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
     if selected:
         save(out / "voice-catalog.json", selected)
     motion = {} if draft else prepare_motion(out, getattr(story, "HEROES", beta_scenes.HEROES))
+    if not draft and hasattr(story, "broll"):
+        # Generated b-roll behind some scenes (hook_review.BROLL, hash-checked).
+        motion.update(story.broll(out))
     for language in LANGUAGES:
         folder = out / language
         folder.mkdir(exist_ok=True)
@@ -393,7 +404,12 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
                 save(folder / "alignment.json", words)
                 save(cache_path, identity)
             timeline, captions, total = timings(
-                texts, words, voice.duration(master), minimum=20, maximum=27, tail=0.8
+                texts,
+                words,
+                voice.duration(master),
+                minimum=20,
+                maximum=getattr(story, "MAX_SECONDS", 27),
+                tail=0.8,
             )
             voice.join([(master, total)], folder / "padded.wav")
         aligned = [
@@ -405,6 +421,13 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
         save(folder / "timeline.json", timeline)
         save(folder / "captions.json", captions)
         (folder / "captions.srt").write_text(srt(captions), encoding="utf-8")
+        audio = folder / "padded.wav"
+        if not draft and hasattr(story, "mix"):
+            # Effects and a music bed under the voice (promo-out/sfx from
+            # beta_campaign=sfx, restored by the workflow).
+            audio = story.mix(
+                language, timeline, captions, audio, total, folder / "mixed.wav", out / "sfx"
+            )
         page_html = story.page(language, timeline, captions, motion)
         layout = layout_check(page_html, timeline, folder)
         package = {
@@ -426,7 +449,7 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
                 page_html,
                 total,
                 folder / "video.mp4",
-                folder / "padded.wav",
+                audio,
                 cover=folder / "cover.jpg",
                 inline=True,
             )
@@ -434,12 +457,22 @@ def build(out: Path, *, draft: bool = False, creative: str = "sven-under-4k") ->
             package["sha256"] = digest(folder / "video.mp4")
             save(folder / "youtube-metadata.json", beta_shorts.package(language, package))
             (folder / "padded.wav").unlink()
+            (folder / "mixed.wav").unlink(missing_ok=True)
         save(folder / "package.json", package)
         print(f"{language}: {'storyboard' if draft else 'video'} {total:.2f}s; layout passed")
 
 
-def deliver(out: Path, *, shorts: bool = False) -> None:
-    """Send privately; the explicit Shorts mode adds the existing YouTube-only callback."""
+def deliver(
+    out: Path,
+    *,
+    shorts: bool = False,
+    languages: tuple[str, ...] = LANGUAGES,
+    kind: str = KIND,
+) -> None:
+    """Send privately; the explicit Shorts mode adds the existing YouTube-only callback.
+
+    `languages` and `kind`: the films of another reviewed artifact (film.py: one Ukrainian film).
+    """
     bot, chat = send._env("TELEGRAM_BOT_TOKEN"), send._env("TELEGRAM_CHAT_ID")
     endpoint = f"{experiments.TELEGRAM_API}/bot{bot}"
     private = send._request(
@@ -455,11 +488,11 @@ def deliver(out: Path, *, shorts: bool = False) -> None:
     # Validate the entire pair before the first network upload.
     packages = {}
     receipt_name = "shorts-approval-receipt.json" if shorts else "telegram-receipt.json"
-    for language in LANGUAGES:
+    for language in languages:
         folder = out / language
         package = json.loads((folder / "package.json").read_text(encoding="utf-8"))
         if (
-            package.get("kind") != KIND
+            package.get("kind") != kind
             or package.get("draft")
             or package.get("language") != language
         ):
@@ -648,12 +681,12 @@ def transcript_similarity(expected: str, actual: str) -> float:
     return SequenceMatcher(None, normalize(expected), normalize(actual), autojunk=False).ratio()
 
 
-def speech_check(out: Path) -> None:
+def speech_check(out: Path, languages: tuple[str, ...] = LANGUAGES) -> None:
     """Independently recognize the rendered speech, including the English delivery."""
     from faster_whisper import WhisperModel
 
     model = WhisperModel("small", device="cpu", compute_type="int8", cpu_threads=2)
-    for language in LANGUAGES:
+    for language in languages:
         folder = out / language
         segments, info = model.transcribe(str(folder / "video.mp4"), beam_size=5, vad_filter=True)
         transcript = " ".join(segment.text.strip() for segment in segments)
@@ -699,8 +732,16 @@ def main() -> None:
     parser.add_argument(
         "--creative",
         default="sven-under-4k",
-        choices=("sven-under-4k", release_carry.CREATIVE, *carry_beta.CREATIVES),
-        help="which pair to build (0.57 release: release_carry.py; carry beta: carry_beta.py)",
+        choices=(
+            "sven-under-4k",
+            release_carry.CREATIVE,
+            *carry_beta.CREATIVES,
+            hook_review.CREATIVE,
+        ),
+        help=(
+            "which pair to build (0.57 release: release_carry.py; carry beta: "
+            "carry_beta.py; hook format test: hook_review.py)"
+        ),
     )
     args = parser.parse_args()
     if sum((args.draft, args.deliver_only, args.speech_check, args.shorts_approval)) > 1:

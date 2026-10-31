@@ -254,3 +254,8 @@ class RecommendationResponse(BaseModel):
     priority: Literal["low", "medium", "high"]
     time_window: str
     source: Literal["fallback", "llm"] = "fallback"
+    # The tool the action orders to use ({kind: item|ability, name}: a GSI item
+    # name or the ability's profile name), set by the copy that chose it
+    # (live_tools.ToolCopy); None for a card that names none. Internal: not
+    # part of the API payload.
+    tool: dict[str, Any] | None = Field(default=None, exclude=True)

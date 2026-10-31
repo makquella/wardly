@@ -70,6 +70,25 @@ class SchedulerState:
     _last_updated: str | None = None
     _active_advice_until: datetime | None = None
     _is_pinned: bool = False
+    # What the held card depends on (advice_validity.advice_basis) and the
+    # last card withdrawn because it no longer held, with until when the
+    # overlay is told so.
+    _active_basis: dict[str, Any] | None = None
+    _withdrawn: dict[str, Any] | None = None
+    _withdrawn_until: datetime | None = None
+    # The type of a card withdrawn because the player can now do more than it
+    # said (a stun gave way to a silence the named item goes through): the
+    # next card of that type is held back neither by its own cooldown nor as
+    # a duplicate of the same game state.
+    _overtaken_type: str | None = None
+    # The status episode (status_source `since`) the last disable card was for.
+    _disable_card_since: float | None = None
+    withdrawn_count: int = 0
+    no_new_decision_count: int = 0
+    # Bumped for each card shown: an async refinement applies only to its card.
+    _card_serial: int = 0
+    # The kill or revive whose readiness card was shown (one per moment).
+    _readiness_shown_key: tuple[str, int] | None = None
     _last_seen_minute: int | None = None
 
     # --- LLM tracking (mutable) ---

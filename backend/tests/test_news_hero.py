@@ -76,8 +76,14 @@ def test_the_hero_of_the_week_uses_the_meta_post_of_its_week(tmp_path, monkeypat
     fact = news_hero.facts(entry["hero"], _site(), "uk")
     page = news_hero.post_main(entry, fact, "uk", "../", "../", {"spectre"})
     assert "Герой тижня: Spectre" in page and "Керрі, що фармить." in page
-    assert "Відходь, коли HP нижче 50 %; нижче 35 % — негайно." in page
-    assert "До 10:00 — 45–60 добивань." in page and 'href="../heroes/spectre.html"' in page
+    # Spectre has a plan: the numbers that win on him, not the generic thresholds.
+    assert "Що виграє на цьому герої" in page and "Прокачка:" in page
+    assert "лігові матчі патча" in page and "Відходь, коли HP" not in page
+    assert 'href="../heroes/spectre.html"' in page
+    # Without a plan the page keeps the hero page's thresholds and pace.
+    plain = news_hero.post_main(entry, {**fact, "insights": None}, "uk", "../", "../", set())
+    assert "Відходь, коли HP нижче 50 %; нижче 35 % — негайно." in plain
+    assert "До 10:00 — 45–60 добивань." in plain
     assert "6–12 жовтня" in page
     # No English note for the hero: the English page just leaves it out.
     en = news_hero.post_main(

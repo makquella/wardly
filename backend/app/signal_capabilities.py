@@ -54,6 +54,10 @@ CAPABILITY_MATRIX: dict[str, dict[str, list[str]]] = {
         ],
         "partial": [
             "objective_context",
+            # Minimap creeps (farm_map.py): own lane creeps always, enemy lane
+            # creeps and neutrals only while the team sees them.
+            "lane_creeps_in_vision",
+            "camps_in_vision",
         ],
         "missing": [
             "nearby_allies_enemies",

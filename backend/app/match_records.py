@@ -4,15 +4,23 @@ match_records.py - a week of match recordings on the player's own computer.
 Switched on in the launcher («Зберігати записи матчів», Settings → «Ще
 налаштування»): every live match is written to its own gzip JSON-lines file —
 what the game sent (at most RECORD_EVERY seconds apart, plus every change of
-the game state or of life and death) and every advice card the coach showed —
+the game state, of life and death or of a blocking status) and every advice
+card the coach showed —
 so a player can save any match of the last week as a file and send it to the
 developer, the next day too. Nothing is uploaded.
 
 The files carry no Steam ID, account id, nickname, GSI token or chat:
 `redact` drops them before writing. Files older than KEEP_DAYS are deleted.
-Lines: {"k": "gsi", "w": wall time, "p": payload} and {"k": "advice", "w": …,
-"clock": …, "dp": …, "action": …, "reason": …, "priority": …}; the first
-line is {"k": "meta", …}. Python's gzip reads the appended members as one file.
+Lines: {"k": "gsi", "w": wall time, "ts": snapshot, "p": payload} and
+{"k": "advice", "w": …, "snap": snapshot, "clock": …, "dp": …, "action": …,
+"reason": …, "priority": …, "basis": …}; the first line is {"k": "meta", …}.
+Python's gzip reads the appended members as one file.
+
+`w` of a GSI line is when the payload arrived (before it was published), so
+the snapshot a card was decided on never carries a later `w` than the card;
+`ts` (gsi_snapshot timestamp) on both lines joins a card to that exact
+snapshot when it was stored. Several payloads share one clock second and only
+some are stored, so a missing `ts` means the deciding snapshot was not kept.
 """
 
 from __future__ import annotations
@@ -120,29 +128,40 @@ class MatchRecords:
 
     # --- recording ------------------------------------------------------------
 
-    def record_gsi(self, payload: Any, *, now: float | None = None) -> None:
-        """Store one GSI payload of the player's live match; never raises."""
+    def record_gsi(
+        self, payload: Any, *, now: float | None = None, snapshot: str | None = None
+    ) -> None:
+        """Store one GSI payload of the player's live match; never raises.
+        `now`: when it arrived; `snapshot`: the published snapshot's timestamp."""
         if not self.enabled or not isinstance(payload, dict):
             return
         # Recording must never break /gsi.
         try:
-            self._record_gsi(payload, time.monotonic() if now is None else now)
+            self._record_gsi(payload, time.monotonic() if now is None else now, snapshot)
         except Exception as error:  # noqa: BLE001 - optional recording never breaks GSI
             with self._lock:
                 self._failures += 1
                 self._last_error = type(error).__name__
             record_error("match-records-observe", error, with_trace=False)
 
-    def _record_gsi(self, payload: dict[str, Any], now: float) -> None:
-        game = payload.get("map") if isinstance(payload.get("map"), dict) else {}
+    def _record_gsi(self, payload: dict[str, Any], now: float, snapshot: str | None = None) -> None:
+        raw_game, raw_player, raw_hero = (payload.get(k) for k in ("map", "player", "hero"))
+        game: dict[str, Any] = raw_game if isinstance(raw_game, dict) else {}
         state = game.get("game_state")
         match_id = _SAFE_ID.sub("", str(game.get("matchid") or ""))[:24]
-        player = payload.get("player") if isinstance(payload.get("player"), dict) else {}
+        player: dict[str, Any] = raw_player if isinstance(raw_player, dict) else {}
         # A spectator gets per-team player blocks: not the player's own match.
         if state not in IN_MATCH_STATES or not match_id or "team2" in player:
             return
-        hero = payload.get("hero") if isinstance(payload.get("hero"), dict) else {}
-        key = (state, hero.get("alive"), hero.get("name"))
+        hero: dict[str, Any] = raw_hero if isinstance(raw_hero, dict) else {}
+        # A blocking status or a debuff can begin and end inside one clock
+        # second: its change is always stored (audits need the onset).
+        key = (
+            state,
+            hero.get("alive"),
+            hero.get("name"),
+            *(hero.get(flag) for flag in ("stunned", "hexed", "silenced", "muted", "has_debuff")),
+        )
         with self._lock:
             if self._dir is None:
                 return
@@ -171,7 +190,10 @@ class MatchRecords:
             if hero.get("name") and not self._meta.get("hero"):
                 self._meta["hero"] = str(hero["name"])[:60]
             self._buffer.append(
-                json.dumps({"k": "gsi", "w": round(now, 2), "p": redact(payload)}, default=str)
+                json.dumps(
+                    {"k": "gsi", "w": round(now, 2), "ts": snapshot, "p": redact(payload)},
+                    default=str,
+                )
             )
             if len(self._buffer) >= FLUSH_LINES or now - self._last_flush >= FLUSH_EVERY:
                 self._flush_locked(now)
@@ -193,12 +215,17 @@ class MatchRecords:
                     {
                         "k": "advice",
                         "w": round(now, 2),
+                        "snap": response.get("timestamp"),
                         "clock": response.get("clock_time"),
                         "dp": response.get("decision_point"),
                         "hero_gameplay": response.get("hero_gameplay"),
                         "action": recommendation.get("action"),
                         "reason": recommendation.get("reason"),
                         "priority": recommendation.get("priority"),
+                        # The snapshot the card was decided on (several GSI
+                        # payloads share one clock second): its clock, game
+                        # time, and the tool/numbers the card cites.
+                        "basis": response.get("advice_basis"),
                     },
                     default=str,
                 )

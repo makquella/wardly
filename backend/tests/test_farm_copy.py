@@ -18,11 +18,13 @@ def _advice(minute=20, **extra):
     return build_post_laning_advice(state, "SAFE_FARMING")
 
 
-def test_a_kill_streak_comes_first():
+def test_a_kill_streak_is_no_card_of_its_own():
+    # «Stay alive: you are on a streak» was a moral, not a decision: the score
+    # gap (which changes how to play) speaks, else the plain line (a filler the
+    # scheduler does not show).
     advice = _advice(kill_streak=4, team_name="radiant", radiant_score=5, dire_score=20)
-    assert advice.action == "Stay alive: you are on a 4-kill streak."
-    assert translate_uk(advice.action) == "Бережіть себе: у вас серія з 4 вбивств поспіль."
-    assert translate_uk(advice.reason) != advice.reason
+    assert advice.action.startswith("Your team is 15 kills behind")
+    assert "streak" not in _advice(kill_streak=6).action
 
 
 def test_the_kill_score_gap_changes_the_advice():
@@ -42,16 +44,10 @@ def test_the_kill_score_gap_changes_the_advice():
     assert "kills" not in _advice(radiant_score=1, dire_score=12).action
 
 
-def test_else_the_pace_in_numbers():
+def test_the_pace_in_numbers_is_no_decision():
+    # «Keep farming: 512 gold per minute» restated a statistic every few minutes.
     advice = _advice(gpm=512, last_hits=140, minute=21)
-    assert advice.action == "Keep farming: 512 gold per minute, 140 last hits at minute 21."
-    assert (
-        translate_uk(advice.action)
-        == "Фарміть далі: 512 золота за хвилину, добивань до 21-ї хвилини — 140."
-    )
-    assert translate_uk(advice.reason) == (
-        "Беріть найбезпечніші хвилі й табори: темп росте й без ризикованих бійок."
-    )
+    assert advice.action == "Keep farming the safest wave-and-camp route and reassess soon."
 
 
 def test_nothing_known_keeps_the_plain_line():
@@ -70,7 +66,11 @@ def test_a_support_heartbeat_gets_no_farm_pace():
     action, reason, _ = _heartbeat_copy(state)
     assert "pace" not in action + reason
     core = {**state, "extra_context": {**state["extra_context"], "advisor_coverage": "full"}}
-    assert _heartbeat_copy(core)[0].startswith("Keep farming:")
+    # A core gets no pace statistic either: the plain line, which the
+    # scheduler then leaves unsaid (advice_validity.FILLER_ACTIONS).
+    assert _heartbeat_copy(core)[0] == (
+        "Keep farming the safest wave-and-camp route and reassess soon."
+    )
 
 
 def test_the_overlay_tells_the_scheduler_the_coverage(client, monkeypatch):

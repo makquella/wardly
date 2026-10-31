@@ -1,0 +1,120 @@
+:root { --gold:#ffc94d; --green:#3ddc84; --card:#11141bf0; }
+.ambient, .edge-light { display:none; }
+.map { position:absolute; inset:0; overflow:hidden; perspective:1500px; }
+.plane { position:absolute; left:540px; top:1000px; width:1500px; height:1500px; }
+.plane svg { width:100%; height:100%; display:block; }
+.land { fill:#131821; stroke:#ffffff10; stroke-width:4; }
+.river { fill:#1d5d9c; opacity:.55; }
+.lane { fill:none; stroke:#2b313c; stroke-width:22; stroke-linecap:round; stroke-linejoin:round; }
+.tower { stroke:#0a0c11; stroke-width:4; }
+.tower.r { fill:#36c47b; }
+.tower.d { fill:#e4474f; }
+.base { opacity:.75; }
+.base.r { fill:#1f8a52; }
+.base.d { fill:#a72c37; }
+.glow { position:absolute; inset:0; background:
+  radial-gradient(ellipse 85% 42% at 72% 16%, #c0263d66, transparent 70%),
+  radial-gradient(ellipse 85% 40% at 22% 94%, #1fa45d4d, transparent 70%),
+  linear-gradient(#0a0c11e6, #0a0c117a 26%, #0a0c1166 62%, #0a0c11f0); }
+.dust { position:absolute; inset:0; overflow:hidden; }
+.dust i { position:absolute; border-radius:50%; background:#fff3d6; }
+.dust b { position:absolute; width:46px; height:46px; margin:-23px 0 0 -23px; border-radius:50%; border:3px solid #ffc94dcc; color:#ffc94d; font:900 26px/40px Montserrat; text-align:center; background:#ffc94d14; }
+main { position:absolute; inset:0; }
+.scene { will-change:opacity, transform; }
+.fx { opacity:0; }
+em { font-style:normal; color:var(--coral); }
+.kicker { position:absolute; left:88px; top:290px; width:804px; font:800 25px/1.3 Inter; letter-spacing:3px; color:#cfd3db; }
+.kicker i { display:inline-block; width:12px; height:12px; margin:0 14px 3px 0; border-radius:50%; background:var(--coral); box-shadow:0 0 16px var(--coral); }
+.headline { position:absolute; left:88px; top:340px; width:804px; margin:0; font:900 132px/1.25 Montserrat; letter-spacing:-6px; color:#fff; text-shadow:0 10px 40px #000c; }
+html[lang=en] .headline { font-size:118px; }
+.headline .word { display:inline-block; }
+.chat { position:absolute; left:88px; top:690px; width:804px; padding:20px 30px 10px; border-radius:26px; background:var(--card); border:1px solid #ffffff22; box-shadow:0 30px 90px #000c; transform:perspective(1200px) rotateX(12deg); }
+.chat-head { font:800 22px/1.3 Inter; letter-spacing:3px; color:#8b93a1; padding-bottom:8px; }
+.chat-row { display:flex; align-items:center; gap:20px; height:90px; border-top:1px solid #ffffff12; }
+.chat-row .face { flex:none; width:66px; height:66px; border-radius:14px; object-fit:cover; }
+.chat-row span { display:block; font:600 21px/1.3 Inter; color:#8b93a1; }
+.chat-row b { display:block; font:750 34px/1.25 Inter; color:#f4efe6; letter-spacing:-.5px; }
+.chat-row b.bad { color:var(--coral); }
+.promise { position:absolute; left:88px; top:350px; width:804px; margin:0; text-align:center; font:900 104px/1.25 Montserrat; letter-spacing:-5px; }
+html[lang=en] .promise { font-size:112px; }
+.burst { position:absolute; left:390px; top:610px; width:300px; height:300px; border-radius:50%; border:4px solid var(--gold); box-shadow:0 0 60px #ffc94d88, inset 0 0 60px #ffc94d55; opacity:0; }
+.brand-logo { position:absolute; left:400px; top:620px; width:280px; height:280px; filter:drop-shadow(0 0 50px #f0556088); }
+.brand-name { position:absolute; left:98px; top:940px; width:784px; text-align:center; font:900 168px/1.25 Montserrat; letter-spacing:-8px; color:#fff; }
+.title { position:absolute; left:88px; top:340px; width:804px; margin:0; font:900 86px/1.25 Montserrat; letter-spacing:-4px; }
+.form { position:absolute; left:88px; top:600px; width:804px; height:112px; display:flex; gap:14px; }
+.field { position:relative; flex:1; display:flex; align-items:center; padding:0 26px; border-radius:20px; background:#0c0f15; border:2px solid #ffffff2e; }
+.placeholder { font:500 29px/1.2 Inter; color:#6f7683; white-space:nowrap; }
+.typed { font:800 44px/1.2 Montserrat; letter-spacing:2px; color:#fff; white-space:nowrap; }
+.caret { width:4px; height:48px; margin-left:4px; background:var(--gold); }
+.button { flex:none; width:200px; display:grid; place-items:center; border-radius:20px; background:var(--coral); color:#151419; font:850 34px/1.2 Montserrat; box-shadow:0 14px 40px #f0556055; }
+.status { position:absolute; left:88px; top:742px; width:804px; display:flex; align-items:center; gap:16px; font:600 30px/1.3 Inter; color:#c9ced6; opacity:0; }
+.spin { flex:none; width:28px; height:28px; border-radius:50%; border:4px solid #ffffff2a; border-top-color:var(--gold); }
+.checks { position:absolute; left:88px; top:812px; width:804px; padding:24px 30px 10px; border-radius:26px; background:var(--card); border:1px solid #ffffff22; opacity:0; }
+.bar { height:10px; border-radius:5px; background:#ffffff14; overflow:hidden; margin-bottom:10px; }
+.bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,#f0a531,var(--gold)); box-shadow:0 0 20px var(--gold); }
+.check { display:flex; align-items:center; gap:22px; height:72px; }
+.check i { flex:none; width:38px; height:38px; border-radius:50%; border:3px solid #ffffff40; display:grid; place-items:center; }
+.check.done i { border-color:var(--green); background:var(--green); box-shadow:0 0 22px #3ddc8466; }
+.check.done i:after { content:''; width:10px; height:18px; margin-top:-4px; border:solid #0b1a12; border-width:0 5px 5px 0; transform:rotate(45deg); }
+.check span { font:750 36px/1.2 Montserrat; color:#6f7683; letter-spacing:-1px; }
+.check.done span { color:#f4efe6; }
+.gauge { position:absolute; left:240px; top:350px; width:600px; height:600px; }
+.gauge svg { position:absolute; inset:0; transform:rotate(-90deg); overflow:visible; }
+.gauge circle { fill:none; stroke-width:14; }
+.gauge .track { stroke:#ffffff14; }
+.gauge .arc { stroke:var(--gold); stroke-linecap:round; stroke-dasharray:540.35; stroke-dashoffset:540.35; filter:drop-shadow(0 0 10px #ffc94d); }
+.count { position:absolute; left:0; top:125px; width:600px; text-align:center; font:900 200px/1.25 Montserrat; letter-spacing:-8px; color:#fff; }
+.grade { position:absolute; left:250px; top:400px; width:100px; height:100px; display:grid; place-items:center; border-radius:50%; background:var(--gold); color:#151419; font:900 60px/1 Montserrat; opacity:0; }
+.result { position:absolute; left:88px; top:990px; width:804px; height:112px; display:flex; align-items:center; justify-content:space-between; padding:0 36px; border-radius:24px; background:var(--card); border:1px solid #ffffff22; }
+.result.r2 { top:1120px; }
+.result span { font:700 40px/1.2 Montserrat; color:#c9ced6; }
+.result b { font:900 56px/1.2 Montserrat; letter-spacing:-2px; }
+.good { color:var(--green); }
+.bad { color:var(--coral); }
+.example-hero { position:absolute; left:-60px; top:300px; width:1200px; height:620px; }
+.example-art.animated { position:absolute; left:-300px; top:-170px; width:1800px; height:930px; object-fit:contain; filter:drop-shadow(0 30px 40px #000c); }
+.example-art.poster { position:absolute; left:300px; top:160px; width:600px; height:338px; object-fit:cover; border-radius:26px; box-shadow:0 30px 80px #000c; }
+.kda { position:absolute; left:98px; top:812px; width:784px; text-align:center; font:900 150px/1.25 Montserrat; letter-spacing:-4px; color:#fff; text-shadow:0 12px 40px #000; }
+.kda .bad { color:var(--coral); text-shadow:0 0 40px #f0556099; }
+.kda-label { position:absolute; left:88px; top:1010px; width:804px; text-align:center; font:800 23px/1.3 Inter; letter-spacing:3px; color:#9aa1ad; }
+.finding { position:absolute; left:88px; top:1056px; width:804px; display:flex; gap:22px; align-items:center; padding:22px 26px; border-radius:24px; background:#18111599; border:2px solid var(--coral); box-shadow:inset 8px 0 0 var(--coral), 0 24px 70px #000b; }
+.threat { flex:none; width:104px; height:104px; border-radius:18px; object-fit:cover; }
+.finding b { display:block; font:800 31px/1.25 Montserrat; letter-spacing:-.5px; }
+.finding p { margin:6px 0 0; font:600 27px/1.3 Inter; color:#d4d7de; }
+.monitor { position:absolute; left:88px; top:590px; width:804px; height:452px; overflow:hidden; border-radius:24px; border:1px solid #ffffff2e; box-shadow:0 30px 90px #000c; }
+.monitor img { width:100%; height:100%; object-fit:cover; filter:brightness(.72) saturate(.9); }
+.tip { position:absolute; left:120px; top:930px; width:740px; padding:24px 30px; border-radius:24px; background:#14161ef7; border:2px solid var(--coral); box-shadow:0 0 0 8px #f055601a, 0 30px 80px #000d; }
+.tip-kicker { font:800 22px/1.3 Inter; letter-spacing:2px; text-transform:uppercase; color:var(--coral); }
+.tip b { display:block; margin-top:8px; font:800 33px/1.25 Montserrat; letter-spacing:-.5px; }
+.tip p { margin:8px 0 0; font:600 27px/1.3 Inter; color:#c9ced6; }
+.aside { position:absolute; left:88px; top:340px; width:804px; margin:0; font:900 82px/1.25 Montserrat; letter-spacing:-4px; }
+html[lang=en] .aside { font-size:74px; }
+.report { position:absolute; left:88px; top:700px; width:804px; text-align:center; font:900 168px/1.25 Montserrat; letter-spacing:-4px; color:#5d6370; }
+.strike { position:absolute; left:40px; top:47%; width:724px; height:18px; border-radius:9px; background:var(--coral); box-shadow:0 0 30px #f05560aa; transform-origin:left center; transform:scaleX(0); }
+.stamp { position:absolute; left:128px; top:960px; width:724px; padding:16px 18px; text-align:center; border:8px solid var(--green); border-radius:18px; color:var(--green); background:#3ddc8414; font:900 58px/1.25 Montserrat; letter-spacing:-1px; text-shadow:0 0 30px #3ddc8466; }
+.wordmark { position:absolute; left:98px; top:300px; width:784px; text-align:center; font:900 150px/1.25 Montserrat; letter-spacing:-7px; color:#fff; }
+.wordmark i { display:inline-block; width:44px; height:44px; margin:0 34px 26px 0; border-radius:10px; background:var(--coral); transform:rotate(45deg); box-shadow:0 0 40px var(--coral); }
+.slogan { position:absolute; left:88px; top:500px; width:804px; text-align:center; font:800 54px/1.2 Montserrat; letter-spacing:-2px; color:#e9e4da; }
+.address { position:absolute; left:178px; top:615px; width:624px; padding:20px 0; text-align:center; border-radius:999px; background:var(--coral); color:#151419; font:850 46px/1.2 Montserrat; letter-spacing:-1px; box-shadow:0 20px 60px #f0556066; }
+.free { position:absolute; left:88px; top:730px; width:804px; text-align:center; font:800 24px/1.3 Inter; letter-spacing:4px; color:#b9bec8; }
+.features { position:absolute; left:88px; top:800px; width:804px; display:flex; flex-direction:column; gap:18px; }
+.feature { height:128px; display:flex; align-items:center; gap:24px; padding:0 28px; border-radius:22px; background:var(--card); border:1px solid #ffffff22; }
+.feature i { flex:none; width:64px; height:64px; border-radius:50%; display:grid; place-items:center; border:3px solid var(--coral); color:var(--coral); font:900 30px/1 Montserrat; font-style:normal; }
+.feature b { display:block; font:800 38px/1.2 Montserrat; letter-spacing:-1px; }
+.feature span { display:block; font:600 26px/1.3 Inter; color:#a7adb8; }
+.captions { top:1290px; font:900 56px/1.22 Montserrat; letter-spacing:-1px; text-transform:uppercase; color:#fff; text-shadow:0 4px 0 #000, 0 0 24px #000, 0 2px 50px #000; }
+.captions span.now { color:var(--gold); }
+.footage { position:absolute; inset:0; overflow:hidden; }
+.footage .clip { position:absolute; inset:-2%; width:104%; height:104%; object-fit:cover; }
+.shade { position:absolute; inset:0; background:linear-gradient(#0a0c11d9 0%, #0a0c1133 30%, #0a0c1140 58%, #0a0c11e6 82%); }
+.s1.with-footage .shade { background:linear-gradient(#0a0c11cc, #0a0c1166 40%, #0a0c11cc 75%); }
+.bubbles { position:absolute; inset:0; }
+.bubble { position:absolute; display:flex; align-items:center; gap:16px; max-width:640px; padding:14px 24px 14px 14px; border-radius:24px; background:#11141bee; border:1px solid #ffffff2a; box-shadow:0 18px 50px #000c; }
+.bubble .face { width:56px; height:56px; border-radius:14px; object-fit:cover; }
+.bubble b { font:750 32px/1.25 Inter; color:#f4efe6; letter-spacing:-.5px; white-space:nowrap; }
+.bubble b.bad { color:var(--coral); }
+.bubble.b0 { left:100px; top:880px; }
+.bubble.b1 { right:190px; top:975px; }
+.bubble.b2 { left:120px; top:1070px; }
+.bubble.b3 { right:200px; top:1165px; }
+.flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:7; mix-blend-mode:screen; }

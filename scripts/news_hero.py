@@ -11,8 +11,10 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from typing import Any
 
+import hero_insights
 import news
 
 HERO_WEEK = news.ROOT / "data" / "news" / "hero-week.json"
@@ -95,7 +97,7 @@ def slug(entry: dict[str, Any]) -> str:
     return f"{entry['date']}-hero-{entry['hero']['slug']}"
 
 
-def facts(hero: dict[str, Any], site: Any, lang: str) -> dict[str, str]:
+def facts(hero: dict[str, Any], site: Any, lang: str) -> dict[str, Any]:
     """The hero page's facts in one language (scripts/build_site.py data)."""
     profile = hero["profile"]
     archetype = site.ARCHETYPES[profile["archetype"]][0 if lang == "uk" else 1]
@@ -109,6 +111,7 @@ def facts(hero: dict[str, Any], site: Any, lang: str) -> dict[str, str]:
         "fight": ", ".join(profile.get("key_fight_abilities") or []),
         "pace": next((f"{low}–{high}" for minute, low, high in hero["pace"] if minute == 10), ""),
         "note": notes.get(hero["name"], ""),
+        "insights": hero_insights.facts(hero["name"], hero["position"]),
     }
 
 
@@ -116,7 +119,7 @@ def title(entry: dict[str, Any], lang: str) -> str:
     return TEXT[lang]["title"].format(hero=entry["hero"]["name"])
 
 
-def lead(entry: dict[str, Any], fact: dict[str, str], lang: str) -> str:
+def lead(entry: dict[str, Any], fact: dict[str, Any], lang: str) -> str:
     t = TEXT[lang]
     archetype = fact["archetype"]
     text = t["lead"].format(archetype=archetype[:1].upper() + archetype[1:])
@@ -130,7 +133,7 @@ def lead(entry: dict[str, Any], fact: dict[str, str], lang: str) -> str:
 
 def post_main(
     entry: dict[str, Any],
-    fact: dict[str, str],
+    fact: dict[str, Any],
     lang: str,
     home: str,
     up: str = "../",
@@ -151,17 +154,28 @@ def post_main(
                 "flame", t["tile_pick"], "", e(news.percent(entry["stats"]["pick"], lang)), ""
             ),
         ]
-    tips = [t["low"].format(low=fact["low"], critical=fact["critical"])]
-    for key in ("saves", "fight", "pace"):
-        if fact[key]:
-            tips.append(t[key].format(**{key: fact[key]}))
-    if fact["note"]:
-        tips.append(fact["note"])
+    found = fact["insights"]
+    if found:
+        # What wins on the hero, in numbers (the same rows as the Telegram card).
+        heading, hint = hero_insights.TEXT[lang]["heading"], hero_insights.source(found, lang)
+        notes = [
+            {"text": html.unescape(re.sub(r"</?b>", "", text)), "info": sub, "level": 1}
+            for _kind, text, sub in hero_insights.rows(found, lang)
+        ]
+    else:
+        tips = [t["low"].format(low=fact["low"], critical=fact["critical"])]
+        for key in ("saves", "fight", "pace"):
+            if fact[key]:
+                tips.append(t[key].format(**{key: fact[key]}))
+        if fact["note"]:
+            tips.append(fact["note"])
+        heading, hint = t["tips"], t["tips_hint"]
+        notes = [{"text": tip, "level": 1} for tip in tips]
     card = news._patch_card(
-        t["tips"],
+        heading,
         [
-            f'              <p class="mode-note news-hint">{e(t["tips_hint"])}</p>',
-            news._patch_notes([{"text": tip, "level": 1} for tip in tips]),
+            f'              <p class="mode-note news-hint">{e(hint)}</p>',
+            news._patch_notes(notes),
             f'              <div class="cta-row"><a class="btn btn-outline btn-lg" '
             f'href="{home}heroes/{hero["slug"]}.html">{e(t["hero_page"])} →</a></div>',
         ],
@@ -197,7 +211,7 @@ def post_main(
 
 
 def list_item(
-    entry: dict[str, Any], fact: dict[str, str], lang: str, up: str, images: set[str]
+    entry: dict[str, Any], fact: dict[str, Any], lang: str, up: str, images: set[str]
 ) -> str:
     """The entry in the news list (news.list_main's `extra`)."""
     t = TEXT[lang]

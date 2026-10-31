@@ -156,6 +156,13 @@ class RoshanTimer:
             return pickup
         return clock if self._seen_without_aegis else None
 
+    def aegis_expires(self) -> int | None:
+        """Match clock the player's Aegis expires at (None: no Aegis, or its
+        pickup time is unknown)."""
+        if self.aegis_at is None:
+            return None
+        return self.aegis_at + _settings()["aegis"]
+
     def enemy_aegis(self, clock: int | None) -> bool:
         """An enemy can still hold the Aegis (from the pickup until it expires)."""
         at = self.enemy_aegis_at

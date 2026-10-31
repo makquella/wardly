@@ -1,0 +1,109 @@
+{
+ "slam.mp3": {
+  "prompt": "Heavy punchy impact, a fist slamming a wooden desk layered with a deep cinematic hit, dry, tight, instant attack, no reverb",
+  "seconds": 1.0,
+  "bytes": 17179
+ },
+ "slam-2.mp3": {
+  "prompt": "Heavy punchy impact, a fist slamming a wooden desk layered with a deep cinematic hit, dry, tight, instant attack, no reverb",
+  "seconds": 1.0,
+  "bytes": 17179
+ },
+ "slam-3.mp3": {
+  "prompt": "Heavy punchy impact, a fist slamming a wooden desk layered with a deep cinematic hit, dry, tight, instant attack, no reverb",
+  "seconds": 1.0,
+  "bytes": 17179
+ },
+ "tick.mp3": {
+  "prompt": "Tiny crisp digital clock tick, a single very short dry high click",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "tick-2.mp3": {
+  "prompt": "Tiny crisp digital clock tick, a single very short dry high click",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "riser.mp3": {
+  "prompt": "Tense cinematic noise riser with a rising synth tone, building fast for one second and cutting off abruptly, no impact",
+  "seconds": 1.2,
+  "bytes": 20105
+ },
+ "stop.mp3": {
+  "prompt": "A single muffled low thud that drops away into silence, soft sub bass impact with a short downward pitch fall, quiet room, clean",
+  "seconds": 1.6,
+  "bytes": 26792
+ },
+ "letter.mp3": {
+  "prompt": "One tiny soft wooden click, a single short tap, very short and dry, no hiss",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "land.mp3": {
+  "prompt": "Soft user interface pop, a small dot dropping into place, gentle rounded click with a tiny low thump, minimal",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "index.mp3": {
+  "prompt": "A single soft bubble pop, short rounded user interface notification blip, clear and audible, dry",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "text.mp3": {
+  "prompt": "Very soft short paper swipe, text appearing on a screen, subtle user interface sound",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "whoosh.mp3": {
+  "prompt": "Clean airy whoosh, soft and smooth, a card sliding past, modern user interface motion, no impact",
+  "seconds": 0.8,
+  "bytes": 13835
+ },
+ "whoosh-2.mp3": {
+  "prompt": "Clean airy whoosh, soft and smooth, a card sliding past, modern user interface motion, no impact",
+  "seconds": 0.8,
+  "bytes": 13835
+ },
+ "bell.mp3": {
+  "prompt": "Single small bright bell chime, one clear pure tone with a gentle short decay, no reverb wash",
+  "seconds": 1.5,
+  "bytes": 24702
+ },
+ "hit.mp3": {
+  "prompt": "A single clean bell-like logo hit: one low sub thump and a bright ringing chime struck once, decaying smoothly, one strike only, dry and clean",
+  "seconds": 3.0,
+  "prompt_influence": 0.7,
+  "bytes": 48944
+ },
+ "note": "Picked takes: stop and letter are the second takes of their prompts, renamed; hit is the third take of its (second) prompt, picked for a single strike with a smooth decay; index is the first. The rest are as generated.",
+ "music/tension.mp3": {
+  "prompt": "Tense dark electronic pulse at exactly 120 BPM in D minor: a punchy sub bass hit on every beat, fast ticking closed hi-hat sixteenths, a dissonant detuned synth cluster slowly opening its filter, building pressure, instrumental, no melody, no vocals",
+  "seconds": 12,
+  "bytes": 193141
+ },
+ "music/calm.mp3": {
+  "prompt": "Calm warm ambient synth pad in D minor at exactly 120 BPM with a soft gentle plucked arpeggio on eighth notes, spacious, airy, quiet, no drums, no sub bass, instrumental, clean modern tech product, no vocals",
+  "seconds": 12,
+  "bytes": 192305
+ },
+ "music/groove.mp3": {
+  "prompt": "Light minimal electronic groove at exactly 120 BPM in D minor: soft kick on every beat, crisp closed hi-hats on the off-beats, soft claps on two and four, warm synth pad and plucked arpeggio, hopeful and rising, instrumental, clean modern tech product, no vocals",
+  "seconds": 12,
+  "bytes": 193141
+ },
+ "click.mp3": {
+  "prompt": "One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "click-2.mp3": {
+  "prompt": "One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short",
+  "seconds": 0.5,
+  "bytes": 8820
+ },
+ "click-3.mp3": {
+  "prompt": "One crisp precise click of a small game item snapping into an inventory slot, tight plastic and metal tick, dry, very short",
+  "seconds": 0.5,
+  "bytes": 8820
+ }
+}

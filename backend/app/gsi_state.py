@@ -28,10 +28,16 @@ from app.item_timing import normalize_item_name
 from app.last_moments import active_slot, ready_savers
 from app.live_tools import bottle_rune, regen_items, wand_charges
 from app.map_hints import has_observer_ward, item_names, observer_charges, timers
-from app.minimap_units import towers, visible_ally_units
+from app.minimap_units import (
+    lane_creeps,
+    neutral_units,
+    towers,
+    visible_ally_units,
+    vision_sources,
+)
 from app.signal_capabilities import capability_summary, live_gsi_observed_capabilities
 from app.skill_tips import read_skills
-from app.tp_tracker import has_teleport, teleport_cooldown
+from app.tp_tracker import has_teleport, teleport_cooldown, teleport_in_stash
 
 _GSI = GSIRegister()
 
@@ -61,6 +67,8 @@ _ITEM_NAME_MAP = {
 }
 
 _EMPTY_ITEM_NAMES = {"", "empty", "item_empty", "item_unknown", "item_none"}
+# The backpack slots: items there are carried but give nothing until swapped in.
+BACKPACK_SLOTS = {"slot6", "slot7", "slot8"}
 
 
 def update_latest_gsi(
@@ -312,6 +320,18 @@ def normalize_gsi_payload(
     return state
 
 
+GOLD_SOURCES = ("creep_kills", "hero_kills", "income", "shared", "summon_kills")
+
+
+def _gold_sources(player_block: dict[str, Any]) -> dict[str, int] | None:
+    found = {
+        name: value
+        for name in GOLD_SOURCES
+        if (value := _optional_int(player_block.get(f"gold_from_{name}"))) is not None
+    }
+    return found or None
+
+
 def _map_coordinate(value: Any) -> float | int | None:
     """Live GSI reports world coordinates (map centre 0, about ±8000); the replay-derived
     states and advice_context.py use the replay's absolute ones (centre MAP_CENTER)."""
@@ -394,6 +414,11 @@ def _normalize_extra_context(
         "muted": _optional_bool(hero_block.get("muted")) or False,
         "break_status": _optional_bool(hero_block.get("break")) or False,
         "magicimmune": _optional_bool(hero_block.get("magicimmune")) or False,
+        # Any debuff on the hero (None when the payload has no such field):
+        # status_source.py tells an own hidden phase from an enemy stun with it.
+        "has_debuff": hero_block.get("has_debuff")
+        if isinstance(hero_block.get("has_debuff"), bool)
+        else None,
         "smoked": _optional_bool(hero_block.get("smoked")) or False,
         "buyback_cost": buyback_cost,
         "buyback_cooldown": buyback_cooldown,
@@ -413,6 +438,9 @@ def _normalize_extra_context(
         "denies": _optional_int(player_block.get("denies")),
         "gpm": _optional_int(player_block.get("gpm")),
         "xpm": _optional_int(player_block.get("xpm")),
+        # Where the gold came from (cumulative): lane creeps only in
+        # gold_from_creep_kills; neutral gold shows in the total alone.
+        "gold_sources": _gold_sources(player_block),
         "player_slot": _optional_int(player_block.get("player_slot")),
         "team_name": _optional_str(player_block.get("team_name")),
         "team_slot": _optional_int(player_block.get("team_slot")),
@@ -444,6 +472,8 @@ def _normalize_extra_context(
         "has_buildings": has_buildings,
         # TP scroll in its slot or Boots of Travel (None: no items block).
         "has_tp": has_teleport(payload.get("items")),
+        # A TP scroll bought but still in the stash (None: no items block).
+        "tp_in_stash": teleport_in_stash(payload.get("items")),
         # Seconds until it can be used (0 ready; None: none or unknown).
         "tp_cooldown": teleport_cooldown(payload.get("items")),
         # Observer ward in the inventory (support tip; None: no items block).
@@ -453,6 +483,12 @@ def _normalize_extra_context(
         "skills": read_skills(payload),
         # Item names in the inventory and stash (role tips such as the mid's Bottle).
         "item_names": item_names(payload.get("items")),
+        # Where each item is: the six active slots (pressable), the stash
+        # (bought, not delivered). None without an items block.
+        "active_items": _slot_names(payload.get("items"), stash=False),
+        "stash_items": _slot_names(payload.get("items"), stash=True),
+        # The backpack (slot6-8): carried, but neither pressable nor passive.
+        "backpack_items": _slot_names(payload.get("items"), stash=False, backpack=True),
         # Roshan kills and Aegis pickups (roshan_timer.py), and the player's Aegis.
         "gsi_events": _objective_events(payload.get("events")),
         # Enemy heroes on the player's minimap (enemy_heroes.py; None: no block).
@@ -463,17 +499,33 @@ def _normalize_extra_context(
         "enemy_units": visible_enemy_units(
             payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
         ),
-        # Allied heroes and the towers on the minimap (fight_summary.py).
-        "ally_units": visible_ally_units(
-            payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
+        # Allied heroes and the towers on the minimap (fight_summary.py). The
+        # player's own hero is left out: GSI sometimes draws it with the plain
+        # ally circle instead of `_self` (seen in 150 snapshots of one match),
+        # and the player is no ally of themselves. Own illusions use another icon.
+        "ally_units": _without_own_hero(
+            visible_ally_units(
+                payload.get("minimap"), player_block.get("team_name"), _normalize_hero_name
+            ),
+            hero_from_gsi(payload),
         ),
         "towers": towers(payload.get("minimap")),
+        # Creeps and own vision on the minimap (farm_map.py): consumed by
+        # MatchMemory and dropped there, never kept in the stored states.
+        "lane_creeps": lane_creeps(payload.get("minimap"), player_block.get("team_name")),
+        "neutral_units": neutral_units(payload.get("minimap")),
+        "vision_sources": vision_sources(payload.get("minimap"), player_block.get("team_name")),
         "has_aegis": _has_aegis(hero_block, payload.get("items")),
         # The player's tier-3 towers and barracks still standing (None: no block).
         "own_base": _own_base(payload.get("buildings"), player_block.get("team_name")),
         # What can be pressed right now (live_tools.py: the survival advice names it).
         "ready_savers": _ready_savers(payload.get("items")),
         "own_castable_items": _own_castable_items(payload.get("items")),
+        # Cooldown and charges per active-slot item (None without an items
+        # block): an own cast (status_source.py), a consumable used
+        # (action_feedback.py).
+        "item_cooldowns": _active_item_numbers(payload.get("items"), "cooldown"),
+        "item_charges": _active_item_numbers(payload.get("items"), "charges", total=True),
         "wand_charges": wand_charges(payload.get("items")),
         "regen_items": regen_items(payload.get("items")),
         # The rune kept in the Bottle (an escape at low HP, a kill for the mid).
@@ -568,6 +620,48 @@ def _own_castable_items(items: Any) -> list[str] | None:
         and item.get("can_cast") is True
         and _optional_number(item.get("cooldown")) == 0
     ]
+
+
+def _without_own_hero(units: list[dict[str, Any]] | None, hero: str) -> list[dict[str, Any]] | None:
+    if units is None:
+        return None
+    return [unit for unit in units if unit.get("hero") != hero]
+
+
+def _slot_names(items: Any, *, stash: bool, backpack: bool = False) -> list[str] | None:
+    """Item names in the stash slots, the backpack, or the six active slots."""
+    if not isinstance(items, dict) or not items:
+        return None
+    names = []
+    for slot, item in items.items():
+        name = item.get("name") if isinstance(item, dict) else None
+        if not isinstance(name, str) or name in _EMPTY_ITEM_NAMES:
+            continue
+        if backpack:
+            if str(slot) in BACKPACK_SLOTS:
+                names.append(name)
+        elif str(slot).startswith("stash") if stash else active_slot(slot):
+            names.append(name)
+    return names
+
+
+def _active_item_numbers(items: Any, field: str, *, total: bool = False) -> dict[str, float] | None:
+    """{item name: field} over the six active slots, only where GSI sends a
+    number (`total`: summed over stacks of the same item, else the first)."""
+    if not isinstance(items, dict):
+        return None
+    numbers: dict[str, float] = {}
+    for slot, item in items.items():
+        if not active_slot(slot) or not isinstance(item, dict):
+            continue
+        name, value = item.get("name"), _optional_number(item.get(field))
+        if not isinstance(name, str) or name in _EMPTY_ITEM_NAMES or value is None:
+            continue
+        if total:
+            numbers[name] = numbers.get(name, 0) + value
+        else:
+            numbers.setdefault(name, value)
+    return numbers
 
 
 def _ready_savers(items: Any) -> list[str] | None:

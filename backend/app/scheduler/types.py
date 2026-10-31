@@ -68,3 +68,9 @@ class ScheduledAdvice:
     game_time_gap_since_previous_advice: float | None = None
     suppressed_by_game_time_spacing: bool = False
     hero_gameplay: dict[str, Any] | None = None
+    # The basis of the card (advice_validity.py): its snapshot clock, the tool
+    # it names and the numbers it cites.
+    basis: dict[str, Any] | None = None
+    # The card just withdrawn because the game moved on ({decision_point,
+    # action, reason}): the overlay drops it and stops speaking it.
+    withdrawn_advice: dict[str, Any] | None = None

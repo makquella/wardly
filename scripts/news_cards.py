@@ -25,6 +25,7 @@ import zlib
 from pathlib import Path
 from typing import Any
 
+import hero_insights
 import news
 
 SITE = news.ROOT / "site"
@@ -388,7 +389,8 @@ def pick_hero(
     post: dict[str, Any], site_heroes: list[dict[str, Any]], history: list[str]
 ) -> tuple[dict[str, Any], dict[str, float] | None]:
     """The week's hero: the best win rate among heroes with a site page, picked in
-    at least HERO_MIN_PICK of matches and not among the last HERO_REPEAT heroes."""
+    at least HERO_MIN_PICK of matches and not among the last HERO_REPEAT heroes;
+    a hero with a plan (hero_insights: numbers that win) comes first."""
     matches = sum(h["picks"] for h in post["heroes"]) / 10 or 1
     # By the picture key: the site and OpenDota may name a hero differently.
     stats = {
@@ -398,8 +400,14 @@ def pick_hero(
     }
     recent = set(history[-HERO_REPEAT:])
     known = [h for h in site_heroes if h["key"] in stats]
+    with_plan = {h["name"] for h in known if hero_insights.facts(h["name"], h.get("position", ""))}
     ranked = sorted(known, key=lambda h: stats[h["key"]]["win"], reverse=True)
     for wanted in (
+        lambda h: (
+            stats[h["key"]]["pick"] >= HERO_MIN_PICK
+            and h["name"] not in recent
+            and h["name"] in with_plan
+        ),
         lambda h: stats[h["key"]]["pick"] >= HERO_MIN_PICK and h["name"] not in recent,
         lambda h: h["name"] not in recent,
         lambda h: True,
@@ -413,7 +421,7 @@ def pick_hero(
     return hero, None
 
 
-def hero_facts(hero: dict[str, Any], site: Any) -> dict[str, str]:
+def hero_facts(hero: dict[str, Any], site: Any) -> dict[str, Any]:
     """The hero page's numbers, short: role, archetype, HP, saves, fight, pace, tip."""
     profile = hero["profile"]
     pace = next((f"{low}–{high}" for minute, low, high in hero["pace"] if minute == 10), "")
@@ -426,11 +434,12 @@ def hero_facts(hero: dict[str, Any], site: Any) -> dict[str, str]:
         "fight": ", ".join(profile["key_fight_abilities"]),
         "pace": pace,
         "note": site.NOTES_UK[hero["name"]],
+        "insights": hero_insights.facts(hero["name"], hero["position"]),
     }
 
 
 def hero_card(
-    hero: dict[str, Any], facts: dict[str, str], stats: dict[str, float] | None, workdir: Path
+    hero: dict[str, Any], facts: dict[str, Any], stats: dict[str, float] | None, workdir: Path
 ) -> str:
     e = escape
     art, big = hero_picture(hero["key"], workdir)
@@ -446,6 +455,26 @@ def hero_card(
             f'<div class="stats num"><div class="stat"><b>{e(news.percent(stats["win"], "uk"))}</b><span>перемог цього тижня</span></div>'
             f'<div class="stat"><b>{e(news.percent(stats["pick"], "uk"))}</b><span>матчів із ним</span></div></div>'
         )
+    found = facts.get("insights")
+    if found:
+        rows = "".join(
+            f'<div class="tip">{icon(hero_insights.ICONS[kind])}<div>{title}<small>{e(sub)}</small></div></div>'
+            for kind, title, sub in hero_insights.rows(found, "uk")[:5]
+        )
+        heading = hero_insights.TEXT["uk"]["heading"]
+    else:
+        rows, heading = _hero_tips(facts), "Що підкаже Wardly"
+    body = f"""{art_tag}<div class="fade"></div>
+<section class="copy"><span class="role">{e(facts["role"])}</span>
+<h1 style="--name: {size}px">{e(hero["name"])}</h1>
+<p>{e(facts["archetype"][0].upper() + facts["archetype"][1:])}</p>{chips}</section>
+<section class="tips"><h3>{e(heading)}</h3>{rows}</section>"""
+    return page(body, HERO_CSS).replace("{pill}", _pill("swords", "Герой тижня"))
+
+
+def _hero_tips(facts: dict[str, Any]) -> str:
+    """The hero page's thresholds and items, for a hero without a plan."""
+    e = escape
     tips = [
         (
             "heart",
@@ -464,25 +493,22 @@ def hero_card(
             ("coins", f"До 10:00 — <b>{e(facts['pace'])}</b> добивань", "темп для цієї позиції")
         )
     tips.append(("spark", e(facts["note"]), ""))
-    rows = "".join(
+    return "".join(
         f'<div class="tip">{icon(name)}<div>{text}{f"<small>{e(sub)}</small>" if sub else ""}</div></div>'
         for name, text, sub in tips[:5]
     )
-    body = f"""{art_tag}<div class="fade"></div>
-<section class="copy"><span class="role">{e(facts["role"])}</span>
-<h1 style="--name: {size}px">{e(hero["name"])}</h1>
-<p>{e(facts["archetype"][0].upper() + facts["archetype"][1:])}</p>{chips}</section>
-<section class="tips"><h3>Що підкаже Wardly</h3>{rows}</section>"""
-    return page(body, HERO_CSS).replace("{pill}", _pill("swords", "Герой тижня"))
 
 
 def hero_caption(
-    hero: dict[str, Any], facts: dict[str, str], stats: dict[str, float] | None
+    hero: dict[str, Any], facts: dict[str, Any], stats: dict[str, float] | None
 ) -> str:
     e = escape
+    role, archetype = facts["role"], facts["archetype"]
+    kind = archetype if archetype.lower().startswith(role.lower()) else f"{role} — {archetype}"
     lines = [
         f"⚔️ <b>Герой тижня: {e(hero['name'])}</b>",
-        f"<i>{e(facts['role'])} — {e(facts['archetype'])}</i>",
+        # «Керрі, що фармить…» rather than «Керрі — керрі, що фармить…».
+        f"<i>{e(kind[0].upper() + kind[1:])}</i>",
         "",
     ]
     if stats:
@@ -491,20 +517,30 @@ def hero_caption(
             f"у <b>{e(news.percent(stats['pick'], 'uk'))}</b> матчів",
             "",
         ]
-    lines.append(
-        f"❤️ Відходь, коли HP нижче <b>{facts['low']} %</b>; нижче <b>{facts['critical']} %</b> — негайно"
-    )
-    if facts["saves"]:
-        lines.append(f"🛡 Рятує: <b>{e(facts['saves'])}</b>")
-    if facts["fight"]:
-        lines.append(f"💥 У бійці: <b>{e(facts['fight'])}</b>")
-    if facts["pace"]:
-        lines.append(f"🌾 До 10:00 — <b>{e(facts['pace'])}</b> добивань")
-    lines.append(f"💡 {e(facts['note'])}")
+    found = facts.get("insights")
+    if found:
+        lines += [
+            f"{hero_insights.EMOJI[kind]} {title}\n<i>{e(sub)}</i>"
+            for kind, title, sub in hero_insights.rows(found, "uk")
+        ]
+        lines += ["", f"<i>{e(hero_insights.source(found, 'uk'))}</i>"]
+        play = "підкаже план предметів проти саме ваших ворогів просто в грі — безкоштовно"
+    else:
+        lines.append(
+            f"❤️ Відходь, коли HP нижче <b>{facts['low']} %</b>; нижче <b>{facts['critical']} %</b> — негайно"
+        )
+        if facts["saves"]:
+            lines.append(f"🛡 Рятує: <b>{e(facts['saves'])}</b>")
+        if facts["fight"]:
+            lines.append(f"💥 У бійці: <b>{e(facts['fight'])}</b>")
+        if facts["pace"]:
+            lines.append(f"🌾 До 10:00 — <b>{e(facts['pace'])}</b> добивань")
+        lines.append(f"💡 {e(facts['note'])}")
+        play = "підкаже це просто в грі — безкоштовно"
     lines += [
         "",
         f'📖 <a href="{news.BASE}/heroes/{hero["slug"]}.html?ref=tg">Усе про героя на сайті</a>',
-        f'🎮 <a href="{news.BASE}/?ref=tg">Wardly</a> підкаже це просто в грі — безкоштовно',
+        f'🎮 <a href="{news.BASE}/?ref=tg">Wardly</a> {play}',
         "",
         "#герой_тижня #dota2",
     ]

@@ -19,6 +19,7 @@ datas = []
 datas += data_dir(REPO_ROOT / "data" / "heroes", "data/heroes")
 datas += data_dir(REPO_ROOT / "data" / "meta", "data/meta")
 datas += data_dir(REPO_ROOT / "data" / "knowledge_base", "data/knowledge_base")
+datas += data_dir(REPO_ROOT / "data" / "live", "data/live")
 
 hiddenimports = []
 for package in (

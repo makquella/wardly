@@ -40,6 +40,14 @@ from app.advice_text import clean_recommendation_text
 from app.advice_ux_policy import (
     apply_ux_policy,
 )
+from app.advice_validity import (
+    FILLER_ACTIONS,
+    advice_basis,
+    is_filler,
+    refreshed_reason,
+    withdraw_reason,
+)
+from app.channel_rules import channel_verdict
 from app.config import ADVICE_FREQUENCY, USE_LLM
 from app.hero_gameplay import rule_valid
 from app.laning_coach import (
@@ -47,6 +55,7 @@ from app.laning_coach import (
     build_laning_advice,
     important_laning_context_changed,
 )
+from app.live_tools import disable_damage_shown
 from app.llm_provider import generate_llm_recommendation, is_llm_provider_enabled
 from app.post_laning_coach import (
     OBJECTIVE_REPEAT_WINDOW_SECONDS,
@@ -128,6 +137,14 @@ from app.scheduler.text import (
 )
 from app.scheduler.types import OverlaySource, OverlayStatus, ScheduledAdvice
 from app.schemas import GameSituationRequest, RecommendationResponse
+from app.team_context import contest_near
+
+# A withdrawn card is reported to the overlay for this long (it may poll late).
+WITHDRAWN_NOTICE = timedelta(seconds=10)
+# HP regained over 3 s that counts as recovering (points of max HP).
+LOW_HP_RECOVERING_POINTS = 5
+# Game seconds between two readiness moments that may skip the usual gates.
+READINESS_BYPASS_GAP = 60
 
 # Public types, constants, and the ScheduledAdvice DTO now live in leaf modules app.scheduler.types and app.scheduler.constants. They are imported below and re-exported by this facade for backwards compatibility.
 
@@ -217,6 +234,7 @@ class AdviceScheduler:
             self._game_time_seconds_locked(state, current_time)
             self._update_hashes_locked(state_hash, tactical_hash)
             self._update_low_hp_recovery_locked(state)
+            self._revalidate_active_locked(state, current_time)
 
     def _evaluate_normalize_input(
         self,
@@ -255,6 +273,7 @@ class AdviceScheduler:
         self._update_hashes_locked(state_hash, tactical_hash)
         if decision_point != "LOW_HP":
             self._update_low_hp_recovery_locked(state)
+        self._revalidate_active_locked(state, current_time)
         return game_time_seconds
 
     def _evaluate_no_advice_locked(
@@ -372,6 +391,10 @@ class AdviceScheduler:
         self.state._last_advice_state_hash = state_hash
         self.state._last_advice_tactical_state_hash = tactical_hash
         self.state._last_recommendation = fallback
+        moment = self._readiness_moment_locked(decision_point, state)
+        if moment is not None:
+            self.state._readiness_shown_key = moment
+        self._set_basis_locked(decision_point, fallback, state)
         gameplay = (state.get("extra_context") or {}).get("hero_gameplay")
         self.state._last_gameplay_context = (
             deepcopy(gameplay)
@@ -427,6 +450,7 @@ class AdviceScheduler:
         cooldown_remaining: int,
         state_hash: str,
         tactical_hash: str,
+        gates_open: bool = False,
     ) -> ScheduledAdvice | None:
         # Phase 4B extract (S3): duplicate gate. Runs under the evaluate lock.
         # cooldown_remaining is hoisted into evaluate (unconditional pure read,
@@ -434,7 +458,7 @@ class AdviceScheduler:
         # S2/S4/S5/S6 (all return a bare ScheduledAdvice | None). On a duplicate
         # it keeps an active advice visible or returns a cooldown result; None
         # to fall through. Early-return preserved.
-        duplicate = self.state._last_advice_state_hash == state_hash
+        duplicate = self.state._last_advice_state_hash == state_hash and not gates_open
         if duplicate:
             self.state.duplicate_suppressed_count += 1
             suppressed_reason = (
@@ -521,6 +545,15 @@ class AdviceScheduler:
         # extracted as one atomic block. Returns a bare ScheduledAdvice | None.
         if decision_point == "LOW_HP":
             low_hp_action = self._low_hp_episode_action_locked(state)
+            raw_extra = state.get("extra_context")
+            if (
+                low_hp_action == "pattern"
+                and isinstance(raw_extra, dict)
+                and channel_verdict(raw_extra, None, "retreat_reset") == "hold"
+            ):
+                # «Stop re-contesting the lane» is a move order: during an
+                # assumed TP channel with no danger seen it waits (channel_rules).
+                low_hp_action = "suppress"
             if low_hp_action == "suppress":
                 self.state.repeated_low_hp_suppressed_count += 1
                 self.state.post_laning_safety_suppressed_count += _post_laning_int(state)
@@ -596,6 +629,7 @@ class AdviceScheduler:
                 self.state._last_advice_state_hash = state_hash
                 self.state._last_advice_tactical_state_hash = tactical_hash
                 self.state._last_recommendation = pattern
+                self._set_basis_locked(decision_point, pattern, state)
                 self.state._last_source = "fallback"
                 self.state._last_llm_used = False
                 self.state._last_advice_mode = "coaching"
@@ -633,6 +667,7 @@ class AdviceScheduler:
                     is_pinned=self.state._is_pinned,
                     low_hp_episode_id=self.state._low_hp_episode_id,
                     game_time_gap_since_previous_advice=gap,
+                    basis=deepcopy(self.state._active_basis),
                 )
 
         return None
@@ -658,6 +693,8 @@ class AdviceScheduler:
             list(self.state._advice_history),
             now=current_time,
             action_type=policy["action_type"],
+            moment=self._readiness_moment_locked(decision_point, state) is not None,
+            overtaken=self._type_gates_open_locked(decision_point, state),
         )
         if ux_result["recommendation"] is None:
             reason = ux_result["suppressed_reason"] or "cooldown"
@@ -750,6 +787,15 @@ class AdviceScheduler:
                 game_time_seconds=game_time_seconds,
             )
         )
+        if (
+            suppress_post_laning
+            and post_laning_reason == "duplicate_post_laning"
+            and self._readiness_moment_locked(decision_point, state) is not None
+        ):
+            # The category comes from the game state, not from the card: an
+            # earlier disable card filed under it says nothing about this kill
+            # or revive, whose readiness card is already one per moment.
+            suppress_post_laning = False
         if suppress_post_laning:
             heartbeat = self._heartbeat_nudge_locked(
                 decision_point=decision_point,
@@ -907,6 +953,7 @@ class AdviceScheduler:
             hero_gameplay=deepcopy(request.extra_context.get("hero_gameplay"))
             if decision_point == "HERO_GAMEPLAY"
             else None,
+            basis=deepcopy(self.state._active_basis),
         )
 
     def evaluate(
@@ -934,10 +981,15 @@ class AdviceScheduler:
             if _no_advice is not None:
                 return _no_advice
 
-            cooldown_remaining = self._cooldown_remaining_locked(
-                decision_point,
-                current_time,
-                game_time_seconds,
+            gates_open = self._type_gates_open_locked(decision_point, state)
+            cooldown_remaining = (
+                0
+                if gates_open or self._readiness_moment_locked(decision_point, state) is not None
+                else self._cooldown_remaining_locked(
+                    decision_point,
+                    current_time,
+                    game_time_seconds,
+                )
             )
             _duplicate = self._evaluate_duplicate_locked(
                 decision_point=decision_point,
@@ -945,6 +997,7 @@ class AdviceScheduler:
                 cooldown_remaining=cooldown_remaining,
                 state_hash=state_hash,
                 tactical_hash=tactical_hash,
+                gates_open=gates_open,
             )
             if _duplicate is not None:
                 return _duplicate
@@ -984,6 +1037,30 @@ class AdviceScheduler:
         )
 
         with self._lock:
+            channel = self._held_by_channel_locked(state, fallback, policy.get("action_type"))
+            if is_filler(fallback, decision_point) or channel:
+                # A card without a decision (a generic «keep farming») is not
+                # worth the player's attention: keep what is shown, say nothing.
+                self.state.no_new_decision_count += 1
+                active = self._active_result_locked(
+                    decision_point=decision_point,
+                    now=current_time,
+                    next_allowed=0,
+                    suppressed_reason="cooldown_keep_visible",
+                )
+                if active is not None:
+                    return active
+                return self._result_locked(
+                    status="no_advice",
+                    decision_point=decision_point,
+                    recommendation=None,
+                    source="none",
+                    llm_used=False,
+                    next_allowed=0,
+                    new_advice=False,
+                    advice_mode="status",
+                    suppressed_reason="channelling" if channel else "no_new_decision",
+                )
             r = self._evaluate_ux_laning_locked(
                 current_time=current_time,
                 decision_point=decision_point,
@@ -1077,6 +1154,7 @@ class AdviceScheduler:
             self._ensure_session_locked(current_time, minute, state)
             game_time_seconds = self._game_time_seconds_locked(state, current_time)
             self._update_hashes_locked(state_hash, tactical_hash)
+            self._revalidate_active_locked(state, current_time)
             return self._active_result_locked(
                 decision_point=decision_point,
                 now=current_time,
@@ -1085,6 +1163,11 @@ class AdviceScheduler:
                 ),
                 suppressed_reason="cooldown_keep_visible",
             )
+
+    def withdrawn_advice(self) -> dict[str, Any] | None:
+        """The card withdrawn moments ago (see _revalidate_active_locked)."""
+        with self._lock:
+            return dict(self.state._withdrawn) if self.state._withdrawn else None
 
     def stats(self, now: datetime | None = None) -> dict[str, Any]:
         current_time = _utcnow(now)
@@ -1101,6 +1184,8 @@ class AdviceScheduler:
                 "llm_applied_rate": _rate(self.state.llm_applied_count, self.state.llm_call_count),
                 "fallback_count": self.state.fallback_count,
                 "stale_llm_count": self.state.stale_llm_count,
+                "withdrawn_count": self.state.withdrawn_count,
+                "no_new_decision_count": self.state.no_new_decision_count,
                 "duplicate_suppressed_count": self.state.duplicate_suppressed_count,
                 "repeated_laning_suppressed_count": self.state.repeated_laning_suppressed_count,
                 "repeated_post_laning_suppressed_count": self.state.repeated_post_laning_suppressed_count,
@@ -1325,7 +1410,13 @@ class AdviceScheduler:
             if self._should_suppress_death_route_locked(state, now, game_time_seconds):
                 return True, post_laning_advice.category, "death_route_duplicate"
 
-        if post_laning_advice.category == "post_laning_low_hp_reset" or decision_point == "LOW_HP":
+        # Urgent cards are never a repeat of a farm card: a silence or stun with
+        # Manta ready was swallowed as «duplicate_post_laning» after a farm card
+        # of the same post-laning category had been shown.
+        if post_laning_advice.category == "post_laning_low_hp_reset" or decision_point in {
+            "LOW_HP",
+            "DISABLED_STATUS",
+        }:
             return False, post_laning_advice.category, None
 
         if post_laning_advice.category == "post_laning_objective_caution":
@@ -1591,6 +1682,20 @@ class AdviceScheduler:
     def _low_hp_episode_action_locked(self, state: dict[str, Any]) -> str:
         hp_percent = _ctx_int(state, "hp_percent", _to_int(state.get("hp_percent"), 100))
         severe_signature = _low_hp_severe_signature(state)
+        raw_extra = state.get("extra_context")
+        extra: dict[str, Any] = raw_extra if isinstance(raw_extra, dict) else {}
+        recovering = _to_int(
+            extra.get("hp_rise_3s"), 0
+        ) >= LOW_HP_RECOVERING_POINTS and not extra.get("hp_falling_fast")
+        if recovering and (self.state._low_hp_episode_active or extra.get("regen_active")):
+            # HP is coming back (own regen running, or healed since the card):
+            # the player is already acting; only a new fall speaks again.
+            if not self.state._low_hp_episode_active:
+                self._start_low_hp_episode_locked(hp_percent, severe_signature)
+            self.state._low_hp_episode_lowest_hp = min(
+                hp_percent, self.state._low_hp_episode_lowest_hp or hp_percent
+            )
+            return "suppress"
 
         if not self.state._low_hp_episode_active:
             self._start_low_hp_episode_locked(hp_percent, severe_signature)
@@ -1690,6 +1795,128 @@ class AdviceScheduler:
             state
         )
 
+    def _held_by_channel_locked(
+        self, state: dict[str, Any], card: RecommendationResponse, action_type: str | None
+    ) -> bool:
+        """An assumed TP channel (action_feedback `teleporting`) and a card
+        whose action would end it for no danger seen (channel_rules): it
+        waits until the channel is over. The action is the card's structured
+        tool (`card.tool`, set by the copy that chose it) or, without one, the
+        policy's action type; never the words of the action."""
+        raw_extra = state.get("extra_context")
+        extra: dict[str, Any] = raw_extra if isinstance(raw_extra, dict) else {}
+        return channel_verdict(extra, card.tool, action_type) == "hold"
+
+    def _readiness_moment_locked(
+        self, decision_point: str, state: dict[str, Any]
+    ) -> tuple[str, int] | None:
+        """The kill or revive a readiness card (live_tools.readiness_copy) is
+        about, while its first card is not shown yet: such a card is useful for
+        seconds, so it passes the type cooldown, coaching spacing and the minute
+        quota once; the next one waits as usual. Only with a fight still around
+        (team_context.contest_near), and at most once per READINESS_BYPASS_GAP
+        of game time: a multi-kill or a kill right after a revive is one
+        moment, not one spoken card each."""
+        if decision_point != "ABILITY_SAFETY_COOLDOWN":
+            return None
+        raw_extra = state.get("extra_context")
+        extra: dict[str, Any] = raw_extra if isinstance(raw_extra, dict) else {}
+        clock = extra.get("clock_time")
+        if not isinstance(clock, int):
+            return None
+        revive = extra.get("recent_revive")
+        key: tuple[str, int] | None = None
+        if isinstance(revive, dict) and isinstance(revive.get("seconds_ago"), int):
+            key = ("revive", clock - revive["seconds_ago"])
+        elif isinstance(extra.get("recent_kill_seconds"), int):
+            key = ("kill", clock - extra["recent_kill_seconds"])
+        if key is None or key == self.state._readiness_shown_key:
+            return None
+        shown = self.state._readiness_shown_key
+        if shown is not None and 0 <= key[1] - shown[1] < READINESS_BYPASS_GAP:
+            return None
+        if not contest_near(extra):
+            return None
+        return key
+
+    def _set_basis_locked(
+        self, decision_point: str, recommendation: RecommendationResponse, state: dict[str, Any]
+    ) -> None:
+        self.state._card_serial += 1
+        self.state._active_basis = advice_basis(
+            decision_point, recommendation.action, recommendation.reason, state
+        )
+        self.state._withdrawn = None
+        self.state._withdrawn_until = None
+        self.state._overtaken_type = None
+        if decision_point == "DISABLED_STATUS":
+            source = (state.get("extra_context") or {}).get("status_source")
+            self.state._disable_card_since = (
+                source.get("since") if isinstance(source, dict) else None
+            )
+
+    def _type_gates_open_locked(self, decision_point: str, state: dict[str, Any]) -> bool:
+        """The next card of this type passes its own cooldown and duplicate
+        gates: the last one was overtaken (`can_act_now`), or this is a
+        disable card for a new status episode that already shows damage
+        (live_tools.disable_damage_shown). An earlier disable card, perhaps an
+        early warning with no damage yet, must not hold back the card of the
+        next disable that is costing HP."""
+        if decision_point == self.state._overtaken_type:
+            return True
+        if decision_point != "DISABLED_STATUS":
+            return False
+        extra = state.get("extra_context")
+        if not isinstance(extra, dict):
+            return False
+        source = extra.get("status_source")
+        since = source.get("since") if isinstance(source, dict) else None
+        return (
+            since is not None
+            and since != self.state._disable_card_since
+            and disable_damage_shown(extra)
+        )
+
+    def _revalidate_active_locked(self, state: dict[str, Any], now: datetime) -> None:
+        """Drop the held card once the snapshot no longer supports it
+        (advice_validity.withdraw_reason): it is neither shown nor spoken again."""
+        if self.state._withdrawn_until is not None and now >= self.state._withdrawn_until:
+            self.state._withdrawn = None
+            self.state._withdrawn_until = None
+        recommendation = self.state._last_recommendation
+        basis = self.state._active_basis
+        if recommendation is None or basis is None:
+            return
+        reason = withdraw_reason(basis, state)
+        if reason is None:
+            # Still valid: the numbers it quotes are this snapshot's.
+            refreshed = refreshed_reason(basis, recommendation.reason, state)
+            if refreshed is not None:
+                self.state._last_recommendation = recommendation.model_copy(
+                    update={"reason": refreshed}
+                )
+            return
+        self.state.withdrawn_count += 1
+        self.state._withdrawn = {
+            "decision_point": basis.get("decision_point"),
+            "action": recommendation.action,
+            "reason": reason,
+            "card_clock": basis.get("clock"),
+        }
+        self.state._withdrawn_until = now + WITHDRAWN_NOTICE
+        if reason == "can_act_now":
+            self.state._overtaken_type = str(basis.get("decision_point") or "") or None
+        if reason in {"cannot_act_now", "can_act_now", "superseded_by_threat"}:
+            # Not done, only overtaken (a stun landed on «use X now», a stun
+            # gave way to a silence X goes through): the next evaluation may
+            # speak again, in the form that fits now.
+            self.state._low_hp_episode_active = False
+        self.state._last_recommendation = None
+        self.state._active_advice_until = None
+        self.state._active_basis = None
+        self.state._is_pinned = False
+        self.state._last_gameplay_context = None
+
     def _cancel_gameplay_if_invalid_locked(self, state: dict[str, Any]) -> None:
         context = self.state._last_gameplay_context
         if context is not None and not rule_valid(state, context.get("rule_id")):
@@ -1772,7 +1999,12 @@ class AdviceScheduler:
             return 0, None
 
         gap = max(0.0, game_time_seconds - self.state._last_shown_game_time_seconds)
-        if decision_point in {"LOW_HP", *DEATH_REVIEW_DECISIONS}:
+        # A disable card comes only with the life at stake (live_tools
+        # _disable_endangers) and once per stun: the same words two minutes
+        # later are a new stun, not a repeat (PL 09:13 waited out the 07:18 one).
+        if decision_point in {"LOW_HP", "DISABLED_STATUS", *DEATH_REVIEW_DECISIONS}:
+            return 0, gap
+        if self._readiness_moment_locked(decision_point, state) is not None:
             return 0, gap
 
         min_gap = 0
@@ -1870,6 +2102,10 @@ class AdviceScheduler:
             return None
 
         action, reason_text, risk = _heartbeat_copy(state)
+        if action in FILLER_ACTIONS:
+            # Nothing to decide: the nudge stays silent rather than repeat
+            # «keep farming» (the frequency setting still spaces real cards).
+            return None
         return RecommendationResponse(
             action=action,
             reason=reason_text,
@@ -1978,6 +2214,8 @@ class AdviceScheduler:
             hero_gameplay=deepcopy(self.state._last_gameplay_context)
             if recommendation is not None and decision_point == "HERO_GAMEPLAY"
             else None,
+            basis=deepcopy(self.state._active_basis) if recommendation is not None else None,
+            withdrawn_advice=dict(self.state._withdrawn) if self.state._withdrawn else None,
         )
 
     def _cooldown_remaining_locked(
@@ -2091,7 +2329,7 @@ class AdviceScheduler:
     ) -> None:
         thread = threading.Thread(
             target=self._run_llm_refinement,
-            args=(tactical_hash, request, decision_point, rag_context),
+            args=(tactical_hash, request, decision_point, rag_context, self.state._card_serial),
             daemon=True,
         )
         thread.start()
@@ -2102,6 +2340,7 @@ class AdviceScheduler:
         request: GameSituationRequest,
         decision_point: str,
         rag_context: list[str],
+        card_serial: int | None = None,
     ) -> None:
         started = time.perf_counter()
         result = generate_llm_recommendation(request, decision_point, rag_context)
@@ -2111,7 +2350,15 @@ class AdviceScheduler:
             self.state._pending_llm_tactical_hashes.discard(tactical_hash)
             self.state._llm_latencies.append(latency)
 
-            if self.state.last_tactical_state_hash != tactical_hash:
+            if self.state.last_tactical_state_hash != tactical_hash or (
+                card_serial is not None
+                and (
+                    card_serial != self.state._card_serial
+                    or self.state._last_recommendation is None
+                )
+            ):
+                # A newer card (or a withdrawn one): the late answer is for a
+                # situation that is gone and must not overwrite the decision.
                 self.state.stale_llm_count += 1
                 return
 
@@ -2136,6 +2383,9 @@ class AdviceScheduler:
                 return
 
             self.state._last_recommendation = recommendation
+            self.state._active_basis = advice_basis(
+                decision_point, recommendation.action, recommendation.reason, request.model_dump()
+            )
             self.state._last_source = "llm"
             self.state._last_llm_used = True
             self.state.llm_applied_count += 1

@@ -140,8 +140,19 @@ def test_spending_the_buyback_counts_from_minute_20_with_the_game_on_the_line():
     assert _spend(26 * 60, None) is None  # before 30:00, as before
     assert _spend(19 * 60, "enemy_aegis") is None
     signal = _spend(26 * 60, "enemy_aegis")
-    assert signal == {"clock": 26 * 60 + 1, "gold": 500, "cost": 1500, "danger": "enemy_aegis"}
-    assert _spend(31 * 60, None) == {"clock": 31 * 60 + 1, "gold": 500, "cost": 1500}
+    assert signal == {
+        "clock": 26 * 60 + 1,
+        "gold": 500,
+        "cost": 1500,
+        "danger": "enemy_aegis",
+        "observed": 26 * 60 + 1,
+    }
+    assert _spend(31 * 60, None) == {
+        "clock": 31 * 60 + 1,
+        "gold": 500,
+        "cost": 1500,
+        "observed": 31 * 60 + 1,
+    }
 
 
 def test_the_buyback_reason_names_the_danger_in_both_languages():

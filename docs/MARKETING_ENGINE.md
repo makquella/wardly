@@ -144,6 +144,28 @@ Kyiv). Receipts: Actions run 38781318750. That one-off tool was removed after
 it ran; the Worker keeps the generic `publish_at` support in `src/social.js`.
 Every other release goes through the Telegram buttons as above.
 
+### Hook format test
+
+`beta_campaign=hook-review`, `send=false` builds a UK/EN pair in the format of the
+[Shorts rules](marketing/shorts-rules.md) (`scripts/promo/hook_review.py`,
+`hook_review.css/js`): an all-chat argument as the hook, «check your part» before
+the brand, the match number typed into the app's own field, the review sections
+ticked off, the score counting up, an Anti-Mage example (5 of 9 deaths to one hero,
+the app's `killed_by_one` text), the in-game tip as the second hook, «not a report»
+and a short free-for-Windows ending. No header, one logo, a schematic map with
+seeded dust behind every scene; motion follows the narration only. Up to 34 s.
+The chat lines are a dramatisation; every card and label comes from the app and the
+build fails if they change. Review the artifact, then `deliver` or `shorts` as above.
+
+The full cut adds generated b-roll and sound. `beta_campaign=sfx` makes the
+ElevenLabs effects and a music bed (`scripts/promo/sound_effects.py`, kept in that
+run's artifact for 7 days). `beta_campaign=hook-review` with `sfx_run_id=<that run>`
+(and `beta_run_id=<an earlier hook-review build>` to reuse its narration) then
+downloads the Higgsfield clips listed in `hook_review.BROLL` (hash-checked), puts
+them behind the hook, the brand reveal and the match-number step, and mixes the
+voice, the clips' own sound, the effects on the animated moments and the music
+ducked under the voice.
+
 ### Release pair 0.57 (20 carries)
 
 `beta_campaign=release`, `send=false` builds a Ukrainian/English pair about the
@@ -179,6 +201,20 @@ the approval caption and details show it in Kyiv time. «▶️ Опубліку
 uploads the video private with `publishAt`, and YouTube opens it itself at that
 time. A button pressed less than 15 minutes before the time (`SCHEDULE_MARGIN`)
 publishes at once and the report says so. Nothing is uploaded without the button.
+
+### The film «Із хаосу — у наступний крок»
+
+`films/wardly-next-step` is a 25-second Remotion film (its own README): a Dota opening
+(Juggernaut, his inventory, «ЩО КУПИТИ?», the death-screen card naming Black King Bar), the
+post-match review and the end card. `beta_campaign=film`, `send=false` renders it in the workflow
+from its committed sources (the soundtrack from the committed ElevenLabs takes, the film's gates,
+the motion-blurred master with its sync/spec checks, the layout audit) and packs it with
+`scripts/promo/film.py`: the MP4, a cover, the narration recognised independently by
+faster-whisper. After reviewing that artifact, `beta_campaign=film-shorts`,
+`beta_run_id=<that run>`, `send=true` sends the exact MP4 to the private chat with the YouTube-only
+button (`beta.deliver` for the one Ukrainian film). Its YouTube time is `film.PUBLISH_AT`
+(24.10.2026 17:00 Kyiv); the title, description and tags are `film.metadata`. As with the carry
+pairs, the press uploads it private with that time and YouTube opens it itself.
 
 ### Reach audit and acquisition materials
 

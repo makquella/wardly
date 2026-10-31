@@ -271,6 +271,7 @@ def document(
     *,
     extra_css="",
     javascript=None,
+    header=True,
 ):
     assets = SITE / "assets"
     fonts = {
@@ -289,6 +290,12 @@ def document(
         encoding="utf-8"
     )
     logo = uri(assets / "logo.png")
+    top = (
+        f'<header><img src="{logo}" data-brand><b data-safe>Wardly</b>'
+        f"<span data-safe>{copy['label']}</span></header>"
+        if header
+        else ""
+    )
     return f'''<!doctype html><html lang="{language}"><meta charset="utf-8">
 <style>
 @font-face{{font-family:Montserrat;src:url("{fonts["montserrat-cyrillic"]}");font-weight:100 900;unicode-range:U+0400-045F,U+0490-0491}}
@@ -299,7 +306,7 @@ def document(
 </style><body>
 <div class="ambient"></div><div class="edge-light"></div>
 {sections}
-<header><img src="{logo}" data-brand><b data-safe>Wardly</b><span data-safe>{copy["label"]}</span></header>
+{top}
 <div class="captions" data-safe></div>
 <script>
 const timeline={json.dumps(timeline, ensure_ascii=False)}, captions={json.dumps(captions, ensure_ascii=False)};

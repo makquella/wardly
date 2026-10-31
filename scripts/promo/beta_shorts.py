@@ -150,6 +150,17 @@ def package(language: str, video: dict[str, Any]) -> dict[str, Any]:
         copy = {**copy, **carry_beta.metadata(video["creative"], language)}
         topic = f"{video['creative']}-{language}"
         publish_at = carry_beta.PUBLISH_AT[video["creative"]]
+    if video.get("creative") == "next-step":
+        from . import film
+
+        copy = {**copy, **film.metadata(language)}
+        topic = f"film-{video['creative']}-{language}"
+        publish_at = film.PUBLISH_AT
+    if video.get("creative") == "review-who-threw":
+        from . import hook_review
+
+        copy = {**copy, **hook_review.metadata(language)}
+        topic = f"{video['creative']}-{language}"
     identity = {"video_sha256": video["sha256"], "language": language, "copy": copy}
     if publish_at:
         identity["publish_at"] = publish_at
