@@ -89,5 +89,12 @@
   "format": "coach",
   "topic": "drow_ranger",
   "hook": 0
+ },
+ {
+  "id": "8e25f1829d84c018",
+  "date": "2026-10-31",
+  "format": "release",
+  "topic": "0.61.0",
+  "hook": 0
  }
 ]
