@@ -1,5 +1,5 @@
 """News («Новини»): the weekly meta post and Dota 2 patches, their site pages and
-their Telegram text.
+the numbers behind their Telegram posts (scripts/news_cards.py).
 
 A patch is a JSON file in data/news/patches/ written by `scripts/build_news.py
 patch` from Valve's datafeed: the notes in Ukrainian and English as Valve gives
@@ -46,8 +46,6 @@ MIN_MOVE = 0.5
 HALF_MIN_PICKS = 2000
 # The win-rate bars start here, so that 52 % and 55 % look different.
 WIN_BAR_FLOOR = 0.45
-# Telegram's limit for one message is 4096 characters.
-TELEGRAM_LIMIT = 3800
 # Valve's patch notes: the list of patches, each patch's notes, and the names
 # behind their ids (heroes, abilities, items) — https://www.dota2.com/datafeed.
 VALVE_FEED = "https://www.dota2.com/datafeed"
@@ -119,10 +117,6 @@ TEXT = {
         "list_channel": "Підписатися на канал @wardlydota",
         "list_top": "Найсильніший: {hero}, {v}",
         "changelog": "Що нового в застосунку →",
-        "tg_more": "Повна таблиця",
-        "tg_win": "{v} перемог",
-        "tg_pick": "у {v} матчів",
-        "tg_app": "Wardly — безкоштовний тренер просто в грі",
         "pp": "п. п.",
         "million": "{n} млн",
         "thousand": "{n} тис.",
@@ -178,10 +172,6 @@ TEXT = {
         "list_channel": "Follow @wardlydota on Telegram",
         "list_top": "Strongest: {hero}, {v}",
         "changelog": "What's new in the app →",
-        "tg_more": "Full table",
-        "tg_win": "{v} win rate",
-        "tg_pick": "in {v} of matches",
-        "tg_app": "Wardly — a free coach right in your game",
         "pp": "pp",
         "million": "{n} million",
         "thousand": "{n} thousand",
@@ -353,6 +343,134 @@ def previous_of(post: dict[str, Any], posts: list[dict[str, Any]]) -> dict[str, 
     return max(older, key=lambda p: p["date"]) if older else None
 
 
+# The meta's angles (meta_angles): a popular hero under this win rate is a trap,
+# a hero picked under GEM_PICK with a top win rate is a quiet strong pick, a change
+# in pick rate under PICK_MOVE points is noise, and a patch explains a move for
+# PATCH_WEEKS after its release.
+TRAP_WIN = 0.49
+TRAP_TOP = 5
+GEM_PICK = 0.05
+PICK_MOVE = 1.0
+PATCH_WEEKS = 3
+
+
+def _top_win(post: dict[str, Any]) -> str | None:
+    rows = summary(post, None)["win"]
+    return rows[0]["name"] if rows else None
+
+
+def win_streak(post: dict[str, Any], posts: list[dict[str, Any]]) -> int:
+    """How many weeks in a row (this one included) the same hero has the best win
+    rate. A post overlapping a newer one is skipped; a gap of over a week ends it."""
+    top = _top_win(post)
+    if top is None:
+        return 0
+    weeks, cursor = 1, post
+    for older in sorted(posts, key=lambda p: p["date"], reverse=True):
+        if older["date"] >= cursor["date"]:
+            continue
+        gap = (date.fromisoformat(cursor["from"]) - date.fromisoformat(older["to"])).days
+        if gap < 1:
+            continue  # shares days with the newer post
+        if gap > 7 or _top_win(older) != top:
+            break
+        weeks, cursor = weeks + 1, older
+    return weeks
+
+
+def _pick_rates(post: dict[str, Any]) -> dict[str, float]:
+    matches = sum(hero["picks"] for hero in post["heroes"]) / 10 or 1
+    return {hero["name"]: hero["picks"] / matches for hero in post["heroes"]}
+
+
+def _patched(post: dict[str, Any], patches: list[dict[str, Any]]) -> tuple[str, set[str]] | None:
+    """(version, hero names) of the newest patch released before the post's week
+    ended and at most PATCH_WEEKS before it."""
+    end = date.fromisoformat(post["to"])
+    for patch in sorted(patches, key=lambda p: p["date"], reverse=True):
+        days = (end - date.fromisoformat(patch["date"])).days
+        if days < 0:
+            continue
+        if days > PATCH_WEEKS * 7:
+            return None
+        names = {hero["name"] for hero in patch["languages"]["en"]["heroes"]}
+        return patch["version"], names
+    return None
+
+
+def meta_angles(
+    post: dict[str, Any],
+    data: dict[str, Any],
+    posts: list[dict[str, Any]],
+    patches: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """What the week says, most telling first: [{"kind", "row", ...numbers}].
+
+    streak (the same best win rate for weeks), patch_rise/patch_fall (a mover the
+    latest patch changed), trap (a top pick that loses), picked_more/picked_less
+    (pick rate against the week before), gem (a top win rate few pick), rise/fall
+    (the biggest win-rate move), quiet (nobody moved), top (the best win rate).
+    Only numbers from the posts and patch files; a hero appears once."""
+    angles: list[dict[str, Any]] = []
+    seen: set[str] = set()
+
+    def add(kind: str, row: dict[str, Any] | None, **extra: Any) -> None:
+        name = row["name"] if row else ""
+        if row is not None and name in seen:
+            return
+        seen.add(name)
+        angles.append({"kind": kind, "row": row, **extra})
+
+    win, pick = data["win"], data["pick"]
+    weeks = win_streak(post, posts) if win else 0
+    if weeks >= 2:
+        add("streak", win[0], weeks=weeks)
+    movers = sorted(data["up"] + data["down"], key=lambda m: -abs(m["change"]))
+    patched = _patched(post, patches)
+    if patched:
+        version, names = patched
+        for mover in movers:
+            if mover["name"] in names:
+                kind = "patch_rise" if mover["change"] > 0 else "patch_fall"
+                add(kind, mover, patch=version, basis=data["moves"])
+                break
+    for row in pick[:TRAP_TOP]:
+        if row["win"] < TRAP_WIN:
+            add("trap", row)
+            break
+    previous = previous_of(post, posts)
+    if previous is not None and _week_before(previous, post):
+        before, now = _pick_rates(previous), _pick_rates(post)
+        rows = {row["name"]: row for row in pick}
+        changes = sorted(
+            (((now[name] - before[name]) * 100, name) for name in now if name in before),
+            key=lambda c: (-abs(c[0]), c[1]),
+        )
+        largest = next((c for c in changes if c[1] not in seen), None)
+        if largest and abs(largest[0]) >= PICK_MOVE:
+            change, name = largest
+            hero = next(h for h in post["heroes"] if h["name"] == name)
+            row = rows.get(name) or {
+                "name": name,
+                "key": hero.get("key") or "",
+                "win": hero["wins"] / hero["picks"] if hero["picks"] else 0.0,
+                "pick": now[name],
+            }
+            add("picked_more" if change > 0 else "picked_less", row, change=change)
+    for row in win[:3]:
+        if row["pick"] < GEM_PICK:
+            add("gem", row)
+            break
+    if movers:
+        mover = movers[0]
+        add("rise" if mover["change"] > 0 else "fall", mover, basis=data["moves"])
+    elif previous is not None and _week_before(previous, post):
+        add("quiet", None)
+    if win:
+        add("top", win[0])
+    return angles
+
+
 def image_keys(data: dict[str, Any]) -> set[str]:
     """The heroes whose pictures a post's page shows."""
     rows = data["win"] + data["pick"] + data["up"] + data["down"]
@@ -507,6 +625,53 @@ def patch_post(
         "source": "Valve datafeed /patchnotes, /herolist, /abilitylist, /itemlist",
         "languages": languages,
     }
+
+
+def _first_line(text: str, limit: int) -> str:
+    text = text.strip()
+    return text if len(text) <= limit else text[: limit - 1].rstrip(" ,;:") + "…"
+
+
+def patch_highlights(
+    patch: dict[str, Any], lang: str = "uk", heroes: int = 3, items: int = 3, limit: int = 110
+) -> dict[str, list[dict[str, Any]]]:
+    """The patch's most changed heroes and items, each with its first change as
+    Valve wrote it: {"heroes": [{"name", "key", "changes", "line"}], "items": [...]}.
+    Most notes first, then by name; a change line is cut at `limit` characters."""
+    language = patch["languages"][lang]
+
+    def hero_row(hero: dict[str, Any]) -> dict[str, Any]:
+        notes = hero["notes"] + hero["talents"]
+        count = len(notes) + sum(len(a["notes"]) for a in hero["abilities"])
+        if hero["abilities"]:
+            ability = hero["abilities"][0]
+            line = f"{ability['name']}: {ability['notes'][0]['text']}"
+        elif hero["notes"]:
+            line = hero["notes"][0]["text"]
+        else:
+            line = f"{TEXT[lang]['patch_talents']}: {hero['talents'][0]['text']}"
+        return {
+            "name": hero["name"],
+            "key": hero["key"],
+            "changes": count,
+            "line": _first_line(line, limit),
+        }
+
+    def item_row(item: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "name": item["name"],
+            "changes": len(item["notes"]),
+            "line": _first_line(item["notes"][0]["text"], limit),
+        }
+
+    hero_rows = sorted(
+        (hero_row(h) for h in language["heroes"]), key=lambda r: (-r["changes"], r["name"])
+    )
+    item_rows = sorted(
+        (item_row(i) for i in language["items"] + language["neutral"] if "name" in i),
+        key=lambda r: (-r["changes"], r["name"]),
+    )
+    return {"heroes": hero_rows[:heroes], "items": item_rows[:items]}
 
 
 def patch_counts(patch: dict[str, Any]) -> dict[str, int]:
@@ -1056,64 +1221,7 @@ def list_main(
     </main>"""
 
 
-# --- Telegram -------------------------------------------------------------------------------
-
-
-def telegram_meta(post: dict[str, Any], data: dict[str, Any], lang: str = "uk") -> str:
-    """The channel post (Telegram HTML): the same lists, short."""
-    t = TEXT[lang]
-    e = html.escape
-    lines = [f"<b>{e(title(post, lang))}</b>", "", e(lead(post, data, lang))]
-
-    def block(icon: str, key: str, rows: list[dict[str, Any]], value: str) -> None:
-        if not rows:
-            return
-        lines.extend(["", f"{icon} <b>{e(t[key])}</b>"])
-        for index, row in enumerate(rows, 1):
-            if value == "change":
-                shown = points(row["change"], lang)
-            else:
-                shown = t[f"tg_{value}"].format(v=percent(row[value], lang))
-            lines.append(f"{index}. {e(row['name'])} — {e(shown)}")
-
-    block("🏆", "win_title", data["win"], "win")
-    block("🔥", "pick_title", data["pick"], "pick")
-    block("📈", "up_title", data["up"], "change")
-    block("📉", "down_title", data["down"], "change")
-    prefix = "" if lang == "uk" else "/en"
-    lines.extend(
-        [
-            "",
-            f"{e(t['tg_more'])}: {BASE}{prefix}/news/{slug(post)}.html?ref=tg",
-            f"{e(t['tg_app'])}: {BASE}{prefix}/?ref=tg",
-        ]
-    )
-    return "\n".join(lines)
-
-
-def telegram_release(version: str, notes: str) -> str:
-    """A release post from docs/release-notes/v<version>.md (its Ukrainian part),
-    cut at a bullet when it would not fit one message."""
-    uk = notes.split("\n---", 1)[0]
-    lines = [f"<b>Wardly {html.escape(version)}</b>", ""]
-    for raw in uk.splitlines():
-        line = raw.strip()
-        if not line or line.startswith("## "):
-            continue
-        text = html.escape(line[2:] if line.startswith("- ") else line, quote=False)
-        text = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", text)
-        text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
-        lines.append(f"• {text}" if line.startswith("- ") else text)
-    while len("\n".join(lines)) > TELEGRAM_LIMIT and len(lines) > 3:
-        lines.pop()
-    lines.extend(
-        [
-            "",
-            f"Що нового: {BASE}/changelog.html?ref=tg#v{version}",
-            f"Завантажити: {BASE}/?ref=tg",
-        ]
-    )
-    return "\n".join(lines)
+# --- the Telegram posts (scripts/news_cards.py) -----------------------------------------
 
 
 def patch_names(patch: dict[str, Any], key: str, lang: str = "uk") -> list[str]:
@@ -1121,30 +1229,3 @@ def patch_names(patch: dict[str, Any], key: str, lang: str = "uk") -> list[str]:
     entries = patch["languages"][lang][key]
     names = [entry["name"] for entry in entries if "name" in entry]
     return sorted(names) if key == "heroes" else names
-
-
-def telegram_patch(patch: dict[str, Any], limit: int = 30) -> str:
-    """The text post of a patch (when the card cannot be drawn)."""
-    e = html.escape
-    t = TEXT["uk"]
-    lines = [f"<b>{e(patch_title(patch, 'uk'))}</b>", "", e(t["patch_lead"])]
-    for icon, heading, key in (
-        ("⚔️", t["patch_heroes_title"], "heroes"),
-        ("🗡", t["patch_items_title"], "items"),
-        ("💎", t["patch_neutral_title"], "neutral"),
-    ):
-        names = patch_names(patch, key)
-        if names:
-            shown = ", ".join(names[:limit]) + (
-                f" +{len(names) - limit}" if len(names) > limit else ""
-            )
-            lines.extend(["", f"{icon} <b>{e(heading)} ({len(names)})</b>", e(shown)])
-    lines.extend(
-        [
-            "",
-            f"Усі зміни: {BASE}/news/{patch_slug(patch)}.html?ref=tg",
-            f"Нотатки Valve: {VALVE_PATCH_PAGE.format(version=patch['version'])}",
-            f"{e(t['tg_app'])}: {BASE}/?ref=tg",
-        ]
-    )
-    return "\n".join(lines)
