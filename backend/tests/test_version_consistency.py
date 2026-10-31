@@ -34,6 +34,11 @@ def release_tree(tmp_path: Path) -> Path:
         target = tmp_path / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPOSITORY / name, target)
+    post = REPOSITORY / "data/news/telegram" / f"{current}.json"
+    if post.exists():  # a minor release has one (scripts/news_telegram.py)
+        target = tmp_path / "data/news/telegram" / post.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(post, target)
     return tmp_path
 
 
@@ -104,3 +109,28 @@ def test_notes_are_required_in_both_languages_at_current_latest_version(
         (path.parent / f"v{major}.{minor}.{int(patch) + 1}.md").write_text("future draft")
     with pytest.raises(ValueError, match="notes|English"):
         versions.check(release_tree)
+
+
+def _telegram_post(root: Path, version: str, **change: Any) -> Path:
+    path = root / "data/news/telegram" / f"{version}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    post = {"version": version, "headline": "Wardly: нова підказка", "text": "Що змінилося."}
+    path.write_text(json.dumps({**post, **change}, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def test_a_minor_release_needs_its_telegram_post(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="Missing the Telegram post"):
+        versions.check_telegram_post(tmp_path, "0.70.0")
+    _telegram_post(tmp_path, "0.70.0")
+    versions.check_telegram_post(tmp_path, "0.70.0")
+    _telegram_post(tmp_path, "0.70.0", headline="")
+    with pytest.raises(ValueError, match="headline"):
+        versions.check_telegram_post(tmp_path, "0.70.0")
+
+
+def test_a_fix_needs_no_telegram_post_but_a_written_one_must_be_ready(tmp_path: Path) -> None:
+    versions.check_telegram_post(tmp_path, "0.70.3")
+    _telegram_post(tmp_path, "0.70.3", text="x" * 1100)
+    with pytest.raises(ValueError, match="Telegram allows"):
+        versions.check_telegram_post(tmp_path, "0.70.3")

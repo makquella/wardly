@@ -91,7 +91,27 @@ def check(root: Path) -> str:
     )
     if latest_notes != current:
         raise ValueError(f"Latest notes {latest_notes} differ from {current}")
+    check_telegram_post(root, current)
     return current
+
+
+def check_telegram_post(root: Path, current: str) -> None:
+    """A minor release goes to the Telegram channel with its own post
+    (data/news/telegram/<version>.json, scripts/news_telegram.py); a fix needs one
+    only to be posted at all."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import news_telegram
+
+    post = news_telegram.load(current, root)
+    if post is None:
+        if news_telegram.is_fix(current):
+            return
+        raise ValueError(
+            f"Missing the Telegram post data/news/telegram/{current}.json for a minor release"
+        )
+    problems = news_telegram.validate(post, current)
+    if problems:
+        raise ValueError(f"Telegram post {current}: " + "; ".join(problems))
 
 
 def main() -> int:

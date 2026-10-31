@@ -52,11 +52,38 @@ def test_the_meta_caption_fits_a_photo_and_links_the_post():
     data = news.summary(post, None)
     caption = cards.meta_caption(post, data)
     assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
-    assert caption.startswith("📊 <b>Мета тижня · 6–12 жовтня</b>")
-    assert "Wraith King 56,0 %" in caption
-    assert "/news/2026-10-12-meta.html?ref=tg" in caption and caption.endswith("#dota2")
+    # Without other angles the best win rate leads.
+    assert caption.startswith("📊 <b>Anti-Mage") and "75,0 %" in caption.split("\n")[0]
+    assert "Wraith King 56,0 %" in caption and "🔥 Беруть: Pudge" in caption
+    assert "6–12 жовтня" in caption
+    assert "/news/2026-10-12-meta.html?ref=tg" in caption and caption.endswith("#мета_тижня")
+    assert "безкоштовний тренер, що підказує" not in caption  # no slogan
     page = cards.meta_card(post, data, Path("/nonexistent"))
     assert "Wraith King" in page and "6–12 жовтня" in page and "{pill}" not in page
+
+
+def test_the_meta_post_leads_with_the_weeks_angle_and_shows_the_next_two():
+    rows = _rows()
+    rows[3] = ("Anti-Mage", 700, 525)  # under 2 % of matches: out of the lists
+    rows[4] = ("Lion", 50_000, 23_000)  # a top pick under 49 %
+    weeks = [_post(rows) for _ in range(3)]
+    for week, day in zip(weeks, ("2026-10-12", "2026-10-19", "2026-10-26"), strict=True):
+        end = date.fromisoformat(day)
+        week["date"], week["to"] = day, day
+        week["from"] = date.fromordinal(end.toordinal() - 6).isoformat()
+    post = weeks[-1]
+    data = news.summary(post, weeks[1])
+    angles = news.meta_angles(post, data, weeks, [])
+    assert [a["kind"] for a in angles] == ["streak", "trap", "quiet"]
+    caption = cards.meta_caption(post, data, angles)
+    first = caption.split("\n")[0]
+    assert "Wraith King" in first and "3-й тиждень" in first and "56,0 %" in first
+    assert "Lion" in caption and "46,0 %" in caption
+    assert "0,5 п. п." in caption  # the quiet week says how little moved
+    assert cards.meta_caption(post, data, angles) == caption  # the same words when redrawn
+    page = cards.meta_card(post, data, Path("/nonexistent"), angles)
+    assert "3-й тиждень на вершині" in page and "Популярний, але програє" in page
+    assert "Lion" in page and "Виграють" in page
 
 
 def test_the_hero_of_the_week_is_the_best_regular_pick_not_shown_lately():
@@ -83,17 +110,21 @@ def test_the_hero_caption_uses_the_site_numbers():
 
     hero = next(h for h in site.heroes() if h["name"] == "Juggernaut")
     facts = cards.hero_facts(hero, site)
-    caption = cards.hero_caption(hero, facts, {"win": 0.526, "pick": 0.183})
+    caption = cards.hero_caption(hero, facts, {"win": 0.526, "pick": 0.183}, "2026-10-29")
     assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
     assert caption.startswith("⚔️ <b>Герой тижня: Juggernaut</b>")
     assert "52,6 %" in caption and "/heroes/juggernaut.html?ref=tg" in caption
-    # Juggernaut has a plan: the skill order, tempo and counters in numbers.
-    assert "🎯 Прокачка: <b>" in caption and "нетворсу на" in caption
-    assert "лігові матчі патча" in caption and "Відходь, коли HP" not in caption
+    # Juggernaut has a plan: the clearest counter record opens, the rest follows once.
+    hook = caption.split("\n")[2]
+    assert "Monkey King Bar" in hook and "62 %" in hook and "47 %" in hook
+    assert caption.count("Monkey King Bar") == 2  # the opening line only, not a bullet too
+    assert "• Прокачка: <b>" in caption and "нетворсу на" in caption
+    assert "лігові матчі патча" in caption and "Відходьте, коли HP" not in caption
     assert "Керрі — керрі" not in caption
     assert "&#x27;" not in caption  # Telegram needs only <, > and & escaped
-    page = cards.hero_card(hero, facts, None, Path("/nonexistent"))
+    page = cards.hero_card(hero, facts, None, Path("/nonexistent"), "2026-10-29")
     assert "Juggernaut" in page and "Що виграє на цьому герої" in page
+    assert '<p class="hook">' in page and "Monkey King Bar" in page
     # A hero without a plan keeps the hero page's thresholds.
     plain = {**facts, "insights": None}
     caption = cards.hero_caption(hero, plain, None)
@@ -112,21 +143,6 @@ def test_a_hero_with_a_plan_comes_before_a_better_win_rate_without_one():
     assert hero["name"] == "Juggernaut"  # Wraith King wins more but has no plan
     hero, _ = cards.pick_hero(post, site, ["Juggernaut"])
     assert hero["name"] == "Wraith King"
-
-
-def test_a_release_caption_keeps_the_headlines_and_the_links():
-    notes = "## Що нового\n\n" + "\n".join(
-        f"- **Пункт {i}.** Перше речення. " + "текст " * 40 for i in range(60)
-    )
-    notes += "\n\n---\n\n**In English:**\n- **English part.** Text"
-    points = cards.release_points(notes)
-    assert points[0] == ("Пункт 0", "Перше речення.")
-    assert all("English" not in head for head, _ in points)
-    caption = cards.release_caption("0.56.0", points)
-    assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
-    assert caption.startswith("🚀 <b>Wardly 0.56.0 вже тут</b>")
-    assert "changelog.html?ref=tg#v0.56.0" in caption
-    assert caption.endswith("оновиться сама, коли Дота буде закрита.")
 
 
 def _png(width, height):
@@ -214,18 +230,6 @@ def test_without_a_browser_there_is_no_card(monkeypatch, tmp_path):
     monkeypatch.setattr(cards, "find_chrome", lambda: None)
     assert not cards.render("<html>", tmp_path / "card.png")
     assert not (tmp_path / "card.png").exists()
-
-
-def test_a_release_with_a_news_post_links_to_it():
-    import news_release
-
-    post = news_release.find("0.57.0")
-    assert post and len(post["heroes"]) == 20
-    caption = cards.release_caption("0.57.0", [], post)
-    assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
-    assert "<b>Свій план для 20 керрі</b>" in caption
-    assert "/news/2026-10-19-release-0-57-0.html?ref=tg" in caption
-    assert "✅ Коли гра вирішується" in caption and "Ursa" in caption
 
 
 def test_hero_insights_show_only_what_the_plan_and_its_stats_hold():

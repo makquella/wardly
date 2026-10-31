@@ -205,10 +205,11 @@ jobs:
 
       - name: Post the release to the Telegram channel
         # To https://t.me/wardlydota (variable TELEGRAM_CHANNEL overrides it; secret
-        # TELEGRAM_BOT_TOKEN, the bot an admin of the channel): a picture card with
-        # the version and its headlines (drawn with the runner's Chrome), the
-        # headlines and links to «Що нового» and the download as the caption; the
-        # text post when the card cannot be drawn. Never fails the release.
+        # TELEGRAM_BOT_TOKEN, the bot an admin of the channel): the release's own
+        # post from data/news/telegram/<version>.json (scripts/news_telegram.py) as a
+        # picture card (drawn with the runner's Chrome) and its caption; the caption
+        # as a text post when the card cannot be drawn. A fix without a post is not
+        # posted. Never fails the release.
         continue-on-error: true
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

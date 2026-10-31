@@ -4,12 +4,14 @@
     python scripts/build_news.py meta --input stats.json --date 2026-10-10
     python scripts/build_news.py telegram-meta [DATE] [--send] [--out DIR]
     python scripts/build_news.py telegram-hero [--date DATE] [--hero NAME] [--send] [--out DIR]
-    python scripts/build_news.py telegram-release 0.55.0 [--send] [--out DIR]
+    python scripts/build_news.py telegram-release 0.61.0 [--send] [--out DIR]
     python scripts/build_news.py patch [VERSION]         # Valve's newest patch notes
     python scripts/build_news.py telegram-patch [VERSION] [--send] [--out DIR]
 
 Channel posts are a picture card with a caption (scripts/news_cards.py); without
-a browser to draw the card the post goes as text. `--out DIR` writes the card
+a browser to draw the card the caption goes as a text post. A release is posted
+only with its own post in data/news/telegram/<version>.json (scripts/news_telegram.py):
+every minor release has one, a fix without one is skipped. `--out DIR` writes the card
 and the caption there instead of printing the caption.
 `--send` posts to the channel named by TELEGRAM_CHANNEL (@name or a numeric id)
 with the bot token TELEGRAM_BOT_TOKEN (the bot must be an admin of the channel).
@@ -45,11 +47,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import news  # noqa: E402 - after the scripts path
 import news_cards as cards  # noqa: E402
 import news_release  # noqa: E402
+import news_telegram  # noqa: E402
 
 HERO_WEEK = news.ROOT / "data" / "news" / "hero-week.json"
 
 HERO_STATS = "https://api.opendota.com/api/heroStats"
-NOTES = news.ROOT / "docs" / "release-notes"
 PATCH_REFRESH_DAYS = 7
 
 
@@ -347,10 +349,11 @@ def main() -> int:
         )
         if post is None:
             raise SystemExit("no such patch in data/news/patches")
+        caption = cards.patch_caption(post)
         publish(
             cards.patch_card(post),
-            cards.patch_caption(post),
-            news.telegram_patch(post),
+            caption,
+            caption,
             args.send,
             args.out,
             f"patch-{post['version']}",
@@ -366,10 +369,12 @@ def main() -> int:
             if post is None:
                 raise SystemExit("no such post in data/news/posts")
             data = news.summary(post, news.previous_of(post, posts))
+            angles = news.meta_angles(post, data, posts, news.load_patches())
+            caption = cards.meta_caption(post, data, angles)
             publish(
-                cards.meta_card(post, data, work),
-                cards.meta_caption(post, data),
-                news.telegram_meta(post, data),
+                cards.meta_card(post, data, work, angles),
+                caption,
+                caption,
                 args.send,
                 args.out,
                 f"meta-{post['date']}",
@@ -397,9 +402,9 @@ def main() -> int:
             else:
                 hero, stats = cards.pick_hero(posts[0], heroes, [w["hero"] for w in weeks])
             facts = cards.hero_facts(hero, site)
-            caption = cards.hero_caption(hero, facts, stats)
+            caption = cards.hero_caption(hero, facts, stats, today)
             publish(
-                cards.hero_card(hero, facts, stats, work),
+                cards.hero_card(hero, facts, stats, work, today),
                 caption,
                 caption,
                 args.send,
@@ -409,21 +414,26 @@ def main() -> int:
             if args.send:
                 save_history([*weeks, {"date": today, "hero": hero["name"]}])
         else:
-            notes = NOTES / f"v{args.version}.md"
-            if not notes.exists():
-                raise SystemExit(f"no release notes: {notes.relative_to(news.ROOT)}")
-            text = notes.read_text(encoding="utf-8")
-            points = cards.release_points(text)
-            post = news_release.find(args.version)
-            if post:
-                # The card lists the release post's sections, the caption links to it.
-                title = post["uk"]["title"].split(": ", 1)[-1]
-                points = [(title[:1].upper() + title[1:], "")]
-                points += [(s["heading"], "") for s in post["uk"]["sections"]]
+            post = news_telegram.load(args.version)
+            if post is None:
+                if news_telegram.is_fix(args.version):
+                    print(f"{args.version} is a fix with no Telegram post: skipped")
+                else:
+                    # A minor release always has one (scripts/bump_version.py --check);
+                    # the changelog's headlines are never posted in its place.
+                    print(
+                        f"::warning::no {news_telegram.path(args.version).relative_to(news.ROOT)}:"
+                        " the release is not posted"
+                    )
+                return 0
+            problems = news_telegram.validate(post, args.version)
+            if problems:
+                raise SystemExit("the Telegram post is not ready: " + "; ".join(problems))
+            caption = cards.release_caption(post, news_release.find(args.version))
             publish(
-                cards.release_card(args.version, points),
-                cards.release_caption(args.version, points, post),
-                news.telegram_release(args.version, text),
+                cards.release_card(post),
+                caption,
+                caption,
                 args.send,
                 args.out,
                 f"release-{args.version}",

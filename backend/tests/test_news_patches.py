@@ -180,26 +180,35 @@ def test_the_patch_page_and_the_news_list():
     assert "Героїв змінено: 2 · предметів: 1" in listing
 
 
-def test_the_telegram_patch_post_fits_and_links_the_page():
+def test_the_telegram_patch_post_shows_what_changed_and_links_the_page():
     patch = _patch()
+    top = news.patch_highlights(patch)
+    assert [row["name"] for row in top["heroes"]] == ["Bane", "Anti-Mage"]  # most notes first
+    assert top["heroes"][1]["line"] == "Спалення мани: Mana Burned as Damage increased"
     caption = cards.patch_caption(patch)
     assert cards.visible_length(caption) <= cards.CAPTION_LIMIT
-    assert "Патч 7.41f" in caption and "Anti-Mage, Bane" in caption
+    assert "7.41f" in caption.split("\n")[0]
+    assert "<b>Bane</b> — Base Armor decreased by 1" in caption
+    assert "<b>Infused Raindrops</b> — Регенерацію мани зменшено: +0,8 → +0,6." in caption
     assert "/news/2026-09-15-patch-7-41f.html?ref=tg" in caption
-    assert "https://www.dota2.com/patches/7.41f" in caption
+    assert "https://www.dota2.com/patches/7.41f" in caption and caption.endswith("#патч")
     card = cards.patch_card(patch)
-    assert "7.41f" in card and "Anti-Mage" in card and "{pill}" not in card
-    text = news.telegram_patch(patch)
-    assert len(text) <= news.TELEGRAM_LIMIT and "Нотатки Valve" in text
+    assert "7.41f" in card and "Anti-Mage" in card and "Base Armor" in card
+    assert "{pill}" not in card
 
-    # Many heroes: the caption and the card stay in their limits.
+    # A long change is cut; many heroes: the caption and the card stay in their limits.
     many = json.loads(json.dumps(patch))
     hero = many["languages"]["uk"]["heroes"][0]
+    long_note = [{"level": 1, "text": "Дуже довга зміна " * 20}]
     many["languages"]["uk"]["heroes"] = [
-        {**hero, "name": f"A very long hero name {i}"} for i in range(120)
+        {**hero, "name": f"A very long hero name {i}", "notes": long_note, "abilities": []}
+        for i in range(120)
     ]
+    line = news.patch_highlights(many)["heroes"][0]["line"]
+    assert len(line) <= 110 and line.endswith("…")
     assert cards.visible_length(cards.patch_caption(many)) <= cards.CAPTION_LIMIT
-    assert "+106" in cards.patch_card(many)  # 14 pictures and the rest
+    assert "та ще" in cards.patch_caption(many)
+    assert "+110" in cards.patch_card(many)  # 3 changes, 7 faces and the rest
 
 
 def _fake_feed(calls: list[str], *, ukrainian: bool = True):
