@@ -54,7 +54,7 @@ jobs:
         run: git diff --stat -- data/meta/stratz_builds.json >> "$GITHUB_STEP_SUMMARY"
       - name: Open a pull request when it changed
         id: pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/stratz-builds
           commit-message: "Refresh high-rank starting items and builds"

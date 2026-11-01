@@ -35,7 +35,7 @@ jobs:
         run: git diff --stat -- backend/requirements.txt backend/requirements-dev.txt backend/requirements-build.txt >> "$GITHUB_STEP_SUMMARY"
       - name: Open or update the reviewable dependency PR
         id: pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/python-dependencies
           commit-message: Refresh Python runtime, development and build locks
