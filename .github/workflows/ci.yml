@@ -58,7 +58,7 @@ jobs:
           ref: ${{ inputs.source_sha || github.sha }}
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
           cache: pip
@@ -173,7 +173,7 @@ jobs:
           ref: ${{ inputs.source_sha || github.sha }}
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
           cache: pip
