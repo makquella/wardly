@@ -61,7 +61,7 @@ jobs:
         run: git diff --stat -- data/heroes/item_stats >> "$GITHUB_STEP_SUMMARY"
       - name: Open a pull request when it changed
         id: pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/hero-stats
           commit-message: "Refresh high-rank hero stats"
