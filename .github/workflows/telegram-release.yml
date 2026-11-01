@@ -1,0 +1,51 @@
+name: Release post
+
+# By hand (Actions -> Release post -> Run workflow): send a release's Telegram
+# post from data/news/telegram/<version>.json (scripts/news_telegram.py) as a
+# picture card with its caption. For a retry when the release workflow's post
+# failed, or to repost a released version in the current format. New releases
+# are posted by release.yml itself.
+#
+# Telegram: the channel https://t.me/wardlydota (repository variable
+# TELEGRAM_CHANNEL overrides it) and the secret TELEGRAM_BOT_TOKEN.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The release, e.g. 0.61.0 (it needs data/news/telegram/<version>.json on main)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: news
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - name: Send the release post
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: ${{ vars.TELEGRAM_CHANNEL || '@wardlydota' }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! [[ "$VERSION" =~ ^0\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::$VERSION is not a release version like 0.61.0"
+            exit 1
+          fi
+          if [ ! -f "data/news/telegram/$VERSION.json" ]; then
+            echo "::error::data/news/telegram/$VERSION.json is not on main: nothing to send"
+            exit 1
+          fi
+          python scripts/build_news.py telegram-release "$VERSION" --send
