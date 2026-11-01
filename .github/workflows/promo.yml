@@ -78,7 +78,7 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || 'main' }}
           fetch-depth: 0 # release notes dates (topics.latest_release)
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
           cache: pip
