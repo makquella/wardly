@@ -28,10 +28,17 @@ What it stands on (minimap_units.py; checked on real recordings):
   either, and ancients only after an ancient clear.
 
 The card names the best option only when it beats what the player is doing
-(their farm gold of the last RATE_WINDOW seconds) by BETTER_SHARE and
-GAIN_MIN gold a minute, and never while the player is at a wave or a camp
-already; one new target per TARGET_GAP seconds and at most TARGETS_MAX per
-TARGETS_WINDOW; a wave more than WAVE_TRAVEL_MAX seconds away is no target.
+by BETTER_SHARE and GAIN_MIN gold a minute, and never while the player is at
+a wave or a camp already. What the player is doing is the more of their farm
+gold of the last RATE_WINDOW seconds and their usual farm of the last
+USUAL_WINDOW: a walk between farm spots earns nothing for half a minute, and
+next to nothing everything looked better (a held-out recording, Night Stalker
+9073917299: 7 of 8 camp cards came at 0 gold a second, small camps 30-40 s
+away, and he went to one). A target pays at least TARGET_GOLD_MIN; a wave more
+than WAVE_TRAVEL_MAX seconds away moves on before the hero gets there, a camp
+more than CAMP_TRAVEL_MAX away is a walk across the map, not the next stop.
+One new target per TARGET_GAP seconds and at most TARGETS_MAX per
+TARGETS_WINDOW.
 GSI sends up to 10 payloads a second live and recordings keep 2: the full
 run is once per game second (the first payload of it), the others only
 re-check the gates, so a replay decides as live does. Minimap keys are no
@@ -39,8 +46,10 @@ unit identity (minimap_units.py): a neutral is followed by name and position. No
 dead, at or under HP_MIN, stunned, teleporting, in a fight (contest_near),
 during an after-fight or Aegis plan, with an enemy hero visible near the hero
 or the target, for a camp on the enemy half or a wave next to an enemy tower.
-Path length (trees, cliffs) is a straight line times PATH_FACTOR: an estimate,
-named in `unknown`. It reads only the current snapshot and its own past.
+Path length goes around trees and cliffs over walk_grid.py (cells units were
+seen in on the player's recordings); where the grid cannot connect the two
+points, a straight line times PATH_FACTOR, named in `unknown`. It reads only
+the current snapshot and its own past.
 """
 
 from __future__ import annotations
@@ -56,6 +65,7 @@ from typing import Any
 from app.config import DATA_DIR
 from app.map_analysis import map_side, zone
 from app.team_context import contest_near, visible_enemies_near
+from app.walk_grid import distances as walk_distances
 
 CORE_ROLES = {"carry", "mid", "offlane"}
 # After the laning phase (live_plan.LANE_UNTIL): the lane has its own tips.
@@ -82,6 +92,8 @@ ENEMY_HERO_NEAR = 2500
 SAME_UNIT = 250
 # A wave further than this moves on before the hero gets there.
 WAVE_TRAVEL_MAX = 15
+CAMP_TRAVEL_MAX = 25
+TARGET_GOLD_MIN = 90
 ENEMY_TOWER_NEAR = 1100
 CAMP_SEEN_FRESH = 45
 VISION_SHARE = 0.6
@@ -94,6 +106,7 @@ SPEED_SAMPLES = 10
 SPEED_SPAN = 3
 WAVE_CLEAR_PER_CREEP = 2.0
 RATE_WINDOW = 30
+USUAL_WINDOW = 180
 GOLD_WINDOW = 180
 LANE_LH_MIN = 5
 BETTER_SHARE = 1.4
@@ -109,7 +122,7 @@ LANE_UNIT = {
     "ranged": "npc_dota_creep_goodguys_ranged",
     "siege": "npc_dota_goodguys_siege",
 }
-UNKNOWN = ["creeps_in_fog", "camps_out_of_vision", "path_length", "enemies_not_seen"]
+UNKNOWN = ["creeps_in_fog", "camps_out_of_vision", "enemies_not_seen"]
 
 
 @lru_cache(maxsize=1)
@@ -373,11 +386,13 @@ class FarmMap:
         (bounties grow during a match)."""
         return _median([c[2] for c in self._clears if c[2] > 0])
 
-    def farm_rate(self, clock: int) -> float:
-        window = self._window(clock, RATE_WINDOW)
+    def farm_rate(self, clock: int, seconds: int = RATE_WINDOW) -> float:
+        """Farm gold a second over the last `seconds` (less behind it counts as
+        nothing farmed: a short past never inflates the rate)."""
+        window = self._window(clock, seconds)
         if window is None:
             return 0.0
-        return max(0.0, window[2] + window[3]) / RATE_WINDOW
+        return max(0.0, window[2] + window[3]) / seconds
 
     # --- camps ----------------------------------------------------------------------
 
@@ -651,24 +666,40 @@ class FarmMap:
             )
         ]
 
-    def _rate(self, candidate: dict[str, Any], x: float, y: float, speed: float) -> dict[str, Any]:
+    def _rate(
+        self, candidate: dict[str, Any], x: float, y: float, speed: float, walk: float | None
+    ) -> dict[str, Any]:
         distance = _dist(candidate["x"], candidate["y"], x, y)
-        travel = 0.0 if distance <= HERE_RADIUS else distance * PATH_FACTOR / speed
+        path = "grid" if walk is not None else "straight"
+        length = walk if walk is not None else distance * PATH_FACTOR
+        travel = 0.0 if distance <= HERE_RADIUS else length / speed
         seconds = max(1.0, travel + candidate["clear_s"])
-        return {**candidate, "travel_s": round(travel), "rate": candidate["gold"] / seconds}
+        return {
+            **candidate,
+            "travel_s": round(travel),
+            "path": path,
+            "rate": candidate["gold"] / seconds,
+        }
+
+    def _reachable(self, candidate: Mapping[str, Any]) -> bool:
+        """Worth naming at all: enough gold, and the next stop, not a trip."""
+        if candidate["travel_s"] <= 0 or candidate["gold"] < TARGET_GOLD_MIN:
+            return False
+        limit = WAVE_TRAVEL_MAX if candidate["kind"] == "wave" else CAMP_TRAVEL_MAX
+        return candidate["travel_s"] <= limit
 
     def _choose(
         self, extra: Mapping[str, Any], creeps: list[dict[str, Any]], clock: int, x: float, y: float
     ) -> dict[str, Any] | None:
         speed, measured = self.speed()
-        scored = [self._rate(c, x, y, speed) for c in self._candidates(extra, creeps, clock)]
+        candidates = self._candidates(extra, creeps, clock)
+        walks = walk_distances(x, y, [(c["x"], c["y"]) for c in candidates])
+        scored = [self._rate(c, x, y, speed, w) for c, w in zip(candidates, walks, strict=True)]
         here = [c for c in scored if c["travel_s"] == 0]
-        current = max([c["rate"] for c in here] + [self.farm_rate(clock)])
-        others = [
-            c
-            for c in scored
-            if c["travel_s"] > 0 and (c["kind"] != "wave" or c["travel_s"] <= WAVE_TRAVEL_MAX)
-        ]
+        current = max(
+            [c["rate"] for c in here] + [self.farm_rate(clock), self.farm_rate(clock, USUAL_WINDOW)]
+        )
+        others = [c for c in scored if self._reachable(c)]
         best = max(others, key=lambda c: c["rate"], default=None)
         target = self.target
         if target is not None:
@@ -681,7 +712,10 @@ class FarmMap:
                 target = None
             else:
                 target.update(
-                    {k: follow[k] for k in ("x", "y", "gold", "rate", "travel_s", "clear_s")}
+                    {
+                        k: follow[k]
+                        for k in ("x", "y", "gold", "rate", "travel_s", "clear_s", "path")
+                    }
                 )
                 for key in ("creeps", "kinds", "state", "respawn"):
                     if key in follow:
@@ -723,6 +757,7 @@ class FarmMap:
             "then": {"kind": then["kind"], "ancient": then.get("ancient", False)} if then else None,
             "unknown": UNKNOWN
             + list(best.get("estimated") or [])
+            + ([] if best["path"] == "grid" else ["path_length"])
             + ([] if measured else ["move_speed"]),
         }
         return self._out(clock)

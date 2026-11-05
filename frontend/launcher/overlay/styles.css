@@ -467,3 +467,61 @@ body:not(.locked) .overlay-shell {
 .plan:has(.items-row:not(.hidden)) .reason {
   -webkit-line-clamp: 2;
 }
+
+/* The small map on a hint card (map-marker.js): the place the card names and
+   the player's own dot over the game's minimap art. */
+.overlay-shell.with-map {
+  position: relative;
+  padding-right: calc(64px + 2 * var(--sp-3));
+}
+
+.hint-map {
+  position: absolute;
+  top: 50%;
+  right: var(--sp-3);
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: rgb(8 9 11);
+  transform: translateY(-50%);
+}
+
+.hint-map.hidden,
+.hint-map img.hidden,
+.hint-map .mk.hidden {
+  display: none;
+}
+
+.hint-map img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.75;
+}
+
+.hint-map .mk {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hint-map .mk-target {
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgb(0 0 0 / 70%);
+  /* Gold: the farm target, not to be read as the player's white dot. */
+  background: #f5c04a;
+}
+
+.hint-map .mk-target.mk-danger {
+  background: var(--error);
+}
+
+.hint-map .mk-player {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgb(0 0 0 / 60%);
+}

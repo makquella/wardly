@@ -158,6 +158,15 @@ PLAN_SHOW = 12
 # The farm card (farm_map.py): shown for this long from the target it names.
 FARM_SHOW = 25
 FIGHT_EVERY = 60
+# An own building attacked by enemy heroes or summons (minimap_events.py):
+# shown BUILDING_SHOW seconds, at most once per BUILDING_EVERY, the same
+# building again only after BUILDING_SAME. A push by summons alone: SUMMON_SHOW
+# seconds, at most once per SUMMON_EVERY.
+BUILDING_SHOW = 12
+BUILDING_EVERY = 60
+BUILDING_SAME = 180
+SUMMON_SHOW = 12
+SUMMON_EVERY = 120
 DENY_MIN_LAST_HITS = 8
 # A power rune kept in the Bottle this long (clock seconds, alive) → use it.
 BOTTLE_RUNE_HELD = 30
@@ -476,6 +485,20 @@ TIPS = {
             "Бійка {place}: союзників {a}, ворогів {e}",
             "{status}Іти чи ні — вирішуйте з командою.",
         ),
+    },
+    # An own building attacked by what the minimap shows (minimap_events.py):
+    # who is seen there, the player's TP; never a call.
+    "building_attack": {
+        "en": (
+            "{building} is attacked",
+            "{who}. {status}Whether to go is your call with the team.",
+        ),
+        "uk": ("Атакують {building}", "{who}. {status}Іти чи ні — вирішуйте з командою."),
+    },
+    # Enemy summons alone on the player's half (minimap_events.summon_push).
+    "summon_push": {
+        "en": ("{owner} {place}: {n}", "No enemy hero seen near them."),
+        "uk": ("{owner} {place}: {n}", "Героїв ворога поруч не видно."),
     },
     # The short-term plan (live_plan.py): started only when the best action
     # changes; the facts it rests on, the next step, and what is unknown.
@@ -851,6 +874,125 @@ FIGHT_WORDS = {
 }
 
 
+BASE_WORDS = {
+    "uk": {
+        "tower": "вашу T{tier} {lane}",
+        "melee": "ваші бараки ближнього бою {lane}",
+        "ranged": "ваші бараки дальнього бою {lane}",
+        "fillers": "ваші будівлі на базі",
+        "ancient": "ваш Древній",
+        "seen": "Видно: {heroes}",
+        "summons": "призвані юніти {owner}: {n}",
+        "summons_alone": "Видно лише призваних юнітів {owner}: {n}, героїв ворога не видно",
+        "owner_none": "ворога",
+        "owner_title": "Призвані юніти {owner}",
+        "owner_title_none": "Призвані юніти ворога",
+    },
+    "en": {
+        "tower": "Your T{tier} {lane}",
+        "melee": "Your melee barracks {lane}",
+        "ranged": "Your ranged barracks {lane}",
+        "fillers": "Your base buildings",
+        "ancient": "Your Ancient",
+        "seen": "Seen: {heroes}",
+        "summons": "{owner} summons: {n}",
+        "summons_alone": "Only {owner} summons seen: {n}, no enemy hero",
+        "owner_none": "enemy",
+        "owner_title": "{owner}'s summons",
+        "owner_title_none": "Enemy summons",
+    },
+}
+
+
+# The overlay's small map (overlay/map-marker.js) is OpenDota's minimap art,
+# replay units MAP_LOW..MAP_HIGH on both axes, y up.
+MAP_LOW, MAP_HIGH = 8192, 24576
+
+
+def map_point(x: Any, y: Any) -> list[float] | None:
+    """(x, y) in replay units as [left, top] shares of the map picture (0..1),
+    or None for a point that is not on the map."""
+    if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+        return None
+    if isinstance(x, bool) or isinstance(y, bool):
+        return None
+    span = MAP_HIGH - MAP_LOW
+    left, top = (x - MAP_LOW) / span, 1 - (y - MAP_LOW) / span
+    if not (0 <= left <= 1 and 0 <= top <= 1):
+        return None
+    return [round(left, 3), round(top, 3)]
+
+
+def _with_marker(tip: dict[str, Any], x: Any, y: Any, kind: str) -> dict[str, Any]:
+    """The card's place on the overlay's small map; the player's own dot is
+    added at the API edge (live_hints.py), from the same snapshot."""
+    point = map_point(x, y)
+    if point is not None:
+        tip["marker"] = {"target": point, "kind": kind}
+    return tip
+
+
+def _lane_words(lane: Any, lang: str) -> str:
+    from app.analysis_texts import PLACE_ZONES
+
+    lane = str(lane or "base")
+    if lang == "uk":
+        return PLACE_ZONES["uk"]["in"].get(lane, "")
+    return f"in the {PLACE_ZONES['en']['name'].get(lane, lane)}"
+
+
+def _owner(hero: Any, lang: str, possessive: bool = False) -> str:
+    words = BASE_WORDS[lang]
+    if not hero:
+        return words["owner_none"]
+    return f"{hero}'s" if possessive and lang == "en" else str(hero)
+
+
+def building_attack_params(attack: dict[str, Any], lang: str) -> dict[str, Any]:
+    """{building, who, status} for the building card in `lang`."""
+    words = BASE_WORDS[lang]
+    building = attack.get("building") or {}
+    kind = building.get("kind")
+    lane = _lane_words(building.get("lane"), lang)
+    if kind == "tower":
+        name = words["tower"].format(tier=building.get("tier"), lane=lane)
+    elif kind == "barracks":
+        name = words["melee" if building.get("melee") else "ranged"].format(lane=lane)
+    else:
+        name = words["ancient" if kind == "ancient" else "fillers"]
+    heroes = list(attack.get("heroes") or [])
+    summons = list(attack.get("summons") or [])
+    parts = []
+    if heroes:
+        parts.append(words["seen"].format(heroes=", ".join(heroes)))
+        parts += [
+            words["summons"].format(owner=_owner(s["hero"], lang, True), n=s["count"])
+            for s in summons
+        ]
+        who = "; ".join(parts)
+    else:
+        top = summons[0]
+        who = words["summons_alone"].format(
+            owner=_owner(top["hero"], lang, True), n=sum(s["count"] for s in summons)
+        )
+    status = fight_params(
+        {"x": attack.get("x", 0), "y": attack.get("y", 0), "team": attack.get("team"), **attack},
+        lang,
+    )["status"]
+    return {"building": name, "who": who, "status": status}
+
+
+def summon_push_params(push: dict[str, Any], lang: str) -> dict[str, Any]:
+    words = BASE_WORDS[lang]
+    top = (push.get("summons") or [{"hero": None}])[0]
+    owner = (
+        words["owner_title"].format(owner=_owner(top["hero"], lang))
+        if top.get("hero")
+        else words["owner_title_none"]
+    )
+    return {"owner": owner, "place": group_place(push, lang), "n": push.get("count")}
+
+
 FARM_WORDS = {
     "uk": {
         "label": "Фарм",
@@ -1194,6 +1336,11 @@ class RoleTips:
         self._shown_draft: dict[str, Any] = {}
         self._shown_group: dict[str, dict[str, Any]] = {}
         self._shown_fight: dict[str, dict[str, Any]] = {}
+        self._shown_building: dict[str, dict[str, Any]] = {}
+        self._shown_summons: dict[str, dict[str, Any]] = {}
+        self._shown_building_at: tuple[Any, Any] = (None, None)
+        self._shown_fight_at: tuple[Any, Any] = (None, None)
+        self._shown_summons_at: tuple[Any, Any] = (None, None)
         # (observer wards carried, the clock since when none was placed).
         self._ward_held: tuple[int, int] | None = None
         # The clock of the last observer ward placed (the carried count went down).
@@ -1269,12 +1416,83 @@ class RoleTips:
         seconds, at most once per FIGHT_EVERY; the words stay while it is up."""
         start = self._shown.get("fight")
         if start is not None and 0 <= clock - start <= FIGHT_SHOW:
-            return _tip("fight", f"fight@{start}", lang, **self._shown_fight[lang])
+            return _with_marker(
+                _tip("fight", f"fight@{start}", lang, **self._shown_fight[lang]),
+                *self._shown_fight_at,
+                "danger",
+            )
         if not fight or (start is not None and 0 <= clock - start < FIGHT_EVERY):
             return None
         self._shown["fight"] = clock
         self._shown_fight = {key: fight_params(fight, key) for key in ("en", "uk")}
-        return _tip("fight", f"fight@{clock}", lang, **self._shown_fight[lang])
+        self._shown_fight_at = (fight.get("x"), fight.get("y"))
+        return _with_marker(
+            _tip("fight", f"fight@{clock}", lang, **self._shown_fight[lang]),
+            *self._shown_fight_at,
+            "danger",
+        )
+
+    def building_attack(
+        self, clock: int, lang: str, attack: dict[str, Any] | None
+    ) -> dict[str, Any] | None:
+        """«Your T2 bottom is attacked: Anti-Mage» (minimap_events.py):
+        BUILDING_SHOW seconds, at most once per BUILDING_EVERY, the same
+        building again after BUILDING_SAME; the words stay while it is up."""
+        start = self._shown.get("building")
+        if start is not None and 0 <= clock - start <= BUILDING_SHOW:
+            return _with_marker(
+                _tip("building_attack", f"building@{start}", lang, **self._shown_building[lang]),
+                *self._shown_building_at,
+                "danger",
+            )
+        if not attack or (start is not None and 0 <= clock - start < BUILDING_EVERY):
+            return None
+        building = attack.get("building") or {}
+        key = f"building:{building.get('kind')}:{building.get('tier')}:{building.get('lane')}:{building.get('melee')}"
+        last = self._shown.get(key)
+        if last is not None and 0 <= clock - last < BUILDING_SAME:
+            return None
+        summons_up = self._shown.get("summons")
+        if (
+            not attack.get("heroes")
+            and summons_up is not None
+            and 0 <= clock - summons_up <= SUMMON_SHOW
+        ):
+            # The summons card up now already says it.
+            self._shown[key] = clock
+            return None
+        self._shown["building"] = clock
+        self._shown[key] = clock
+        self._shown_building = {k: building_attack_params(attack, k) for k in ("en", "uk")}
+        self._shown_building_at = (attack.get("x"), attack.get("y"))
+        return _with_marker(
+            _tip("building_attack", f"building@{clock}", lang, **self._shown_building[lang]),
+            *self._shown_building_at,
+            "danger",
+        )
+
+    def summon_push(
+        self, clock: int, lang: str, push: dict[str, Any] | None
+    ) -> dict[str, Any] | None:
+        """«Nature's Prophet's summons in the bottom lane: 9» (minimap_events.py):
+        SUMMON_SHOW seconds, at most once per SUMMON_EVERY."""
+        start = self._shown.get("summons")
+        if start is not None and 0 <= clock - start <= SUMMON_SHOW:
+            return _with_marker(
+                _tip("summon_push", f"summons@{start}", lang, **self._shown_summons[lang]),
+                *self._shown_summons_at,
+                "danger",
+            )
+        if not push or (start is not None and 0 <= clock - start < SUMMON_EVERY):
+            return None
+        self._shown["summons"] = clock
+        self._shown_summons = {k: summon_push_params(push, k) for k in ("en", "uk")}
+        self._shown_summons_at = (push.get("x"), push.get("y"))
+        return _with_marker(
+            _tip("summon_push", f"summons@{clock}", lang, **self._shown_summons[lang]),
+            *self._shown_summons_at,
+            "danger",
+        )
 
     def farm(self, clock: int, lang: str, farm: dict[str, Any] | None) -> dict[str, Any] | None:
         """The farm card (farm_map.py) for FARM_SHOW seconds from the target it
@@ -1284,7 +1502,7 @@ class RoleTips:
         key, params = farm_params(farm, lang)
         tip = _tip(key, f"farm@{farm['since']}", lang, **params)
         tip["label"] = FARM_WORDS["uk" if lang == "uk" else "en"]["label"]
-        return tip
+        return _with_marker(tip, farm.get("x"), farm.get("y"), "farm")
 
     def plan(self, clock: int, lang: str, plan: dict[str, Any] | None) -> dict[str, Any] | None:
         """The card of a short-term plan (live_plan.py) for PLAN_SHOW seconds
@@ -1838,6 +2056,8 @@ def map_hint(
     fight: dict[str, Any] | None = None,
     plan: dict[str, Any] | None = None,
     farm: dict[str, Any] | None = None,
+    building_attack: dict[str, Any] | None = None,
+    summon_push: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """A timer, but a role tip over a minor one (runes, lotus); None before the
     horn or without a role. `objective`: a Roshan / Aegis timer (roshan_timer.py),
@@ -1860,6 +2080,13 @@ def map_hint(
     fought = tips.fight(clock, lang, fight if alive else None)
     if fought is not None:
         return fought
+    # An own building attacked by heroes or summons, then summons pushing alone.
+    attacked = tips.building_attack(clock, lang, building_attack if alive else None)
+    if attacked is not None:
+        return attacked
+    pushed = tips.summon_push(clock, lang, summon_push if alive else None)
+    if pushed is not None:
+        return pushed
     grouped = tips.enemy_group(clock, lang, enemy_group if alive else None)
     if grouped is not None:
         return grouped

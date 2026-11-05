@@ -6,6 +6,10 @@ const actionEl = document.querySelector("#action");
 const reasonEl = document.querySelector("#reason");
 const stripEl = document.querySelector("#timer-strip");
 const itemsEl = document.querySelector("#items-row");
+const mapEl = document.querySelector("#hint-map");
+const mapArtEl = document.querySelector("#hint-map-art");
+const mapTargetEl = mapEl?.querySelector(".mk-target");
+const mapPlayerEl = mapEl?.querySelector(".mk-player");
 
 // Short card texts in the system language; advice itself comes from the backend.
 const OVERLAY_TEXT = {
@@ -197,6 +201,7 @@ function dropWithdrawnAdvice(withdrawn) {
 function renderOverlay(data) {
   dropWithdrawnAdvice(data.withdrawn_advice);
   renderItems([]);
+  renderMarker(null);
   renderStrip(data.post_game && data.post_game.main ? [] : data.timer_strip);
   // The score screen after a match: the summary of its review, nothing else.
   if (data.post_game && data.post_game.main) {
@@ -550,9 +555,33 @@ function showHint(hint, data) {
   } else {
     renderItems(hint.items);
   }
+  renderMarker(hint.marker);
   renderStatusRow(data);
   reveal();
   markCard(`hint|${hint.id || hint.title}`);
+}
+
+// The small map at the card's right: the place it names and the player's dot.
+// The map art loads on the first card that needs it; without it the square
+// stays dark and the dots still show the direction.
+function renderMarker(marker) {
+  const layout = window.OverlayMapMarker && mapEl ? window.OverlayMapMarker.markerLayout(marker) : null;
+  shell.classList.toggle("with-map", Boolean(layout));
+  if (!mapEl) return;
+  mapEl.classList.toggle("hidden", !layout);
+  if (!layout) return;
+  if (!mapArtEl.getAttribute("src")) {
+    mapArtEl.addEventListener("error", () => mapArtEl.classList.add("hidden"), { once: true });
+    mapArtEl.setAttribute("src", window.OverlayMapMarker.MAP_SRC);
+  }
+  mapTargetEl.className = `mk mk-target mk-${layout.kind}`;
+  mapTargetEl.style.left = layout.target.left;
+  mapTargetEl.style.top = layout.target.top;
+  mapPlayerEl.classList.toggle("hidden", !layout.player);
+  if (layout.player) {
+    mapPlayerEl.style.left = layout.player.left;
+    mapPlayerEl.style.top = layout.player.top;
+  }
 }
 
 // The pros' skill order as icons with arrows between them; the one to level
