@@ -96,5 +96,19 @@
   "format": "release",
   "topic": "0.61.0",
   "hook": 0
+ },
+ {
+  "id": "034d44c048f57b47",
+  "date": "2026-11-03",
+  "format": "draft",
+  "topic": "chaos_knight",
+  "hook": 1
+ },
+ {
+  "id": "5a97528e2ac90689",
+  "date": "2026-11-05",
+  "format": "draft",
+  "topic": "huskar",
+  "hook": 2
  }
 ]
