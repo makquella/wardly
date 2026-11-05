@@ -1,8 +1,63 @@
-# Live advice audit (0.59.0, re-audited in 0.60.0, 0.60.1 and 0.60.2; farm tip 0.61.0)
+# Live advice audit (0.59.0, re-audited in 0.60.0, 0.60.1 and 0.60.2; farm tip 0.61.0; map events 0.62.0)
 
 Audit of the realtime coach against a review of match `9054793282` (Phantom
 Lancer, 28 logged cards) and two other real recordings. What was changed, which
 causes are confirmed, what stays open, and how to re-run the check.
+
+## 0.62.0: farm choice, the walk grid, building attacks, summons, the map marker
+
+Recording: Night Stalker `9073917299` (Radiant, 35 min, 1921 snapshots, recorded
+by 0.61). It is the first recording the farm tip had not seen, so 0.61 was
+checked on it first (`replay_recording.py --audit`, `farm_outcomes.py`); the
+0.62 rules were then set on the same recording, so the «after» numbers are
+**not a held-out check**.
+
+| Farm tip | Cards | Per 10 min | He went | Target there | Camp cards (went) | Travel actual / estimate |
+|---|---|---|---|---|---|---|
+| 0.61 | 14 | 5.6 | 6 | 5 of 6 | 8 (1, camp gone) | 2.18 |
+| 0.62 | 11 | 4.4 | 8 | 7 of 8 | 1 (0) | 1.98 |
+
+What was wrong and what changed (`farm_map.py`):
+
+- the «current farm» was the last 30 s: 7 of 8 camp cards came at 0 gold a
+  second (walking, just after a fight), small camps 21-38 s away worth 48-59
+  gold. Now the more of the 30 s rate and the last `USUAL_WINDOW` (180 s);
+  a target pays `TARGET_GOLD_MIN` (90), a camp is at most `CAMP_TRAVEL_MAX`
+  (25 s) away;
+- travel goes over `data/live/walk_grid.json` (`walk_grid.py`, Dijkstra over
+  128-unit cells, no corner cutting): the cells where ground units were seen
+  on the recordings (allies, enemies in vision, creeps, summons, the ground
+  courier; `scripts/build_walk_grid.py`). The recorded player's own hero is
+  left out, so his walks check the estimate: on 133 stretches of 10-30 s of
+  walking after 10:00, walked / estimate quartiles 1.18 / 1.50 / 2.08 for the
+  straight line and 1.05 / 1.28 / 1.83 for the grid. 40 % of the map's cells
+  are known (one recording, mostly the Radiant half); an unknown walk falls
+  back to the straight line × 1.25, named `path_length` in `unknown`;
+- the remaining ~2× on wave travel is the recorded player: second by second he
+  closed the distance at the estimated speed while walking, and stopped on the
+  way (last hits, waiting) for 4-10 s. He never saw these cards.
+
+Minimap events (`minimap_events.py`, cards in `map_hints.RoleTips`):
+
+- `minimap_ping_baseattacked`: 47 pings, each within 6 units of an own
+  building (towers, barracks, the fillers, the Ancient), `eventduration` 4 s.
+  21 had lane creeps only: no card. A card needs an enemy hero or summons seen
+  within 1500 of the building and the player 3000+ away, from 10:00; 60 s
+  between cards, 180 s for the same building. 4 cards on this recording; the
+  fight card took the slot at 11:41, 14:03 and 21:54;
+- `minimap_controlledcreep` with the enemy team: Nature's Prophet's treants
+  (3145 sightings), dominated units with no summoner named. A push card needs
+  3+ within 1500 of each other on the player's half, no enemy hero within
+  1500, the player 3000+ away; 120 s between cards; an attack by those summons
+  alone adds no building card while it is up. 6 cards;
+- read but not used yet: enemy wards spotted (`minimap_ward_obs` /
+  `minimap_ward_invis` with the enemy team: 73 and 253 sightings), death
+  marks (`minimap_death`, no team), allied TP pings (`minimap_ping_teleporting`
+  with the hero; 7 without a unit, too few to tell what they are);
+- the map marker: farm, fight, building and summons cards carry
+  `marker.target` as [left, top] shares of OpenDota's minimap art
+  (`map_hints.map_point`), and the API adds the player's dot
+  (`live_hints._with_player_dot`); `overlay/map-marker.js` draws it.
 
 ## 0.61.0: the farm tip («Farm now: …»)
 

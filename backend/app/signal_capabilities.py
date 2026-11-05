@@ -58,6 +58,11 @@ CAPABILITY_MATRIX: dict[str, dict[str, list[str]]] = {
             # creeps and neutrals only while the team sees them.
             "lane_creeps_in_vision",
             "camps_in_vision",
+            # minimap_events.py: the game's «building under attack» ping (who
+            # attacks is only what the team sees there) and the enemy's summons
+            # in vision.
+            "building_attack_pings",
+            "enemy_summons_in_vision",
         ],
         "missing": [
             "nearby_allies_enemies",

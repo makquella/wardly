@@ -9,6 +9,12 @@
 
   const TEXT = {
     en: {
+      "0.62.0": [
+        "Farm: the seconds to a wave or a camp go around trees and cliffs, over the map cells where units walked in match recordings. A target has to beat your farm of the last 3 minutes, not the half minute you spent walking; a target under 90 gold or a camp over 25 s away is not named.",
+        "Your buildings attacked: when the game pings a building and enemy heroes or their summons are seen at it, a card names which one and who is there: «Your T2 in the mid lane is attacked — Seen: Anti-Mage, Ogre Magi. TP ready.» Lane creeps alone at a tower get no card.",
+        "Enemy summons on your half with no hero near: «Nature's Prophet's summons in the bottom lane on your side: 9».",
+        "The farm, fight, building and summons cards show a small map: the target's dot and yours."
+      ],
       "0.61.0": [
         "Farm now: for carry, mid and offlane from 10:00, the hint card names the wave or camp that pays most per second right now, with the gold, the seconds to get there and the next stop: «Farm now: the wave in the bottom lane on your side — 4 creeps in sight, ~180 gold, ~6 s away». Only what the minimap shows: a wave in sight, a camp seen full or one you cleared that is due back, never a camp bigger than the ones you cleared this match, never on the enemy half and never with an enemy hero in sight near you or the target. Text only, no voice; the map marker comes later."
       ],
@@ -590,6 +596,12 @@
       ]
     },
     uk: {
+      "0.62.0": [
+        "Фарм: секунди до хвилі чи табору рахуються в обхід дерев і скель, по клітинках мапи, де на записах матчів ходили юніти. Ціль має бити ваш фарм за останні 3 хвилини, а не пів хвилини, поки ви йшли; ціль дешевша за 90 золота чи табір далі ніж за 25 с не називаються.",
+        "Атакують ваші будівлі: коли гра показує атаку на будівлю і біля неї видно ворожих героїв чи їхніх призваних юнітів, картка називає, яку саме і хто там: «Атакують вашу T2 на центральній лінії — Видно: Anti-Mage, Ogre Magi. ТП — готово.» Лише кріпи біля вежі — без картки.",
+        "Призвані юніти ворога на вашій половині без героя поруч: «Призвані юніти Nature's Prophet на нижній лінії на своїй половині: 9».",
+        "Картки фарму, бою, атаки будівлі й призваних юнітів показують маленьку мапу: точку цілі й вашу."
+      ],
       "0.61.0": [
         "Фарм зараз: для керрі, міду й хардлайну з 10:00 картка підказки називає хвилю чи табір, що дає найбільше золота за секунду саме зараз, з золотом, секундами дороги й наступною зупинкою: «Фарм зараз: хвиля на нижній лінії на своїй половині — видно кріпів: 4, ~180 золота, ~6 с дороги». Лише те, що показує мінікарта: хвиля у видимості, табір, який видно повним, або взятий вами, що вже мав відродитися; ніколи табір більший за ті, що ви брали цього матчу, ніколи на половині ворога і ніколи, коли поруч з вами чи з ціллю видно ворожого героя. Лише текст, без голосу; позначка на карті буде пізніше."
       ],

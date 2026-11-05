@@ -28,6 +28,8 @@ from app.item_timing import normalize_item_name
 from app.last_moments import active_slot, ready_savers
 from app.live_tools import bottle_rune, regen_items, wand_charges
 from app.map_hints import has_observer_ward, item_names, observer_charges, timers
+from app.minimap_events import building_pings, enemy_summons
+from app.minimap_events import buildings as minimap_buildings
 from app.minimap_units import (
     lane_creeps,
     neutral_units,
@@ -510,6 +512,11 @@ def _normalize_extra_context(
             hero_from_gsi(payload),
         ),
         "towers": towers(payload.get("minimap")),
+        # Buildings pinged as attacked, every building standing, the enemy's
+        # summons in vision (minimap_events.py: the base and summon cards).
+        "building_pings": building_pings(payload.get("minimap")),
+        "buildings": minimap_buildings(payload.get("minimap")),
+        "enemy_summons": enemy_summons(payload.get("minimap"), player_block.get("team_name")),
         # Creeps and own vision on the minimap (farm_map.py): consumed by
         # MatchMemory and dropped there, never kept in the stored states.
         "lane_creeps": lane_creeps(payload.get("minimap"), player_block.get("team_name")),

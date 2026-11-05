@@ -22,6 +22,12 @@
         <!-- Item icons: the build on the plan card, the usual start on the empty-bag card. -->
         <div id="items-row" class="items-row hidden" aria-hidden="true"></div>
         <p id="reason" class="reason"></p>
+        <!-- Where the card points on a small map, with the player's own dot (map-marker.js). -->
+        <div id="hint-map" class="hint-map hidden" aria-hidden="true">
+          <img id="hint-map-art" alt="">
+          <i class="mk mk-target"></i>
+          <i class="mk mk-player"></i>
+        </div>
       </section>
       <!-- The next events for the player's position (runes, stacks, Roshan, Aegis). -->
       <ul id="timer-strip" class="timer-strip hidden" aria-label="Timers"></ul>
@@ -29,6 +35,7 @@
     <script src="../renderer/dota-data.js"></script>
     <script src="../renderer/dota-icons.js"></script>
     <script src="./voice.js"></script>
+    <script src="./map-marker.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from app.map_hints import enemy_group, map_hint, score_gap, timer_strip
+from app.minimap_events import building_attack, summon_push
 
 if TYPE_CHECKING:
     from app.match_memory import LiveTrackerSnapshot, MatchMemory
@@ -115,6 +116,8 @@ def render_live_hints(
             fight=_fight(memory, extra, trackers, inputs, clock),
             plan=extra.get("live_plan") if isinstance(extra.get("live_plan"), dict) else None,
             farm=extra.get("farm_target") if isinstance(extra.get("farm_target"), dict) else None,
+            building_attack=_building_attack(extra),
+            summon_push=summon_push(dict(extra)),
             enemy_group=enemy_group(
                 extra.get("enemy_units") if isinstance(extra.get("enemy_units"), list) else None,
                 extra.get("xpos"),
@@ -135,8 +138,20 @@ def render_live_hints(
     if seen and clock is not None and not _keeps_hint(hint):
         hint = memory.tips.role_mismatch(clock, lang, str(role_name), str(seen)) or hint
     if hint is not None:
-        result["map_hint"] = hint
+        result["map_hint"] = _with_player_dot(hint, extra)
     return result
+
+
+def _with_player_dot(hint: dict[str, Any], extra: Mapping[str, Any]) -> dict[str, Any]:
+    """A card with a place on the small map (map_hints._with_marker) also shows
+    where the player is now."""
+    from app.map_hints import map_point
+
+    marker = hint.get("marker")
+    if not isinstance(marker, dict):
+        return hint
+    player = map_point(extra.get("xpos"), extra.get("ypos"))
+    return {**hint, "marker": {**marker, "player": player}}
 
 
 # A hard lane for the skill tip: in the first LANE_PRESSURE_UNTIL seconds, a death,
@@ -220,3 +235,12 @@ def _fight(
         "tp_cooldown": extra.get("tp_cooldown"),
         "abilities": ability_states(extra.get("abilities"), names, labels),
     }
+
+
+def _building_attack(extra: Mapping[str, Any]) -> dict[str, Any] | None:
+    """An own building attacked (minimap_events.py), with the player's TP for
+    the card."""
+    attack = building_attack(dict(extra))
+    if attack is None:
+        return None
+    return {**attack, "has_tp": extra.get("has_tp"), "tp_cooldown": extra.get("tp_cooldown")}

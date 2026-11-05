@@ -42,6 +42,8 @@ HERO_AT = (C - 2000, C - 6200)
 @pytest.fixture(autouse=True)
 def camps(monkeypatch):
     monkeypatch.setattr(farm_map, "farm_data", lambda: DATA)
+    # No walk grid unless a test gives one: straight lines × PATH_FACTOR.
+    monkeypatch.setattr(farm_map, "walk_distances", lambda x, y, targets: [None] * len(targets))
 
 
 def snap(clock: int, **kw: Any) -> dict[str, Any]:
@@ -361,3 +363,54 @@ def test_minimap_parsers_read_lane_creeps_siege_neutrals_and_own_vision():
     ]
     assert lane_creeps(None, "radiant") is None and lane_creeps(MINIMAP, None) is None
     assert neutral_units("broken") is None
+
+
+def test_the_walk_around_trees_sets_the_travel_and_says_how_it_was_found(monkeypatch):
+    fm = FarmMap()
+    out = run(fm, [snap(900 + i, lane_creeps=wave()) for i in range(3)])
+    assert out["path"] == "straight" and "path_length" in out["unknown"]
+    straight = out["travel_s"]
+    # The grid finds a walk 1.45 times the straight line: the travel follows it.
+    walk = 1.45 * (WAVE_AT[0] - HERO_AT[0])
+    monkeypatch.setattr(farm_map, "walk_distances", lambda x, y, targets: [walk] * len(targets))
+    fm = FarmMap()
+    out = run(fm, [snap(900 + i, lane_creeps=wave()) for i in range(3)])
+    assert out["path"] == "grid" and "path_length" not in out["unknown"]
+    assert out["travel_s"] > straight
+
+
+def test_a_camp_across_the_map_or_a_small_payout_is_no_target(monkeypatch):
+    fm = FarmMap()
+    end = _clear_own_camp(fm, 900)
+    seen = neutrals(NEAR_CAMP, ["npc_dota_neutral_centaur_khan"] * 2)
+    hero = {"xpos": OWN_CAMP["x"] + 200, "ypos": OWN_CAMP["y"]}
+    far = (farm_map.CAMP_TRAVEL_MAX + 5) * farm_map.SPEED_DEFAULT
+    monkeypatch.setattr(farm_map, "walk_distances", lambda x, y, targets: [far] * len(targets))
+    assert run(fm, [snap(end + 1 + i, neutral_units=seen, **hero) for i in range(3)]) is None
+    # A wave of two melee creeps pays under TARGET_GOLD_MIN.
+    monkeypatch.setattr(farm_map, "walk_distances", lambda x, y, targets: [None] * len(targets))
+    small = [
+        {"team": "enemy", "kind": "melee", "x": WAVE_AT[0] + 40 * i, "y": WAVE_AT[1]}
+        for i in range(2)
+    ]
+    out = run(FarmMap(), [snap(900 + i, lane_creeps=small) for i in range(3)])
+    assert out is None
+
+
+def test_a_walk_between_farm_spots_does_not_make_every_target_look_better(monkeypatch):
+    """Nothing farmed in the last half minute, but the usual farm of the last
+    minutes is high: a target has to beat that, not zero."""
+    usual = {farm_map.RATE_WINDOW: 0.0, farm_map.USUAL_WINDOW: 40.0}
+    monkeypatch.setattr(FarmMap, "farm_rate", lambda self, clock, seconds=30: usual[seconds])
+    assert run(FarmMap(), [snap(900 + i, lane_creeps=wave()) for i in range(3)]) is None
+    usual[farm_map.USUAL_WINDOW] = 1.0
+    out = run(FarmMap(), [snap(900 + i, lane_creeps=wave()) for i in range(3)])
+    assert out is not None and out["kind"] == "wave"
+
+
+def test_the_farm_card_points_at_its_target_on_the_small_map():
+    from app.map_hints import map_point
+
+    out = run(FarmMap(), [snap(900 + i, lane_creeps=wave()) for i in range(3)])
+    card = RoleTips().farm(out["since"], "uk", out)
+    assert card["marker"] == {"target": map_point(out["x"], out["y"]), "kind": "farm"}
