@@ -591,11 +591,26 @@
               <div class="setting setting-wrap records-row" data-search="записи матчів запис файл recordings record match file">
                 <span class="setting-text">
                   <label class="setting-title" for="match-records" data-i18n="recordsTitle">Keep match recordings for a week</label>
-                  <span class="setting-hint" data-i18n="recordsHint">Everything the game sent during each match and every advice shown, kept on this computer for 7 days. Save any match as a file and send it to the developer, the next day too. No nicknames, Steam IDs or chat.</span>
+                  <span class="setting-hint" data-i18n="recordsHint">Everything the game sent during each match and every advice shown, kept on this computer for 7 days. Save any match as a file and send it to the developer, the next day too, only after you confirm it. No nicknames, Steam IDs or chat.</span>
                   <span class="setting-hint" id="records-hint" aria-live="polite"></span>
                 </span>
                 <input id="match-records" type="checkbox" class="switch" role="switch" />
                 <ul class="records-list" id="records-list" hidden></ul>
+                <!-- One consent per recording: what is sent and what is not, then «Send». -->
+                <div class="report-panel" id="records-send-panel" hidden>
+                  <strong class="report-label" data-i18n="recordsSendTitle">Send this match to the developer?</strong>
+                  <p class="report-terms" id="records-send-label"></p>
+                  <p class="report-terms" data-i18n="recordsSendWhat"></p>
+                  <p class="report-terms" data-i18n="recordsSendRemoved"></p>
+                  <p class="report-terms">
+                    <span data-i18n="recordsSendKept"></span>
+                    <button id="records-send-privacy" class="report-link" type="button" data-i18n="recordsSendPrivacy">Privacy</button>
+                  </p>
+                  <div class="report-actions">
+                    <button id="records-send-now" class="btn btn-primary" type="button"><span data-i18n="recordsSendNow">Send</span></button>
+                    <button id="records-send-cancel" class="btn btn-ghost" type="button"><span data-i18n="recordsSendCancel">Cancel</span></button>
+                  </div>
+                </div>
               </div>
               <!-- Opt-in anonymous statistics (advice-stats.js): off by default. -->
               <div class="setting setting-wrap stats-row" data-search="статистика анонімна допомогти видалити дані statistics anonymous help delete data">

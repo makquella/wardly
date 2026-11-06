@@ -523,6 +523,18 @@ label.setting {
   font-variant-numeric: tabular-nums;
 }
 
+.records-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.records-sent {
+  color: var(--text-3);
+  font-size: var(--fs-12);
+}
+
 .records-label {
   min-width: 0;
   overflow: hidden;

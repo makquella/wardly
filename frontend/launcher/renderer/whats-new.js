@@ -9,6 +9,9 @@
 
   const TEXT = {
     en: {
+      "0.63.0": [
+        "Send a match to the developer: with «Keep match recordings for a week» on, each recording in More settings has a «Send to developer» button. Before sending the app shows what goes (what the game reported about your hero and the advice shown) and what does not (nickname, Steam ID, match ID, chat, the date and time); every recording needs its own confirmation. It is kept for 60 days and can be deleted earlier with «Delete my data on the server». The button is offered to some installations first."
+      ],
       "0.62.0": [
         "Farm: the seconds to a wave or a camp go around trees and cliffs, over the map cells where units walked in match recordings. A target has to beat your farm of the last 3 minutes, not the half minute you spent walking; a target under 90 gold or a camp over 25 s away is not named.",
         "Your buildings attacked: when the game pings a building and enemy heroes or their summons are seen at it, a card names which one and who is there: «Your T2 in the mid lane is attacked — Seen: Anti-Mage, Ogre Magi. TP ready.» Lane creeps alone at a tower get no card.",
@@ -596,6 +599,9 @@
       ]
     },
     uk: {
+      "0.63.0": [
+        "Надішліть матч розробникові: коли ввімкнено «Зберігати записи матчів тиждень», біля кожного запису в «Ще налаштуваннях» є кнопка «Надіслати розробникові». Перед відправкою застосунок показує, що піде (що гра повідомила про вашого героя й показані поради) і що ні (нік, Steam ID, номер матчу, чат, дата й час); кожен запис потребує окремого підтвердження. Він зберігається 60 днів, раніше його можна видалити кнопкою «Видалити мої дані на сервері». Спочатку кнопку пропонують не всім."
+      ],
       "0.62.0": [
         "Фарм: секунди до хвилі чи табору рахуються в обхід дерев і скель, по клітинках мапи, де на записах матчів ходили юніти. Ціль має бити ваш фарм за останні 3 хвилини, а не пів хвилини, поки ви йшли; ціль дешевша за 90 золота чи табір далі ніж за 25 с не називаються.",
         "Атакують ваші будівлі: коли гра показує атаку на будівлю і біля неї видно ворожих героїв чи їхніх призваних юнітів, картка називає, яку саме і хто там: «Атакують вашу T2 на центральній лінії — Видно: Anti-Mage, Ogre Magi. ТП — готово.» Лише кріпи біля вежі — без картки.",

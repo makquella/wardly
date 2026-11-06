@@ -98,6 +98,17 @@
       <article data-doc="uk" lang="uk">
         <h1>Що нового</h1>
         <p class="doc-updated">Усі версії Wardly. Встановлений застосунок оновлюється сам, коли Дота закрита.</p>
+<section class="release" id="v0.63.0">
+<h2><a href="#v0.63.0">Версія 0.63.0</a></h2>
+<ul>
+  <li><strong>Надішліть матч розробникові.</strong> Коли ввімкнено «Зберігати записи матчів тиждень» («Налаштування → Ще налаштування»), біля кожного запису є кнопка «Надіслати розробникові». Вона відкриває підтвердження: що піде (що гра повідомила про вашого героя за матч і всі показані поради) і що ні (нік, Steam ID, ID облікового запису, номер матчу, ключ доступу гри, чат, дата й час матчу). Кожен запис потребує окремої згоди, самі записи нікуди не йдуть. Після надсилання запис має номер <code>S-XXXXXX</code>, і кнопка змінюється на «Надіслано».</li>
+  <li><strong>Копія ще безособовіша за файл.</strong> Копія для надсилання повторно проходить очищення, не має номера матчу й назви локального файлу, а всі часи в ній ідуть від початку запису. Якщо в копії щось приватне лишилося, застосунок її не надсилає. Копія до 20 МБ.</li>
+  <li><strong>Сервер.</strong> Запис лежить у Cloudflare R2 <strong>60 днів</strong>, потім видаляється сам. Сервер лише перевіряє початок файлу. Ліміти: 3 записи на годину з одного встановлення, 10 з однієї адреси, 150 на добу разом. Його читає лише розробник, щоб налаштовувати поради. Видалити раніше можна кнопкою «Видалити мої дані на сервері».</li>
+  <li><strong>Вибірка.</strong> Спочатку кнопку пропонують не всім: частку встановлень і саму можливість сервер регулює без нового випуску (<code>/v1/config</code>).</li>
+  <li><strong>Розробнику.</strong> <code>scripts/fetch_recordings.py</code> завантажує записи в <code>backend/session_records/cloud/</code>, розділені на <code>tune</code> (на них налаштовують правила) і <code>holdout</code> (на них лише перевіряють; ≈ 25 %, сторона залежить від номера запису). Сторінка «Конфіденційність» описує надсилання.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.63.0" rel="noopener">Завантажити й подробиці</a></p>
+</section>
 <section class="release" id="v0.62.0">
 <h2><a href="#v0.62.0">Версія 0.62.0</a></h2>
 <ul>
@@ -1654,6 +1665,17 @@
       <article data-doc="en" lang="en" hidden>
         <h1>What's new</h1>
         <p class="doc-updated">Every Wardly version. The installed app updates itself while Dota is closed.</p>
+<section class="release" id="v0.63.0">
+<h2><a href="#v0.63.0">Version 0.63.0</a></h2>
+<ul>
+  <li><strong>Send a match to the developer.</strong> With «Keep match recordings for a week» on (Settings → More settings), each recording has a «Send to developer» button. It opens a confirmation: what goes (what the game reported about your hero during the match and every advice shown) and what does not (nickname, Steam ID, account ID, match ID, the game's access token, chat, the date and time of the match). Every recording needs its own consent; nothing is sent by itself. After sending, the recording has a number <code>S-XXXXXX</code> and the button becomes «Sent».</li>
+  <li><strong>A copy more anonymous than the file.</strong> The copy goes through the redaction again, has no match ID or local file name, and all its times count from the start of the recording. If anything private is left in it, the app does not send it. A copy is at most 20 MB.</li>
+  <li><strong>The server.</strong> The recording sits in Cloudflare R2 for <strong>60 days</strong> and is then deleted by itself. The server only checks the beginning of the file. Limits: 3 recordings an hour per installation, 10 per address, 150 a day in total. Only the developer reads it, to tune the advice. «Delete my data on the server» removes it earlier.</li>
+  <li><strong>Sample.</strong> At first the button is offered to some installations only: the share and the feature itself are controlled by the server without a new release (<code>/v1/config</code>).</li>
+  <li><strong>For the developer.</strong> <code>scripts/fetch_recordings.py</code> downloads recordings into <code>backend/session_records/cloud/</code>, split into <code>tune</code> (rules are set on them) and <code>holdout</code> (they only check; about 25 %, the side follows the recording's number). The Privacy page describes the sending.</li>
+</ul>
+<p class="release-link"><a href="https://github.com/makquella/wardly/releases/tag/v0.63.0" rel="noopener">Download and details</a></p>
+</section>
 <section class="release" id="v0.62.0">
 <h2><a href="#v0.62.0">Version 0.62.0</a></h2>
 <ul>
