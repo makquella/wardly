@@ -118,6 +118,18 @@ jobs:
           fi
           grep -q r2_buckets wrangler.toml && echo "storage: R2" || echo "storage: D1"
 
+      - name: R2 lifecycle for match recordings
+        # A safety net for the cron cleanup (src/index.js): objects under
+        # sessions/ expire after 61 days even if a row was lost. Idempotent.
+        run: |
+          if grep -q r2_buckets wrangler.toml; then
+            if npx wrangler r2 bucket lifecycle list "$BUCKET" 2>&1 | grep -q "wardly-sessions-61d"; then
+              echo "lifecycle rule exists"
+            else
+              npx wrangler r2 bucket lifecycle add "$BUCKET" wardly-sessions-61d sessions/ --expire-days 61 --force
+            fi
+          fi
+
       - name: Migrations
         run: npx wrangler d1 migrations apply "$DATABASE" --remote
 

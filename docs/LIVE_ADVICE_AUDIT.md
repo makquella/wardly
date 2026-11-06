@@ -749,3 +749,15 @@ From `backend/` with the venv:
 `review.md` lists every logged card next to the current decision, the cards
 added and the cards withdrawn while held. Keep recordings and their outputs
 outside the repository.
+
+## Recordings from players (0.63.0)
+
+From 0.63.0 players can send a match recording by consent (`docs/DATA_PLAN.md`,
+stage 5). Fetch them with `scripts/fetch_recordings.py`
+(`docs/REPLAY_DEMO.md`, «Recordings sent by players»). Each file is `tune` or
+`holdout`, fixed by the server from its number. Rules are set on `tune`; a
+`holdout` recording is replayed once after the rule is finished and its numbers
+are reported apart from the tuning ones. Do not move a recording between sides
+after looking at it: if a `holdout` one informs a rule, say so here and treat it
+as `tune` from then on. Times in these files start from zero, so compare cards by
+match clock (`clock_time`), not by date.

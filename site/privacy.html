@@ -77,7 +77,7 @@
     <main class="wrap doc">
       <article data-doc="uk" lang="uk">
         <h1>Конфіденційність</h1>
-        <p class="doc-updated">Оновлено 13 жовтня 2026 року</p>
+        <p class="doc-updated">Оновлено 6 листопада 2026 року</p>
 
         <p>
           Wardly працює на вашому комп'ютері. Історія матчів, розбори й ключі зберігаються лише там; ключі й токени у Windows зашифровано для вашого облікового запису (DPAPI). В інтернет застосунок
@@ -93,7 +93,7 @@
           <li>Історія ваших матчів і розбори (файл SQLite у теці <code>%APPDATA%\DotaAICoach</code>).</li>
           <li>Ключі OpenDota й ШІ-сервісу, якщо ви їх ввели. Вони не показуються в застосунку повністю й нікуди не надсилаються, крім самого сервісу.</li>
           <li>Налаштування й журнали застосунку.</li>
-          <li>Записи матчів за останні 7 днів — лише якщо ви ввімкнули «Зберігати записи матчів тиждень» у «Ще налаштуваннях»: що надсилала гра й які поради показав тренер, без ніків, Steam ID і чату. Старі видаляються самі; файл іде комусь, лише якщо ви самі його збережете й надішлете.</li>
+          <li>Записи матчів за останні 7 днів — лише якщо ви ввімкнули «Зберігати записи матчів тиждень» у «Ще налаштуваннях»: що надсилала гра й які поради показав тренер, без ніків, Steam ID і чату. Старі видаляються самі; запис іде комусь, лише якщо ви самі його збережете або окремо підтвердите надсилання (розділ «Записи матчів»).</li>
         </ul>
 
         <h2>Звіт про проблему</h2>
@@ -211,7 +211,7 @@
           <a href="https://github.com/makquella/wardly/issues" rel="noopener">issues на GitHub</a> — звіт видалять. Усі
           звіти вашого встановлення видаляє запит <code>DELETE https://api.luhovyimvp.dev/v1/device/&lt;ідентифікатор&gt;</code>;
           ідентифікатор — поле <code>installId</code> у файлі <code>%APPDATA%\DotaAICoach\settings.json</code>. Цей самий запит видаляє
-          усі опубліковані розбори, картку профілю й статистику встановлення; у застосунку він запускається кнопкою «Видалити мої дані на сервері»
+          усі опубліковані розбори, надіслані записи матчів, картку профілю й статистику встановлення; у застосунку він запускається кнопкою «Видалити мої дані на сервері»
           у «Налаштуваннях → Застосунок» (під «Анонімною статистикою»). З версії 0.53.54 застосунок разом із надсиланням передає випадковий
           ключ пристрою (він зберігається зашифрованим на вашому комп'ютері, на сервері — лише його хеш): те, що надіслано з ним, видаляється
           лише запитом із цим ключем, тому чужа людина, що дізналася ідентифікатор, не зітре ваші дані. Кнопка в застосунку передає
@@ -227,16 +227,47 @@
           <li><strong>YouTube API Services</strong> — застосунок на вашому комп'ютері їх не використовує й до вашого акаунта Google доступу не має. Через них сервер Wardly лише завантажує власні відео Wardly на канал, який підключив розробник; токен доступу зберігається на сервері зашифрованим і видаляється командою відключення. Дані обробляються згідно з <a href="https://policies.google.com/privacy" rel="noopener">Політикою конфіденційності Google</a>; відкликати доступ можна на <a href="https://myaccount.google.com/permissions" rel="noopener">сторінці дозволів Google</a>.</li>
         </ul>
 
+        <h2>Записи матчів</h2>
+        <p>
+          Біля кожного запису в «Ще налаштуваннях» є кнопка <strong>«Надіслати розробникові»</strong>. Вона з'являється, лише
+          якщо сервер це дозволяє (перемикач у <code>/v1/config</code>; сервер може пропонувати її лише частині встановлень), і ніколи не
+          спрацьовує сама: перед кожним надсиланням застосунок показує, що піде й що ні, і чекає вашого «Надіслати».
+          Згода діє на один запис. Матч, який ще записується, надіслати не можна — лише після його завершення.
+        </p>
+        <p>
+          <strong>Надсилається</strong>: що гра повідомляла про вашого героя за матч (герой, рівень, предмети, здібності, золото,
+          позиція, видимі події на мапі) і всі поради, які показав тренер. <strong>Не надсилається</strong>: нік, Steam ID й ID
+          облікового запису, номер матчу, ключ доступу гри, повідомлення чату, дата й час матчу (усі часи рахуються від початку
+          запису) та назва локального файлу. Застосунок вирізає це з копії ще раз перед надсиланням і не надсилає запис, у якому
+          щось із цього лишилося.
+        </p>
+        <p>
+          Сервер лише дивиться на початок файлу (чи це безособовий запис Wardly) і зберігає його в Cloudflare R2 на
+          <strong>60 днів</strong>, потім видаляє автоматично. Ліміти: до 20 МБ, 3 записи на годину з одного встановлення, 10 з
+          однієї адреси та загальні межі за обсягом (на добу й разом), щоб не переповнити сховище. Запис читає лише розробник — щоб підлаштувати правила порад на одних матчах і
+          перевірити на інших; нікому іншому він не передається й не публікується. Разом із записом зберігаються герой,
+          тривалість, версія застосунку й хеш ключа пристрою (для видалення). Ідентифікатор встановлення разом із записом не
+          зберігається: лише його хеш із сіллю, і тільки для ліміту на годину; за ним запис не пов'язати з профілем чи
+          поширеними розборами. Без ключа пристрою сервер запис не приймає.
+          Після надсилання застосунок показує номер запису (<code>S-XXXXXX</code>); розробник отримує сповіщення з номером, героєм і
+          тривалістю, але без самого файлу.
+        </p>
+        <p>
+          Видалити можна кнопкою «Видалити мої дані на сервері» або запитом <code>DELETE /v1/device/&lt;ідентифікатор&gt;</code> —
+          він видаляє й надіслані записи (з ключем пристрою), або номером запису в issues на GitHub. Надсилання можна вимкнути на
+          сервері без нового випуску.
+        </p>
+
         <h2>Що буде далі</h2>
         <p>
-          Надсилання записів матчів з'явиться лише як окрема згода на кожне надсилання й буде описане на цій сторінці до
-          випуску.
+          Надсилання записів уже працює описаним вище способом. Будь-які нові види надсилання з'являться лише з окремою згодою й
+          будуть описані на цій сторінці до випуску.
         </p>
       </article>
 
       <article data-doc="en" lang="en" hidden>
         <h1>Privacy</h1>
-        <p class="doc-updated">Updated October 13, 2026</p>
+        <p class="doc-updated">Updated November 6, 2026</p>
 
         <p>
           Wardly runs on your computer. Match history, reviews and keys stay there; on Windows keys and tokens are encrypted for your user account (DPAPI). The app goes online for match data
@@ -252,7 +283,7 @@
           <li>Your match history and reviews (an SQLite file in <code>%APPDATA%\DotaAICoach</code>).</li>
           <li>Your OpenDota and AI keys, if you entered them. The app never shows them in full and sends them only to that service.</li>
           <li>App settings and logs.</li>
-          <li>Match recordings of the last 7 days — only if you turned on «Keep match recordings for a week» in More settings: what the game sent and which advice the coach showed, without nicknames, Steam IDs or chat. Older ones are deleted by themselves; a file goes to anyone only if you save and send it yourself.</li>
+          <li>Match recordings of the last 7 days — only if you turned on «Keep match recordings for a week» in More settings: what the game sent and which advice the coach showed, without nicknames, Steam IDs or chat. Older ones are deleted by themselves; a recording goes to anyone only if you save it or confirm sending it separately (see «Match recordings»).</li>
         </ul>
 
         <h2>Problem report</h2>
@@ -358,7 +389,7 @@
           <a href="https://github.com/makquella/wardly/issues" rel="noopener">GitHub issues</a> and it will be deleted.
           Every report of your installation is deleted by <code>DELETE https://api.luhovyimvp.dev/v1/device/&lt;id&gt;</code>; the
           id is <code>installId</code> in <code>%APPDATA%\DotaAICoach\settings.json</code>. The same request also deletes every
-          review the installation shared and its statistics; in the app, «Delete my data on the server» in «Settings → App» (under
+          review the installation shared, every match recording it sent, and its statistics; in the app, «Delete my data on the server» in «Settings → App» (under
           «Anonymous statistics») sends it. From 0.53.54 the app also sends a random device key with each upload (kept encrypted on
           your computer; the server stores only its hash): what was sent with it is deleted only by a request carrying that key, so
           someone who learns the id cannot erase your data. The app's button sends the key itself; a request without it deletes only
@@ -374,10 +405,41 @@
           <li><strong>YouTube API Services</strong> — the app on your computer does not use them and has no access to your Google account. The Wardly server only uploads Wardly's own videos through them to the channel the developer connected; its access token is stored encrypted on the server and deleted by the disconnect command. Data is handled under the <a href="https://policies.google.com/privacy" rel="noopener">Google Privacy Policy</a>; access can be revoked on <a href="https://myaccount.google.com/permissions" rel="noopener">Google's permissions page</a>.</li>
         </ul>
 
+        <h2>Match recordings</h2>
+        <p>
+          Each recording in More settings has a <strong>«Send to developer»</strong> button. It appears only when the server allows
+          it (a switch in <code>/v1/config</code>; the server can offer it to only part of the installations) and it never fires by itself:
+          before each send the app shows what goes and what does not, and waits for your «Send». The consent covers one
+          recording. A match that is still being recorded cannot be sent until it ends.
+        </p>
+        <p>
+          <strong>Sent</strong>: what the game reported about your hero during the match (hero, level, items, abilities, gold,
+          position, visible events on the map) and every advice the coach showed. <strong>Not sent</strong>: nickname, Steam ID and
+          account ID, the match ID, the game's access token, chat messages, the date and time of the match (all times count from
+          the start of the recording) and the local file name. The app removes these from the copy once more before sending and
+          refuses to send a recording in which any of them is left.
+        </p>
+        <p>
+          The server only looks at the beginning of the file (whether it is an anonymous Wardly recording) and keeps it in
+          Cloudflare R2 for <strong>60 days</strong>, then deletes it automatically. Limits: up to 20 MB, 3 recordings an hour from
+          one installation, 10 from one address, and overall caps on volume (per day and in total) to keep the storage from filling. Only the developer reads a recording — to tune the
+          advice rules on some matches and check them on others; it is not passed on or published. Stored with it: the hero, the
+          length, the app version and the hash of the device key (for deleting). The installation id is not stored with it: only a
+          salted hash of it, used for the hourly limit alone, which cannot be joined to a profile or a shared review. Without a
+          device key the server does not accept a recording. After sending the
+          app shows the recording's number (<code>S-XXXXXX</code>); the developer gets a notification with the number, hero and
+          length, without the file.
+        </p>
+        <p>
+          Delete it with «Delete my data on the server» or <code>DELETE /v1/device/&lt;id&gt;</code> — that also removes the
+          recordings you sent (with the device key) — or post the number in GitHub issues. Sending can be switched off on the
+          server without a new release.
+        </p>
+
         <h2>What comes next</h2>
         <p>
-          Sending match recordings will only come as a separate consent for each upload and will be described on this page
-          before it ships.
+          Sending recordings already works as described above. Any new kind of upload will come only with its own consent and
+          will be described on this page before it ships.
         </p>
       </article>
     </main>

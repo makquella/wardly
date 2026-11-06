@@ -94,3 +94,27 @@ cd backend
 .venv/bin/python ../scripts/replay_recording.py ~/Wardly-match-....jsonl.gz --from 20:00 \
   --items items.json        # optional: OpenDota /api/constants/items saved once
 ```
+
+### Recordings sent by players (tune / holdout)
+
+A player can send one recording to the developer (Settings → More settings →
+«Send to developer», one consent per recording; `docs/DATA_PLAN.md`, stage 5).
+The server keeps it 60 days. The copy has no nickname, Steam or account id,
+match id, GSI token, chat or absolute time (every time counts from the start of
+the recording), and it reads like a local file in every replay script.
+
+```bash
+export WARDLY_ADMIN_TOKEN=...           # never as an argument, never in the repository
+python scripts/fetch_recordings.py --dry-run       # what is new
+python scripts/fetch_recordings.py                 # downloads into backend/session_records/cloud/<tune|holdout>/
+cd backend
+.venv/bin/python ../scripts/replay_recording.py session_records/cloud/tune/S-XXXXXX.jsonl.gz \
+  --audit /tmp/audit.jsonl
+.venv/bin/python ../scripts/farm_outcomes.py session_records/cloud/tune/S-XXXXXX.jsonl.gz /tmp/audit.jsonl
+```
+
+The server fixes the side from the recording's number (about a quarter is
+`holdout`). Set and change rules on `tune` recordings only; run the finished
+rule once on `holdout` and report those numbers separately, as a check no rule
+was set on. A `holdout` recording that informs a rule becomes a `tune` one in
+the audit notes.

@@ -13,6 +13,10 @@
 //   PUT    /v1/transfer/<id>        -> keeps an encrypted history backup for 15 minutes (src/transfer.js)
 //   POST   /v1/transfer/<id>/claim  -> hands it over (3 downloads at most)
 //   DELETE /v1/transfer/<id>        -> the receiving launcher deletes it once imported
+//   POST   /v1/session              -> keeps one anonymized match recording for 60 days in R2 (src/session.js; the body is the raw gzip,
+//                                      the metadata in x-* headers; off without the REPORTS bucket), answers { id: "S-XXXXXX" }
+//   GET    /v1/admin/sessions?split=tune|holdout -> latest recordings (same token)
+//   GET    /v1/admin/session/<id>   -> one recording as gzip (same)
 //   GET    /v1/admin/reports        -> latest reports (Bearer ADMIN_TOKEN; off without the secret)
 //   GET    /v1/admin/report/<id>    -> one report as text (same)
 //   GET    /v1/admin/stats?days=N   -> the statistics summed over the last N days (same)
@@ -35,7 +39,8 @@
 //                                      CHANNEL_RETENTION_DAYS; on Mondays a stats note to Telegram
 //
 // Bindings: DB (D1), REPORTS (R2, optional: without it the gzipped report is
-// kept in the D1 row, which is enough for the free tier's 5 GB). Secrets (optional): TELEGRAM_BOT_TOKEN,
+// kept in the D1 row, which is enough for the free tier's 5 GB; recordings
+// need it: 20 MB does not fit a D1 row). Secrets (optional): TELEGRAM_BOT_TOKEN,
 // TELEGRAM_CHAT_ID (a message with the report file to the developer), ADMIN_TOKEN.
 
 import {
@@ -70,6 +75,22 @@ import {
   renderProfilePage,
   validateProfile
 } from "./profile.js";
+import {
+  SESSION_DAILY_BYTES,
+  SESSION_LIMITS,
+  SESSION_RATE_PER_HOUR,
+  SESSION_TOTAL_BYTES,
+  SESSION_RETENTION_DAYS,
+  checkMetaLine,
+  firstLine,
+  hasGzipMagic,
+  isSessionId,
+  sessionId,
+  sessionKey,
+  sessionNote,
+  sessionSplit,
+  validateSessionHeaders
+} from "./session.js";
 import { ADMIN_HEADERS, ADMIN_HTML, ADMIN_JS, ADMIN_SCRIPT_HEADERS } from "./admin-page.js";
 import {
   STATS_ADMIN_MAX_DAYS,
@@ -120,6 +141,14 @@ function flag(value, fallback) {
   return !["0", "false", "off", "no"].includes(String(value).toLowerCase());
 }
 
+// The share of installations that is asked to send recordings, 0..1.
+function sample(value) {
+  const number = Number(value);
+  return value === undefined || value === null || value === "" || !Number.isFinite(number)
+    ? 1
+    : Math.min(Math.max(number, 0), 1);
+}
+
 export function config(env) {
   return {
     reports: flag(env.REPORTS_ENABLED, true),
@@ -130,7 +159,11 @@ export function config(env) {
     stats: flag(env.STATS_ENABLED, true),
     channels: flag(env.CHANNELS_ENABLED, true),
     profiles: flag(env.PROFILES_ENABLED, true),
-    sessions: false,
+    // Recordings need R2 (20 MB does not fit a D1 row). The launcher asks a
+    // `recordings_sample` share of installations, decided from its install id.
+    recordings: flag(env.RECORDINGS_ENABLED, true) && Boolean(env.REPORTS),
+    recordings_sample: sample(env.RECORDINGS_SAMPLE),
+    recording_days: SESSION_RETENTION_DAYS,
     retention_days: RETENTION_DAYS
   };
 }
@@ -255,6 +288,119 @@ export async function handleReport(request, env, ctx, now = Date.now()) {
     .run();
   ctx.waitUntil(notifyTelegram(env, id, report).catch((error) => console.log(`telegram: ${error.message}`)));
   return json({ ok: true, id, retention_days: RETENTION_DAYS }, 201);
+}
+
+async function notifySession(env, text) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+    return;
+  }
+  const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ chat_id: String(env.TELEGRAM_CHAT_ID), text })
+  });
+  if (!response.ok) {
+    console.log(`telegram: HTTP ${response.status}`);
+  }
+}
+
+// A salted hash of the installation id, only for the hourly rate limit: the
+// raw id is never stored with a recording, so it cannot be joined to a profile.
+function sessionInstallHash(installId) {
+  return sha256(`dac-session:${installId}`);
+}
+
+const randomBytes = (n) => crypto.getRandomValues(new Uint8Array(n));
+
+export async function handleSession(request, env, ctx, now = Date.now(), random = randomBytes) {
+  if (!config(env).recordings) {
+    return json({ ok: false, code: env.REPORTS ? "disabled" : "storage_unavailable" }, 503);
+  }
+  // 1. Headers and metadata: nothing here costs a query or counts against a limit.
+  const checked = validateSessionHeaders(request.headers);
+  if (!checked.ok) {
+    return json({ ok: false, code: checked.code }, checked.status);
+  }
+  const { meta } = checked;
+  // 2. The device key: it owns the recording ("Delete my data"). Launchers from
+  // 0.53.54 on always send it.
+  const owner = await ownerHash(request);
+  if (!owner) {
+    return json({ ok: false, code: "no_device_key" }, 400);
+  }
+  // 3. Storage caps from the stored sizes, this upload included. Uploads that
+  // run at the same moment all see the same totals, so the caps can be
+  // exceeded by a few files: acceptable against R2's free 10 GB.
+  const stored = await env.DB.prepare(
+    "SELECT COALESCE(SUM(CASE WHEN created_at >= ?1 THEN size END), 0) AS day, COALESCE(SUM(size), 0) AS total FROM sessions"
+  )
+    .bind(now - 24 * 3_600_000)
+    .first();
+  if (
+    Number(stored?.day || 0) + meta.length > SESSION_DAILY_BYTES ||
+    Number(stored?.total || 0) + meta.length > SESSION_TOTAL_BYTES
+  ) {
+    return json({ ok: false, code: "storage_full" }, 507);
+  }
+  // 4. Rate limits; only an upload that can actually be taken uses them up.
+  const address = await sha256(`dac-rate:${clientAddress(request)}`);
+  const installHash = await sessionInstallHash(meta.installId);
+  const underLimit =
+    (await allow(env, `session:install:${installHash}`, SESSION_RATE_PER_HOUR.install, now)) &&
+    (await allow(env, `session:address:${address}`, SESSION_RATE_PER_HOUR.address, now));
+  if (!underLimit) {
+    return json({ ok: false, code: "rate_limited" }, 429);
+  }
+  // 5. The body.
+  const body = new Uint8Array(await request.arrayBuffer());
+  if (body.length > SESSION_LIMITS.bodyBytes) {
+    return json({ ok: false, code: "too_large" }, 413);
+  }
+  // 6. The gzip stream and its first line.
+  if (!hasGzipMagic(body)) {
+    return json({ ok: false, code: "bad_recording" }, 400);
+  }
+  const line = checkMetaLine(await firstLine(body));
+  if (!line.ok) {
+    return json({ ok: false, code: line.code }, line.status);
+  }
+  // The index row goes first: a primary-key collision fails before any put and
+  // never overwrites another player's file. The id is drawn once more on a collision.
+  let id = "";
+  let key = "";
+  let split = "";
+  let indexed = false;
+  for (let attempt = 0; attempt < 2 && !indexed; attempt += 1) {
+    id = sessionId(random(6));
+    key = sessionKey(id, new Date(now));
+    split = await sessionSplit(id);
+    try {
+      await env.DB.prepare(
+        "INSERT INTO sessions (id, created_at, owner_hash, install_hash, version, hero, minutes, size, r2_key, split) " +
+          "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)"
+      )
+        .bind(id, now, owner, installHash, meta.version, meta.hero, meta.minutes, body.length, key, split)
+        .run();
+      indexed = true;
+    } catch (error) {
+      console.log(`session: insert failed (${error.message})`);
+    }
+  }
+  if (!indexed) {
+    return json({ ok: false, code: "storage_error" }, 500);
+  }
+  try {
+    await env.REPORTS.put(key, body, {
+      httpMetadata: { contentType: "application/gzip" },
+      customMetadata: { id, version: meta.version }
+    });
+  } catch (error) {
+    console.log(`session: put failed (${error.message})`);
+    await env.DB.prepare("DELETE FROM sessions WHERE id = ?1").bind(id).run().catch(() => {});
+    return json({ ok: false, code: "storage_error" }, 500);
+  }
+  ctx.waitUntil(notifySession(env, sessionNote(id, meta, split, body.length)).catch((error) => console.log(`telegram: ${error.message}`)));
+  return json({ ok: true, id, retention_days: SESSION_RETENTION_DAYS }, 201);
 }
 
 async function readShare(env, id, now) {
@@ -727,6 +873,13 @@ export async function deleteDevice(request, installId, env) {
   const { results } = await env.DB.prepare(`SELECT r2_key FROM reports WHERE ${OWNED}`).bind(id, owner).all();
   const rows = results || [];
   await deleteObjects(env, rows);
+  // Recordings carry no installation id: only the device key finds them, and
+  // their R2 objects go before the index rows.
+  if (owner) {
+    const recordings = (await env.DB.prepare("SELECT r2_key FROM sessions WHERE owner_hash = ?1").bind(owner).all()).results || [];
+    await deleteObjects(env, recordings);
+    await env.DB.prepare("DELETE FROM sessions WHERE owner_hash = ?1").bind(owner).run();
+  }
   for (const table of ["reports", "shares", "transfers", "profiles"]) {
     await env.DB.prepare(`DELETE FROM ${table} WHERE ${OWNED}`).bind(id, owner).run();
   }
@@ -766,16 +919,42 @@ async function adminReport(id, env) {
   });
 }
 
+async function adminSessions(url, env) {
+  const split = url.searchParams.get("split");
+  const filtered = split === "tune" || split === "holdout";
+  const statement = env.DB.prepare(
+    "SELECT id, created_at, version, hero, minutes, size, split FROM sessions " +
+      `${filtered ? "WHERE split = ?1 " : ""}ORDER BY created_at DESC LIMIT 200`
+  );
+  const { results } = await (filtered ? statement.bind(split) : statement).all();
+  return json({ ok: true, sessions: results || [] });
+}
+
+async function adminSession(id, env) {
+  const row = await env.DB.prepare("SELECT r2_key FROM sessions WHERE id = ?1").bind(id).first();
+  const object = row?.r2_key && env.REPORTS ? await env.REPORTS.get(row.r2_key) : null;
+  if (!object) {
+    return json({ ok: false, code: "not_found" }, 404);
+  }
+  return new Response(object.body, {
+    headers: {
+      "content-type": "application/gzip",
+      "content-disposition": `attachment; filename="${id}.jsonl.gz"`,
+      "cache-control": "no-store"
+    }
+  });
+}
+
 // D1 binds at most 100 parameters per statement, so old reports go in batches.
 const CLEANUP_BATCH = 100;
 const CLEANUP_MAX_BATCHES = 50;
 
-export async function cleanup(env, now = Date.now()) {
-  const cutoff = now - RETENTION_DAYS * 24 * 3_600_000;
+// Rows of `table` older than `cutoff` with their R2 objects; returns how many.
+async function purgeOld(env, table, cutoff) {
   let removed = 0;
   for (let batch = 0; batch < CLEANUP_MAX_BATCHES; batch += 1) {
     const { results } = await env.DB.prepare(
-      `SELECT id, r2_key FROM reports WHERE created_at < ?1 LIMIT ${CLEANUP_BATCH}`
+      `SELECT id, r2_key FROM ${table} WHERE created_at < ?1 LIMIT ${CLEANUP_BATCH}`
     )
       .bind(cutoff)
       .all();
@@ -787,7 +966,7 @@ export async function cleanup(env, now = Date.now()) {
     // leaves rows that the next run deletes again, never unindexed objects.
     await deleteObjects(env, rows);
     const marks = rows.map((_, i) => `?${i + 1}`).join(", ");
-    await env.DB.prepare(`DELETE FROM reports WHERE id IN (${marks})`)
+    await env.DB.prepare(`DELETE FROM ${table} WHERE id IN (${marks})`)
       .bind(...rows.map((row) => row.id))
       .run();
     removed += rows.length;
@@ -795,6 +974,12 @@ export async function cleanup(env, now = Date.now()) {
       break;
     }
   }
+  return removed;
+}
+
+export async function cleanup(env, now = Date.now()) {
+  const removed = await purgeOld(env, "reports", now - RETENTION_DAYS * 24 * 3_600_000);
+  await purgeOld(env, "sessions", now - SESSION_RETENTION_DAYS * 24 * 3_600_000);
   await env.DB.prepare("DELETE FROM shares WHERE expires_at < ?1").bind(now).run();
   await env.DB.prepare("DELETE FROM transfers WHERE expires_at < ?1").bind(now).run();
   await env.DB.prepare("DELETE FROM profiles WHERE updated_at < ?1")
@@ -823,6 +1008,9 @@ export default {
       }
       if (request.method === "POST" && path === "/v1/report") {
         return await handleReport(request, env, ctx);
+      }
+      if (request.method === "POST" && path === "/v1/session") {
+        return await handleSession(request, env, ctx);
       }
       if (request.method === "POST" && path === "/v1/stats") {
         return await handleStats(request, env);
@@ -904,6 +1092,13 @@ export default {
         }
         if (request.method === "GET" && path === "/v1/admin/reports") {
           return await adminList(env);
+        }
+        if (request.method === "GET" && path === "/v1/admin/sessions") {
+          return await adminSessions(url, env);
+        }
+        const recording = path.match(/^\/v1\/admin\/session\/(S-[A-Z0-9]{6})$/);
+        if (request.method === "GET" && recording && isSessionId(recording[1])) {
+          return await adminSession(recording[1], env);
         }
         if (request.method === "GET" && path === "/v1/admin/stats") {
           return await adminStats(url, env);

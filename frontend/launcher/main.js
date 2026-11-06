@@ -41,6 +41,7 @@ const {
   uploadPayload,
   withNote
 } = require("./problem-report");
+const { parseConfig, pruneSent, rememberSent, sendRecording, uploadOffered } = require("./match-upload");
 const { DOTA_STATUS, dotaStatus, overlayVisibility } = require("./overlay-visibility");
 const { createSettingsStore } = require("./settings");
 const { loadLocalApiAuth, controlHeaders, renderGsiConfig } = require("./local-api");
@@ -165,6 +166,9 @@ const settings = createSettingsStore(path.join(USER_DATA_DIR, "settings.json"), 
   friends: [],
   // A week of match recordings on this computer (backend match_records.py), off by default.
   matchRecords: false,
+  // Recordings sent to the developer by consent: {local id: {id: "S-XXXXXX", sentAt}},
+  // forgotten after the 60 days the server keeps them (match-upload.js).
+  sentRecords: {},
   // Rich Presence on the player's Discord profile («Матч на Juggernaut · з тренером Wardly»).
   discordPresence: true,
   // The week in Discord: the player's channel webhook link (discord-weekly.js),
@@ -985,8 +989,8 @@ function setShareStats(enabled) {
   return publicStatus();
 }
 
-// «Видалити мої дані на сервері»: every report, shared link, transfer and
-// statistics row of this installation (DELETE /v1/device/<install id>).
+// «Видалити мої дані на сервері»: every report, match recording, shared link,
+// transfer and statistics row of this installation (DELETE /v1/device/<install id>).
 async function deleteServerData() {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), STATS_TIMEOUT_MS);
@@ -1001,6 +1005,8 @@ async function deleteServerData() {
     }
     // The shared links are gone with it, and what was counted before is never sent again.
     settings.set("shares", {});
+    // The recordings sent are deleted too: the list no longer says «Sent».
+    settings.set("sentRecords", {});
     // The profile card went with it: hidden until the player shows it again.
     settings.set("friendsProfile", { ...friendsProfile(), enabled: false, hash: "" });
     restartStatsCount();
@@ -2606,17 +2612,28 @@ async function collectProblemReport() {
   });
 }
 
-// «Зберігати записи матчів»: "list" → the backend's recordings of the week;
-// {save: id} → that recording copied to Downloads (the id is checked by the
-// backend, which only serves files of its own list).
+// «Зберігати записи матчів»: "list" → the backend's recordings of the week
+// (and whether sending one to the developer is offered, with what was sent);
+// {save: id} → that recording copied to Downloads; {upload: id} → the
+// anonymized copy sent to the developer (the player confirmed it in the panel).
+// The ids are checked by the backend, which only serves files of its own list.
 async function matchRecordsAction(request) {
   if (request === "list") {
     try {
       const body = await requestBackendJson("/match-records");
-      return { ok: true, records: Array.isArray(body.records) ? body.records : [] };
+      const config = await recordingsConfig();
+      return {
+        ok: true,
+        records: Array.isArray(body.records) ? body.records : [],
+        upload: uploadOffered(config, installId()),
+        sent: pruneSent(settings.get("sentRecords"))
+      };
     } catch (error) {
       return { ok: false, error: error.message };
     }
+  }
+  if (request && typeof request.upload === "string") {
+    return uploadMatchRecord(request.upload);
   }
   const id = request && typeof request.save === "string" ? request.save : "";
   if (!/^[0-9A-Za-z_-]{1,64}$/.test(id)) {
@@ -2632,6 +2649,124 @@ async function matchRecordsAction(request) {
   appendLog("launcher", `Match recording saved: ${filePath}`, { force: true });
   shell.showItemInFolder(filePath);
   return { ok: true, path: filePath };
+}
+
+// /v1/config says whether recordings are on and which share of installations is
+// asked. Kept for an hour; a failed read is "not offered" and retried in 5 minutes.
+let recordingsConfigCache = { at: 0, ttl: 0, value: parseConfig(null) };
+
+async function recordingsConfig() {
+  const now = Date.now();
+  if (now - recordingsConfigCache.at < recordingsConfigCache.ttl) {
+    return recordingsConfigCache.value;
+  }
+  try {
+    const response = await electronNet.fetch(`${apiUrl()}/v1/config`, { signal: AbortSignal.timeout(5000) });
+    recordingsConfigCache = { at: now, ttl: 3_600_000, value: parseConfig(response.ok ? await response.json() : null) };
+  } catch {
+    recordingsConfigCache = { at: now, ttl: 300_000, value: parseConfig(null) };
+  }
+  return recordingsConfigCache.value;
+}
+
+// The local backend's anonymized copy of one recording (match_record_upload.py):
+// the gzip bytes with the hero and minutes in headers.
+function fetchRecordingCopy(localId) {
+  return new Promise((resolve) => {
+    if (processStatus.backend !== "running") {
+      resolve({ ok: false, code: "failed" });
+      return;
+    }
+    const url = new URL(`/match-records/${encodeURIComponent(localId)}/upload`, backendUrl());
+    const headers = controlHeaders(url, backendUrl(), localApiAuth().control);
+    const request = http.get(url, { timeout: 60000, headers }, (response) => {
+      const chunks = [];
+      response.on("data", (chunk) => chunks.push(chunk));
+      response.on("error", () => resolve({ ok: false, code: "failed" }));
+      response.on("end", () => {
+        const body = Buffer.concat(chunks);
+        if (response.statusCode !== 200) {
+          let code = "failed";
+          try {
+            code = JSON.parse(body.toString("utf8")).code || code;
+          } catch {
+            // Not JSON: a plain failure.
+          }
+          resolve({ ok: false, code });
+          return;
+        }
+        resolve({
+          ok: true,
+          body,
+          hero: String(response.headers["x-upload-hero"] || ""),
+          minutes: Number(response.headers["x-upload-minutes"]) || 0
+        });
+      });
+    });
+    request.on("timeout", () => request.destroy(new Error("timeout")));
+    request.on("error", () => resolve({ ok: false, code: "failed" }));
+  });
+}
+
+async function postRecording(headers, body) {
+  const controller = new AbortController();
+  // Up to 20 MB over a home connection.
+  const timer = setTimeout(() => controller.abort(), 180_000);
+  try {
+    const response = await electronNet.fetch(`${apiUrl()}/v1/session`, {
+      method: "POST",
+      headers,
+      body,
+      signal: controller.signal
+    });
+    let answer = {};
+    try {
+      answer = await response.json();
+    } catch {
+      // Not JSON (a proxy page): the status decides.
+    }
+    return response.ok && answer.id
+      ? { ok: true, id: String(answer.id) }
+      : { ok: false, code: answer.code || `http_${response.status}` };
+  } catch {
+    return { ok: false, code: "offline" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+let recordingUploadActive = false;
+
+async function uploadMatchRecord(localId) {
+  if (!/^[0-9A-Za-z_-]{1,64}$/.test(localId)) {
+    return { ok: false, code: "failed" };
+  }
+  // One at a time: two clicks never send the same 20 MB twice.
+  if (recordingUploadActive) {
+    return { ok: false, code: "busy" };
+  }
+  recordingUploadActive = true;
+  try {
+    const result = await sendRecording({
+      localId,
+      sent: settings.get("sentRecords"),
+      installId: installId(),
+      version: app.getVersion(),
+      device: deviceHeaders(),
+      getCopy: fetchRecordingCopy,
+      post: postRecording
+    });
+    if (result.ok && !result.already) {
+      settings.set("sentRecords", rememberSent(settings.get("sentRecords"), localId, result.id));
+    }
+    // No ids of the player's, no keys: only the outcome and the server's number.
+    appendLog("launcher", result.ok ? `Match recording sent: ${result.id}` : `Match recording not sent: ${result.code}`, {
+      force: true
+    });
+    return result;
+  } finally {
+    recordingUploadActive = false;
+  }
 }
 
 function downloadBackendFile(endpointPath, filePath, timeoutMs = 60000) {

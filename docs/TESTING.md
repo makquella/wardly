@@ -28,6 +28,7 @@ python -m pytest tests/test_<feature>.py tests/test_<consumer>.py
 | HTTP / logging / IPC | `test_api_smoke.py`, `test_diagnostics.py`, відповідний feature suite; launcher syntax + відповідний Node test; Electron smoke для main/preload/backend boundary |
 | Launcher helper | З `frontend/launcher/`: `node --test test/<feature>.test.js`, `npm run check`; увесь `npm test` допустимий перед здачею |
 | Renderer / locales / CSS | Launcher `test/i18n.test.js` + relevant helpers; реальні DOM-сценарії та UK/EN на підтримуваних масштабах для layout/interaction |
+| Записи матчів за згодою | `test_match_records.py`, `test_match_record_upload.py` (очищення копії, відсутність нік/ID/токена/номера матчу/часу в байтах), `test_fetch_recordings.py`; launcher `test/match-upload.test.js`; Worker `test/session.test.js`, `api.test.js`, `test/integration/sessions.test.js` (справжній local D1 + R2) |
 | Worker | З `services/api/`: `npm test`; SQL/retention/concurrency додатково потребують local D1 + migrations |
 | Hero / meta data | `test_hero_coverage.py`, `test_core_heroes.py`, `test_supports.py`, `test_stratz_builds.py` і відповідна live-логіка; site generator check |
 | Packaging / dependencies | `test_packaging_runtime.py`, launcher `test/package-files.test.js`, full affected suites, clean install і Windows build/smoke |

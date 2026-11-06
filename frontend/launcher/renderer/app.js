@@ -114,6 +114,11 @@ const els = {
   matchRecords: $("#match-records"),
   recordsHint: $("#records-hint"),
   recordsList: $("#records-list"),
+  recordsSendPanel: $("#records-send-panel"),
+  recordsSendLabel: $("#records-send-label"),
+  recordsSendNow: $("#records-send-now"),
+  recordsSendCancel: $("#records-send-cancel"),
+  recordsSendPrivacy: $("#records-send-privacy"),
   statsHint: $("#stats-hint"),
   statsPreview: $("#stats-preview"),
   statsPreviewText: $("#stats-preview-text"),
@@ -631,6 +636,11 @@ async function init() {
     })
   );
   els.recordsList.addEventListener("click", (event) => {
+    const send = event.target.closest("button[data-send-record]");
+    if (send) {
+      openRecordsSend(send.dataset.sendRecord);
+      return;
+    }
     const button = event.target.closest("button[data-record]");
     if (!button) {
       return;
@@ -647,6 +657,9 @@ async function init() {
         button.disabled = false;
       });
   });
+  els.recordsSendCancel.addEventListener("click", closeRecordsSend);
+  els.recordsSendPrivacy.addEventListener("click", () => run(() => window.launcherApi.openPrivacy()));
+  els.recordsSendNow.addEventListener("click", () => run(sendPendingRecord));
   els.settingsMore.addEventListener("toggle", () => {
     if (els.settingsMore.open) {
       refreshRecords();
@@ -928,44 +941,127 @@ function refreshRecords() {
     return;
   }
   Promise.resolve(window.launcherApi.matchRecords("list"))
-    .then((result) => renderRecords(result && result.ok ? result.records : null))
+    .then((result) => renderRecords(result && result.ok ? result : null))
     .catch(() => renderRecords(null));
 }
 
-function renderRecords(records) {
-  if (!Array.isArray(records)) {
+// Sending a recording to the developer: «Send to developer» opens the panel
+// with exactly what goes and what does not; only its «Send» uploads, one
+// recording per confirmation (services/api POST /v1/session).
+let recordsView = { records: [], upload: false, sent: {} };
+let pendingRecord = "";
+
+function openRecordsSend(id) {
+  const record = recordsView.records.find((row) => row.id === id);
+  if (!record || record.active) {
     return;
+  }
+  pendingRecord = id;
+  els.recordsSendLabel.textContent = recordLabel(record);
+  els.recordsSendPanel.hidden = false;
+  els.recordsSendNow.disabled = false;
+  els.recordsSendNow.focus();
+}
+
+function closeRecordsSend() {
+  pendingRecord = "";
+  els.recordsSendPanel.hidden = true;
+}
+
+async function sendPendingRecord() {
+  const id = pendingRecord;
+  if (!id) {
+    return;
+  }
+  els.recordsSendNow.disabled = true;
+  els.recordsSendCancel.disabled = true;
+  els.recordsHint.textContent = tr("recordsSending");
+  try {
+    const result = await window.launcherApi.matchRecords({ upload: id });
+    if (result && result.ok) {
+      recordsView.sent = { ...recordsView.sent, [id]: { id: result.id } };
+      closeRecordsSend();
+      renderRecords(recordsView);
+      els.recordsHint.textContent = tr("recordsSent", result.id);
+    } else {
+      const errors = tr("recordsSendErrors");
+      els.recordsHint.textContent = errors[result && result.code] || errors.failed;
+    }
+  } catch {
+    els.recordsHint.textContent = tr("recordsSendErrors").failed;
+  } finally {
+    els.recordsSendNow.disabled = false;
+    els.recordsSendCancel.disabled = false;
+  }
+}
+
+function recordLabel(record) {
+  const when = record.started_at
+    ? new Date(record.started_at).toLocaleString(locale === "uk" ? "uk-UA" : "en-GB", {
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    : "";
+  const hero = String(record.hero || "").replace(/^npc_dota_hero_/, "").replace(/_/g, " ");
+  const parts = [when, hero];
+  if (Number.isFinite(record.minutes)) {
+    parts.push(tr("recordsMinutes", record.minutes));
+  }
+  if (Number.isFinite(record.advice)) {
+    parts.push(tr("recordsAdvice", record.advice));
+  }
+  return parts.filter(Boolean).join(" · ");
+}
+
+function renderRecords(view) {
+  if (!view || !Array.isArray(view.records)) {
+    return;
+  }
+  const records = view.records;
+  recordsView = { records, upload: Boolean(view.upload), sent: view.sent || {} };
+  if (pendingRecord && !records.some((row) => row.id === pendingRecord)) {
+    closeRecordsSend();
   }
   els.recordsHint.textContent = records.length ? tr("recordsCount", records.length) : tr("recordsEmpty");
   els.recordsList.replaceChildren(
     ...records.map((record) => {
       const item = document.createElement("li");
       item.className = "records-item";
-      const when = record.started_at
-        ? new Date(record.started_at).toLocaleString(locale === "uk" ? "uk-UA" : "en-GB", {
-            day: "numeric",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-        : "";
-      const hero = String(record.hero || "").replace(/^npc_dota_hero_/, "").replace(/_/g, " ");
-      const parts = [when, hero];
-      if (Number.isFinite(record.minutes)) {
-        parts.push(tr("recordsMinutes", record.minutes));
-      }
-      if (Number.isFinite(record.advice)) {
-        parts.push(tr("recordsAdvice", record.advice));
-      }
       const label = document.createElement("span");
       label.className = "records-label";
-      label.textContent = parts.filter(Boolean).join(" · ");
+      label.textContent = recordLabel(record);
       const button = document.createElement("button");
       button.className = "btn btn-ghost";
       button.type = "button";
       button.dataset.record = record.id;
       button.textContent = tr("recordsSave");
-      item.append(label, button);
+      const actions = document.createElement("span");
+      actions.className = "records-actions";
+      const sent = recordsView.sent[record.id];
+      if (sent) {
+        const badge = document.createElement("span");
+        badge.className = "records-sent";
+        badge.textContent = tr("recordsSentBadge", sent.id);
+        actions.append(badge);
+      } else if (recordsView.upload && record.active) {
+        // The match is still being written: sent after it ends.
+        const wait = document.createElement("span");
+        wait.className = "records-sent";
+        wait.dataset.recordActive = record.id;
+        wait.textContent = tr("recordsActive");
+        actions.append(wait);
+      } else if (recordsView.upload) {
+        const send = document.createElement("button");
+        send.className = "btn btn-ghost";
+        send.type = "button";
+        send.dataset.sendRecord = record.id;
+        send.textContent = tr("recordsSend");
+        actions.append(send);
+      }
+      actions.append(button);
+      item.append(label, actions);
       return item;
     })
   );
@@ -1630,6 +1726,7 @@ function renderOverlaySettings(status) {
   if (!status.matchRecords) {
     els.recordsHint.textContent = tr("recordsOff");
     els.recordsList.hidden = true;
+    closeRecordsSend();
   }
   els.shareStats.checked = Boolean(status.shareStats);
   const statsDate = status.statsSentAt

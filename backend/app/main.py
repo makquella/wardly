@@ -13,7 +13,7 @@ from fastapi import FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ValidationError
 
@@ -73,6 +73,7 @@ from app.local_api_security import LocalApiSecurity, local_origins
 from app.logger import log_recommendation, prune_logs
 from app.map_hints import DRAFT_UNTIL, timers
 from app.match_memory import MATCH_MEMORY
+from app.match_record_upload import UploadError, upload_copy
 from app.match_records import KEEP_DAYS, MATCH_RECORDS
 from app.next_item import owned_items
 from app.player_api import PLAYER_SERVICE, refresh_quieter_advice
@@ -125,7 +126,7 @@ app = LocalApiApp(
     lifespan=_lifespan,
     title="Wardly",
     description="MVP-1: rule-based carry coach with local knowledge-base RAG.",
-    version="0.62.0",
+    version="0.63.0",
 )
 app.include_router(player_router)
 
@@ -161,7 +162,7 @@ if _DEBUG_PAGES is not None:
 @app.get("/", summary="Health check")
 def root():
     """Simple health-check endpoint."""
-    return {"status": "ok", "service": "Wardly", "version": "0.62.0"}
+    return {"status": "ok", "service": "Wardly", "version": "0.63.0"}
 
 
 @app.get("/health", summary="Health check")
@@ -969,6 +970,40 @@ def match_record_file(record_id: str):
     if path is None:
         return JSONResponse(status_code=404, content={"detail": "No such recording."})
     return FileResponse(path, media_type="application/gzip", filename=path.name)
+
+
+@app.get(
+    "/match-records/{record_id}/upload",
+    summary="The anonymized copy of a recording that the player may send to the developer",
+)
+def match_record_upload(record_id: str):
+    """Only the launcher asks, after the player's consent for this one upload
+    (docs/DATA_PLAN.md, stage 5). The summary travels in headers; the body is
+    the gzip stream itself."""
+    path = MATCH_RECORDS.path_of(record_id)
+    if path is None:
+        return JSONResponse(status_code=404, content={"detail": "No such recording."})
+    # The match still being written is not sent: the file is incomplete and grows.
+    if MATCH_RECORDS.is_active(record_id):
+        return JSONResponse(
+            status_code=409, content={"detail": "recording_active", "code": "recording_active"}
+        )
+    # A plain `def`: it runs in the threadpool, and the copy is built without
+    # holding the recorder's lock (path_of only flushes under it).
+    try:
+        copy = upload_copy(path, app_version=app.version)
+    except UploadError as error:
+        status = 413 if error.code == "too_large" else 422
+        return JSONResponse(status_code=status, content={"detail": error.code, "code": error.code})
+    return Response(
+        copy.data,
+        media_type="application/gzip",
+        headers={
+            "X-Upload-Hero": copy.hero,
+            "X-Upload-Minutes": str(copy.minutes),
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 def _census_for_report() -> dict[str, object]:

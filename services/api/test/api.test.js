@@ -6,6 +6,7 @@ import { RATE_PER_HOUR, redact, reportId, summarize, validateReport } from "../s
 import { siteHome } from "../src/share.js";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
+import { gzipSync } from "node:zlib";
 import { ADMIN_JS } from "../src/admin-page.js";
 import { renderProfilePage } from "../src/profile.js";
 
@@ -15,6 +16,7 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
   const shares = [];
   const transfers = [];
   const profiles = [];
+  const sessions = [];
   const daily = new Map();
   const rate = new Map();
   const objects = new Map();
@@ -35,6 +37,13 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
             const key = `${args[0]}|${args[1]}`;
             rate.set(key, (rate.get(key) || 0) + 1);
             return { count: rate.get(key) };
+          }
+          if (sql.startsWith("SELECT COALESCE(SUM(CASE WHEN created_at >=")) {
+            const sum = (rows) => rows.reduce((total, r) => total + Number(r.size || 0), 0);
+            return { day: sum(sessions.filter((r) => r.created_at >= args[0])), total: sum(sessions) };
+          }
+          if (sql.startsWith("SELECT r2_key FROM sessions WHERE id")) {
+            return sessions.find((r) => r.id === args[0]) || null;
           }
           if (sql.startsWith("SELECT r2_key, body FROM reports WHERE id")) {
             return reports.find((r) => r.id === args[0]) || null;
@@ -66,6 +75,18 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
           if (sql.startsWith("SELECT id, updated_at, body FROM profiles WHERE id IN")) {
             return { results: profiles.filter((r) => args.includes(r.id)) };
           }
+          if (sql.startsWith("SELECT r2_key FROM sessions WHERE owner_hash = ?1")) {
+            return { results: sessions.filter((r) => r.owner_hash === args[0]) };
+          }
+          if (sql.startsWith("SELECT id, r2_key FROM sessions WHERE created_at <")) {
+            const limit = Number(sql.match(/LIMIT (\d+)/)[1]);
+            return { results: sessions.filter((r) => r.created_at < args[0]).slice(0, limit) };
+          }
+          if (sql.startsWith("SELECT id, created_at, version, hero, minutes, size, split FROM sessions")) {
+            const rows = sql.includes("WHERE split = ?1") ? sessions.filter((r) => r.split === args[0]) : sessions;
+            const columns = ["id", "created_at", "version", "hero", "minutes", "size", "split"];
+            return { results: [...rows].reverse().slice(0, 200).map((r) => Object.fromEntries(columns.map((c) => [c, r[c]]))) };
+          }
           if (sql.startsWith("SELECT r2_key FROM reports WHERE (owner_hash")) {
             return { results: reports.filter((r) => owned(r, args[0], args[1])) };
           }
@@ -85,6 +106,16 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
           ownedArgs = args;
           if (/^DELETE FROM (reports|shares|transfers|profiles) WHERE \(owner_hash/.test(sql)) {
             dropOwned({ reports, shares, transfers, profiles }[sql.split(" ")[2]]);
+          } else if (sql.startsWith("DELETE FROM sessions WHERE owner_hash = ?1")) {
+            sessions.splice(0, sessions.length, ...sessions.filter((r) => r.owner_hash !== args[0]));
+          } else if (sql.startsWith("DELETE FROM sessions WHERE id = ?1")) {
+            sessions.splice(0, sessions.length, ...sessions.filter((r) => r.id !== args[0]));
+          } else if (sql.startsWith("INSERT INTO sessions")) {
+            const [id, created_at, owner_hash, install_hash, version, hero, minutes, size, r2_key, split] = args;
+            if (sessions.some((r) => r.id === id)) throw new Error("UNIQUE constraint failed: sessions.id");
+            sessions.push({ id, created_at, owner_hash, install_hash, version, hero, minutes, size, r2_key, split });
+          } else if (sql.startsWith("DELETE FROM sessions WHERE id IN")) {
+            sessions.splice(0, sessions.length, ...sessions.filter((r) => !args.includes(r.id)));
           } else if (sql.startsWith("INSERT INTO shares")) {
             const [id, created_at, expires_at, install_id, delete_hash, lang, version, body, owner_hash = null] = args;
             shares.push({ id, created_at, expires_at, install_id, delete_hash, lang, version, body: [...body], owner_hash });
@@ -151,6 +182,7 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
   };
   const REPORTS = {
     async put(key, body, options) {
+      if (vars.FAIL_PUT) throw new Error("R2 is down");
       objects.set(key, { body, options });
     },
     async get(key) {
@@ -161,7 +193,7 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
       for (const key of [].concat(keys)) objects.delete(key);
     }
   };
-  return { env: { DB, ...(r2 ? { REPORTS } : {}), ...vars }, reports, shares, transfers, profiles, objects, daily };
+  return { env: { DB, ...(r2 ? { REPORTS } : {}), ...vars }, reports, sessions, shares, transfers, profiles, objects, daily };
 }
 
 const ctx = { waitUntil: (promise) => promise };
@@ -250,7 +282,9 @@ test("bad bodies, rate limits and the kill switch", async () => {
     stats: true,
     channels: true,
     profiles: true,
-    sessions: false,
+    recordings: true,
+    recordings_sample: 1,
+    recording_days: 60,
     retention_days: 180
   });
 });
@@ -742,4 +776,259 @@ test("bad profile requests are refused", async () => {
   const off = fakeEnv({ PROFILES_ENABLED: "false" });
   assert.equal((await worker.fetch(putCard("4k7p9qx2"), off.env, ctx)).status, 503);
   assert.equal(config(off.env).profiles, false);
+});
+
+// --- match recordings sent by consent (src/session.js) ----------------------
+
+const META_LINE = { k: "meta", hero: "npc_dota_hero_juggernaut", payloads: 2, advice: 0, last_clock: 600, format: 1, upload: 1, anonymized: true };
+
+function recordingBytes(meta = META_LINE) {
+  const rows = [JSON.stringify(meta), JSON.stringify({ k: "gsi", w: 0, ts: "+0.000", p: { map: { clock_time: 1 } } })];
+  return new Uint8Array(gzipSync(Buffer.from(`${rows.join("\n")}\n`)));
+}
+
+function sessionUpload(body = recordingBytes(), { ip = "203.0.113.5", install = REPORT.install_id, key = "a".repeat(64), extra = {} } = {}) {
+  return new Request("https://api.example/v1/session", {
+    method: "POST",
+    headers: {
+      "content-type": "application/gzip",
+      "content-length": String(body.length),
+      "cf-connecting-ip": ip,
+      "x-install-id": install,
+      "x-app-version": "0.63.0",
+      "x-hero": "npc_dota_hero_juggernaut",
+      "x-minutes": "42",
+      ...(key ? { "x-device-key": key } : {}),
+      ...extra
+    },
+    body
+  });
+}
+
+test("a recording is stored in R2 with an index row and a note to the developer", async () => {
+  const sent = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    sent.push({ url: String(url), body: JSON.parse(init.body) });
+    return new Response("{}");
+  };
+  try {
+    const { env, sessions, objects } = fakeEnv({ TELEGRAM_BOT_TOKEN: "bot", TELEGRAM_CHAT_ID: "42" });
+    const bytes = recordingBytes();
+    const response = await worker.fetch(sessionUpload(bytes), env, ctx);
+    assert.equal(response.status, 201);
+    const answer = await response.json();
+    assert.match(answer.id, /^S-[2-9A-HJ-NP-Z]{6}$/);
+    assert.equal(answer.retention_days, 60);
+    assert.equal(sessions.length, 1);
+    const row = sessions[0];
+    assert.deepEqual([row.hero, row.minutes, row.size, row.version], ["npc_dota_hero_juggernaut", 42, bytes.length, "0.63.0"]);
+    assert.equal("install_id" in row, false, "the raw installation id is not stored");
+    assert.match(row.install_hash, /^[a-f0-9]{32}$/);
+    assert.ok(!JSON.stringify(row).includes(REPORT.install_id));
+    assert.ok(["tune", "holdout"].includes(row.split));
+    assert.match(row.r2_key, /^sessions\/\d{4}\/\d{2}\/S-[A-Z0-9]{6}\.jsonl\.gz$/);
+    assert.equal(row.owner_hash.length, 32);
+    assert.deepEqual([...objects.get(row.r2_key).body], [...bytes]);
+    assert.equal(sent.length, 1);
+    assert.ok(sent[0].url.endsWith("/sendMessage") && sent[0].body.text.includes(answer.id));
+    assert.ok(!JSON.stringify(sent[0].body).includes(REPORT.install_id));
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("recordings can be switched off, need R2 and are announced in the config", async () => {
+  const off = fakeEnv({ RECORDINGS_ENABLED: "false" });
+  assert.equal(config(off.env).recordings, false);
+  assert.deepEqual(await (await worker.fetch(sessionUpload(), off.env, ctx)).json(), { ok: false, code: "disabled" });
+  assert.equal((await worker.fetch(sessionUpload(), off.env, ctx)).status, 503);
+  const noR2 = fakeEnv({}, { r2: false });
+  assert.equal(config(noR2.env).recordings, false);
+  const response = await worker.fetch(sessionUpload(), noR2.env, ctx);
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).code, "storage_unavailable");
+  assert.equal(config(fakeEnv({ RECORDINGS_SAMPLE: "0.25" }).env).recordings_sample, 0.25);
+  assert.equal(config(fakeEnv({ RECORDINGS_SAMPLE: "7" }).env).recordings_sample, 1);
+  assert.equal(config(fakeEnv({ RECORDINGS_SAMPLE: "-1" }).env).recordings_sample, 0);
+  assert.equal(config(fakeEnv({ RECORDINGS_SAMPLE: "abc" }).env).recordings_sample, 1);
+});
+
+test("a bad recording is refused before anything is stored", async () => {
+  const { env, sessions, objects } = fakeEnv();
+  let n = 0;
+  // Every attempt counts against the limits, so each comes from another installation.
+  const refuse = async (body, status, code, extra = {}) => {
+    n += 1;
+    const request = sessionUpload(body, { install: `install-${n}-aaaaaaaa`, ip: `203.0.113.${n}`, extra });
+    const response = await worker.fetch(request, env, ctx);
+    assert.equal(response.status, status, code);
+    assert.equal((await response.json()).code, code);
+  };
+  await refuse(recordingBytes(), 413, "too_large", { "content-length": String(21 * 1024 * 1024) });
+  await refuse(new TextEncoder().encode("this is not a gzip file at all, only text"), 400, "bad_recording");
+  await refuse(recordingBytes({ ...META_LINE, anonymized: false }), 400, "bad_recording");
+  await refuse(recordingBytes({ ...META_LINE, matchid: "8012345678" }), 422, "not_anonymized");
+  await refuse(recordingBytes({ ...META_LINE, steamid: "7656" }), 422, "not_anonymized");
+  await refuse(recordingBytes(), 400, "bad_minutes", { "x-minutes": "999" });
+  n += 1;
+  const noKey = await worker.fetch(sessionUpload(recordingBytes(), { install: `install-${n}-aaaaaaaa`, ip: `203.0.113.${n}`, key: null }), env, ctx);
+  assert.deepEqual([noKey.status, (await noKey.json()).code], [400, "no_device_key"]);
+  n += 1;
+  const badKey = await worker.fetch(sessionUpload(recordingBytes(), { install: `install-${n}-aaaaaaaa`, ip: `203.0.113.${n}`, key: "xyz" }), env, ctx);
+  assert.deepEqual([badKey.status, (await badKey.json()).code], [400, "no_device_key"]);
+  assert.equal((await worker.fetch(sessionUpload(recordingBytes(), { install: "x" }), env, ctx)).status, 400);
+  assert.equal(sessions.length, 0);
+  assert.equal(objects.size, 0);
+});
+
+test("recordings are limited per installation, per address and per day", async () => {
+  const { env, sessions } = fakeEnv();
+  for (let i = 0; i < 3; i += 1) {
+    assert.equal((await worker.fetch(sessionUpload(recordingBytes(), { ip: `203.0.113.${i + 10}` }), env, ctx)).status, 201);
+  }
+  const fourth = await worker.fetch(sessionUpload(recordingBytes(), { ip: "203.0.113.99" }), env, ctx);
+  assert.equal(fourth.status, 429);
+  assert.equal((await fourth.json()).code, "rate_limited");
+  // Another installation from one address: 10 an hour, then refused.
+  const crowded = fakeEnv();
+  for (let i = 0; i < 10; i += 1) {
+    const install = `install-number-${i}-aaaa`;
+    assert.equal((await worker.fetch(sessionUpload(recordingBytes(), { install }), crowded.env, ctx)).status, 201);
+  }
+  assert.equal((await worker.fetch(sessionUpload(recordingBytes(), { install: "install-number-x-aaaa" }), crowded.env, ctx)).status, 429);
+  assert.equal(sessions.length, 3);
+});
+
+test("storage is capped by bytes per day and in total, this upload included", async () => {
+  const { handleSession } = await import("../src/index.js");
+  const { SESSION_DAILY_BYTES, SESSION_TOTAL_BYTES } = await import("../src/session.js");
+  const bytes = recordingBytes();
+  const hour = 3_600_000;
+  // 1.5 GB in the last day: even a small file is refused, with a distinct code.
+  const full = fakeEnv();
+  full.sessions.push({ id: "S-FAKE22", created_at: Date.now() - hour, size: SESSION_DAILY_BYTES - bytes.length + 1, r2_key: "k" });
+  const refused = await worker.fetch(sessionUpload(bytes, { install: "fresh-install-aaaa", ip: "198.51.100.7" }), full.env, ctx);
+  assert.deepEqual([refused.status, (await refused.json()).code], [507, "storage_full"]);
+  // Exactly up to the cap is taken.
+  full.sessions[0].size = SESSION_DAILY_BYTES - bytes.length;
+  assert.equal((await worker.fetch(sessionUpload(bytes, { install: "fresh-install-aaaa", ip: "198.51.100.7" }), full.env, ctx)).status, 201);
+  // A day later the daily window is empty again.
+  const later = Date.now() + 25 * hour;
+  assert.equal((await handleSession(sessionUpload(bytes, { install: "fresh-install-bbbb", ip: "198.51.100.8" }), full.env, ctx, later)).status, 201);
+  // 8 GB in total: old files count although they are older than a day.
+  const total = fakeEnv();
+  total.sessions.push({ id: "S-OLD222", created_at: Date.now() - 5 * 24 * hour, size: SESSION_TOTAL_BYTES - bytes.length + 1, r2_key: "k" });
+  const second = await worker.fetch(sessionUpload(bytes), total.env, ctx);
+  assert.deepEqual([second.status, (await second.json()).code], [507, "storage_full"]);
+  assert.equal(total.objects.size, 0);
+});
+
+test("uploads refused before the limits do not use up the hourly limit", async () => {
+  const { env, sessions } = fakeEnv();
+  const same = { install: "one-install-aaaa", ip: "203.0.113.77" };
+  const bad = [
+    { extra: { "x-minutes": "999" } },
+    { extra: { "x-hero": "Juggernaut; drop table" } },
+    { key: null }
+  ];
+  for (const options of bad) {
+    assert.equal((await worker.fetch(sessionUpload(recordingBytes(), { ...same, ...options }), env, ctx)).status, 400);
+  }
+  assert.equal((await worker.fetch(sessionUpload(recordingBytes(), same), env, ctx)).status, 201);
+  assert.equal(sessions.length, 1);
+});
+
+test("a failed R2 put leaves no index row", async () => {
+  const { env, sessions, objects } = fakeEnv({ FAIL_PUT: true });
+  const response = await worker.fetch(sessionUpload(), env, ctx);
+  assert.deepEqual([response.status, (await response.json()).code], [500, "storage_error"]);
+  assert.equal(sessions.length, 0);
+  assert.equal(objects.size, 0);
+});
+
+test("an id collision fails before any put and draws another id", async () => {
+  const { handleSession } = await import("../src/index.js");
+  const { env, sessions, objects } = fakeEnv();
+  const taken = "S-222222";
+  const theirs = new Uint8Array([9, 9, 9]);
+  sessions.push({ id: taken, created_at: Date.now(), owner_hash: "other", size: 3, r2_key: sessionKeyFor(taken) });
+  objects.set(sessionKeyFor(taken), { body: theirs });
+  const draws = [new Uint8Array(6), new Uint8Array([1, 2, 3, 4, 5, 6])];
+  const response = await handleSession(sessionUpload(), env, ctx, Date.now(), () => draws.shift());
+  assert.equal(response.status, 201);
+  const { id } = await response.json();
+  assert.notEqual(id, taken);
+  assert.deepEqual([...objects.get(sessionKeyFor(taken)).body], [...theirs], "the other file is untouched");
+  assert.equal(sessions.length, 2);
+  assert.equal(objects.size, 2);
+  // Two collisions in a row give up without touching anything.
+  const clash = fakeEnv();
+  clash.sessions.push({ id: taken, created_at: Date.now(), owner_hash: "other", size: 3, r2_key: sessionKeyFor(taken) });
+  const failed = await handleSession(sessionUpload(), clash.env, ctx, Date.now(), () => new Uint8Array(6));
+  assert.equal(failed.status, 500);
+  assert.equal(clash.objects.size, 0);
+});
+
+function sessionKeyFor(id) {
+  const now = new Date();
+  return `sessions/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${id}.jsonl.gz`;
+}
+
+test("Delete my data removes recordings and their R2 objects with the device key only", async () => {
+  const { env, sessions, objects } = fakeEnv();
+  await worker.fetch(sessionUpload(recordingBytes(), { ip: "203.0.113.20" }), env, ctx);
+  await worker.fetch(sessionUpload(recordingBytes(), { ip: "203.0.113.21", install: "other-install-1", key: "b".repeat(64) }), env, ctx);
+  assert.equal(objects.size, 2);
+  const del = (key) =>
+    worker.fetch(new Request(`https://api.example/v1/device/${REPORT.install_id}`, { method: "DELETE", headers: key ? { "x-device-key": key } : {} }), env, ctx);
+  // Without the key (an older launcher) rows that have an owner stay.
+  assert.equal((await del(null)).status, 200);
+  assert.equal(sessions.length, 2);
+  assert.equal((await del("a".repeat(64))).status, 200);
+  assert.deepEqual(sessions.map((r) => r.owner_hash.length), [32]);
+  assert.ok(sessions.every((r) => !("install_id" in r)));
+  assert.deepEqual([...objects.keys()], [sessions[0].r2_key]);
+});
+
+test("cleanup deletes recordings after 60 days, objects first, in batches", async () => {
+  const { env, sessions, objects } = fakeEnv();
+  for (let i = 0; i < 230; i += 1) {
+    const key = `sessions/2026/01/S-OLD${i}.jsonl.gz`;
+    sessions.push({ id: `S-OLD${i}`, created_at: 1, owner_hash: "old", r2_key: key });
+    objects.set(key, { body: new Uint8Array() });
+  }
+  await worker.fetch(sessionUpload(), env, ctx);
+  const fresh = sessions.at(-1);
+  const now = Date.now();
+  await cleanup(env, now + 59 * 24 * 3_600_000);
+  assert.equal(sessions.length, 1, "the 230 old ones go, the new one is still there at 59 days");
+  assert.equal(objects.size, 1);
+  await cleanup(env, now + 61 * 24 * 3_600_000);
+  assert.equal(sessions.length, 0);
+  assert.equal(objects.has(fresh.r2_key), false);
+});
+
+test("the developer lists and downloads recordings with the admin token only", async () => {
+  const { env } = fakeEnv({ ADMIN_TOKEN: "t0ken" });
+  const bytes = recordingBytes();
+  const id = (await (await worker.fetch(sessionUpload(bytes), env, ctx)).json()).id;
+  const auth = { headers: { authorization: "Bearer t0ken" } };
+  const list = await (await worker.fetch(new Request("https://api.example/v1/admin/sessions", auth), env, ctx)).json();
+  assert.equal(list.sessions[0].id, id);
+  assert.deepEqual(Object.keys(list.sessions[0]).sort(), ["created_at", "hero", "id", "minutes", "size", "split", "version"]);
+  const side = list.sessions[0].split;
+  const other = side === "tune" ? "holdout" : "tune";
+  const mine = await (await worker.fetch(new Request(`https://api.example/v1/admin/sessions?split=${side}`, auth), env, ctx)).json();
+  const rest = await (await worker.fetch(new Request(`https://api.example/v1/admin/sessions?split=${other}`, auth), env, ctx)).json();
+  assert.deepEqual([mine.sessions.length, rest.sessions.length], [1, 0]);
+  const file = await worker.fetch(new Request(`https://api.example/v1/admin/session/${id}`, auth), env, ctx);
+  assert.equal(file.headers.get("content-type"), "application/gzip");
+  assert.match(file.headers.get("content-disposition"), new RegExp(`${id}\\.jsonl\\.gz`));
+  assert.deepEqual([...new Uint8Array(await file.arrayBuffer())], [...bytes]);
+  assert.equal((await worker.fetch(new Request("https://api.example/v1/admin/session/S-AAAAAA", auth), env, ctx)).status, 404);
+  for (const path of ["/v1/admin/sessions", `/v1/admin/session/${id}`]) {
+    assert.equal((await worker.fetch(new Request(`https://api.example${path}`), env, ctx)).status, 404);
+    assert.equal((await worker.fetch(new Request(`https://api.example${path}`, { headers: { authorization: "Bearer nope" } }), env, ctx)).status, 404);
+  }
 });

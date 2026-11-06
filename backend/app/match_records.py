@@ -42,7 +42,9 @@ KEEP_DAYS = 7
 RECORD_EVERY = 0.5  # wall seconds between two stored payloads of the same game second
 FLUSH_EVERY = 10.0  # seconds between two writes to disk
 FLUSH_LINES = 200
+ACTIVE_IDLE = 120.0  # seconds without a stored payload after which a match counts as over
 MAX_FILE_BYTES = 60 * 1024 * 1024  # a broken match never fills the disk
+POST_GAME = "DOTA_GAMERULES_STATE_POST_GAME"
 IN_MATCH_STATES = {
     "DOTA_GAMERULES_STATE_STRATEGY_TIME",
     "DOTA_GAMERULES_STATE_TEAM_SHOWCASE",
@@ -57,19 +59,31 @@ _SAFE_ID = re.compile(r"[^0-9A-Za-z_-]+")
 
 
 def redact(payload: dict[str, Any]) -> dict[str, Any]:
-    """A copy without the GSI token, the player's ids and name, and chat."""
+    """A copy without the GSI token, the player's ids and name, and chat
+    (chat events at any depth: `events`, `previously.events`, `added.events`)."""
     clean = copy.deepcopy(payload)
     clean.pop("auth", None)
     for block in ("player", "previously", "added"):
         value = clean.get(block)
         if isinstance(value, dict):
             _drop_private(value)
-    events = clean.get("events")
-    if isinstance(events, list):
-        clean["events"] = [
-            e for e in events if not (isinstance(e, dict) and e.get("event_type") == "chat_message")
-        ]
+    _drop_chat(clean)
     return clean
+
+
+def is_chat_event(value: Any) -> bool:
+    return isinstance(value, dict) and value.get("event_type") == "chat_message"
+
+
+def _drop_chat(value: Any) -> None:
+    """Removes chat events from every list in the structure, however deep."""
+    if isinstance(value, dict):
+        for item in value.values():
+            _drop_chat(item)
+    elif isinstance(value, list):
+        value[:] = [item for item in value if not is_chat_event(item)]
+        for item in value:
+            _drop_chat(item)
 
 
 def _drop_private(block: dict[str, Any]) -> None:
@@ -305,8 +319,22 @@ class MatchRecords:
                 continue
         return removed
 
+    def is_active(self, record_id: str) -> bool:
+        """True while this recording is the one being written: the match is on
+        (a payload was stored in the last ACTIVE_IDLE seconds and the game has
+        not reached POST_GAME)."""
+        with self._lock:
+            post_game = self._last_key is not None and self._last_key[0] == POST_GAME
+            return (
+                self._path is not None
+                and self._path.name == f"{record_id}.jsonl.gz"
+                and not post_game
+                and time.monotonic() - self._last_stored < ACTIVE_IDLE
+            )
+
     def list(self) -> list[dict[str, Any]]:
-        """Recordings, newest first: {id, match_id, hero, started_at, minutes, …}."""
+        """Recordings, newest first: {id, match_id, hero, started_at, minutes,
+        active, …}; `active` marks the match that is still being recorded."""
         self.flush()
         base = self._dir
         if base is None or not base.is_dir():
@@ -329,6 +357,7 @@ class MatchRecords:
                     "payloads": meta.get("payloads"),
                     "advice": meta.get("advice"),
                     "bytes": path.stat().st_size,
+                    "active": self.is_active(record_id),
                 }
             )
         return rows

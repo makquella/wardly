@@ -62,7 +62,7 @@ function fakeEnv(vars = {}) {
           if (sql.startsWith("SELECT day, src, visits, downloads FROM channel_counts")) {
             return { results: [] };
           }
-          if (sql.startsWith("SELECT r2_key FROM reports") || sql.startsWith("SELECT id, r2_key FROM reports")) {
+          if (sql.startsWith("SELECT r2_key FROM reports") || sql.startsWith("SELECT r2_key FROM sessions") || sql.startsWith("SELECT id, r2_key FROM reports") || sql.startsWith("SELECT id, r2_key FROM sessions")) {
             return { results: [] };
           }
           throw new Error(`unexpected all(): ${sql}`);

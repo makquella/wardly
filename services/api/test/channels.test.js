@@ -49,7 +49,7 @@ function fakeEnv(vars = {}) {
           if (sql.startsWith("SELECT install_hash, day, version, body FROM daily_stats")) {
             return { results: [] };
           }
-          if (sql.startsWith("SELECT id, r2_key FROM reports")) {
+          if (sql.startsWith("SELECT id, r2_key FROM reports") || sql.startsWith("SELECT id, r2_key FROM sessions")) {
             return { results: [] };
           }
           throw new Error(`unexpected all(): ${sql}`);
