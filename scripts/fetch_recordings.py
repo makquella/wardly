@@ -5,7 +5,8 @@ developer (services/api, docs/DATA_PLAN.md stage 5) for offline tuning.
 
 Files land in backend/session_records/cloud/<split>/<id>.jsonl.gz (git-ignored)
 and are read by `replay_recording.py`, `farm_outcomes.py` and
-`replay_outcomes.py` like a local recording. A file already downloaded is
+`replay_outcomes.py` like a local recording; `rule_table.py` replays all of them
+and prints one table per rule for `tune` and `holdout`. A file already downloaded is
 skipped, so the script can run again and again.
 
 The split is fixed by the server from the recording's number (about a quarter

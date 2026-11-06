@@ -372,7 +372,7 @@
     },
     {
       "path": "app/opendota.py",
-      "message": "Name \"names\" already defined on line 306",
+      "message": "Name \"names\" already defined on line 318",
       "code": "no-redef",
       "count": 1
     },

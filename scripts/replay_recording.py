@@ -338,6 +338,11 @@ def main() -> int:
                 }
             )
         for kind, card_id, title, text in _cards(answer):
+            if kind == "death" and card_id is None:
+                # The death screen has no id: one card per death, by the
+                # player's death counter in the latest raw snapshot.
+                deaths = ((last_raw or {}).get("player") or {}).get("deaths")
+                card_id = f"death@{deaths}" if isinstance(deaths, int) else None
             if (kind, card_id) in seen:
                 continue
             seen.add((kind, card_id))

@@ -761,3 +761,38 @@ are reported apart from the tuning ones. Do not move a recording between sides
 after looking at it: if a `holdout` one informs a rule, say so here and treat it
 as `tune` from then on. Times in these files start from zero, so compare cards by
 match clock (`clock_time`), not by date.
+
+### One table over all recordings (`scripts/rule_table.py`)
+
+`rule_table.py` replays every `tune` and `holdout` recording through the current
+code (one `replay_recording.py` process each) and prints one table per rule, the
+two sides apart: cards, cards per 10 minutes, repeats (the same rule again within
+60 s), checkable cards, and how many times the recorded player used the named
+tool after the card (farm cards: went there), had already done it, or did not.
+The recorded player never saw the cards: read the columns as the recorded use
+after the card, not as «followed». Map hints, the strip and death screens are
+listed as `HINT:<family>` / `STRIP:<family>` / `DEATH` with cards and repeats
+only (the replay keeps one death screen per recording, so `DEATH` is a lower
+bound).
+
+```
+cd backend
+.venv/bin/python ../scripts/rule_table.py --json /tmp/base.json          # before the change (e.g. on main)
+.venv/bin/python ../scripts/rule_table.py --compare /tmp/base.json --gate  # after it
+```
+
+Without cloud files, name local recordings with `--tune PATH` / `--holdout PATH`
+(a file or a folder, repeatable; one file on both sides is an error). With no
+recordings at all the script says so and exits 2. `--work DIR` keeps the outputs;
+`--reuse` skips the replay of recordings already there (only for editing the
+table code: the code under test is not replayed again).
+
+The gate: tune is where rules are set (its deltas are printed, never gate). A
+change is accepted only if holdout did not get worse. For a rule with at least 5
+cards (5 checkable cards for the used-after share) in both runs, holdout is
+WORSE when the used-after share fell by 10 points or more, the repeat share rose
+by 10 points or more, or the cards per 10 minutes rose by 50 % or more.
+`--gate` makes the exit code 3 then. The two runs must use the same holdout
+recordings (compared by sha256; the script warns otherwise); a rule that does not
+reach 5 cards is not judged, so a thin holdout proves little. The thresholds are
+constants at the top of the script.

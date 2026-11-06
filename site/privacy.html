@@ -84,7 +84,7 @@
           звертається по дані матчів (OpenDota), по картинки героїв (Valve), по оновлення (GitHub) і, якщо ви самі
           додали ключ, до обраного ШІ-сервісу. Нам застосунок надсилає лише те, що ви обрали самі: кнопкою — звіт про
           проблему, розбір або прогрес, яким ви вирішили поділитися за посиланням, і зашифровану історію під час перенесення за кодом;
-          а якщо ви ввімкнули анонімну статистику — раз на день лічильники підказок.
+          а якщо ви ввімкнули анонімну статистику — раз на день лічильники підказок. Відкриті довідники OpenDota застосунок завантажує з нашого сервера, нічого про вас не надсилаючи (див. «Сторонні сервіси»).
         </p>
 
         <h2>Що зберігається на комп'ютері</h2>
@@ -221,6 +221,7 @@
         <h2>Сторонні сервіси</h2>
         <ul>
           <li><strong>OpenDota</strong> — історія матчів і розбір реплеїв за вашим Steam-акаунтом (відкриті дані Dota 2), а також картинка мінімапи для «Мапи матчу» (один раз, потім із кешу).</li>
+          <li><strong>Довідники OpenDota через сервер Wardly</strong> (з версії 0.64) — відкриті довідкові дані (статистика героїв, предмети, а для героя — час купівлі, популярність предметів і протистояння) застосунок спершу бере з <code>api.luhovyimvp.dev</code>, де їх раз на добу оновлюють із OpenDota; якщо там нічого свіжого немає, звертається до OpenDota напряму. Запит містить лише назву довідника й номер героя — нічого про вас, ваш акаунт чи ключ OpenDota; сервер не зберігає, хто питав (Cloudflare бачить адресу, як будь-який сайт).</li>
           <li><strong>Valve CDN</strong> — портрети героїв та іконки предметів, один раз, потім із кешу.</li>
           <li><strong>GitHub</strong> — перевірка й завантаження оновлень.</li>
           <li><strong>Gemini, Groq або OpenRouter</strong> — лише якщо ви додали свій ключ: їм ідуть цифри розбору матчу, без ніків і Steam ID.</li>
@@ -274,7 +275,7 @@
           (OpenDota), hero pictures (Valve), updates (GitHub) and, if you added a key yourself, the AI service you chose. It
           sends us only what you chose: on a button press, a problem report, a review or your progress shared by link, and the
           encrypted history when you move it by code; and, if you switched on anonymous statistics, the advice counts once a
-          day.
+          day. The app downloads public OpenDota reference data from our server without sending anything about you (see “Third-party services”).
         </p>
 
         <h2>What stays on your computer</h2>
@@ -399,6 +400,7 @@
         <h2>Third-party services</h2>
         <ul>
           <li><strong>OpenDota</strong> — match history and replay parsing for your Steam account (public Dota 2 data), and the minimap picture for the match map (once, then from a cache).</li>
+          <li><strong>OpenDota reference data through the Wardly server</strong> (since 0.64) — public reference data (hero statistics, items and, for a hero, item timings, popularity and matchups) is taken first from <code>api.luhovyimvp.dev</code>, where it is refreshed from OpenDota once a day; if nothing fresh is there, the app asks OpenDota directly. The request carries only the name of the table and the hero number — nothing about you, your account or your OpenDota key; the server keeps no record of who asked (Cloudflare sees the address, as on any website).</li>
           <li><strong>Valve CDN</strong> — hero portraits and item icons, once, then from a cache.</li>
           <li><strong>GitHub</strong> — checking for and downloading updates.</li>
           <li><strong>Gemini, Groq or OpenRouter</strong> — only if you added your own key: they get the numbers of a match review, without nicknames or Steam IDs.</li>

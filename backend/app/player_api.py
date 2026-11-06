@@ -37,7 +37,13 @@ from pydantic import BaseModel, Field
 from app.advice_i18n import normalize_lang
 from app.advice_scheduler import ADVICE_SCHEDULER
 from app.coach_llm import env_settings
-from app.config import OPENDOTA_API_KEY, OPENDOTA_API_URL, OPENDOTA_ENABLED, PLAYER_DATA_DIR
+from app.config import (
+    OPENDOTA_API_KEY,
+    OPENDOTA_API_URL,
+    OPENDOTA_CACHE_URL,
+    OPENDOTA_ENABLED,
+    PLAYER_DATA_DIR,
+)
 from app.history_backup import BackupError
 from app.opendota import OpenDotaClient
 from app.player_contracts import (
@@ -55,7 +61,11 @@ from app.steam_ids import SteamIdError
 
 PLAYER_SERVICE = PlayerService(
     PLAYER_DATA_DIR,
-    client=OpenDotaClient(OPENDOTA_API_URL, api_key=OPENDOTA_API_KEY) if OPENDOTA_ENABLED else None,
+    client=(
+        OpenDotaClient(OPENDOTA_API_URL, api_key=OPENDOTA_API_KEY, cache_url=OPENDOTA_CACHE_URL)
+        if OPENDOTA_ENABLED
+        else None
+    ),
     env_ai=env_settings(),
 )
 

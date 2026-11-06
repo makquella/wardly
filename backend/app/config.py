@@ -133,3 +133,11 @@ PLAYER_DATA_DIR = path_from_env("PLAYER_DATA_DIR", WRITABLE_DIR / "player_data")
 OPENDOTA_ENABLED = os.getenv("OPENDOTA_ENABLED", "true").strip().lower() != "false"
 OPENDOTA_API_URL = os.getenv("OPENDOTA_API_URL", "https://api.opendota.com/api").strip().rstrip("/")
 OPENDOTA_API_KEY = os.getenv("OPENDOTA_API_KEY", "").strip()
+# Wardly's shared cache of OpenDota reference data (hero stats, items, per-hero
+# timings), tried before OpenDota. Set to an empty value to switch it off.
+_opendota_cache_url = os.getenv("WARDLY_OPENDOTA_CACHE_URL")
+OPENDOTA_CACHE_URL = (
+    "https://api.luhovyimvp.dev/v1/opendota"
+    if _opendota_cache_url is None
+    else _opendota_cache_url.strip().rstrip("/")
+)
