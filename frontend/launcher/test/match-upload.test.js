@@ -52,9 +52,27 @@ test("sent recordings are remembered for 60 days only", () => {
 });
 
 test("server codes map to a small set of messages", () => {
-  for (const code of ["rate_limited", "too_large", "disabled", "storage_unavailable"]) assert.equal(errorKey(code), code);
+  for (const code of ["rate_limited", "too_large", "disabled", "storage_unavailable", "storage_full", "recording_active"]) assert.equal(errorKey(code), code);
   assert.equal(errorKey("offline"), "network");
-  for (const code of ["bad_recording", "not_anonymized", "http_500", undefined, "unredacted"]) assert.equal(errorKey(code), "failed");
+  for (const code of ["bad_recording", "not_anonymized", "http_500", undefined, "unredacted", "no_device_key"]) assert.equal(errorKey(code), "failed");
+});
+
+test("a recording that is still being written is refused by the backend and the text exists in both languages", async () => {
+  const answer = await sendRecording({
+    localId: "2026-11-06_1200_1",
+    sent: {},
+    installId: "install-aaaaaaaa",
+    version: "0.63.0",
+    getCopy: async () => ({ ok: false, code: "recording_active" }),
+    post: async () => assert.fail("nothing is posted")
+  });
+  assert.deepEqual(answer, { ok: false, code: "recording_active" });
+  const texts = require("../renderer/app-texts.js").create(require("../renderer/whats-new"));
+  for (const locale of ["en", "uk"]) {
+    const table = texts[locale];
+    assert.ok(table.recordsActive, `${locale} recordsActive`);
+    for (const key of ["recording_active", "storage_full"]) assert.ok(table.recordsSendErrors[key], `${locale} ${key}`);
+  }
 });
 
 test("upload headers carry only the install, the version, the hero and the minutes", () => {

@@ -8,6 +8,11 @@ workers_dev = true
 
 [vars]
 REPORTS_ENABLED = "true"
+# Match recordings sent by consent (src/session.js). RECORDINGS_SAMPLE is the
+# share of installations the server offers the "Send to developer" button to
+# (0..1, by a stable hash of the installation id); 1 = everyone, 0 = nobody.
+RECORDINGS_ENABLED = "true"
+RECORDINGS_SAMPLE = "1"
 # Share links point at the site: a Workers route (Cloudflare dashboard) sends
 # luhovyimvp.dev/r/* to this Worker.
 SHARE_ORIGIN = "https://luhovyimvp.dev"

@@ -62,6 +62,8 @@ function errorKey(code) {
     case "too_large":
     case "disabled":
     case "storage_unavailable":
+    case "storage_full":
+    case "recording_active":
       return code;
     case "offline":
     case "network":

@@ -18,12 +18,14 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import io
 import json
 import os
 import re
 import sys
 import urllib.error
 import urllib.request
+import zlib
 from pathlib import Path
 from typing import Any
 
@@ -63,12 +65,18 @@ def pending(rows: list[dict[str, Any]], out: Path) -> list[dict[str, Any]]:
     ]
 
 
+FIRST_LINE_BYTES = 16384
+
+
 def looks_anonymized(data: bytes) -> bool:
     """The first line is the anonymized meta line (the server checked the same)."""
+    # Only the first line, bounded: a gzip bomb must not be inflated in memory.
     try:
-        first = gzip.decompress(data).split(b"\n", 1)[0]
+        first = gzip.GzipFile(fileobj=io.BytesIO(data)).readline(FIRST_LINE_BYTES)
         meta = json.loads(first)
-    except (OSError, EOFError, ValueError):
+    except (OSError, EOFError, ValueError, zlib.error):
+        return False
+    if not isinstance(meta, dict):
         return False
     return meta.get("k") == "meta" and meta.get("anonymized") is True
 

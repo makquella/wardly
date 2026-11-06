@@ -230,9 +230,9 @@
         <h2>Записи матчів</h2>
         <p>
           Біля кожного запису в «Ще налаштуваннях» є кнопка <strong>«Надіслати розробникові»</strong>. Вона з'являється, лише
-          якщо сервер це дозволяє (перемикач у <code>/v1/config</code>; на початку запис пропонують не всім), і ніколи не
+          якщо сервер це дозволяє (перемикач у <code>/v1/config</code>; сервер може пропонувати її лише частині встановлень), і ніколи не
           спрацьовує сама: перед кожним надсиланням застосунок показує, що піде й що ні, і чекає вашого «Надіслати».
-          Згода діє на один запис.
+          Згода діє на один запис. Матч, який ще записується, надіслати не можна — лише після його завершення.
         </p>
         <p>
           <strong>Надсилається</strong>: що гра повідомляла про вашого героя за матч (герой, рівень, предмети, здібності, золото,
@@ -244,9 +244,11 @@
         <p>
           Сервер лише дивиться на початок файлу (чи це безособовий запис Wardly) і зберігає його в Cloudflare R2 на
           <strong>60 днів</strong>, потім видаляє автоматично. Ліміти: до 20 МБ, 3 записи на годину з одного встановлення, 10 з
-          однієї адреси та загальна денна межа. Запис читає лише розробник — щоб підлаштувати правила порад на одних матчах і
+          однієї адреси та загальні межі за обсягом (на добу й разом), щоб не переповнити сховище. Запис читає лише розробник — щоб підлаштувати правила порад на одних матчах і
           перевірити на інших; нікому іншому він не передається й не публікується. Разом із записом зберігаються герой,
-          тривалість, версія застосунку, випадковий ідентифікатор встановлення й хеш ключа пристрою (для видалення).
+          тривалість, версія застосунку й хеш ключа пристрою (для видалення). Ідентифікатор встановлення разом із записом не
+          зберігається: лише його хеш із сіллю, і тільки для ліміту на годину; за ним запис не пов'язати з профілем чи
+          поширеними розборами. Без ключа пристрою сервер запис не приймає.
           Після надсилання застосунок показує номер запису (<code>S-XXXXXX</code>); розробник отримує сповіщення з номером, героєм і
           тривалістю, але без самого файлу.
         </p>
@@ -406,9 +408,9 @@
         <h2>Match recordings</h2>
         <p>
           Each recording in More settings has a <strong>«Send to developer»</strong> button. It appears only when the server allows
-          it (a switch in <code>/v1/config</code>; at first only some installations are offered it) and it never fires by itself:
+          it (a switch in <code>/v1/config</code>; the server can offer it to only part of the installations) and it never fires by itself:
           before each send the app shows what goes and what does not, and waits for your «Send». The consent covers one
-          recording.
+          recording. A match that is still being recorded cannot be sent until it ends.
         </p>
         <p>
           <strong>Sent</strong>: what the game reported about your hero during the match (hero, level, items, abilities, gold,
@@ -420,9 +422,11 @@
         <p>
           The server only looks at the beginning of the file (whether it is an anonymous Wardly recording) and keeps it in
           Cloudflare R2 for <strong>60 days</strong>, then deletes it automatically. Limits: up to 20 MB, 3 recordings an hour from
-          one installation, 10 from one address, and an overall daily cap. Only the developer reads a recording — to tune the
+          one installation, 10 from one address, and overall caps on volume (per day and in total) to keep the storage from filling. Only the developer reads a recording — to tune the
           advice rules on some matches and check them on others; it is not passed on or published. Stored with it: the hero, the
-          length, the app version, the installation's random id and the hash of the device key (for deleting). After sending the
+          length, the app version and the hash of the device key (for deleting). The installation id is not stored with it: only a
+          salted hash of it, used for the hourly limit alone, which cannot be joined to a profile or a shared review. Without a
+          device key the server does not accept a recording. After sending the
           app shows the recording's number (<code>S-XXXXXX</code>); the developer gets a notification with the number, hero and
           length, without the file.
         </p>

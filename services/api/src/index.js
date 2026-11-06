@@ -76,9 +76,10 @@ import {
   validateProfile
 } from "./profile.js";
 import {
-  SESSION_DAILY_CAP,
+  SESSION_DAILY_BYTES,
   SESSION_LIMITS,
   SESSION_RATE_PER_HOUR,
+  SESSION_TOTAL_BYTES,
   SESSION_RETENTION_DAYS,
   checkMetaLine,
   firstLine,
@@ -303,33 +304,59 @@ async function notifySession(env, text) {
   }
 }
 
-export async function handleSession(request, env, ctx, now = Date.now()) {
+// A salted hash of the installation id, only for the hourly rate limit: the
+// raw id is never stored with a recording, so it cannot be joined to a profile.
+function sessionInstallHash(installId) {
+  return sha256(`dac-session:${installId}`);
+}
+
+const randomBytes = (n) => crypto.getRandomValues(new Uint8Array(n));
+
+export async function handleSession(request, env, ctx, now = Date.now(), random = randomBytes) {
   if (!config(env).recordings) {
     return json({ ok: false, code: env.REPORTS ? "disabled" : "storage_unavailable" }, 503);
   }
+  // 1. Headers and metadata: nothing here costs a query or counts against a limit.
   const checked = validateSessionHeaders(request.headers);
   if (!checked.ok) {
     return json({ ok: false, code: checked.code }, checked.status);
   }
   const { meta } = checked;
+  // 2. The device key: it owns the recording ("Delete my data"). Launchers from
+  // 0.53.54 on always send it.
+  const owner = await ownerHash(request);
+  if (!owner) {
+    return json({ ok: false, code: "no_device_key" }, 400);
+  }
+  // 3. Storage caps from the stored sizes, this upload included. Uploads that
+  // run at the same moment all see the same totals, so the caps can be
+  // exceeded by a few files: acceptable against R2's free 10 GB.
+  const stored = await env.DB.prepare(
+    "SELECT COALESCE(SUM(CASE WHEN created_at >= ?1 THEN size END), 0) AS day, COALESCE(SUM(size), 0) AS total FROM sessions"
+  )
+    .bind(now - 24 * 3_600_000)
+    .first();
+  if (
+    Number(stored?.day || 0) + meta.length > SESSION_DAILY_BYTES ||
+    Number(stored?.total || 0) + meta.length > SESSION_TOTAL_BYTES
+  ) {
+    return json({ ok: false, code: "storage_full" }, 507);
+  }
+  // 4. Rate limits; only an upload that can actually be taken uses them up.
   const address = await sha256(`dac-rate:${clientAddress(request)}`);
+  const installHash = await sessionInstallHash(meta.installId);
   const underLimit =
-    (await allow(env, `session:install:${meta.installId}`, SESSION_RATE_PER_HOUR.install, now)) &&
+    (await allow(env, `session:install:${installHash}`, SESSION_RATE_PER_HOUR.install, now)) &&
     (await allow(env, `session:address:${address}`, SESSION_RATE_PER_HOUR.address, now));
   if (!underLimit) {
     return json({ ok: false, code: "rate_limited" }, 429);
   }
-  // Everyone together, per rolling day: protects R2's free 10 GB from a flood.
-  const today = await env.DB.prepare("SELECT COUNT(*) AS n FROM sessions WHERE created_at >= ?1")
-    .bind(now - 24 * 3_600_000)
-    .first();
-  if (Number(today?.n || 0) >= SESSION_DAILY_CAP) {
-    return json({ ok: false, code: "rate_limited" }, 429);
-  }
+  // 5. The body.
   const body = new Uint8Array(await request.arrayBuffer());
   if (body.length > SESSION_LIMITS.bodyBytes) {
     return json({ ok: false, code: "too_large" }, 413);
   }
+  // 6. The gzip stream and its first line.
   if (!hasGzipMagic(body)) {
     return json({ ok: false, code: "bad_recording" }, 400);
   }
@@ -337,19 +364,41 @@ export async function handleSession(request, env, ctx, now = Date.now()) {
   if (!line.ok) {
     return json({ ok: false, code: line.code }, line.status);
   }
-  const id = sessionId(crypto.getRandomValues(new Uint8Array(6)));
-  const key = sessionKey(id, new Date(now));
-  const split = await sessionSplit(id);
-  await env.REPORTS.put(key, body, {
-    httpMetadata: { contentType: "application/gzip" },
-    customMetadata: { id, version: meta.version }
-  });
-  await env.DB.prepare(
-    "INSERT INTO sessions (id, created_at, install_id, owner_hash, version, hero, minutes, size, r2_key, split) " +
-      "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)"
-  )
-    .bind(id, now, meta.installId, await ownerHash(request), meta.version, meta.hero, meta.minutes, body.length, key, split)
-    .run();
+  // The index row goes first: a primary-key collision fails before any put and
+  // never overwrites another player's file. The id is drawn once more on a collision.
+  let id = "";
+  let key = "";
+  let split = "";
+  let indexed = false;
+  for (let attempt = 0; attempt < 2 && !indexed; attempt += 1) {
+    id = sessionId(random(6));
+    key = sessionKey(id, new Date(now));
+    split = await sessionSplit(id);
+    try {
+      await env.DB.prepare(
+        "INSERT INTO sessions (id, created_at, owner_hash, install_hash, version, hero, minutes, size, r2_key, split) " +
+          "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)"
+      )
+        .bind(id, now, owner, installHash, meta.version, meta.hero, meta.minutes, body.length, key, split)
+        .run();
+      indexed = true;
+    } catch (error) {
+      console.log(`session: insert failed (${error.message})`);
+    }
+  }
+  if (!indexed) {
+    return json({ ok: false, code: "storage_error" }, 500);
+  }
+  try {
+    await env.REPORTS.put(key, body, {
+      httpMetadata: { contentType: "application/gzip" },
+      customMetadata: { id, version: meta.version }
+    });
+  } catch (error) {
+    console.log(`session: put failed (${error.message})`);
+    await env.DB.prepare("DELETE FROM sessions WHERE id = ?1").bind(id).run().catch(() => {});
+    return json({ ok: false, code: "storage_error" }, 500);
+  }
   ctx.waitUntil(notifySession(env, sessionNote(id, meta, split, body.length)).catch((error) => console.log(`telegram: ${error.message}`)));
   return json({ ok: true, id, retention_days: SESSION_RETENTION_DAYS }, 201);
 }
@@ -824,9 +873,14 @@ export async function deleteDevice(request, installId, env) {
   const { results } = await env.DB.prepare(`SELECT r2_key FROM reports WHERE ${OWNED}`).bind(id, owner).all();
   const rows = results || [];
   await deleteObjects(env, rows);
-  const recordings = (await env.DB.prepare(`SELECT r2_key FROM sessions WHERE ${OWNED}`).bind(id, owner).all()).results || [];
-  await deleteObjects(env, recordings);
-  for (const table of ["reports", "sessions", "shares", "transfers", "profiles"]) {
+  // Recordings carry no installation id: only the device key finds them, and
+  // their R2 objects go before the index rows.
+  if (owner) {
+    const recordings = (await env.DB.prepare("SELECT r2_key FROM sessions WHERE owner_hash = ?1").bind(owner).all()).results || [];
+    await deleteObjects(env, recordings);
+    await env.DB.prepare("DELETE FROM sessions WHERE owner_hash = ?1").bind(owner).run();
+  }
+  for (const table of ["reports", "shares", "transfers", "profiles"]) {
     await env.DB.prepare(`DELETE FROM ${table} WHERE ${OWNED}`).bind(id, owner).run();
   }
   await env.DB.prepare("DELETE FROM daily_stats WHERE install_hash = ?1").bind(await statsHash(id)).run();

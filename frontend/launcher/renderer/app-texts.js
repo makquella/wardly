@@ -210,6 +210,7 @@
         recordsSendCancel: "Cancel",
         recordsSendPrivacy: "Privacy",
         recordsSending: "Sending the recording…",
+        recordsActive: "Still recording: send it after the match.",
         recordsSent: (id) => `Sent, number ${id}.`,
         recordsSentBadge: (id) => `Sent · ${id}`,
         recordsSendErrors: {
@@ -217,6 +218,8 @@
           too_large: "This recording is too large to send.",
           disabled: "Sending recordings is switched off for now.",
           storage_unavailable: "The server cannot take recordings right now.",
+          storage_full: "The server cannot take more recordings today. Try again later.",
+          recording_active: "This match is still being recorded. Send it after the match.",
           network: "No connection to the server. Try again.",
           busy: "Another recording is being sent.",
           failed: "Could not send the recording."
@@ -789,6 +792,7 @@
         recordsSendCancel: "Скасувати",
         recordsSendPrivacy: "Конфіденційність",
         recordsSending: "Надсилаю запис…",
+        recordsActive: "Ще триває запис: надішліть після матчу.",
         recordsSent: (id) => `Надіслано, номер ${id}.`,
         recordsSentBadge: (id) => `Надіслано · ${id}`,
         recordsSendErrors: {
@@ -796,6 +800,8 @@
           too_large: "Цей запис завеликий для надсилання.",
           disabled: "Надсилання записів поки вимкнено.",
           storage_unavailable: "Сервер зараз не приймає записи.",
+          storage_full: "Сервер сьогодні не приймає більше записів. Спробуйте пізніше.",
+          recording_active: "Цей матч ще записується. Надішліть після матчу.",
           network: "Немає зв'язку із сервером. Спробуйте ще раз.",
           busy: "Інший запис ще надсилається.",
           failed: "Не вдалося надіслати запис."

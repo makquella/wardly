@@ -66,7 +66,10 @@ test("a recording is stored in R2, indexed, downloadable by the developer and de
   assert.equal(response.status, 201);
   const { id } = await response.json();
   const row = await db.prepare("SELECT * FROM sessions WHERE id = ?1").bind(id).first();
-  assert.equal(row.install_id, MINE);
+  assert.equal("install_id" in row, false);
+  assert.match(row.owner_hash, /^[a-f0-9]{32}$/);
+  assert.match(row.install_hash, /^[a-f0-9]{32}$/);
+  assert.ok(!JSON.stringify(row).includes(MINE));
   assert.equal(row.size, bytes.length);
   assert.ok(["tune", "holdout"].includes(row.split));
   assert.equal((await bucket.list()).objects.length, 1);
@@ -92,8 +95,8 @@ test("the daily cleanup removes recordings older than 60 days, object and row", 
   await bucket.put("sessions/2026/11/S-NEWAAA.jsonl.gz", recording());
   for (const [id, at] of [["S-OLDAAA", old], ["S-NEWAAA", Date.now()]]) {
     await db
-      .prepare("INSERT INTO sessions (id, created_at, install_id, r2_key, split) VALUES (?1, ?2, ?3, ?4, 'tune')")
-      .bind(id, at, MINE, `sessions/${id === "S-OLDAAA" ? "2026/01" : "2026/11"}/${id}.jsonl.gz`)
+      .prepare("INSERT INTO sessions (id, created_at, owner_hash, r2_key, split) VALUES (?1, ?2, ?3, ?4, 'tune')")
+      .bind(id, at, "owner", `sessions/${id === "S-OLDAAA" ? "2026/01" : "2026/11"}/${id}.jsonl.gz`)
       .run();
   }
   const worker = await mf.getWorker();
@@ -109,4 +112,13 @@ test("a recording that names a match id is refused by the real Worker", async (t
   const response = await upload(mf, bytes);
   assert.equal(response.status, 422);
   assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM sessions").first()).n, 0);
+});
+
+test("without a device key the real Worker refuses the recording", async (t) => {
+  const { mf, db, bucket } = await localWorker(t);
+  const response = await upload(mf, recording(), null);
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).code, "no_device_key");
+  assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM sessions").first()).n, 0);
+  assert.equal((await bucket.list()).objects.length, 0);
 });

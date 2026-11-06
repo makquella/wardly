@@ -953,7 +953,7 @@ let pendingRecord = "";
 
 function openRecordsSend(id) {
   const record = recordsView.records.find((row) => row.id === id);
-  if (!record) {
+  if (!record || record.active) {
     return;
   }
   pendingRecord = id;
@@ -1045,6 +1045,13 @@ function renderRecords(view) {
         badge.className = "records-sent";
         badge.textContent = tr("recordsSentBadge", sent.id);
         actions.append(badge);
+      } else if (recordsView.upload && record.active) {
+        // The match is still being written: sent after it ends.
+        const wait = document.createElement("span");
+        wait.className = "records-sent";
+        wait.dataset.recordActive = record.id;
+        wait.textContent = tr("recordsActive");
+        actions.append(wait);
       } else if (recordsView.upload) {
         const send = document.createElement("button");
         send.className = "btn btn-ghost";

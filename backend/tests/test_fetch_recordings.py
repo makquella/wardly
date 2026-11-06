@@ -66,6 +66,26 @@ def test_only_an_anonymized_meta_line_is_accepted():
     assert not fetch.looks_anonymized(b"not gzip")
 
 
+def test_a_gzip_bomb_is_not_inflated():
+    import time
+    import tracemalloc
+
+    meta = (json.dumps({"k": "meta", "anonymized": True}) + "\n").encode()
+    bomb = gzip.compress(meta + b"\0" * (200 * 1024 * 1024), compresslevel=9)
+    assert len(bomb) < 1024 * 1024  # a small download that would inflate to 200 MB
+    tracemalloc.start()
+    started = time.perf_counter()
+    try:
+        assert fetch.looks_anonymized(bomb)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert peak < 32 * 1024 * 1024, f"inflated {peak} bytes"
+    assert time.perf_counter() - started < 2
+    # No newline at all in the bomb: still bounded, and refused.
+    assert not fetch.looks_anonymized(gzip.compress(b"\0" * (100 * 1024 * 1024), compresslevel=9))
+
+
 def test_the_table_lists_hero_split_and_size():
     text = fetch.table([ROW])
     assert "S-ABCDEF" in text and "tune" in text and "axe" in text and "2.9" in text

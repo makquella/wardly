@@ -32,7 +32,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from app.match_records import _PLAYER_PRIVATE, redact
+from app.match_records import _PLAYER_PRIVATE, is_chat_event, redact
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024  # the Worker refuses more (services/api/src/session.js)
 UPLOAD_FORMAT = 1
@@ -110,11 +110,20 @@ def _strip_match_id(value: Any) -> None:
             _strip_match_id(item)
 
 
-def _has_forbidden_key(value: Any) -> bool:
+def _has_forbidden_key(value: Any, *, in_player: bool = False) -> bool:
+    """Private keys, chat events and the player's own name, at any depth.
+    `in_player`: inside a `player` block (also `previously.player`, `added.player`)."""
     if isinstance(value, dict):
-        return any(k in _FORBIDDEN_KEYS or _has_forbidden_key(v) for k, v in value.items())
+        for key, item in value.items():
+            if key in _FORBIDDEN_KEYS or (in_player and key == "name"):
+                return True
+            if _has_forbidden_key(item, in_player=in_player or key == "player"):
+                return True
+        return False
     if isinstance(value, list):
-        return any(_has_forbidden_key(item) for item in value)
+        return any(
+            is_chat_event(item) or _has_forbidden_key(item, in_player=in_player) for item in value
+        )
     return False
 
 

@@ -983,6 +983,13 @@ def match_record_upload(record_id: str):
     path = MATCH_RECORDS.path_of(record_id)
     if path is None:
         return JSONResponse(status_code=404, content={"detail": "No such recording."})
+    # The match still being written is not sent: the file is incomplete and grows.
+    if MATCH_RECORDS.is_active(record_id):
+        return JSONResponse(
+            status_code=409, content={"detail": "recording_active", "code": "recording_active"}
+        )
+    # A plain `def`: it runs in the threadpool, and the copy is built without
+    # holding the recorder's lock (path_of only flushes under it).
     try:
         copy = upload_copy(path, app_version=app.version)
     except UploadError as error:

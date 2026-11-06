@@ -220,3 +220,132 @@ def test_a_recording_without_payloads_or_unreadable_is_refused(tmp_path):
     with pytest.raises(UploadError) as unreadable:
         upload_copy(broken)
     assert unreadable.value.code == "unreadable"
+
+
+# --- chat and names nested in `previously` / `added` --------------------------
+
+NESTED_CHAT = ("nested chat in previously", "nested chat in added", "nested deep chat")
+
+
+def _nested_chat_payload(clock: int) -> dict:
+    chat = lambda text: {"event_type": "chat_message", "message": text}  # noqa: E731
+    return {
+        "provider": {"name": "Dota 2", "appid": 570, "timestamp": START + clock},
+        "map": {"clock_time": clock, "game_state": "DOTA_GAMERULES_STATE_GAME_IN_PROGRESS"},
+        "hero": {"name": "npc_dota_hero_juggernaut", "alive": True},
+        "previously": {"events": [chat(NESTED_CHAT[0]), {"event_type": "courier_killed"}]},
+        "added": {
+            "events": [chat(NESTED_CHAT[1])],
+            "deeper": {"events": [chat(NESTED_CHAT[2]), {"event_type": "roshan_killed"}]},
+        },
+    }
+
+
+def _nested_recording(tmp_path: Path) -> Path:
+    meta = {"k": "meta", "hero": "npc_dota_hero_juggernaut", "payloads": 1, "format": 1}
+    gsi = {"k": "gsi", "w": 1.0, "ts": "2026-11-01T18:30:00+00:00", "p": _nested_chat_payload(5)}
+    return _write(tmp_path / "nested.jsonl.gz", [meta, gsi])
+
+
+def test_chat_in_previous_and_added_events_never_reaches_the_upload(tmp_path):
+    data = upload_copy(_nested_recording(tmp_path)).data
+    text = gzip.decompress(data).decode("utf-8")
+    for message in NESTED_CHAT:
+        assert message not in text
+    assert "chat_message" not in text
+    # Other events stay.
+    assert "courier_killed" in text and "roshan_killed" in text
+
+
+def test_the_final_scan_refuses_chat_at_any_depth(tmp_path, monkeypatch):
+    monkeypatch.setattr(match_record_upload, "redact", lambda payload: payload)
+    with pytest.raises(UploadError) as error:
+        upload_copy(_nested_recording(tmp_path))
+    assert error.value.code == "unredacted"
+
+
+@pytest.mark.parametrize("block", ["player", "previously", "added"])
+def test_the_final_scan_refuses_a_player_name(tmp_path, monkeypatch, block):
+    monkeypatch.setattr(match_record_upload, "redact", lambda payload: payload)
+    payload = _nested_chat_payload(5)
+    payload["previously"] = {}
+    payload["added"] = {}
+    if block == "player":
+        payload["player"] = {"name": "SomeNick", "kills": 1}
+    else:
+        payload[block]["player"] = {"name": "SomeNick"}
+    path = _write(
+        tmp_path / "named.jsonl.gz",
+        [{"k": "meta"}, {"k": "gsi", "w": 1.0, "ts": "2026-11-01T18:30:00+00:00", "p": payload}],
+    )
+    with pytest.raises(UploadError) as error:
+        upload_copy(path)
+    assert error.value.code == "unredacted"
+
+
+def test_hero_and_ability_names_are_not_player_names(tmp_path):
+    from app.match_record_upload import _has_forbidden_key
+
+    assert not _has_forbidden_key(
+        {"hero": {"name": "npc_dota_hero_axe"}, "abilities": [{"name": "x"}]}
+    )
+    assert _has_forbidden_key({"previously": {"player": {"name": "x"}}})
+
+
+# --- the match still being recorded ---------------------------------------------
+
+
+def _live_match(client, *, finish: bool):
+    client.post("/settings/advice", json={"match_records": True})
+    stream = gsi_match_stream(minutes=6, death_minutes=())
+    for payload in stream if finish else stream[:-1]:
+        client.post("/gsi", json=payload)
+    return client.get("/match-records").json()["records"][0]
+
+
+def test_the_match_still_being_recorded_cannot_be_sent(client, monkeypatch):
+    from app import match_records
+
+    record = _live_match(client, finish=False)
+    if record["active"] is False:  # the helper's last payload may already be post-game
+        pytest.skip("stream ends in post-game")
+    response = client.get(f"/match-records/{record['id']}/upload")
+    assert response.status_code == 409 and response.json()["code"] == "recording_active"
+    # A quiet GSI (the game was closed) ends it.
+    monkeypatch.setattr(match_records, "ACTIVE_IDLE", 0.0)
+    assert client.get("/match-records").json()["records"][0]["active"] is False
+    assert client.get(f"/match-records/{record['id']}/upload").status_code == 200
+
+
+def test_a_finished_match_is_not_active(client):
+    record = _live_match(client, finish=True)
+    assert record["active"] is False
+    assert client.get(f"/match-records/{record['id']}/upload").status_code == 200
+
+
+def test_building_the_copy_does_not_hold_the_recorder_lock(client, monkeypatch):
+    from app import main
+    from app.match_records import MATCH_RECORDS
+
+    record = _live_match(client, finish=True)
+    seen = {}
+    real = main.upload_copy
+
+    def watching(path, **kwargs):
+        # /gsi writes through this lock: it must be free while the file is read.
+        seen["free"] = MATCH_RECORDS._lock.acquire(blocking=False)
+        if seen["free"]:
+            MATCH_RECORDS._lock.release()
+        return real(path, **kwargs)
+
+    monkeypatch.setattr(main, "upload_copy", watching)
+    assert client.get(f"/match-records/{record['id']}/upload").status_code == 200
+    assert seen["free"] is True
+
+
+def test_the_upload_endpoint_runs_in_the_threadpool():
+    import inspect
+
+    from app import main
+
+    assert not inspect.iscoroutinefunction(main.match_record_upload)

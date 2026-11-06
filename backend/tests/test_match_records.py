@@ -118,3 +118,18 @@ def test_a_spectated_match_is_not_recorded(tmp_path):
         payload["player"] = {"team2": {"player0": {}}, "team3": {}}
         records.record_gsi(payload)
     assert records.list() == []
+
+
+def test_redact_removes_chat_events_at_every_depth():
+    chat = {"event_type": "chat_message", "message": "secret words"}
+    keep = {"event_type": "roshan_killed"}
+    payload = {
+        "events": [chat, keep],
+        "previously": {"events": [chat, keep]},
+        "added": {"events": [chat], "nested": [{"events": [chat, keep]}]},
+    }
+    clean = redact(payload)
+    assert "secret words" not in json.dumps(clean)
+    assert clean["events"] == [keep] and clean["previously"]["events"] == [keep]
+    assert clean["added"]["events"] == [] and clean["added"]["nested"][0]["events"] == [keep]
+    assert chat in payload["events"], "the input is not changed"

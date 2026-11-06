@@ -8,10 +8,13 @@ export const SESSION_LIMITS = {
   peekCompressed: 8192, // the part of the stream that is decompressed to read the first line
   firstLineChars: 16_384
 };
-// Recordings per hour from one installation and from one address, and per day
-// from everyone: 150 x 20 MB x 60 days would still be far from R2's free 10 GB.
+// Recordings per hour from one installation and from one address. Everyone
+// together is capped by bytes (sizes stored in D1) to stay inside R2's free
+// 10 GB: at most 1.5 GB in the last 24 hours and 8 GB in total, the upload
+// being checked included.
 export const SESSION_RATE_PER_HOUR = { install: 3, address: 10 };
-export const SESSION_DAILY_CAP = 150;
+export const SESSION_DAILY_BYTES = 1.5 * 1024 ** 3;
+export const SESSION_TOTAL_BYTES = 8 * 1024 ** 3;
 export const SESSION_RETENTION_DAYS = 60;
 // About a quarter of the recordings is kept apart to check rules that were
 // tuned on the rest (scripts/fetch_recordings.py, docs/LIVE_ADVICE_AUDIT.md).
