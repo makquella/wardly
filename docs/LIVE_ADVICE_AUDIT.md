@@ -772,8 +772,7 @@ tool after the card (farm cards: went there), had already done it, or did not.
 The recorded player never saw the cards: read the columns as the recorded use
 after the card, not as «followed». Map hints, the strip and death screens are
 listed as `HINT:<family>` / `STRIP:<family>` / `DEATH` with cards and repeats
-only (the replay keeps one death screen per recording, so `DEATH` is a lower
-bound).
+only (each death is its own `DEATH` card, numbered by the death counter).
 
 ```
 cd backend
@@ -792,7 +791,10 @@ change is accepted only if holdout did not get worse. For a rule with at least 5
 cards (5 checkable cards for the used-after share) in both runs, holdout is
 WORSE when the used-after share fell by 10 points or more, the repeat share rose
 by 10 points or more, or the cards per 10 minutes rose by 50 % or more.
-`--gate` makes the exit code 3 then. The two runs must use the same holdout
-recordings (compared by sha256; the script warns otherwise); a rule that does not
+`--gate` makes the exit code 3 then. An `ALL` row (every card of every rule)
+is gated the same way, so noise from a new rule shows; a rule that is `new` or
+`gone` is information only. The two runs must use the same holdout recordings
+(compared by sha256): without `--gate` the script warns, with `--gate` it
+refuses (exit 2: re-run the base on the same recordings). A rule that does not
 reach 5 cards is not judged, so a thin holdout proves little. The thresholds are
 constants at the top of the script.

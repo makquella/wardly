@@ -20,8 +20,8 @@ module globals), and the audit rows are counted per rule, the two splits apart:
   REPEAT_WINDOW game seconds;
 - map hints, the strip and death screens (`HINT:<family>`, `STRIP:<family>`,
   `DEATH`): cards and repeats only (game seconds), nothing to check. The family
-  is the id without its per-instance part («fight@1234» -> fight). The replay
-  keeps one death screen per recording (it has no id), so DEATH is a lower bound.
+  is the id without its per-instance part («fight@1234» -> fight); each death
+  is its own card (the replay numbers death screens by the death counter).
 
 The recorded player never saw these cards, so the words are «the recorded use
 after the card» and «went there», never «followed»: the table says what the
@@ -35,11 +35,15 @@ recorded match did near a card, not that a card changed anything.
 Rules are tuned on `tune`. A change is accepted only if `holdout` did not get
 worse: save `--json base.json` on the code before the change, then run
 `--compare base.json --gate` after it (exit code 3 when holdout is worse; the
-thresholds are the constants below; tune deltas are printed, never gate). Do not
+thresholds are the constants below; tune deltas are printed, never gate). An
+`ALL` row (every card of every rule) is gated with the same thresholds, so noise
+from a new rule counts; a rule that is `new` or `gone` is only information. The
+gate refuses (exit 2) when the two runs did not use the same holdout recordings. Do not
 move a recording between sides after looking at it (docs/LIVE_ADVICE_AUDIT.md).
 
 Exit codes: 0 done, 1 a replay failed (the rest is still printed), 2 bad
-arguments or no recordings at all, 3 the gate found holdout worse.
+arguments, no recordings at all, or a gate over different holdout recordings,
+3 the gate found holdout worse.
 """
 
 from __future__ import annotations
@@ -83,6 +87,7 @@ REPLAY_TIMEOUT = 1800  # seconds per recording
 JSON_VERSION = 1
 UNMATCHED = "WITHDRAWN:unmatched"
 UNCHECKED_PREFIXES = ("HINT:", "STRIP:", "DEATH")
+ALL_RULE = "ALL"
 
 
 class InputError(Exception):
@@ -547,14 +552,25 @@ def worse_reasons(
     return reasons
 
 
+def total_counts(rules: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """The ALL row: every card of every rule, summed."""
+    total = {k: v for k, v in new_counts().items() if k != "delays"}
+    for counts in rules.values():
+        for key in total:
+            total[key] += counts.get(key, 0)
+    return total
+
+
 def compare_runs(base: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
     """Per rule and split the base and new numbers; holdout verdicts. Both
     arguments are `to_json` documents."""
     warnings: list[str] = []
+    same_holdout = True
     for side in SPLITS:
         old = {r["sha256_12"] for r in base["splits"][side]["recordings"] if not r.get("failed")}
         cur = {r["sha256_12"] for r in new["splits"][side]["recordings"] if not r.get("failed")}
         if old != cur:
+            same_holdout = same_holdout and side != "holdout"
             warnings.append(
                 f"{side}: the two runs did not use the same recordings "
                 f"({len(old - cur)} only in base, {len(cur - old)} only in new)"
@@ -564,11 +580,15 @@ def compare_runs(base: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
     for side in SPLITS:
         names |= set(base["splits"][side]["rules"]) | set(new["splits"][side]["rules"])
     rows = []
-    for rule in sorted(names):
-        row: dict[str, Any] = {"rule": rule, "worse": []}
+    for rule in [ALL_RULE, *sorted(names)]:
+        row: dict[str, Any] = {"rule": rule, "worse": [], "note": ""}
         for side in SPLITS:
-            b = {**empty, **base["splits"][side]["rules"].get(rule, {})}
-            n = {**empty, **new["splits"][side]["rules"].get(rule, {})}
+            if rule == ALL_RULE:
+                b = total_counts(base["splits"][side]["rules"])
+                n = total_counts(new["splits"][side]["rules"])
+            else:
+                b = {**empty, **base["splits"][side]["rules"].get(rule, {})}
+                n = {**empty, **new["splits"][side]["rules"].get(rule, {})}
             base_minutes, new_minutes = (
                 base["splits"][side]["minutes"],
                 new["splits"][side]["minutes"],
@@ -581,10 +601,15 @@ def compare_runs(base: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
             }
             if side == "holdout":
                 row["worse"] = worse_reasons(b, n, base_minutes, new_minutes)
+                if rule != ALL_RULE and b["cards"] == 0 < n["cards"]:
+                    row["note"] = "new"
+                elif rule != ALL_RULE and n["cards"] == 0 < b["cards"]:
+                    row["note"] = "gone"
         rows.append(row)
     return {
         "rows": rows,
         "warnings": warnings,
+        "same_holdout": same_holdout,
         "worse": [{"rule": r["rule"], "reasons": r["worse"]} for r in rows if r["worse"]],
     }
 
@@ -619,7 +644,8 @@ def render_compare(result: dict[str, Any]) -> str:
                 cells.append(_arrow(bm["per_10"], nm["per_10"], ".1f"))
             cells.append(_arrow(bm["used_share"], nm["used_share"], ".0%"))
             cells.append(_arrow(bm["repeat_share"], nm["repeat_share"], ".0%"))
-        cells.append("WORSE: " + "; ".join(row["worse"]) if row["worse"] else "ok")
+        verdict = "WORSE: " + "; ".join(row["worse"]) if row["worse"] else row["note"] or "ok"
+        cells.append(verdict)
         lines.append("| " + " | ".join(cells) + " |")
     lines.append("")
     lines.append(
@@ -628,7 +654,7 @@ def render_compare(result: dict[str, Any]) -> str:
         else "Holdout did not get worse."
     )
     lines.append(
-        f"(Checked with at least {MIN_CARDS} cards in both runs: used-after share down "
+        f"(ALL = every card of every rule; `new` / `gone` rules are information only. Checked with at least {MIN_CARDS} cards in both runs: used-after share down "
         f"{USED_DROP * 100:.0f} points, repeat share up {REPEAT_RISE * 100:.0f} points, "
         f"or cards per 10 min up {NOISE_RISE * 100:.0f} %. Tune deltas never gate.)"
     )
@@ -728,6 +754,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     if base is not None:
         compared = compare_runs(base, document)
         print("\n" + render_compare(compared))
+        if args.gate and not compared["same_holdout"]:
+            print(
+                "rule_table: --gate refused: the two runs did not use the same holdout "
+                "recordings; re-run the base on the same recordings.",
+                file=sys.stderr,
+            )
+            return 2
         if args.gate and compared["worse"]:
             code = 3
     return code

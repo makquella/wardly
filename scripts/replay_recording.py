@@ -233,6 +233,12 @@ def _item_constants(path: Path) -> dict[str, Any]:
     return {"by_id": by_id, "items": items}
 
 
+def _death_id(raw: dict[str, Any] | None) -> str | None:
+    """Id of a death screen: the player's death counter in the latest raw snapshot."""
+    deaths = ((raw or {}).get("player") or {}).get("deaths")
+    return f"death@{deaths}" if isinstance(deaths, int) and not isinstance(deaths, bool) else None
+
+
 def _cards(answer: dict[str, Any]) -> list[tuple[str, Any, Any, Any]]:
     cards: list[tuple[str, Any, Any, Any]] = []
     advice = answer.get("recommendation")
@@ -341,8 +347,7 @@ def main() -> int:
             if kind == "death" and card_id is None:
                 # The death screen has no id: one card per death, by the
                 # player's death counter in the latest raw snapshot.
-                deaths = ((last_raw or {}).get("player") or {}).get("deaths")
-                card_id = f"death@{deaths}" if isinstance(deaths, int) else None
+                card_id = _death_id(last_raw)
             if (kind, card_id) in seen:
                 continue
             seen.add((kind, card_id))

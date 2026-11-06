@@ -178,8 +178,8 @@ def test_gate_flags_a_fall_in_the_used_after_share():
     base = document("R", cards=20, checkable=20, used=10)
     worse = document("R", cards=20, checkable=20, used=8)  # 50% -> 40%
     result = verdict(base, worse)
-    assert [w["rule"] for w in result["worse"]] == ["R"]
-    assert "used after" in result["worse"][0]["reasons"][0]
+    assert [w["rule"] for w in result["worse"]] == ["ALL", "R"]
+    assert "used after" in result["worse"][1]["reasons"][0]
     assert "WORSE" in rt.render_compare(result)
 
 
@@ -311,3 +311,68 @@ def test_a_synthetic_recording_goes_through_the_subprocess_replay(tmp_path, caps
     again = ["--cloud", nothing, "--tune", str(tmp_path / "tune" / "t.jsonl.gz")]
     again += ["--holdout", holdout, "--compare", str(out), "--gate"]
     assert rt.main(again) == 0
+
+
+def test_each_death_screen_gets_its_own_id_from_the_death_counter():
+    import replay_recording
+
+    assert replay_recording._death_id({"player": {"deaths": 3}}) == "death@3"
+    assert replay_recording._death_id({"player": {"deaths": 0}}) == "death@0"
+    assert replay_recording._death_id({"player": {}}) is None
+    assert replay_recording._death_id(None) is None
+    cards = [
+        {"kind": "death", "id": replay_recording._death_id({"player": {"deaths": n}}), "clock": c}
+        for n, c in ((3, 100), (3, 110), (4, 400))
+    ]
+    assert rt.hint_counts(cards)["DEATH"]["cards"] == 3  # the same id is dropped by the replay
+
+
+def test_gate_row_all_catches_noise_from_a_new_rule():
+    base = document("R", cards=20, checkable=20, used=10)
+    new = document("R", cards=20, checkable=20, used=10)
+    for side in rt.SPLITS:
+        new["splits"][side]["rules"]["NEW"] = {**new["splits"][side]["rules"]["R"], "cards": 30}
+    result = verdict(base, new)
+    by_rule = {r["rule"]: r for r in result["rows"]}
+    assert by_rule["ALL"]["worse"] and "cards per 10 min" in by_rule["ALL"]["worse"][0]
+    assert by_rule["NEW"]["note"] == "new" and by_rule["NEW"]["worse"] == []
+    assert [w["rule"] for w in result["worse"]] == ["ALL"]
+    assert "| NEW |" in rt.render_compare(result) and "new" in rt.render_compare(result)
+
+
+def test_all_row_covers_used_after_and_gone_is_information():
+    base = document("R", cards=20, repeats=2, checkable=20, used=10)
+    base["splits"]["holdout"]["rules"]["OLD"] = {**base["splits"]["holdout"]["rules"]["R"]}
+    new = document("R", cards=20, repeats=2, checkable=20, used=10)
+    by_rule = {r["rule"]: r for r in verdict(base, new)["rows"]}
+    assert by_rule["OLD"]["note"] == "gone" and by_rule["OLD"]["worse"] == []
+    assert by_rule["ALL"]["worse"] == []  # fewer cards is not noise
+    # used-after over all checkable cards: 10/20 -> 10/40
+    more = document("R", cards=20, repeats=2, checkable=20, used=10)
+    more["splits"]["holdout"]["rules"]["X"] = {
+        **more["splits"]["holdout"]["rules"]["R"],
+        "used_after": 0,
+    }
+    row = verdict(document("R", cards=20, repeats=2, checkable=20, used=10), more)["rows"][0]
+    assert row["rule"] == "ALL" and any("used after" in r for r in row["worse"])
+
+
+def test_gate_refuses_different_holdout_recordings(tmp_path, monkeypatch, capsys):
+    base = document("R", cards=20, checkable=20, used=10, shas=("aaa",))
+    new = document("R", cards=20, checkable=20, used=10, shas=("bbb",))
+    assert verdict(base, new)["same_holdout"] is False
+    # tune differences only warn
+    tune = document("R", cards=20, checkable=20, used=10, shas=("zzz",))["splits"]["tune"]
+    same = document("R", cards=20, checkable=20, used=10, tune=tune)
+    result = verdict(base, same)
+    assert result["same_holdout"] is True and result["warnings"]
+
+    path = tmp_path / "base.json"
+    path.write_text(json.dumps(base), encoding="utf-8")
+    holdout = tmp_path / "h.jsonl.gz"
+    synthetic_recording(holdout)
+    args = ["--cloud", str(tmp_path / "none"), "--holdout", str(holdout), "--compare", str(path)]
+    assert rt.main(args) == 0  # a warning only
+    capsys.readouterr()
+    assert rt.main([*args, "--gate"]) == 2
+    assert "same recordings" in capsys.readouterr().err
