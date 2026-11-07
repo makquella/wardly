@@ -94,6 +94,8 @@ const BACKEND_HOST = "127.0.0.1";
 const PREFERRED_BACKEND_PORT = 8000;
 const BACKEND_HEALTH_TIMEOUT_MS = 45000;
 const BACKEND_GRACEFUL_STOP_MS = 8000;
+// Linux/macOS: time for SIGTERM to work before SIGKILL.
+const SIGTERM_GRACE_MS = 3000;
 const BACKEND_MAX_RESTARTS = 3;
 const BACKEND_RESTART_WINDOW_MS = 2 * 60 * 1000;
 const GSI_STATUS_POLL_MS = 1000;
@@ -1647,6 +1649,18 @@ async function stopManaged(name, { timeoutMs = 5000 } = {}) {
 
   if (await exited) {
     return "graceful";
+  }
+  if (process.platform !== "win32") {
+    // Still up: ask once more the POSIX way (uvicorn handles SIGTERM) before the kill.
+    appendLog("launcher", `${name} did not exit within ${timeoutMs / 1000}s; sending SIGTERM.`, { force: true });
+    try {
+      child.kill("SIGTERM");
+    } catch (error) {
+      appendLog("launcher", `Stop signal failed for ${name}: ${error.message}`, { force: true });
+    }
+    if (await waitForExit(child, SIGTERM_GRACE_MS)) {
+      return "forced";
+    }
   }
   appendLog("launcher", `${name} did not exit within ${timeoutMs / 1000}s; forcing it to stop.`, { force: true });
   try {
@@ -3507,6 +3521,21 @@ const xdgAutostart = linuxDesktop.createXdgAutostart({
   log: (message) => appendLog("launcher", message, { force: true })
 });
 
+// Linux, at every start: say which display backend runs, make an AppImage show
+// up in the app menu, and keep an enabled autostart entry pointing at the file
+// that is running now (the AppImage may have been moved or updated).
+function setUpLinuxDesktop() {
+  const log = (message) => appendLog("launcher", message, { force: true });
+  if (linuxStartup) {
+    log(`Linux display backend: ${linuxStartup.display} (session ${linuxStartup.session || "unknown"}, DISPLAY=${process.env.DISPLAY || "none"}).`);
+  }
+  if (!IS_PACKAGED) {
+    return;
+  }
+  linuxDesktop.ensureAppImageIntegration({ iconSource: path.join(ICON_DIR, "icon.png"), log });
+  xdgAutostart.refresh();
+}
+
 function isAutostartSupported() {
   return IS_PACKAGED && (process.platform === "win32" || process.platform === "darwin" || process.platform === "linux");
 }
@@ -4190,6 +4219,9 @@ function bootstrap() {
       settings.set("installedAt", Date.parse(settings.get("gsiSeenAt")) || Date.now());
     }
     migrateAutostartPath();
+    if (process.platform === "linux") {
+      setUpLinuxDesktop();
+    }
     autostartEnabled = isAutostartEnabled();
     createTray();
     // After an update the app comes back the way it was: hidden in the tray
@@ -4265,7 +4297,8 @@ function bootstrap() {
     }
   });
 
-  for (const signal of ["SIGINT", "SIGTERM"]) {
+  // SIGHUP: the terminal that started the app (Linux) was closed.
+  for (const signal of process.platform === "linux" ? ["SIGINT", "SIGTERM", "SIGHUP"] : ["SIGINT", "SIGTERM"]) {
     process.on(signal, () => quitApp(`signal ${signal}`));
   }
 }

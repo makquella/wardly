@@ -9,6 +9,7 @@ import {
   aggregateChannels,
   channelSource,
   installerUrl,
+  downloadKind,
   latestInstaller,
   resetInstallerCache
 } from "../src/channels.js";
@@ -113,6 +114,70 @@ test("the installer URL comes from the latest release tag", async () => {
   // GitHub down with nothing cached: the releases page.
   resetInstallerCache();
   assert.equal(await latestInstaller(async () => { throw new Error("offline"); }, NOW), RELEASES_PAGE);
+});
+
+// GitHub with a release whose assets are `assets` (names); others answer 404.
+function githubWithAssets(tag, assets, calls = []) {
+  return async (url, init) => {
+    calls.push(url);
+    if (url === RELEASES_PAGE) {
+      return new Response(null, { status: 302, headers: { location: `https://github.com/makquella/wardly/releases/tag/${tag}` } });
+    }
+    const found = assets.some((name) => url.endsWith(`/${tag}/${name}`));
+    return new Response(null, { status: found ? 302 : 404 });
+  };
+}
+
+test("Linux downloads: AppImage, pacman and deb of the latest release", async () => {
+  assert.equal(downloadKind("Linux-Pacman"), "linux-pacman");
+  for (const bad of [undefined, "", "mac", "__proto__", "constructor", "linux;rm"]) {
+    assert.equal(downloadKind(bad), "windows", String(bad));
+  }
+  const location = "https://github.com/makquella/wardly/releases/tag/v1.2.3";
+  const base = "https://github.com/makquella/wardly/releases/download/v1.2.3";
+  assert.equal(installerUrl(location, "linux"), `${base}/Wardly-1.2.3-x86_64.AppImage`);
+  assert.equal(installerUrl(location, "linux-pacman"), `${base}/Wardly-1.2.3-x86_64.pacman`);
+  assert.equal(installerUrl(location, "linux-deb"), `${base}/Wardly_1.2.3_amd64.deb`);
+  assert.equal(installerUrl(location), `${base}/Wardly-Setup-1.2.3.exe`);
+
+  resetInstallerCache();
+  const all = ["Wardly-0.70.0-x86_64.AppImage", "Wardly-0.70.0-x86_64.pacman", "Wardly_0.70.0_amd64.deb"];
+  const fetchAll = githubWithAssets("v0.70.0", all);
+  assert.match(await latestInstaller(fetchAll, NOW, "linux"), /v0\.70\.0\/Wardly-0\.70\.0-x86_64\.AppImage$/);
+  assert.match(await latestInstaller(fetchAll, NOW, "linux-deb"), /Wardly_0\.70\.0_amd64\.deb$/);
+  // The kinds are cached apart: the Windows lookup is not answered with the AppImage.
+  assert.match(await latestInstaller(fetchAll, NOW, "windows"), /Wardly-Setup-0\.70\.0\.exe$/);
+  const calls = [];
+  await latestInstaller(githubWithAssets("v0.71.0", all, calls), NOW + 60_000, "linux");
+  assert.deepEqual(calls, [], "cached for 10 minutes");
+});
+
+test("a release without Linux packages sends Linux players to the releases page", async () => {
+  resetInstallerCache();
+  const windowsOnly = githubWithAssets("v0.64.0", ["Wardly-Setup-0.64.0.exe"]);
+  assert.equal(await latestInstaller(windowsOnly, NOW, "linux"), RELEASES_PAGE);
+  assert.equal(await latestInstaller(windowsOnly, NOW, "linux-pacman"), RELEASES_PAGE);
+  assert.match(await latestInstaller(windowsOnly, NOW, "windows"), /Wardly-Setup-0\.64\.0\.exe$/);
+  // Once the package appears it is used (a miss is not cached).
+  const ready = githubWithAssets("v0.64.0", ["Wardly-0.64.0-x86_64.AppImage"]);
+  assert.match(await latestInstaller(ready, NOW + 1000, "linux"), /AppImage$/);
+});
+
+test("/d/<source>?os=linux redirects to the AppImage and still counts the download", async () => {
+  resetInstallerCache();
+  const env = fakeEnv();
+  const fetchImpl = githubWithAssets("v0.70.0", ["Wardly-0.70.0-x86_64.AppImage"]);
+  const response = await handleDownload(
+    new Request("https://api.luhovyimvp.dev/d/reddit?os=linux", { headers: { "cf-connecting-ip": "203.0.113.9" } }),
+    "reddit",
+    env,
+    NOW,
+    fetchImpl
+  );
+  assert.equal(response.status, 302);
+  assert.match(response.headers.get("location"), /Wardly-0\.70\.0-x86_64\.AppImage$/);
+  const plain = await handleDownload(new Request("https://api.luhovyimvp.dev/d/reddit"), "reddit", env, NOW, githubRedirect("v0.70.0"));
+  assert.match(plain.headers.get("location"), /Wardly-Setup-0\.70\.0\.exe$/);
 });
 
 test("a visit and a download are counted per source and day", async () => {
