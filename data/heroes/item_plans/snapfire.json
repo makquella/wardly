@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "hero": "Snapfire",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "453 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 46.1%. One rule: Glimmer Cape against three or more magic damage heroes (42 games, 11 without it). Reproduce: python scripts/hero_item_stats.py snapfire.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Glimmer Cape.",
+    "hero": "Valve /datafeed/herodata hero_id 128 (Firesnap Cookie, Mortimer Kisses), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_glimmer",
+      "why": "magic_glimmer",
+      "family": "glimmer",
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 17,
+      "basis": "Valve 7.41f Glimmer Cape (2150 gold): after a 0.5 s delay invisibility, +20 movement speed and a 375 magic damage barrier for 5 s on you or an ally, 600 cast range, 15 s cooldown. It is in her build (63% of the won games, ~21 min); against three or more magic damage heroes she buys it in 74% of 42 games (52% otherwise), won 52% against 18% (11 games without it).",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} is in your build, take it earlier, it gives you or an ally a 375 magic damage barrier for 5 seconds",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} і так у вашій збірці — візьміть його раніше, він дає вам або союзнику магічний бар'єр на 375 шкоди на 5 секунд"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 97% (1), magic_wand 84% (4), ring_of_basilius 97% (8), arcane_boots 97% (12), aghanims_shard 66% (20), glimmer_cape 63% (21), headdress 24% (21), mekansm 21% (23), staff_of_wizardry 54% (25), blink 36% (25), force_staff 31% (27). Reviewed: dropped Ring of Basilius, Headdress, Mekansm (21%), Staff of Wizardry (parts). STRATZ pos4: Blink Dagger 21 min (44% of 4628 games), earlier than the league games (36%, 25 min); pos5 has no build.",
+  "skills": {
+    "order": [
+      "snapfire_scatterblast",
+      "snapfire_firesnap_cookie",
+      "snapfire_lil_shredder"
+    ],
+    "games": 453,
+    "first_agree": 385,
+    "opening": {
+      "name": "snapfire_scatterblast",
+      "agree": 307
+    },
+    "names": {
+      "snapfire_scatterblast": "Scatterblast",
+      "snapfire_firesnap_cookie": "Firesnap Cookie",
+      "snapfire_lil_shredder": "Lil' Shredder",
+      "snapfire_mortimer_kisses": "Mortimer Kisses"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_snapfire_5",
+        "label": "Mortimer Kisses Burn DPS",
+        "picked": 284,
+        "games": 428
+      },
+      "15": {
+        "name": "special_bonus_unique_snapfire_3",
+        "label": "Firesnap Cookie Cooldown",
+        "picked": 152,
+        "games": 210
+      },
+      "20": {
+        "name": "special_bonus_unique_snapfire_firesnap_cookie_additional_charge",
+        "label": "Firesnap Cookie Charges",
+        "picked": 58,
+        "games": 63
+      },
+      "25": {
+        "name": "special_bonus_unique_snapfire_1",
+        "label": "Mortimer Kisses Launched",
+        "picked": 9,
+        "games": 11
+      }
+    },
+    "basis": "453 games since 7.41: maxed snapfire_scatterblast > snapfire_firesnap_cookie > snapfire_lil_shredder 206 (win 53.9%), snapfire_scatterblast > snapfire_firesnap_cookie 71 (win 22.5%), snapfire_scatterblast > snapfire_lil_shredder 61 (win 41.0%); talents 10: Mortimer Kisses Burn DPS 284/428 (46.8%), Scatterblast Damage 144/428 (52.1%); 15: Firesnap Cookie Cooldown 152/210 (58.6%), Lil' Shredder attacks 58/210 (70.7%); 20: Firesnap Cookie Charges 58/63 (65.5%), Lil' Shredder Targets 5/63 (80.0%); 25: Mortimer Kisses Launched 9/11 (55.6%), Lil' Shredder Attack Damage 2/11 (50.0%)."
+  },
+  "fight": [
+    "snapfire_firesnap_cookie",
+    "snapfire_mortimer_kisses"
+  ]
+}

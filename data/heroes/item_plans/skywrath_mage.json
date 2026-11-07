@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "hero": "Skywrath Mage",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "569 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 43.9%. Eul's, Glimmer Cape and Ghost Scepter rules rest on 61, 40 and 35 games; the Ghost Scepter one is thin (14 games with it). Reproduce: python scripts/hero_item_stats.py skywrath_mage.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Eul's Scepter of Divinity, Glimmer Cape, Ghost Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 101 (Ancient Seal, Mystic Flare), 44 (Phantom Assassin: Phantom Strike is a unit-targeted jump) and 71 (Spirit Breaker: Charge of Darkness is unit-targeted), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "targeted_jumpers_cyclone",
+      "why": "targeted_jumpers_cyclone",
+      "family": "cyclone",
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity",
+      "enemy": "targeted_jumpers",
+      "minute": 20,
+      "basis": "Valve 7.41f Eul's Scepter of Divinity (2600 gold): Cyclone on yourself makes you invulnerable for 2.5 s, basic dispel, goes through spell immunity, 23 s cooldown, 550 cast range. Phantom Assassin's Phantom Strike and Spirit Breaker's Charge of Darkness are unit-targeted jumps (/herodata). Not in the usual build; high-rank Skywrath Mages against them buy it in 23% of 61 games (6% otherwise), won 64% against 23%.",
+      "reason": {
+        "en": "{enemy} jumps onto a hero with {spell}: {item} on yourself makes you invulnerable for 2.5 seconds and dispels some debuffs",
+        "uk": "{enemy} стрибає на героя через {spell}: {item} на себе робить вас невразливим на 2,5 секунди й знімає частину дебафів"
+      }
+    },
+    {
+      "id": "magic_glimmer",
+      "why": "magic_glimmer",
+      "family": "glimmer",
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 18,
+      "basis": "Valve 7.41f Glimmer Cape (2150 gold): after a 0.5 s delay invisibility, +20 movement speed and a 375 magic damage barrier for 5 s on you or an ally, 600 cast range, 15 s cooldown. Not in the usual build; against three or more magic damage heroes high-rank Skywrath Mages buy it in 38% of 40 games (12% otherwise), won 80% against 52%.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} puts a 375 magic damage barrier on you or an ally for 5 seconds",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} дає вам або союзнику магічний бар'єр на 375 шкоди на 5 секунд"
+      }
+    },
+    {
+      "id": "physical_ghost",
+      "why": "physical_ghost",
+      "family": "ghost",
+      "item": "ghost",
+      "name": "Ghost Scepter",
+      "enemy": "physical",
+      "count": 2,
+      "minute": 21,
+      "basis": "Valve 7.41f Ghost Scepter (1500 gold): 4 s ghost form, immune to physical damage but unable to attack and more vulnerable to magic damage, 22 s cooldown. It is in his build (32% of the won games, ~25 min); against two or more physical carries it is 40% of 35 games (30% otherwise), won 57% against 24%.",
+      "reason": {
+        "en": "{enemy} and another physical carry are in their team: {item} is in your build, take it earlier, it makes you immune to physical damage for 4 seconds",
+        "uk": "{enemy} та ще один фізичний керрі в їхній команді: {item} і так у вашій збірці — візьміть його раніше, він робить вас невразливим до фізичної шкоди на 4 секунди"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "rod_of_atos",
+      "name": "Rod of Atos"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "kaya",
+      "name": "Kaya"
+    },
+    {
+      "item": "ghost",
+      "name": "Ghost Scepter"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: null_talisman 84% (3), ward_dispenser 94% (4), magic_wand 50% (8), ring_of_basilius 60% (10), arcane_boots 59% (13), staff_of_wizardry 89% (18), great_famango 21% (18), vitality_booster 52% (20), rod_of_atos 45% (21), aghanims_shard 45% (24), kaya 47% (25), ghost 32% (25), blink 32% (28), point_booster 22% (28). Reviewed: dropped Null Talisman, Ring of Basilius, Great Famango, Vitality Booster, Staff of Wizardry and Point Booster (parts or small). STRATZ pos4: Rod of Atos 19 min (57%), the same first item. Ghost Scepter 32% of the won games.",
+  "skills": {
+    "order": [
+      "skywrath_mage_arcane_bolt",
+      "skywrath_mage_ancient_seal",
+      "skywrath_mage_concussive_shot"
+    ],
+    "games": 569,
+    "first_agree": 294,
+    "opening": {
+      "name": "skywrath_mage_concussive_shot",
+      "agree": 507
+    },
+    "names": {
+      "skywrath_mage_arcane_bolt": "Arcane Bolt",
+      "skywrath_mage_ancient_seal": "Ancient Seal",
+      "skywrath_mage_concussive_shot": "Concussive Shot",
+      "skywrath_mage_mystic_flare": "Mystic Flare"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_skywrath_6",
+        "label": "Arcane Bolt Cast Range",
+        "picked": 443,
+        "games": 550
+      },
+      "15": {
+        "name": "special_bonus_unique_skywrath",
+        "label": "Ancient Seal Cooldown",
+        "picked": 290,
+        "games": 349
+      },
+      "20": {
+        "name": "special_bonus_unique_skywrath_3",
+        "label": "Ancient Seal Increased Magic Damage",
+        "picked": 69,
+        "games": 123
+      },
+      "25": {
+        "name": "special_bonus_unique_skywrath_5",
+        "label": "Mystic Flare Damage",
+        "picked": 15,
+        "games": 21
+      }
+    },
+    "basis": "569 games since 7.41: maxed skywrath_mage_arcane_bolt > skywrath_mage_ancient_seal > skywrath_mage_concussive_shot 238 (win 54.2%), skywrath_mage_ancient_seal > skywrath_mage_arcane_bolt > skywrath_mage_concussive_shot 71 (win 57.7%), skywrath_mage_arcane_bolt > skywrath_mage_ancient_seal 56 (win 16.1%); talents 10: Arcane Bolt Cast Range 443/550 (46.3%), +1.5 Mana Regen 107/550 (42.1%); 15: Ancient Seal Cooldown 290/349 (58.6%), Concussive Shot Slow 59/349 (59.3%); 20: Ancient Seal Increased Magic Damage 69/123 (68.1%), Global Concussive Shot 54/123 (57.4%); 25: Mystic Flare Damage 15/21 (73.3%), Arcane Bolt Int Multiplier 6/21 (50.0%)."
+  },
+  "fight": [
+    "skywrath_mage_ancient_seal",
+    "skywrath_mage_mystic_flare"
+  ],
+  "notes": [
+    {
+      "id": "escape_seal",
+      "enemy": "escape",
+      "minute": 8,
+      "basis": "Valve 7.41f Ancient Seal: silences the target for 3/4/5/6 s and amplifies spell damage taken, 700-850 cast range, 14 s cooldown. The escape group (draft_analysis.ESCAPES) casts its escapes as spells, which a silence stops.",
+      "reason": {
+        "en": "{enemy} escapes with a spell: keep Ancient Seal for them, a silence stops them from casting it",
+        "uk": "{enemy} тікає за допомогою закляття: бережіть Ancient Seal для нього — тиша не дасть його застосувати"
+      }
+    }
+  ]
+}

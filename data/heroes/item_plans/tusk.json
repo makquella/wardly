@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "hero": "Tusk",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1427 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 50.2%. Eul's against magic damage lineups rests on 108 games; against targeted jumpers on 97 games with a small win gap (56% against 46%). Reproduce: python scripts/hero_item_stats.py tusk.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Eul's Scepter of Divinity.",
+    "hero": "Valve /datafeed/herodata hero_id 100 (Snowball, Walrus Kick), 44 (Phantom Assassin: Phantom Strike is a unit-targeted jump) and 71 (Spirit Breaker: Charge of Darkness is unit-targeted), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_cyclone",
+      "why": "magic_cyclone",
+      "family": "cyclone",
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 24,
+      "basis": "Valve 7.41f Eul's Scepter of Divinity (2600 gold): Cyclone on yourself makes you invulnerable for 2.5 s, basic dispel, goes through spell immunity, 23 s cooldown, 550 cast range. It is 24% of the won games (29 min); against three or more magic damage heroes high-rank Tusks buy it in 33% of 108 games (20% otherwise), won 69% against 40%.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} on yourself makes you invulnerable for 2.5 seconds and dispels some debuffs",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} на себе робить вас невразливим на 2,5 секунди й знімає частину дебафів"
+      }
+    },
+    {
+      "id": "targeted_jumpers_cyclone",
+      "why": "targeted_jumpers_cyclone",
+      "family": "cyclone",
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity",
+      "enemy": "targeted_jumpers",
+      "minute": 24,
+      "basis": "Valve 7.41f Eul's Scepter of Divinity (2600 gold): Cyclone on yourself makes you invulnerable for 2.5 s, basic dispel, goes through spell immunity, 23 s cooldown, 550 cast range. Phantom Assassin's Phantom Strike and Spirit Breaker's Charge of Darkness are unit-targeted jumps (/herodata). High-rank Tusks against them buy it in 33% of 97 games (20% otherwise), won 56% against 46%.",
+      "reason": {
+        "en": "{enemy} jumps onto a hero with {spell}: {item} on yourself makes you invulnerable for 2.5 seconds and dispels some debuffs",
+        "uk": "{enemy} стрибає на героя через {spell}: {item} на себе робить вас невразливим на 2,5 секунди й знімає частину дебафів"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (2), tranquil_boots 56% (8), magic_wand 71% (9), phase_boots 23% (17), blink 99% (18), great_famango 22% (23), staff_of_wizardry 57% (27), cyclone 24% (29), ogre_axe 43% (30), point_booster 26% (32), mithril_hammer 21% (34), blade_of_alacrity 23% (34), ultimate_scepter 21% (35). Reviewed: dropped Tranquil Boots (900 gold), Phase Boots, Great Famango, Staff of Wizardry, Ogre Axe, Point Booster, Mithril Hammer and Blade of Alacrity (parts; together they point to Aghanim's Scepter, bought whole in 21% of the won games at 35 min). STRATZ pos4/pos5 (3208 and 3212 games): only Blink Dagger 17-18 min (100%).",
+  "skills": {
+    "order": [
+      "tusk_tag_team",
+      "tusk_snowball",
+      "tusk_ice_shards"
+    ],
+    "games": 1427,
+    "first_agree": 836,
+    "opening": {
+      "name": "tusk_tag_team",
+      "agree": 739
+    },
+    "names": {
+      "tusk_tag_team": "Tag Team",
+      "tusk_snowball": "Snowball",
+      "tusk_ice_shards": "Ice Shards",
+      "tusk_walrus_kick": "Walrus Kick"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_tusk_7",
+        "label": "Walrus Punch Stun Duration",
+        "picked": 1296,
+        "games": 1385
+      },
+      "15": {
+        "name": "special_bonus_unique_tusk_2",
+        "label": "Snowball Damage",
+        "picked": 520,
+        "games": 1017
+      },
+      "20": {
+        "name": "special_bonus_unique_tusk_6",
+        "label": "Snowball Cooldown",
+        "picked": 390,
+        "games": 416
+      },
+      "25": {
+        "name": "special_bonus_unique_tusk_shard_dps",
+        "label": "Ice Shards slow by and deal DPS",
+        "picked": 60,
+        "games": 77
+      }
+    },
+    "basis": "1427 games since 7.41: maxed tusk_tag_team > tusk_snowball > tusk_ice_shards 541 (win 60.1%), tusk_tag_team > tusk_ice_shards > tusk_snowball 189 (win 58.7%), tusk_ice_shards > tusk_snowball > tusk_tag_team 179 (win 57.5%); talents 10: Walrus Punch Stun Duration 1296/1385 (51.6%), Tag Team Duration 89/1385 (50.6%); 15: Snowball Damage 520/1017 (61.2%), +325 Health 497/1017 (60.8%); 20: Snowball Cooldown 390/416 (65.4%), Walrus Punch Crit 26/416 (76.9%); 25: Ice Shards slow by and deal DPS 60/77 (53.3%), Chance Walrus Punch 17/77 (70.6%)."
+  },
+  "fight": [
+    "tusk_snowball",
+    "tusk_walrus_kick"
+  ]
+}

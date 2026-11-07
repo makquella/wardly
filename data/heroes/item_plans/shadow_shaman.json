@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "hero": "Shadow Shaman",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "713 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 49.5%. Thin sample note: none of the groups under 20 games is used; the Ghost Scepter rule rests on 57 games of Bristleback, Spectre or Huskar lineups. Glimmer Cape in the build follows STRATZ pos5 (38% of 8439 games), not the league games (24% of the won games). Reproduce: python scripts/hero_item_stats.py shadow_shaman.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Ghost Scepter, Glimmer Cape.",
+    "hero": "Valve /datafeed/herodata hero_id 27 (Shackles, Hex, Mass Serpent Ward), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "break_ghost",
+      "why": "break_ghost",
+      "family": "ghost",
+      "item": "ghost",
+      "name": "Ghost Scepter",
+      "enemy": "break",
+      "minute": 22,
+      "basis": "Valve 7.41f Ghost Scepter (1500 gold): 4 s ghost form, immune to physical damage but unable to attack and more vulnerable to magic damage, 22 s cooldown. Ghost Scepter is not in the usual build (under 25% of the won games); high-rank Shadow Shamans against Bristleback, Spectre or Huskar buy it in 19% of 57 games against them (9% otherwise), won 64% against 57%. Shackles is channeled, so the 4 s of ghost form do not stop the cast.",
+      "reason": {
+        "en": "{enemy} kills with attacks: {item} makes you immune to physical damage for 4 seconds, but you cannot attack and take more magic damage",
+        "uk": "{enemy} вбиває атаками: {item} робить вас невразливим до фізичної шкоди на 4 секунди, але ви не можете атакувати й отримуєте більше магічної шкоди"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "aether_lens",
+      "name": "Aether Lens"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 99% (4), magic_wand 72% (5), ring_of_basilius 74% (8), tranquil_boots 24% (9), arcane_boots 72% (11), blink 97% (19), aghanims_shard 32% (25), aether_lens 53% (26), ogre_axe 21% (29), glimmer_cape 24% (29), staff_of_wizardry 22% (29). Reviewed: dropped Ring of Basilius, Tranquil Boots (900 gold), Ogre Axe and Staff of Wizardry (parts). Glimmer Cape added last from STRATZ pos5 (27 min, 38% of 8439 games, won 55%): in the league games it is 24% of the won games (29 min). STRATZ pos5 order: Blink Dagger 19, Aether Lens 26 (41%), Glimmer Cape 27; pos4: Blink Dagger 18 (100%).",
+  "skills": {
+    "order": [
+      "shadow_shaman_shackles",
+      "shadow_shaman_voodoo",
+      "shadow_shaman_ether_shock"
+    ],
+    "games": 713,
+    "first_agree": 539,
+    "opening": {
+      "name": "shadow_shaman_shackles",
+      "agree": 506
+    },
+    "names": {
+      "shadow_shaman_shackles": "Shackles",
+      "shadow_shaman_voodoo": "Hex",
+      "shadow_shaman_ether_shock": "Ether Shock",
+      "shadow_shaman_mass_serpent_ward": "Mass Serpent Ward"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_shadow_shaman_6",
+        "label": "Shackles Total Damage",
+        "picked": 572,
+        "games": 681
+      },
+      "15": {
+        "name": "special_bonus_unique_shadow_shaman_7",
+        "label": "Hex Breaks",
+        "picked": 244,
+        "games": 390
+      },
+      "20": {
+        "name": "special_bonus_unique_shadow_shaman_2",
+        "label": "Shackles Duration",
+        "picked": 67,
+        "games": 88
+      },
+      "25": {
+        "name": "special_bonus_unique_shadow_shaman_4",
+        "label": "Ward Attack Targets",
+        "picked": 5,
+        "games": 9
+      }
+    },
+    "basis": "713 games since 7.41: maxed shadow_shaman_shackles > shadow_shaman_voodoo > shadow_shaman_ether_shock 318 (win 65.4%), shadow_shaman_shackles > shadow_shaman_voodoo 120 (win 20.0%), shadow_shaman_shackles > shadow_shaman_ether_shock > shadow_shaman_voodoo 62 (win 56.5%); talents 10: Shackles Total Damage 572/681 (50.3%), +1.75 Mana Regen 109/681 (56.0%); 15: Hex Breaks 244/390 (61.5%), Serpent Wards Attack Range 146/390 (75.3%); 20: Shackles Duration 67/88 (67.2%), Serpent Wards Max HP 21/88 (81.0%); 25: Ward Attack Targets 5/9 (80.0%), Ether Shock Damage 4/9 (50.0%)."
+  },
+  "fight": [
+    "shadow_shaman_shackles",
+    "shadow_shaman_mass_serpent_ward"
+  ]
+}

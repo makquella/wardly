@@ -88,7 +88,7 @@
       "basis": "Valve Static Storm (fetched 2026-11-07): silences all enemy units in 550 radius for 6 s (70-100 s cooldown, 800 cast range); the escape group is the escapes a silence stops (draft_analysis.ESCAPES). Glimpse: teleports the hero back to where it was 4 s ago (600-1800 range, 18-24 s cooldown).",
       "reason": {
         "en": "{enemy} runs away with spells: Static Storm silences everyone inside for 6 s so no escape spell works, and Glimpse pulls a runner back to where they stood 4 s ago",
-        "uk": "{enemy} тікає заклинаннями: Static Storm мовчанкою на 6 с не дає нікому всередині втекти, а Glimpse повертає втікача туди, де він стояв 4 с тому"
+        "uk": "{enemy} тікає заклинаннями: Static Storm накладає тишу на всіх усередині на 6 с, тож заклинання втечі не спрацює, а Glimpse повертає втікача туди, де він стояв 4 с тому"
       }
     }
   ]

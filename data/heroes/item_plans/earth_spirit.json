@@ -92,7 +92,7 @@
       "basis": "Valve Geomagnetic Grip (fetched 2026-11-07): enemies struck by the pulled remnant or ally are silenced for 2.3-3.5 s (13 s cooldown, 1000-1300 range to a remnant); the escape group is the escapes a silence stops (draft_analysis.ESCAPES).",
       "reason": {
         "en": "{enemy} runs away with spells: Geomagnetic Grip silences the enemies the pulled remnant strikes for up to 3.5 s, so pull one through them before they cast it",
-        "uk": "{enemy} тікає заклинаннями: Geomagnetic Grip мовчанкою до 3,5 с накриває ворогів, яких зачепить стягнутий уламок, тож протягніть його крізь них, поки вони не встигли втекти"
+        "uk": "{enemy} тікає заклинаннями: Geomagnetic Grip накладає тишу до 3,5 с на ворогів, яких зачепить стягнутий уламок, тож протягніть його крізь них, поки вони не втекли"
       }
     }
   ]

@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "hero": "Witch Doctor",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "637 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 52.9%. Thin: the Spirit Vessel rule has 94 healing games but only ~12 with the item. Reproduce: python scripts/hero_item_stats.py witch_doctor.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel.",
+    "hero": "Valve /datafeed/herodata hero_id 30 (Maledict, Death Ward), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "healing_vessel",
+      "why": "healing_vessel",
+      "family": "vessel",
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel",
+      "enemy": "healing",
+      "minute": 18,
+      "basis": "Valve 7.41f Spirit Vessel (2725 gold): Soul Release on an enemy cuts health restoration by 70%, drains 4% of current health a second and deals 25 damage a second for 8 s, 750 cast range, 10 s cooldown. Not in the usual build; against Lifestealer, Oracle, Huskar, Necrophos or Alchemist high-rank Witch Doctors buy it in 13% of 94 games (3% otherwise), won 67% against 50%; Urn of Shadows, its first step, 27% against 12%.",
+      "reason": {
+        "en": "{enemy} heals a lot: {item} cuts their health restoration by 70% for 8 seconds",
+        "uk": "{enemy} багато лікується: {item} на 8 секунд ріже їхнє відновлення здоров'я на 70%"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "ghost",
+      "name": "Ghost Scepter"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (2), magic_wand 90% (9), ring_of_basilius 94% (10), arcane_boots 93% (12), glimmer_cape 51% (22), aghanims_shard 61% (25), blink 43% (28), staff_of_wizardry 39% (29), ghost 26% (30), point_booster 21% (32), ogre_axe 21% (34), vitality_booster 20% (34). Reviewed: dropped Ring of Basilius, Staff of Wizardry, Point Booster, Ogre Axe and Vitality Booster (parts). STRATZ pos5 (10364 games): Glimmer Cape 22 (64%), Blink Dagger 23 (69%), Aghanim's Scepter 35 (38%) -> Blink earlier and the Scepter added; the league games have Glimmer 21.5, Shard 25, Blink 28 and Ghost 30 (26%).",
+  "skills": {
+    "order": [
+      "witch_doctor_maledict",
+      "witch_doctor_paralyzing_cask",
+      "witch_doctor_voodoo_restoration"
+    ],
+    "games": 637,
+    "first_agree": 591,
+    "opening": {
+      "name": "witch_doctor_maledict",
+      "agree": 512
+    },
+    "names": {
+      "witch_doctor_maledict": "Maledict",
+      "witch_doctor_paralyzing_cask": "Paralyzing Cask",
+      "witch_doctor_voodoo_restoration": "Voodoo Restoration",
+      "witch_doctor_death_ward": "Death Ward"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_hp_200",
+        "label": "+200 Health",
+        "picked": 491,
+        "games": 616
+      },
+      "15": {
+        "name": "special_bonus_unique_witch_doctor_7",
+        "label": "Maledict Duration",
+        "picked": 370,
+        "games": 425
+      },
+      "20": {
+        "name": "special_bonus_unique_witch_doctor_maledict_spread",
+        "label": "Maledict bursts deal damage in a AoE",
+        "picked": 104,
+        "games": 155
+      },
+      "25": {
+        "name": "special_bonus_unique_witch_doctor_3",
+        "label": "Paralyzing Cask Bounces",
+        "picked": 17,
+        "games": 34
+      }
+    },
+    "basis": "637 games since 7.41: maxed witch_doctor_maledict > witch_doctor_paralyzing_cask > witch_doctor_voodoo_restoration 275 (win 61.1%), witch_doctor_maledict > witch_doctor_voodoo_restoration > witch_doctor_paralyzing_cask 187 (win 62.6%), witch_doctor_maledict > witch_doctor_paralyzing_cask 81 (win 23.5%); talents 10: +200 Health 491/616 (53.4%), Voodoo Restoration Mana Per Second 125/616 (60.0%); 15: Maledict Duration 370/425 (64.6%), Paralyzing Cask Cooldown 55/425 (60.0%); 20: Maledict bursts deal damage in a AoE 104/155 (67.3%), Target Max Health Voodoo Restoration Heal 51/155 (72.5%); 25: Paralyzing Cask Bounces 17/34 (64.7%), Death Ward Damage 17/34 (70.6%)."
+  },
+  "fight": [
+    "witch_doctor_death_ward",
+    "witch_doctor_maledict"
+  ]
+}
