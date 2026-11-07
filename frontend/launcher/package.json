@@ -126,7 +126,6 @@
       "executableName": "wardly",
       "syncDesktopName": true,
       "maintainer": "Wardly <noreply@luhovyimvp.dev>",
-      "packageName": "wardly",
       "synopsis": "Dota 2 coach: live advice overlay and match reviews",
       "description": "Wardly watches your Dota 2 match through Game State Integration and gives short advice on screen and by voice; after the game it reviews the match. Everything runs on your computer.",
       "desktop": {
@@ -143,6 +142,7 @@
     },
     "deb": {
       "artifactName": "Wardly_${version}_amd64.${ext}",
+      "packageName": "wardly",
       "recommends": [
         "libayatana-appindicator3-1",
         "speech-dispatcher",
@@ -151,6 +151,7 @@
     },
     "pacman": {
       "artifactName": "Wardly-${version}-x86_64.${ext}",
+      "packageName": "wardly",
       "compression": "zstd",
       "depends": [
         "gtk3",
