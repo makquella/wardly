@@ -228,3 +228,98 @@ jobs:
             ${{ runner.temp }}/smoke-*.json
             ${{ runner.temp }}/launcher.log
           if-no-files-found: ignore
+
+  linux:
+    # Builds on ubuntu-22.04 (oldest practical glibc for the PyInstaller backend)
+    # and adds the Linux packages to the release the Windows job created.
+    # latest-linux.yml is the AppImage's auto-update feed; the pacman and deb
+    # packages only get a "new version" notice in the app. See docs/PACKAGING_LINUX.md.
+    name: Build and publish Linux packages
+    needs: [source, validation, windows]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    env:
+      RELEASE_SHA: ${{ needs.source.outputs.sha }}
+      TAG: ${{ needs.source.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.source.outputs.sha }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-build.txt
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: frontend/launcher/package-lock.json
+
+      - name: Install packaging tools (bsdtar for pacman, Xvfb for the app smoke test)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libarchive-tools xvfb
+
+      - name: Verify validated source before building
+        run: python scripts/verify_source.py "$RELEASE_SHA"
+
+      - name: Build backend, Electron app, AppImage, pacman and deb
+        run: ./scripts/build-linux.sh
+
+      - name: Smoke test (backend /health, app, AppImage, packages)
+        run: ./scripts/smoke-linux.sh
+
+      - name: Add the Linux packages to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag_args=(--release-tag "$TAG")
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then tag_args+=(--allow-missing-tag); fi
+          python scripts/verify_source.py "$RELEASE_SHA" "${tag_args[@]}"
+          version="${TAG#v}"
+          dist="frontend/launcher/dist"
+          # electron-updater (AppImage) needs the feed, the AppImage and its blockmap;
+          # the pacman and deb packages are for manual installs (the app tells about new versions).
+          files=(
+            "$dist/latest-linux.yml"
+            "$dist/Wardly-$version-x86_64.AppImage"
+            "$dist/Wardly-$version-x86_64.pacman"
+            "$dist/Wardly_${version}_amd64.deb"
+          )
+          # The blockmap is embedded in the AppImage; a separate file only exists on some builder versions.
+          if [ -f "$dist/Wardly-$version-x86_64.AppImage.blockmap" ]; then
+            files+=("$dist/Wardly-$version-x86_64.AppImage.blockmap")
+          fi
+          for file in "${files[@]}"; do
+            [ -f "$file" ] || { echo "Missing release file: $file" >&2; exit 1; }
+          done
+          # The Windows job created the release; retry because GitHub answers 5xx now and then.
+          done_upload=false
+          for attempt in 1 2 3; do
+            python scripts/verify_source.py "$RELEASE_SHA" "${tag_args[@]}" || { echo "The validated source/tag no longer matches." >&2; exit 1; }
+            if gh release view "$TAG" >/dev/null 2>&1 && gh release upload "$TAG" "${files[@]}" --clobber; then
+              done_upload=true
+              break
+            fi
+            echo "Uploading failed (attempt $attempt), retrying in 30 s"
+            sleep 30
+          done
+          if [ "$done_upload" != "true" ]; then echo "gh release upload failed three times" >&2; exit 1; fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-linux-smoke-logs
+          path: |
+            ${{ runner.temp }}/smoke-*.json
+            ${{ runner.temp }}/launcher.log
+          if-no-files-found: ignore
