@@ -1,7 +1,8 @@
 name: Release
 
 # Push a tag "v<version>" (matching frontend/launcher/package.json) to build,
-# smoke-test and publish the Windows installer as a GitHub Release. Or run it
+# smoke-test and publish the Windows installer as a GitHub Release (the Linux
+# packages are added to the same release by the "linux" job). Or run it
 # by hand on main (Actions -> Release -> Run workflow): it then releases the
 # version from package.json and creates the tag "v<version>" itself when it
 # publishes. Installed apps update themselves from the latest release
@@ -71,6 +72,8 @@ jobs:
       source_sha: ${{ needs.source.outputs.sha }}
       # This workflow does its own Windows build with signing and smoke below.
       skip_windows: true
+      # ...and its own Linux build and smoke (job "linux" below).
+      skip_linux: true
 
   windows:
     name: Build and publish Windows installer
