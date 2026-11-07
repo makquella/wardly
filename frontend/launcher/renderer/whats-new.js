@@ -9,6 +9,9 @@
 
   const TEXT = {
     en: {
+      "0.65.0": [
+        "Item plans for all 25 supports, as the cores have: the build in the order high-rank players buy it, items against the enemy lineup, the skill build and the fight abilities. The «gold unspent» card and the death screen name the plan's next item and why (Glimmer Cape against three magic heroes, Spirit Vessel against heavy healing, Rod of Atos for Hoodwink against escapes); the «no save item» tip names the save item of the hero's build, or stays off when high-rank players on that hero buy none."
+      ],
       "0.64.0": [
         "Wardly now runs on Linux (x86_64): an AppImage for any distro that updates itself, plus pacman (Arch, CachyOS) and deb (Debian, Ubuntu) packages that tell you about new versions. Same overlay, voice, tray and reviews as on Windows; in Dota use «Borderless window». Install xprop and xwininfo so the overlay hides when Dota is not focused, and speech-dispatcher with a voice for spoken advice.",
         "Reviews and build advice stay full when OpenDota is slow: hero statistics, items and per-hero item timings now come from the Wardly server, refreshed from OpenDota once a day. The app asks OpenDota itself only for your matches (and for this data if the server has nothing fresh), so you hit its limits less. Only the table name and a hero number go to the server, nothing about you; the Privacy page says so."
@@ -603,6 +606,9 @@
       ]
     },
     uk: {
+      "0.65.0": [
+        "Плани предметів для всіх 25 саппортів, як у корів: збірка в порядку, у якому її беруть сильні гравці, предмети проти складу ворога, прокачка й здібності для підсумку бійки. Картка «золото лежить» і екран смерті називають наступний предмет із плану й пояснюють чому (Glimmer Cape проти трьох магів, Spirit Vessel проти сильного лікування, Rod of Atos для Hoodwink проти втеч); підказка «немає рятівного предмета» називає рятівний предмет зі збірки героя або мовчить, якщо сильні гравці на ньому такого не беруть."
+      ],
       "0.64.0": [
         "Wardly тепер і на Linux (x86_64): AppImage для будь-якого дистрибутива, що оновлюється сам, і пакети pacman (Arch, CachyOS) та deb (Debian, Ubuntu), які повідомляють про нові версії. Ті самі підказки поверх гри, голос, трей і розбори, що й на Windows; у Доті — режим «Вікно без рамки». Встановіть xprop і xwininfo, щоб підказки ховалися, коли Дота не у фокусі, і speech-dispatcher з голосом для озвучення.",
         "Розбори й поради щодо збірки лишаються повними, коли OpenDota повільний: статистика героїв, предмети й таймінги предметів героя тепер приходять зі сервера Wardly, який раз на добу оновлює їх з OpenDota. До самого OpenDota застосунок звертається по ваші матчі (і по ці дані, якщо на сервері нічого свіжого), тож ви рідше впираєтеся в його ліміти. На сервер іде лише назва таблиці й номер героя, нічого про вас; це сказано на сторінці «Конфіденційність»."

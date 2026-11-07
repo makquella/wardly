@@ -257,4 +257,8 @@ def test_hero_insights_show_only_what_the_plan_and_its_stats_hold():
     kinds = [kind for kind, _title, _sub in hero_insights.rows(found, "en")]
     assert kinds[:3] == ["skills", "tempo", "fast"]
     assert hero_insights.facts("Phantom Lancer", "support") is None
-    assert hero_insights.facts("Crystal Maiden", "support") is None
+    # A support's plan has no tempo line: its post shows the skills and counters.
+    support = hero_insights.facts("Hoodwink", "support")
+    assert support["games"] == 1816 and "tempo" not in support
+    assert {c["item"] for c in support["counters"]} == {"Spirit Vessel", "Rod of Atos"}
+    assert [kind for kind, _t, _s in hero_insights.rows(support, "uk")][0] == "skills"
