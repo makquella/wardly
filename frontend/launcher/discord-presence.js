@@ -54,6 +54,29 @@ function ipcPath(index, { platform = process.platform, env = process.env } = {})
   return `${base.replace(/\/+$/, "")}/discord-ipc-${index}`;
 }
 
+// Every place a Discord client may listen on this platform, most likely first.
+// Linux: the plain client uses $XDG_RUNTIME_DIR; the Flatpak and Snap builds
+// keep the socket in their own folder below it (and the sandboxed build only
+// shares that folder if it was granted, so each one is tried in turn).
+function ipcPaths(index, { platform = process.platform, env = process.env } = {}) {
+  if (platform === "win32") {
+    return [ipcPath(index, { platform, env })];
+  }
+  const bases = [];
+  const runtime = env.XDG_RUNTIME_DIR ? env.XDG_RUNTIME_DIR.replace(/\/+$/, "") : "";
+  if (platform === "linux" && runtime) {
+    bases.push(runtime, `${runtime}/app/com.discordapp.Discord`, `${runtime}/snap.discord`);
+  }
+  bases.push(env.TMPDIR || env.TMP || env.TEMP || "/tmp");
+  if (platform === "linux") {
+    bases.push("/tmp");
+  }
+  const seen = new Set();
+  return bases
+    .map((base) => `${base.replace(/\/+$/, "")}/discord-ipc-${index}`)
+    .filter((candidate) => !seen.has(candidate) && seen.add(candidate));
+}
+
 const TEXT = {
   uk: {
     match: (hero) => (hero ? `Матч на ${hero}` : "Матч у Dota 2"),
@@ -123,7 +146,7 @@ function trackMatchStart(previous, { inMatch, hero, clock, now }) {
 function createDiscordPresence({
   clientId = CLIENT_ID,
   connect = (path) => net.createConnection(path),
-  pathFor = ipcPath,
+  pathFor = ipcPaths,
   log = () => {},
   onState = () => {},
   retryMs = RETRY_MS,
@@ -183,17 +206,23 @@ function createDiscordPresence({
     retryTimer.unref?.();
   }
 
-  function tryPipe(index) {
+  // pathFor(index) is one path or a list of places to look, tried in turn.
+  function tryPipe(index, variant = 0) {
     if (index > 9) {
       connecting = false;
       setState("no_discord");
       scheduleRetry();
       return;
     }
-    const candidate = connect(pathFor(index));
+    const paths = [].concat(pathFor(index));
+    const candidate = connect(paths[variant]);
     candidate.once("error", () => {
       candidate.destroy();
-      tryPipe(index + 1);
+      if (variant + 1 < paths.length) {
+        tryPipe(index, variant + 1);
+      } else {
+        tryPipe(index + 1);
+      }
     });
     candidate.once("connect", () => {
       candidate.removeAllListeners("error");
@@ -291,4 +320,4 @@ function createDiscordPresence({
   };
 }
 
-module.exports = { CLIENT_ID, OP, buildActivity, createDiscordPresence, decode, encode, ipcPath, trackMatchStart };
+module.exports = { CLIENT_ID, OP, buildActivity, createDiscordPresence, decode, encode, ipcPath, ipcPaths, trackMatchStart };
