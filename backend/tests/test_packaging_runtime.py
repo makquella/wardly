@@ -80,8 +80,8 @@ def test_frozen_linux_uses_xdg_config_home_and_private_dir(clean_env, tmp_path):
 
     config = _load_config()
 
-    assert config.WRITABLE_DIR == xdg / "DotaAICoach"
-    assert config.LOGS_DIR == xdg / "DotaAICoach" / "logs"
+    assert xdg / "DotaAICoach" == config.WRITABLE_DIR
+    assert xdg / "DotaAICoach" / "logs" == config.LOGS_DIR
     if os.name == "posix":
         assert stat.S_IMODE(config.WRITABLE_DIR.stat().st_mode) == 0o700
 
@@ -96,7 +96,7 @@ def test_frozen_linux_defaults_to_home_config(clean_env, tmp_path):
     # A relative XDG_CONFIG_HOME is ignored (XDG Base Directory spec).
     for value in ("", "relative/path"):
         clean_env.setenv("XDG_CONFIG_HOME", value)
-        assert _load_config().WRITABLE_DIR == tmp_path / "home" / ".config" / "DotaAICoach"
+        assert tmp_path / "home" / ".config" / "DotaAICoach" == _load_config().WRITABLE_DIR
 
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX permissions")

@@ -14,6 +14,7 @@
     "pack": "electron-builder --dir --publish never",
     "dist": "electron-builder --win nsis --publish never",
     "dist:portable": "electron-builder --win portable --publish never",
+    "dist:linux": "electron-builder --linux AppImage pacman deb --publish never",
     "test": "node --test test/steam-locator.test.js test/overlay-visibility.test.js test/overlay-placement.test.js test/dota-watcher.test.js test/updater.test.js test/problem-report.test.js test/match-upload.test.js test/voice.test.js test/map-marker.test.js test/i18n.test.js test/whats-new.test.js test/app-texts.test.js test/match-texts.test.js test/match-contract.test.js test/finding-evidence.test.js test/match-navigation.test.js test/match-requests.test.js test/match-list-requests.test.js test/career-requests.test.js test/player-status-requests.test.js test/profile-requests.test.js test/dota-assets.test.js test/dota-icons.test.js test/history-transfer.test.js test/transfer-code.test.js test/discord-presence.test.js test/discord-weekly.test.js test/advice-stats.test.js test/tour.test.js test/package-files.test.js test/gsi-config.test.js test/local-api.test.js test/renderer-security.test.js test/friends.test.js test/skill-arrow-placement.test.js test/settings-search.test.js test/settings.test.js"
   },
   "devDependencies": {
@@ -110,6 +111,58 @@
     },
     "portable": {
       "artifactName": "Wardly-${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "pacman", "arch": ["x64"] },
+        { "target": "deb", "arch": ["x64"] }
+      ],
+      "category": "Game",
+      "icon": "linux-icons",
+      "executableName": "wardly",
+      "maintainer": "Wardly <noreply@luhovyimvp.dev>",
+      "synopsis": "Dota 2 coach: live advice overlay and match reviews",
+      "description": "Wardly watches your Dota 2 match through Game State Integration and gives short advice on screen and by voice; after the game it reviews the match. Everything runs on your computer.",
+      "desktop": {
+        "entry": {
+          "Name": "Wardly",
+          "Comment": "Dota 2 coach: live advice overlay and match reviews",
+          "Keywords": "Dota;Dota 2;coach;overlay;",
+          "StartupWMClass": "Wardly"
+        }
+      }
+    },
+    "appImage": {
+      "artifactName": "Wardly-${version}-x86_64.${ext}"
+    },
+    "deb": {
+      "artifactName": "Wardly_${version}_amd64.${ext}",
+      "recommends": [
+        "libayatana-appindicator3-1",
+        "speech-dispatcher",
+        "x11-utils"
+      ]
+    },
+    "pacman": {
+      "artifactName": "Wardly-${version}-x86_64.${ext}",
+      "depends": [
+        "gtk3",
+        "libnotify",
+        "nss",
+        "libxss",
+        "libxtst",
+        "xdg-utils",
+        "at-spi2-core",
+        "libsecret",
+        "util-linux-libs"
+      ],
+      "fpm": [
+        "--pacman-optional-depends=libayatana-appindicator: tray icon on GNOME and other desktops without StatusNotifier",
+        "--pacman-optional-depends=speech-dispatcher: spoken advice (add espeak-ng or RHVoice for voices)",
+        "--pacman-optional-depends=xorg-xprop: Dota window focus tracking for the overlay",
+        "--pacman-optional-depends=xorg-xwininfo: Dota window position for the overlay"
+      ]
     }
   },
   "dependencies": {
