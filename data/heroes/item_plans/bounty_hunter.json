@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "hero": "Bounty Hunter",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.40",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "421 league games since 7.40 (data/heroes/item_stats; 7.41 alone had under 300), win 58.2%, soft support (STRATZ pos4, 8044 games). Reproduce: python scripts/hero_item_stats.py bounty_hunter.",
+    "items": "Valve /datafeed/itemdata item_id 267 (Spirit Vessel), current patch, fetched 2026-11-07.",
+    "hero": "Valve /datafeed/herodata hero_id 62 (Shuriken Toss, Shadow Walk, Track), fetched 2026-11-07."
+  },
+  "rules": [
+    {
+      "id": "healing",
+      "why": "healing_vessel",
+      "family": "healing",
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel",
+      "enemy": "healing",
+      "minute": 14,
+      "basis": "Valve /datafeed/itemdata Spirit Vessel (fetched 2026-11-07): Soul Release on an enemy cuts its health restoration by 70% and drains 4% of its current health per second for 8 s (10 s cooldown, 750 cast range, charges from hero deaths within 1500). High-rank Bounty Hunters against Huskar, Lifestealer, Oracle, Necrophos or Alchemist: Spirit Vessel in 29% of 58 games (18% otherwise), won 59% against 54%; STRATZ pos4 has it at ~17 min in 27% of games. Track (Valve: +8/12/16% damage taken for 25 s) marks the kill the Vessel keeps from healing back.",
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} cuts their health restoration by 70% for 8 s, so the hero you Track cannot heal out of the kill",
+        "uk": "{enemy} багато лікується: ваш {item} на 8 с знижує їхнє відновлення здоров'я на 70%, тож герой із вашим Track не вилікується з-під добивання"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "ancient_janggo",
+      "name": "Drum of Endurance",
+      "unless": [
+        "boots_of_bearing"
+      ]
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "boots_of_bearing",
+      "name": "Boots of Bearing"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "pers",
+      "name": "Perseverance"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (-2), tranquil_boots 83% (7), magic_wand 71% (10), urn_of_shadows 43% (12), ring_of_basilius 23% (12), headdress 40% (15), diadem 24% (16), ancient_janggo 43% (16), staff_of_wizardry 64% (22), cyclone 38% (24), ring_of_tarrasque 36% (24), boots_of_bearing 27% (24), great_famango 22% (24), force_staff 35% (25), pers 30% (28), platemail 22% (28), aghanims_shard 26% (31). Reviewed: Drum of Endurance is skipped once Boots of Bearing is owned (its part, bought ~8 min earlier); Tranquil Boots, Urn of Shadows and parts are not listed (under 1000 gold or parts). STRATZ pos4 (8044 games): Drum 14 min 41%, Spirit Vessel 17 min 27%, Eul's 21 min 54% (won 61%) - the Vessel step is left to the healing rule.",
+  "skills": {
+    "order": [
+      "bounty_hunter_shuriken_toss",
+      "bounty_hunter_wind_walk",
+      "bounty_hunter_jinada"
+    ],
+    "games": 238,
+    "first_agree": 106,
+    "opening": {
+      "name": "bounty_hunter_wind_walk",
+      "agree": 207
+    },
+    "names": {
+      "bounty_hunter_shuriken_toss": "Shuriken Toss",
+      "bounty_hunter_wind_walk": "Shadow Walk",
+      "bounty_hunter_jinada": "Jinada"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_bounty_hunter_5",
+        "label": "Shuriken Toss Slow",
+        "picked": 203,
+        "games": 234
+      },
+      "15": {
+        "name": "special_bonus_unique_bounty_hunter_9",
+        "label": "Damage Taken in Shadow Walk",
+        "picked": 152,
+        "games": 168
+      },
+      "20": {
+        "name": "special_bonus_unique_bounty_hunter_8",
+        "label": "Track Grants Shared Vision",
+        "picked": 52,
+        "games": 58
+      },
+      "25": {
+        "name": "special_bonus_unique_bounty_hunter_2",
+        "label": "Shuriken Toss Damage",
+        "picked": 20,
+        "games": 22
+      }
+    },
+    "basis": "238 games since 7.41: maxed bounty_hunter_shuriken_toss > bounty_hunter_wind_walk > bounty_hunter_jinada 86 (win 65.1%), bounty_hunter_wind_walk > bounty_hunter_shuriken_toss > bounty_hunter_jinada 74 (win 64.9%), bounty_hunter_wind_walk > bounty_hunter_shuriken_toss 22 (win 63.6%); talents 10: Shuriken Toss Slow 203/234 (61.6%), +30 Damage 31/234 (71.0%); 15: Damage Taken in Shadow Walk 152/168 (70.4%), Track Gold 16/168 (75.0%); 20: Track Grants Shared Vision 52/58 (73.1%), Jinada Gold Steal 6/58 (100.0%); 25: Shuriken Toss Damage 20/22 (75.0%), No Cooldown on Jinada 2/22 (100.0%)."
+  },
+  "fight": [
+    "bounty_hunter_wind_walk"
+  ],
+  "notes": [
+    {
+      "id": "invisibility_track",
+      "enemy": "invisibility",
+      "minute": 6,
+      "basis": "Valve Track (fetched 2026-11-07): grants True Sight of the target for 25 s, +8/12/16% damage taken, 1000 cast range, 6/5/4 s cooldown, and casting it does not take you out of Shadow Walk.",
+      "reason": {
+        "en": "{enemy} can go invisible: Track gives you true sight of the marked hero for 25 s from 1000 range, so mark them before the fight",
+        "uk": "{enemy} може ставати невидимим: Track дає вам справжній зір на позначеного героя на 25 с з відстані 1000, тож позначте його до бійки"
+      }
+    }
+  ]
+}

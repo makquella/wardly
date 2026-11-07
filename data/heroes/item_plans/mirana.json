@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "hero": "Mirana",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "410 league games since 7.41 (data/heroes/item_stats), win 46.3%. Reproduce: python scripts/hero_item_stats.py mirana.",
+    "items": "Valve 7.41f: Solar Crest.",
+    "hero": "Valve /datafeed/herodata hero_id 9 (abilities named in fight and skills), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "evasion_solar",
+      "why": "evasion_solar",
+      "family": "barrier",
+      "item": "solar_crest",
+      "name": "Solar Crest",
+      "enemy": "evasion",
+      "minute": 21,
+      "basis": "Valve 7.41f Solar Crest: Shine on an ally: +5 armor, +60 attack speed, +15% movement speed and a 350 physical damage barrier for 7 s (16 s cooldown, 100 mana, cast range 1000); shared cooldown with Pavise. It has no effect on evasion itself. High-rank games against an evasion hero: 32% of 50 games (14% otherwise), won 56% with it against 38% without; Pavise 34% (15%).",
+      "reason": {
+        "en": "{enemy} dodges attacks and hits hard: {item} gives an ally a 350 physical damage barrier, armor and attack speed for 7 s",
+        "uk": "{enemy} ухиляється від атак і боляче б'є: {item} дає союзнику бар'єр на 350 фізичної шкоди, броню та швидкість атаки на 7 с"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "essence_distiller",
+      "name": "Essence Distiller"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 52% (13), essence_distiller 42% (15), cyclone 43% (24), ultimate_scepter 43% (34). STRATZ pos4 (8648 games): Essence Distiller 13 min, Eul's 21 min (58%), Aghanim's Scepter 29 min (82%); pos5 the same at 12, 21, 30 min. The league build is later by 3-5 min.",
+  "skills": {
+    "order": [
+      "mirana_starfall",
+      "mirana_arrow",
+      "mirana_leap"
+    ],
+    "games": 410,
+    "first_agree": 364,
+    "opening": {
+      "name": "mirana_starfall",
+      "agree": 212
+    },
+    "names": {
+      "mirana_starfall": "Starstorm",
+      "mirana_arrow": "Sacred Arrow",
+      "mirana_leap": "Leap",
+      "mirana_invis": "Moonlight Shadow"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_mirana_6",
+        "label": "+150 Leap Distance",
+        "picked": 264,
+        "games": 401
+      },
+      "15": {
+        "name": "special_bonus_unique_mirana_5",
+        "label": "Moonlight Shadow gives +20% Evasion",
+        "picked": 253,
+        "games": 277
+      },
+      "20": {
+        "name": "special_bonus_unique_mirana_7",
+        "label": "+200 Starstorm Damage",
+        "picked": 96,
+        "games": 97
+      },
+      "25": {
+        "name": "special_bonus_unique_mirana_2",
+        "label": "+2 Multishot Sacred Arrows",
+        "picked": 13,
+        "games": 13
+      }
+    },
+    "basis": "410 games since 7.41: maxed mirana_starfall > mirana_arrow > mirana_leap 235 (win 58.3%), mirana_starfall > mirana_arrow 66 (win 13.6%), mirana_starfall > mirana_leap > mirana_arrow 49 (win 53.1%); talents 10: +150 Leap Distance 264/401 (48.1%), -2s Starstorm Cooldown 137/401 (46.0%); 15: Moonlight Shadow gives +20% Evasion 253/277 (57.3%), +90 Leap Attack Speed 24/277 (70.8%); 20: +200 Starstorm Damage 96/97 (76.0%), Celestial Quiver Damage 1/97 (100.0%); 25: +2 Multishot Sacred Arrows 13/13 (76.9%)."
+  },
+  "fight": [
+    "mirana_arrow",
+    "mirana_invis"
+  ]
+}

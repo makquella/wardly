@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "hero": "Ogre Magi",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "602 league games since 7.41 (data/heroes/item_stats), win 48.2%. Reproduce: python scripts/hero_item_stats.py ogre_magi.",
+    "items": "Valve 7.41f: Ghost Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 84 (abilities named in fight and skills), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "ghost_physical",
+      "why": "physical_ghost",
+      "family": "physical",
+      "item": "ghost",
+      "name": "Ghost Scepter",
+      "enemy": "physical",
+      "count": 2,
+      "minute": 20,
+      "basis": "Valve 7.41f Ghost Scepter: Ghost Form for 4 s, immune to physical damage, unable to attack, 30% more magic damage taken, 22 s cooldown. High-rank games against 2+ physical carries: 18% of 33 games (8% otherwise), won 83% with it against 52% without (6 games with it).",
+      "reason": {
+        "en": "{enemy} and another physical carry are in their team: {item} makes you immune to physical damage for 4 s, though you cannot attack",
+        "uk": "{enemy} та ще один фізичний керрі в їхній команді: {item} робить вас невразливим до фізичної шкоди на 4 с, але атакувати в цей час не можна"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "hand_of_midas",
+      "name": "Hand of Midas"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "aether_lens",
+      "name": "Aether Lens"
+    },
+    {
+      "item": "solar_crest",
+      "name": "Solar Crest"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 94% (11), hand_of_midas 31% (21), glimmer_cape 34% (23), aether_lens 34% (23), solar_crest 27% (25), aghanims_shard 33% (26). STRATZ pos4 and pos5 (2814 and 4968 games): Hand of Midas at 17-18 min is the only core row (100%).",
+  "skills": {
+    "order": [
+      "ogre_magi_ignite",
+      "ogre_magi_bloodlust",
+      "ogre_magi_fireblast"
+    ],
+    "games": 601,
+    "first_agree": 281,
+    "opening": {
+      "name": "ogre_magi_ignite",
+      "agree": 459
+    },
+    "names": {
+      "ogre_magi_ignite": "Ignite",
+      "ogre_magi_bloodlust": "Bloodlust",
+      "ogre_magi_fireblast": "Fireblast"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_ogre_magi_4",
+        "label": "Ignite Burn Damage",
+        "picked": 453,
+        "games": 591
+      },
+      "15": {
+        "name": "special_bonus_unique_ogre_magi",
+        "label": "/ Bloodlust / Self Attack Speed",
+        "picked": 278,
+        "games": 325
+      },
+      "20": {
+        "name": "special_bonus_strength_30",
+        "label": "+30 Strength",
+        "picked": 38,
+        "games": 60
+      },
+      "25": {
+        "name": "special_bonus_unique_ogre_magi_multicast_chance",
+        "label": "Multicast Chance",
+        "picked": 7,
+        "games": 8
+      }
+    },
+    "basis": "601 games since 7.41: maxed ogre_magi_ignite > ogre_magi_bloodlust > ogre_magi_fireblast 142 (win 65.5%), ogre_magi_bloodlust > ogre_magi_ignite > ogre_magi_fireblast 103 (win 62.1%), ogre_magi_bloodlust > ogre_magi_fireblast > ogre_magi_ignite 95 (win 43.2%); talents 10: Ignite Burn Damage 453/591 (47.7%), / Dumb Luck Mana/Mana Regen Per Strength 138/591 (52.9%); 15: / Bloodlust / Self Attack Speed 278/325 (66.2%), +80 Damage 47/325 (44.7%); 20: +30 Strength 38/60 (76.3%), Fireblast Damage 22/60 (72.7%); 25: Multicast Chance 7/8 (85.7%), special_bonus_unique_ogre_magi_3 1/8 (100.0%)."
+  },
+  "fight": [
+    "ogre_magi_fireblast",
+    "ogre_magi_ignite"
+  ]
+}

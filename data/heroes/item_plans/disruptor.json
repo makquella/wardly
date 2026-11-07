@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "hero": "Disruptor",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1077 league games since 7.41 (data/heroes/item_stats), win 47.0%, hard support (STRATZ pos5, 9655 games). Reproduce: python scripts/hero_item_stats.py disruptor.",
+    "items": "No item rule: Ghost Scepter against break heroes (21% vs 11% of 84 games) was not bought more in won games and has no mechanic against them; build from the games.",
+    "hero": "Valve /datafeed/herodata hero_id 87 (Glimpse, Static Storm), fetched 2026-11-07."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 99% (4), magic_wand 74% (8), ring_of_basilius 94% (8), arcane_boots 93% (12), glimmer_cape 32% (23), blink 60% (23), staff_of_wizardry 56% (28), point_booster 45% (29), ogre_axe 44% (30), blade_of_alacrity 37% (33), ultimate_scepter 34% (34). Reviewed: Staff of Wizardry, Point Booster, Ogre Axe and Blade of Alacrity (parts of the Scepter) dropped; Blink Dagger put before Glimmer Cape: the league median minute is the same (23), Blink is bought in 60% of won games against 32%, and STRATZ pos5 has Blink 21 min 80%, Glimmer 22 min 35%, Aghanim's Scepter 34 min 65% (won 61%) (asked).",
+  "skills": {
+    "order": [
+      "disruptor_glimpse",
+      "disruptor_thunder_strike",
+      "disruptor_kinetic_field"
+    ],
+    "games": 1077,
+    "first_agree": 1036,
+    "opening": {
+      "name": "disruptor_thunder_strike",
+      "agree": 936
+    },
+    "names": {
+      "disruptor_glimpse": "Glimpse",
+      "disruptor_thunder_strike": "Thunder Strike",
+      "disruptor_kinetic_field": "Kinetic Field"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_disruptor_consecutive_strike_damage",
+        "label": "+15 Thunder Strike Damage per Strike",
+        "picked": 779,
+        "games": 1052
+      },
+      "15": {
+        "name": "special_bonus_unique_disruptor",
+        "label": "+60 Static Storm Max DPS",
+        "picked": 478,
+        "games": 634
+      },
+      "20": {
+        "name": "special_bonus_unique_disruptor_8",
+        "label": "+75 Static Storm Radius",
+        "picked": 144,
+        "games": 166
+      },
+      "25": {
+        "name": "special_bonus_unique_disruptor_4",
+        "label": "2 Glimpse Charges",
+        "picked": 19,
+        "games": 28
+      }
+    },
+    "basis": "1077 games since 7.41: maxed disruptor_glimpse > disruptor_thunder_strike > disruptor_kinetic_field 536 (win 55.8%), disruptor_glimpse > disruptor_kinetic_field > disruptor_thunder_strike 204 (win 54.9%), disruptor_glimpse > disruptor_thunder_strike 194 (win 29.4%); talents 10: +15 Thunder Strike Damage per Strike 779/1052 (47.1%), +20 Movement Speed 273/1052 (50.5%); 15: +60 Static Storm Max DPS 478/634 (57.1%), +15%/300 Glimpse Distance To Damage/Max 156/634 (64.1%); 20: +75 Static Storm Radius 144/166 (66.0%), +1s Kinetic Field Duration 22/166 (50.0%); 25: 2 Glimpse Charges 19/28 (63.2%), Thunder Strike Strikes 9/28 (88.9%)."
+  },
+  "fight": [
+    "disruptor_static_storm",
+    "disruptor_kinetic_field"
+  ],
+  "notes": [
+    {
+      "id": "escape_storm",
+      "enemy": "escape",
+      "minute": 8,
+      "basis": "Valve Static Storm (fetched 2026-11-07): silences all enemy units in 550 radius for 6 s (70-100 s cooldown, 800 cast range); the escape group is the escapes a silence stops (draft_analysis.ESCAPES). Glimpse: teleports the hero back to where it was 4 s ago (600-1800 range, 18-24 s cooldown).",
+      "reason": {
+        "en": "{enemy} runs away with spells: Static Storm silences everyone inside for 6 s so no escape spell works, and Glimpse pulls a runner back to where they stood 4 s ago",
+        "uk": "{enemy} тікає заклинаннями: Static Storm мовчанкою на 6 с не дає нікому всередині втекти, а Glimpse повертає втікача туди, де він стояв 4 с тому"
+      }
+    }
+  ]
+}

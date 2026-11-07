@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "hero": "Earthshaker",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.40",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "51 league games since 7.40 (data/heroes/item_stats; most of his games are cores), win 37.3%; soft support by STRATZ pos4 (5489 games) and pos5 (1275). Under 150 games: the build leans on STRATZ pos4 (Blink Dagger 16 min 100%, Kaya 25 min 45%, won 57%), no rule. Reproduce: python scripts/hero_item_stats.py earthshaker.",
+    "items": "No item rule: no group has 20 games with a signal (illusion clearers 22 games, 4 Yasha buys).",
+    "hero": "Valve /datafeed/herodata hero_id 7 (Fissure, Echo Slam), fetched 2026-11-07."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "kaya",
+      "name": "Kaya"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 90% (-2), ring_of_basilius 90% (7), arcane_boots 79% (11), blink 100% (16), aghanims_shard 47% (20), force_staff 37% (24), staff_of_wizardry 79% (24), glimmer_cape 21% (26), kaya 26% (26), cyclone 32% (28), blade_of_alacrity 21% (31), yasha 21% (31), tiara_of_selemene 21% (41), ring_of_tarrasque 21% (42). Reviewed against STRATZ pos4 (5489 games): Blink Dagger and Kaya agree; Eul's Scepter (32% at 28 min of 51 games) dropped, Arcane Boots, Aghanim's Shard and Force Staff are league-only (asked).",
+  "skills": {
+    "order": [
+      "earthshaker_fissure",
+      "earthshaker_aftershock",
+      "earthshaker_enchant_totem"
+    ],
+    "games": 51,
+    "first_agree": 28,
+    "opening": {
+      "name": "earthshaker_fissure",
+      "agree": 48
+    },
+    "names": {
+      "earthshaker_fissure": "Fissure",
+      "earthshaker_aftershock": "Aftershock",
+      "earthshaker_enchant_totem": "Enchant Totem"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_earthshaker_4",
+        "label": "+75 Fissure Damage",
+        "picked": 44,
+        "games": 46
+      },
+      "15": {
+        "name": "special_bonus_unique_earthshaker_6",
+        "label": "+50 Aftershock Damage",
+        "picked": 16,
+        "games": 29
+      },
+      "20": {
+        "name": "special_bonus_unique_earthshaker_2",
+        "label": "+50 Echo Damage",
+        "picked": 9,
+        "games": 9
+      },
+      "25": {
+        "name": "special_bonus_unique_earthshaker_echo_cd",
+        "label": "-50% Echo Slam Cooldown",
+        "picked": 2,
+        "games": 3
+      }
+    },
+    "basis": "51 games since 7.40: maxed earthshaker_fissure > earthshaker_aftershock > earthshaker_enchant_totem 19 (win 47.4%), earthshaker_aftershock > earthshaker_fissure > earthshaker_enchant_totem 13 (win 46.2%), earthshaker_fissure > earthshaker_aftershock 9 (win 44.4%); talents 10: +75 Fissure Damage 44/46 (40.9%), +25 Base Damage 2/46 (50.0%); 15: +50 Aftershock Damage 16/29 (50.0%), +200 Fissure Range 13/29 (53.8%); 20: +50 Echo Damage 9/9 (55.6%); 25: -50% Echo Slam Cooldown 2/3 (100.0%), -1.5s Enchant Totem Cooldown 1/3 (100.0%)."
+  },
+  "fight": [
+    "earthshaker_echo_slam",
+    "earthshaker_fissure"
+  ]
+}

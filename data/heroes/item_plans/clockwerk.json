@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "hero": "Clockwerk",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1007 league games since 7.41 (data/heroes/item_stats), win 51.6%. STRATZ pos4/pos5 have no build for him (3050 games). Reproduce: python scripts/hero_item_stats.py clockwerk.",
+    "items": "No item rule: the build is from the games; Valve /datafeed/itemdata not needed.",
+    "hero": "Valve /datafeed/herodata hero_id 51 (Power Cogs, Hookshot), fetched 2026-11-07."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "essence_distiller",
+      "name": "Essence Distiller"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ghost",
+      "name": "Ghost Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 100% (2), tranquil_boots 86% (9), magic_wand 74% (10), urn_of_shadows 35% (12), essence_distiller 26% (17), pavise 21% (20), staff_of_wizardry 65% (24), great_famango 26% (24), blink 48% (26), cyclone 29% (26), force_staff 40% (27), aghanims_shard 34% (30), ghost 25% (31), greater_famango 21% (39). Reviewed: the draft as is. No rule: no group has a candidate with a clear signal (Spirit Vessel against targeted jumpers is 5 buys in 29 games and won 20%; Ghost Scepter against jumpers 35% vs 24% of 52 games is asked).",
+  "skills": {
+    "order": [
+      "rattletrap_power_cogs",
+      "rattletrap_rocket_flare",
+      "rattletrap_battery_assault"
+    ],
+    "games": 1007,
+    "first_agree": 896,
+    "opening": {
+      "name": "rattletrap_power_cogs",
+      "agree": 871
+    },
+    "names": {
+      "rattletrap_power_cogs": "Power Cogs",
+      "rattletrap_rocket_flare": "Rocket Flare",
+      "rattletrap_battery_assault": "Battery Assault"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_mp_regen_150",
+        "label": "+1.5 Mana Regen",
+        "picked": 626,
+        "games": 980
+      },
+      "15": {
+        "name": "special_bonus_unique_clockwerk_5",
+        "label": "Hookshot Cooldown",
+        "picked": 666,
+        "games": 713
+      },
+      "20": {
+        "name": "special_bonus_unique_clockwerk_4",
+        "label": "Rocket Flare True Sight",
+        "picked": 258,
+        "games": 309
+      },
+      "25": {
+        "name": "special_bonus_unique_clockwerk_rocket_flare_charges",
+        "label": "Rocket Flare Charges",
+        "picked": 57,
+        "games": 64
+      }
+    },
+    "basis": "1007 games since 7.41: maxed rattletrap_power_cogs > rattletrap_rocket_flare > rattletrap_battery_assault 676 (win 59.5%), rattletrap_power_cogs > rattletrap_rocket_flare 172 (win 29.7%), rattletrap_power_cogs > rattletrap_battery_assault > rattletrap_rocket_flare 48 (win 60.4%); talents 10: +1.5 Mana Regen 626/980 (56.2%), Hookshot Damage 354/980 (46.6%); 15: Hookshot Cooldown 666/713 (62.6%), Battery Assault Damage 47/713 (61.7%); 20: Rocket Flare True Sight 258/309 (67.8%), Power Cogs Mana Burn 51/309 (66.7%); 25: Rocket Flare Charges 57/64 (70.2%), Battery Assault Interval 7/64 (57.1%)."
+  },
+  "fight": [
+    "rattletrap_hookshot",
+    "rattletrap_power_cogs"
+  ],
+  "notes": [
+    {
+      "id": "invisibility_cogs",
+      "enemy": "invisibility",
+      "minute": 6,
+      "basis": "Valve Power Cogs (fetched 2026-11-07): a ring of cogs traps units near Clockwerk and knocks back and burns the ones touching it; note 'Cogs can shock invisible units'. 5-8 s, 15-21 s cooldown.",
+      "reason": {
+        "en": "{enemy} can go invisible: Power Cogs shock invisible units and trap them inside the ring, so cast them on top of the fight",
+        "uk": "{enemy} може ставати невидимим: Power Cogs б'ють невидимих і замикають їх у кільці, тож ставте їх просто в бійку"
+      }
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "hero": "Jakiro",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "792 league games since 7.41 (data/heroes/item_stats), win 47.0%. Reproduce: python scripts/hero_item_stats.py jakiro.",
+    "items": "Valve 7.41f: Glimmer Cape, Eul's Scepter of Divinity.",
+    "hero": "Valve /datafeed/herodata hero_id 64 (abilities named in fight and skills), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_glimmer",
+      "why": "magic_glimmer",
+      "family": "magic",
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 18,
+      "basis": "Valve 7.41f Glimmer Cape: after a 0.5 s delay, invisibility, 20% movement speed and a barrier absorbing up to 375 magic damage on you or an ally for 5 s, +20 magic resistance passive, 15 s cooldown. High-rank games against 3+ magic damage heroes: 55% of 64 games (36% otherwise), won 60% with it against 45% without. In his build (41% of the won games, ~22 min); Dual Breath, Ice Path and Macropyre keep him in the middle of the fight.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} puts a 375 magic damage barrier on you or an ally for 5 s",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} дає вам або союзнику магічний бар'єр на 375 шкоди на 5 с"
+      }
+    },
+    {
+      "id": "eul_jumpers",
+      "why": "jump_eul",
+      "family": "jump",
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity",
+      "enemy": "targeted_jumpers",
+      "minute": 19,
+      "basis": "Valve 7.41f Eul's Scepter of Divinity: Cyclone on an enemy or on yourself (never an ally), 2.5 s of invulnerability, 23 s cooldown, 175 mana; cast on yourself it goes through spell immunity. Whether a jump cast on a cycloned hero is lost is not in the datafeed (asked). High-rank games against heroes that jump onto a target: 67% of 60 games (23% otherwise), won 47% with it against 55% without; Eul's is in his build (30% of the won games, ~23 min).",
+      "reason": {
+        "en": "{enemy} jumps onto a chosen target: {item} makes you invulnerable for 2.5 s or lifts the jumper out of the fight",
+        "uk": "{enemy} стрибає на обрану ціль: {item} робить вас невразливим на 2,5 с або підхоплює стрибуна й забирає його з бійки"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 85% (12), glimmer_cape 41% (22), cyclone 30% (23), force_staff 36% (26), ultimate_scepter 27% (35). STRATZ has no build rows for him in pos4 or pos5 (1556 and 3732 games), so the order is the league games' only.",
+  "skills": {
+    "order": [
+      "jakiro_liquid_fire",
+      "jakiro_ice_path",
+      "jakiro_dual_breath"
+    ],
+    "games": 792,
+    "first_agree": 389,
+    "opening": {
+      "name": "jakiro_liquid_fire",
+      "agree": 568
+    },
+    "names": {
+      "jakiro_liquid_fire": "Liquid Fire",
+      "jakiro_ice_path": "Ice Path",
+      "jakiro_dual_breath": "Dual Breath",
+      "jakiro_macropyre": "Macropyre"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_jakiro_4",
+        "label": "Liquid Fire Attack Speed Slow",
+        "picked": 629,
+        "games": 769
+      },
+      "15": {
+        "name": "special_bonus_attack_range_175",
+        "label": "+175 Attack Range",
+        "picked": 379,
+        "games": 482
+      },
+      "20": {
+        "name": "special_bonus_unique_jakiro_7",
+        "label": "Macropyre Damage",
+        "picked": 90,
+        "games": 138
+      },
+      "25": {
+        "name": "special_bonus_unique_jakiro_3",
+        "label": "Liquid Frost and Fire Max Health Damage",
+        "picked": 16,
+        "games": 28
+      }
+    },
+    "basis": "792 games since 7.41: maxed jakiro_liquid_fire > jakiro_ice_path > jakiro_dual_breath 206 (win 58.3%), jakiro_ice_path > jakiro_dual_breath 120 (win 57.5%), jakiro_liquid_fire > jakiro_dual_breath > jakiro_ice_path 120 (win 55.0%); talents 10: Liquid Fire Attack Speed Slow 629/769 (48.6%), Ice Path Damage 140/769 (47.1%); 15: +175 Attack Range 379/482 (59.6%), Dual Breath Cooldown 103/482 (65.0%); 20: Macropyre Damage 90/138 (73.3%), Ice Path Stun Duration 48/138 (68.8%); 25: Liquid Frost and Fire Max Health Damage 16/28 (87.5%), Dual Breath Damage and Range 12/28 (83.3%)."
+  },
+  "fight": [
+    "jakiro_macropyre",
+    "jakiro_ice_path"
+  ]
+}

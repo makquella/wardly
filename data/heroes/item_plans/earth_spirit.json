@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "hero": "Earth Spirit",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.40",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "270 league games since 7.40 (data/heroes/item_stats; 7.41 alone had under 300; the skill build has 130 games of 7.41), win 52.2%, soft support (STRATZ pos4, 2369 games). Under 150 games in any group: build checked against STRATZ pos4, which has only Spirit Vessel (16 min, 23%). Reproduce: python scripts/hero_item_stats.py earth_spirit.",
+    "items": "No item rule: Spirit Vessel against healing heroes is 39% vs 32% of 36 games, won 64% vs 27% on a handful of games (asked); build from the games.",
+    "hero": "Valve /datafeed/herodata hero_id 107 (Boulder Smash, Geomagnetic Grip, Magnetize), fetched 2026-11-07."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "aether_lens",
+      "name": "Aether Lens"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 97% (2), urn_of_shadows 66% (7), magic_wand 67% (8), tranquil_boots 24% (8), diadem 40% (12), spirit_vessel 38% (17), great_famango 28% (22), blink 52% (23), cyclone 29% (23), staff_of_wizardry 57% (23), aether_lens 55% (26), point_booster 23% (27), aghanims_shard 38% (27), ogre_axe 33% (30). Reviewed: Ogre Axe (a part, 33% at 30 min) dropped; Urn of Shadows (66% at 7 min) is the part of Spirit Vessel, under 1000 gold. STRATZ pos4 (2369 games): Spirit Vessel 16 min 23% (won 49%), nothing else.",
+  "skills": {
+    "order": [
+      "earth_spirit_boulder_smash",
+      "earth_spirit_rolling_boulder",
+      "earth_spirit_geomagnetic_grip"
+    ],
+    "games": 130,
+    "first_agree": 39,
+    "opening": {
+      "name": "earth_spirit_boulder_smash",
+      "agree": 105
+    },
+    "names": {
+      "earth_spirit_boulder_smash": "Boulder Smash",
+      "earth_spirit_rolling_boulder": "Rolling Boulder",
+      "earth_spirit_geomagnetic_grip": "Geomagnetic Grip"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_earth_spirit_4",
+        "label": "+150 Rolling Boulder Distance",
+        "picked": 119,
+        "games": 127
+      },
+      "15": {
+        "name": "special_bonus_unique_earth_spirit_6",
+        "label": "+80 Boulder Smash Damage",
+        "picked": 43,
+        "games": 82
+      },
+      "20": {
+        "name": "special_bonus_unique_earth_spirit_8",
+        "label": "+30% Magnetize Damage & Duration",
+        "picked": 24,
+        "games": 29
+      },
+      "25": {
+        "name": "special_bonus_unique_earth_spirit_2",
+        "label": "Earth Spirit Magnetizes himself",
+        "picked": 4,
+        "games": 5
+      }
+    },
+    "basis": "130 games since 7.41: maxed earth_spirit_boulder_smash > earth_spirit_rolling_boulder > earth_spirit_geomagnetic_grip 26 (win 61.5%), earth_spirit_rolling_boulder > earth_spirit_geomagnetic_grip > earth_spirit_boulder_smash 24 (win 58.3%), earth_spirit_rolling_boulder > earth_spirit_boulder_smash > earth_spirit_geomagnetic_grip 23 (win 65.2%); talents 10: +150 Rolling Boulder Distance 119/127 (50.4%), -2.0s Boulder Smash Cooldown 8/127 (50.0%); 15: +80 Boulder Smash Damage 43/82 (53.5%), Rolling Boulder Stun Duration 39/82 (71.8%); 20: +30% Magnetize Damage & Duration 24/29 (66.7%), +175% Rolling Boulder Damage from Strength 5/29 (80.0%); 25: Earth Spirit Magnetizes himself 4/5 (75.0%), +250 Geomagnetic Grip Remnant Damage 1/5 (100.0%)."
+  },
+  "fight": [
+    "earth_spirit_magnetize",
+    "earth_spirit_boulder_smash"
+  ],
+  "notes": [
+    {
+      "id": "escape_grip",
+      "enemy": "escape",
+      "minute": 8,
+      "basis": "Valve Geomagnetic Grip (fetched 2026-11-07): enemies struck by the pulled remnant or ally are silenced for 2.3-3.5 s (13 s cooldown, 1000-1300 range to a remnant); the escape group is the escapes a silence stops (draft_analysis.ESCAPES).",
+      "reason": {
+        "en": "{enemy} runs away with spells: Geomagnetic Grip silences the enemies the pulled remnant strikes for up to 3.5 s, so pull one through them before they cast it",
+        "uk": "{enemy} тікає заклинаннями: Geomagnetic Grip мовчанкою до 3,5 с накриває ворогів, яких зачепить стягнутий уламок, тож протягніть його крізь них, поки вони не встигли втекти"
+      }
+    }
+  ]
+}

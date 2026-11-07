@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "hero": "Lich",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1067 league games since 7.41 (data/heroes/item_stats), win 49.7%. Reproduce: python scripts/hero_item_stats.py lich.",
+    "items": "Valve 7.41f: Glimmer Cape, Ghost Scepter.",
+    "hero": "Valve /datafeed/herodata hero_id 31 (abilities named in fight and skills), 7.41f."
+  },
+  "rules": [
+    {
+      "id": "magic_glimmer",
+      "why": "magic_glimmer",
+      "family": "magic",
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape",
+      "enemy": "magic",
+      "count": 3,
+      "minute": 16,
+      "basis": "Valve 7.41f Glimmer Cape: after a 0.5 s delay, invisibility, 20% movement speed and a barrier absorbing up to 375 magic damage on you or an ally for 5 s, +20 magic resistance passive, 15 s cooldown. High-rank games against 3+ magic damage heroes: 72% of 81 games (55% otherwise), won 47% with it against 44% without. In his build (59% of the won games, ~19 min), so this is buying it earlier.",
+      "reason": {
+        "en": "{enemy} and other magic damage heroes are in their team: {item} puts a 375 magic damage barrier on you or an ally for 5 s",
+        "uk": "{enemy} та інші герої з магічною шкодою: {item} дає вам або союзнику магічний бар'єр на 375 шкоди на 5 с"
+      }
+    },
+    {
+      "id": "ghost_physical",
+      "why": "physical_ghost",
+      "family": "physical",
+      "item": "ghost",
+      "name": "Ghost Scepter",
+      "enemy": "physical",
+      "count": 2,
+      "minute": 22,
+      "basis": "Valve 7.41f Ghost Scepter: Ghost Form for 4 s, immune to physical damage, unable to attack, 30% more magic damage taken, 22 s cooldown. High-rank games against 2+ physical carries: 30% of 37 games (16% otherwise), won 64% with it against 35% without (11 games with it).",
+      "reason": {
+        "en": "{enemy} and another physical carry are in their team: {item} makes you immune to physical damage for 4 s, though you cannot attack",
+        "uk": "{enemy} та ще один фізичний керрі в їхній команді: {item} робить вас невразливим до фізичної шкоди на 4 с, але атакувати в цей час не можна"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts, consumables and Tranquil Boots dropped): glimmer_cape 59% (19), aghanims_shard 66% (23), blink 57% (26), force_staff 27% (26), ultimate_scepter 26% (37). STRATZ pos5 (10450 games): Glimmer Cape 19 min, Blink Dagger 20 min (91%), Aghanim's Scepter 33 min; it puts Blink before the Shard.",
+  "skills": {
+    "order": [
+      "lich_frost_nova",
+      "lich_frost_shield",
+      "lich_sinister_gaze"
+    ],
+    "games": 1067,
+    "first_agree": 908,
+    "opening": {
+      "name": "lich_frost_nova",
+      "agree": 1043
+    },
+    "names": {
+      "lich_frost_nova": "Frost Blast",
+      "lich_frost_shield": "Frost Shield",
+      "lich_sinister_gaze": "Sinister Gaze",
+      "lich_chain_frost": "Chain Frost"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_lich_6",
+        "label": "Frost Blast Radius and Area Damage",
+        "picked": 544,
+        "games": 1043
+      },
+      "15": {
+        "name": "special_bonus_unique_lich_2",
+        "label": "Sinister Gaze Duration",
+        "picked": 587,
+        "games": 747
+      },
+      "20": {
+        "name": "special_bonus_unique_lich_7",
+        "label": "Chain Frost on Death",
+        "picked": 216,
+        "games": 282
+      },
+      "25": {
+        "name": "special_bonus_unique_lich_5",
+        "label": "Chain Frost Unlimited Bounces",
+        "picked": 55,
+        "games": 69
+      }
+    },
+    "basis": "1067 games since 7.41: maxed lich_frost_nova > lich_frost_shield > lich_sinister_gaze 444 (win 59.5%), lich_frost_nova > lich_sinister_gaze > lich_frost_shield 311 (win 62.1%), lich_frost_nova > lich_frost_shield 101 (win 15.8%); talents 10: Frost Blast Radius and Area Damage 544/1043 (51.5%), Frost Shield Damage Reduction 499/1043 (50.1%); 15: Sinister Gaze Duration 587/747 (61.8%), Frost Blast Cooldown 160/747 (60.0%); 20: Chain Frost on Death 216/282 (71.3%), Frost Shield Charges 66/282 (71.2%); 25: Chain Frost Unlimited Bounces 55/69 (69.1%), Frost Shield Provides HP Regen 14/69 (42.9%)."
+  },
+  "fight": [
+    "lich_chain_frost",
+    "lich_sinister_gaze"
+  ]
+}

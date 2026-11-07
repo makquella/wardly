@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "hero": "Hoodwink",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1816 league games since 7.41 (data/heroes/item_stats), win 48.9%, soft support (STRATZ pos4, 8014 games). Reproduce: python scripts/hero_item_stats.py hoodwink.",
+    "items": "Valve /datafeed/itemdata item_id 267 (Spirit Vessel) and 206 (Rod of Atos, no rule), current patch, fetched 2026-11-07.",
+    "hero": "Valve /datafeed/herodata hero_id 123 (Bushwhack, Sharpshooter), fetched 2026-11-07."
+  },
+  "rules": [
+    {
+      "id": "healing",
+      "why": "healing_vessel",
+      "family": "healing",
+      "item": "spirit_vessel",
+      "name": "Spirit Vessel",
+      "enemy": "healing",
+      "minute": 14,
+      "basis": "Valve /datafeed/itemdata Spirit Vessel (fetched 2026-11-07): Soul Release on an enemy cuts its health restoration by 70% and drains 4% of its current health per second for 8 s (10 s cooldown, 750 cast range, charges from hero deaths within 1500). High-rank Hoodwinks against Huskar, Lifestealer, Oracle, Necrophos or Alchemist: Spirit Vessel in 12% of 265 games (3% otherwise), won 69% against 50%. Sharpshooter (Valve) deals up to 600/975/1350 damage to one hero, Bushwhack 90-360 over its stun.",
+      "reason": {
+        "en": "{enemy} heals a lot: your {item} cuts their health restoration by 70% for 8 s, so Bushwhack and Sharpshooter damage is not healed back",
+        "uk": "{enemy} багато лікується: ваш {item} на 8 с знижує їхнє відновлення здоров'я на 70%, тож шкода від Bushwhack і Sharpshooter не відновиться"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "essence_distiller",
+      "name": "Essence Distiller"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 99% (0), magic_wand 89% (9), ring_of_basilius 71% (10), urn_of_shadows 46% (11), arcane_boots 69% (13), essence_distiller 38% (16), vitality_booster 32% (20), rod_of_atos 23% (20), staff_of_wizardry 72% (21), great_famango 25% (23), aghanims_shard 37% (25), glimmer_cape 27% (26), force_staff 39% (26), cyclone 22% (28), blink 40% (28), mystic_staff 20% (41). Reviewed: Vitality Booster (a part, 32% at 20 min) dropped; Rod of Atos (23% at 20 min) is not in the build. STRATZ pos4 (8014 games) has only Essence Distiller 14 min 55% (won 50%).",
+  "skills": {
+    "order": [
+      "hoodwink_bushwhack",
+      "hoodwink_acorn_shot",
+      "hoodwink_scurry"
+    ],
+    "games": 1816,
+    "first_agree": 1485,
+    "opening": {
+      "name": "hoodwink_bushwhack",
+      "agree": 1138
+    },
+    "names": {
+      "hoodwink_bushwhack": "Bushwhack",
+      "hoodwink_acorn_shot": "Acorn Shot",
+      "hoodwink_scurry": "Scurry"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_hp_175",
+        "label": "+175 Health",
+        "picked": 1037,
+        "games": 1778
+      },
+      "15": {
+        "name": "special_bonus_unique_hoodwink_scurry_charges",
+        "label": "Scurry Ability Charge",
+        "picked": 1251,
+        "games": 1338
+      },
+      "20": {
+        "name": "special_bonus_unique_hoodwink_sharpshooter_vision",
+        "label": "Sharpshooter Provides Vision While Charging",
+        "picked": 397,
+        "games": 595
+      },
+      "25": {
+        "name": "special_bonus_unique_hoodwink_sharpshooter_damage",
+        "label": "Sharpshooter Max Damage",
+        "picked": 118,
+        "games": 130
+      }
+    },
+    "basis": "1816 games since 7.41: maxed hoodwink_bushwhack > hoodwink_acorn_shot > hoodwink_scurry 1102 (win 56.2%), hoodwink_acorn_shot > hoodwink_bushwhack > hoodwink_scurry 216 (win 55.1%), hoodwink_bushwhack > hoodwink_acorn_shot 215 (win 18.6%); talents 10: +175 Health 1037/1778 (48.9%), Bushwhack Damage 741/1778 (51.4%); 15: Scurry Ability Charge 1251/1338 (57.7%), +10 Agility 87/1338 (66.7%); 20: Sharpshooter Provides Vision While Charging 397/595 (63.7%), Acorn Shot Bounces 198/595 (64.1%); 25: Sharpshooter Max Damage 118/130 (63.6%), Acorn Shot Charges 12/130 (66.7%)."
+  },
+  "fight": [
+    "hoodwink_sharpshooter",
+    "hoodwink_bushwhack"
+  ]
+}

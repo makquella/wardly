@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "hero": "Nyx Assassin",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "494 league games since 7.41 (data/heroes/item_stats), win 55.7%. Reproduce: python scripts/hero_item_stats.py nyx_assassin.",
+    "items": "Valve 7.41f: none (no item rule).",
+    "hero": "Valve /datafeed/herodata hero_id 88 (abilities named in fight and skills), 7.41f."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped; the Point Booster, Ogre Axe and Blade of Alacrity of the draft are the Aghanim's Scepter's parts): arcane_boots 37% (11), cyclone 66% (20), blink 50% (24), aghanims_shard 40% (29), ultimate_scepter 24% (33). STRATZ pos4 (8462 games): Dagon 20 min (29%), Eul's 20 min (25%), Aghanim's Scepter 33 min (28%); no Dagon in the league build.",
+  "skills": {
+    "order": [
+      "nyx_assassin_impale",
+      "nyx_assassin_spiked_carapace",
+      "nyx_assassin_jolt"
+    ],
+    "games": 494,
+    "first_agree": 427,
+    "opening": {
+      "name": "nyx_assassin_impale",
+      "agree": 488
+    },
+    "names": {
+      "nyx_assassin_impale": "Impale",
+      "nyx_assassin_spiked_carapace": "Spiked Carapace",
+      "nyx_assassin_jolt": "Mind Flare",
+      "nyx_assassin_vendetta": "Vendetta"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_nyx_3",
+        "label": "Impale Stun Duration",
+        "picked": 244,
+        "games": 481
+      },
+      "15": {
+        "name": "special_bonus_unique_nyx_jolt_cooldown",
+        "label": "Mind Flare Cooldown",
+        "picked": 312,
+        "games": 380
+      },
+      "20": {
+        "name": "special_bonus_unique_nyx_6",
+        "label": "Spiked Carapace Stun Duration",
+        "picked": 132,
+        "games": 164
+      },
+      "25": {
+        "name": "special_bonus_unique_nyx",
+        "label": "Mind Flare Radius",
+        "picked": 39,
+        "games": 45
+      }
+    },
+    "basis": "494 games since 7.41: maxed nyx_assassin_impale > nyx_assassin_spiked_carapace > nyx_assassin_jolt 272 (win 64.3%), nyx_assassin_impale > nyx_assassin_jolt > nyx_assassin_spiked_carapace 93 (win 59.1%), nyx_assassin_impale > nyx_assassin_spiked_carapace 43 (win 20.9%); talents 10: Impale Stun Duration 244/481 (57.4%), Spiked Carapace Damage Reflect 237/481 (57.0%); 15: Mind Flare Cooldown 312/380 (62.5%), Vendetta Damage 68/380 (76.5%); 20: Spiked Carapace Stun Duration 132/164 (78.0%), Impale Damage 32/164 (62.5%); 25: Mind Flare Radius 39/45 (82.1%), +80 Agility 6/45 (66.7%)."
+  },
+  "fight": [
+    "nyx_assassin_impale",
+    "nyx_assassin_vendetta"
+  ]
+}
