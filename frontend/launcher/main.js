@@ -4033,9 +4033,10 @@ async function runSmokeTest(resultPath) {
     const install = await locateDota();
     step("steam/dota locator", true, install.dotaDir || `Dota 2 not installed; libraries: ${install.libraries.join(", ") || "none"}`);
 
-    if (process.platform === "win32" && process.env.DOTA_AI_SMOKE_FAKE_DOTA === "1") {
-      // scripts/smoke-windows.ps1 runs a plain window named dota2.exe: the
-      // helper must find its window rect and the overlay must move into it.
+    if ((process.platform === "win32" || process.platform === "linux") && process.env.DOTA_AI_SMOKE_FAKE_DOTA === "1") {
+      // scripts/smoke-windows.ps1 runs a plain window named dota2.exe (Linux: a
+      // process called dota2 with an X window): the helper must find its window
+      // rect and the overlay must move into it.
       dotaWatcher.start();
       const state = await waitForWatcherState((item) => item.running && item.windowRect, 30000);
       step("dota watcher finds the dota2.exe window", Boolean(state), JSON.stringify(dotaWatcher.getState()));
@@ -4067,9 +4068,30 @@ async function runSmokeTest(resultPath) {
       refreshPresence();
       step("overlay hidden without Dota", !overlay.isVisible(), presence.reason);
       dotaWatcher.stop();
+    } else if (process.platform === "linux") {
+      // The /proc scan (and xprop/xwininfo when installed) must report, and with
+      // no dota2 process running the overlay must stay hidden. Without the X
+      // tools focus tracking is off by design (the overlay follows its switch),
+      // so "supported" is only required when DOTA_AI_SMOKE_REQUIRE_FOCUS_TRACKING=1.
+      const report = waitForEvent(dotaWatcher, "report", 30000);
+      dotaWatcher.start();
+      const state = await report;
+      const requireTracking = process.env.DOTA_AI_SMOKE_REQUIRE_FOCUS_TRACKING === "1";
+      step(
+        "dota watcher reports",
+        Boolean(state) && !state.running && (!requireTracking || state.supported),
+        JSON.stringify(state)
+      );
+      refreshPresence();
+      step(
+        "overlay hidden without Dota",
+        !overlay.isVisible() || !state || !state.supported,
+        state && state.supported ? presence.reason : "focus tracking unavailable (xprop/xwininfo missing or no X display)"
+      );
+      dotaWatcher.stop();
     }
 
-    if (IS_PACKAGED && process.platform === "win32") {
+    if (IS_PACKAGED && (process.platform === "win32" || process.platform === "linux")) {
       // electron-builder writes app-update.yml only when "publish" is set.
       let updaterDetail = path.join(process.resourcesPath, "app-update.yml");
       let updaterOk = fs.existsSync(updaterDetail);
@@ -4079,7 +4101,7 @@ async function runSmokeTest(resultPath) {
         updaterOk = false;
         updaterDetail = error.message;
       }
-      step("auto-update configured", updaterOk, updaterDetail);
+      step("auto-update configured", updaterOk, `${updaterDetail} (a real run would use mode ${updateModeFor({ isPackaged: IS_PACKAGED })})`);
     }
 
     const started = await startBackend();
