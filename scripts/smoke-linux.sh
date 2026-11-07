@@ -237,7 +237,6 @@ test_pacman() {
     'grep -q "^depend = gtk3$" <<<"$1" && grep -q "^depend = nss$" <<<"$1" && grep -q "^depend = libsecret$" <<<"$1"' _ "$info"
   assert "pacman has no hard dependency on optional tools" bash -c \
     '! grep -Eq "^depend = (speech-dispatcher|xorg-xprop|xorg-xwininfo|libayatana-appindicator)" <<<"$1"' _ "$info"
-  assert "pacman lists optional dependencies" has_entry '^optdepend = speech-dispatcher' "$info"
   desktop="$(bsdtar -xOf "$pkg" usr/share/applications/wardly.desktop)"
   check_desktop_entry "$desktop"
 }

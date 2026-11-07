@@ -68,5 +68,5 @@ CI (`linux-build` in `ci.yml`, same scope rule as Windows) builds and smokes on 
 ## Limits
 
 - x86_64 only; no code signing; no Flatpak/Snap/rpm yet.
-- pacman and deb packages get no in-place update.
+- pacman and deb packages get no in-place update. fpm does not write pacman `optdepends`, so the optional tools are only listed in these docs.
 - Only verified in headless builds (Xvfb); real Dota, tray and overlay behaviour on KDE/GNOME still needs a manual check.

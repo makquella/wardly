@@ -127,7 +127,7 @@
       "syncDesktopName": true,
       "maintainer": "Wardly <noreply@luhovyimvp.dev>",
       "synopsis": "Dota 2 coach: live advice overlay and match reviews",
-      "description": "Wardly watches your Dota 2 match through Game State Integration and gives short advice on screen and by voice; after the game it reviews the match. Everything runs on your computer.",
+      "description": "Dota 2 coach: live advice overlay and match reviews",
       "desktop": {
         "entry": {
           "Name": "Wardly",
@@ -163,12 +163,6 @@
         "at-spi2-core",
         "libsecret",
         "util-linux-libs"
-      ],
-      "fpm": [
-        "--pacman-optional-depends=libayatana-appindicator: tray icon on GNOME and other desktops without StatusNotifier",
-        "--pacman-optional-depends=speech-dispatcher: spoken advice (add espeak-ng or RHVoice for voices)",
-        "--pacman-optional-depends=xorg-xprop: Dota window focus tracking for the overlay",
-        "--pacman-optional-depends=xorg-xwininfo: Dota window position for the overlay"
       ]
     }
   },
