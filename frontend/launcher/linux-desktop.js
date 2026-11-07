@@ -13,8 +13,9 @@ const path = require("node:path");
 const APP_NAME = "Wardly";
 const DESKTOP_FILE = "wardly.desktop";
 const ICON_NAME = "wardly";
-// Must match the window class the app gets (the product name).
-const WM_CLASS = "Wardly";
+// Must match the window class the packaged app gets: Chromium takes it from
+// package.json "desktopName" (wardly.desktop), so xprop WM_CLASS reads "wardly".
+const WM_CLASS = "wardly";
 
 const COMMENT_EN = "A local Dota 2 coach: advice over the game and match reviews";
 const COMMENT_UK = "Локальний тренер Dota 2: підказки поверх гри та розбір матчів";

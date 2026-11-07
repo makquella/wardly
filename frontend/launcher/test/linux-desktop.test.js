@@ -178,7 +178,7 @@ test("AppImage integration writes the menu entry and icon, idempotently, and fol
   assert.equal(entry.TryExec, env.APPIMAGE);
   assert.equal(entry.Icon, "wardly");
   assert.equal(entry.Categories, "Game;");
-  assert.equal(entry.StartupWMClass, "Wardly");
+  assert.equal(entry.StartupWMClass, "wardly");
   assert.deepEqual(fs.readFileSync(iconFile), fs.readFileSync(icon));
 
   assert.deepEqual(ensureAppImageIntegration({ platform: "linux", env, iconSource: icon }), { desktop: false, icon: false });
