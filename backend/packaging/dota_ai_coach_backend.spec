@@ -1,11 +1,15 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import sys
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_submodules
 
 
 block_cipher = None
+
+# UPX only on Windows: it can corrupt Linux shared libraries and gains little there.
+USE_UPX = sys.platform == "win32"
 
 BACKEND_DIR = Path(SPECPATH).parent
 REPO_ROOT = BACKEND_DIR.parent
@@ -78,7 +82,7 @@ backend_exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=USE_UPX,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -96,7 +100,7 @@ demo_exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=USE_UPX,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -112,7 +116,7 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=True,
+    upx=USE_UPX,
     upx_exclude=[],
     name="dota-ai-coach-backend",
 )
