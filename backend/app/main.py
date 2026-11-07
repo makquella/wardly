@@ -655,14 +655,15 @@ def _death_screen_for_overlay(response: dict[str, object], lang: str) -> dict[st
     extra = state.get("extra_context") if isinstance(state.get("extra_context"), dict) else {}
     if extra.get("source_type") != "live_gsi" or extra.get("alive") is not False:
         return None
-    carry = hero_coverage(str(state.get("hero") or "")) == "full" and not _plays_support(state)
+    hero = str(state.get("hero") or "")
+    carry = hero_coverage(hero) == "full" and not _plays_support(state)
+    role = _live_role(state)
     try:
         return PLAYER_SERVICE.death_screen(
             _with_enemies(state),
             lang,
-            next_item_for_hero=carry
-            or _has_support_plan(str(state.get("hero") or ""), _live_role(state)),
-            role=(_live_role(state) or {}).get("role"),
+            next_item_for_hero=carry or _has_support_plan(hero, role),
+            role=(role or {}).get("role"),
         )
     except Exception as error:  # noqa: BLE001 - never breaks the live path
         record_error("death-screen", error)

@@ -1388,6 +1388,35 @@ def test_the_save_tip_is_off_when_the_plan_names_none():
     assert tip(False) is None
 
 
+def test_the_planned_save_item_tip_says_why_in_both_languages():
+    from app.map_hints import _save_item_tip
+
+    reason = {
+        "en": "two right-click carries: {item} stops their attacks",
+        "uk": "два керрі з ударами з руки: {item} зупиняє їхні атаки",
+    }
+    rule = {
+        "key": "ghost",
+        "name": "Ghost Scepter",
+        "gold_left": 1500,
+        "why": "plan",
+        "reason": {k: v.format(item="Ghost Scepter") for k, v in reason.items()},
+    }
+    en = _save_item_tip("save_item@780", "en", rule, 300)
+    assert en["title"] == "No save item yet: Ghost Scepter"
+    assert en["hint"] == "Two right-click carries: Ghost Scepter stops their attacks."
+    uk = _save_item_tip("save_item@780", "uk", rule, 300)
+    assert uk["hint"] == "Два керрі з ударами з руки: Ghost Scepter зупиняє їхні атаки."
+    # A build item with its price: the gold still to farm.
+    build = {**rule, "key": "force_staff", "name": "Force Staff", "reason": None}
+    assert "gold to go" in _save_item_tip("save_item@780", "en", build, 300)["hint"]
+    # Not priced (no item constants cached): the plan's item, never the generic pair.
+    unpriced = {**build, "gold_left": None}
+    hint = _save_item_tip("save_item@780", "en", unpriced, 300)
+    assert hint["title"] == "No save item yet: Force Staff"
+    assert "Glimmer Cape or" not in hint["hint"]
+
+
 def test_a_planned_support_gold_card_names_the_plan_item():
     from app.gold_tips import GoldTips
 
