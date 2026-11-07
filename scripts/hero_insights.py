@@ -34,6 +34,9 @@ AGAINST = {
     "magic": ("magic_lineup", "магічної шкоди", "magic damage"),
     "jumpers": ("jumpers", "стрибунів", "jumpers"),
     "targeted_jumpers": ("jumpers", "стрибунів", "jumpers"),
+    # A support's plan (2+ right-click carries, heroes who escape with a spell).
+    "physical": ("physical_lineup", "фізичних керрі", "physical carries"),
+    "escape": ("escape", "втеч", "escapes"),
 }
 
 

@@ -130,7 +130,8 @@
     "names": {
       "phantom_assassin_phantom_strike": "Phantom Strike",
       "phantom_assassin_stifling_dagger": "Stifling Dagger",
-      "phantom_assassin_immaterial": "Immaterial"
+      "phantom_assassin_immaterial": "Immaterial",
+      "phantom_assassin_blur": "Blur"
     },
     "talents": {
       "10": {

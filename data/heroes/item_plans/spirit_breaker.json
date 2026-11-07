@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "hero": "Spirit Breaker",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "694 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 46.8%. No rules: the largest signals sit on 20 games (physical lineup) or on selection (Black King Bar against escape heroes, 14% of 262 games). Reproduce: python scripts/hero_item_stats.py spirit_breaker.",
+    "items": "Valve /datafeed/itemdata, 7.41f: no item named by a rule.",
+    "hero": "Valve /datafeed/herodata hero_id 71 (Charge of Darkness, Nether Strike), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "phase_boots",
+      "name": "Phase Boots"
+    },
+    {
+      "item": "ancient_janggo",
+      "name": "Drum of Endurance"
+    },
+    {
+      "item": "invis_sword",
+      "name": "Shadow Blade"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 93% (4), magic_wand 58% (10), phase_boots 95% (10), headdress 53% (15), ancient_janggo 52% (18), blitz_knuckles 58% (19), claymore 57% (22), great_famango 24% (23), invis_sword 55% (24), staff_of_wizardry 46% (25), ogre_axe 36% (27), blade_of_alacrity 29% (28). Reviewed: dropped Headdress (53%), Blitz Knuckles and Claymore (parts of Shadow Blade), Staff of Wizardry, Ogre Axe and Blade of Alacrity (parts). STRATZ pos4 (12880 games) agrees on Drum of Endurance 15 min (38%) and Shadow Blade 23 min (95%) and adds Eul's Scepter 28 (25%) and Yasha and Kaya 32 (22%), which the league games do not show (Eul's under 25%).",
+  "skills": {
+    "order": [
+      "spirit_breaker_greater_bash",
+      "spirit_breaker_charge_of_darkness",
+      "spirit_breaker_bulldoze"
+    ],
+    "games": 694,
+    "first_agree": 417,
+    "opening": {
+      "name": "spirit_breaker_greater_bash",
+      "agree": 586
+    },
+    "names": {
+      "spirit_breaker_greater_bash": "Greater Bash",
+      "spirit_breaker_charge_of_darkness": "Charge of Darkness",
+      "spirit_breaker_bulldoze": "Bulldoze",
+      "spirit_breaker_nether_strike": "Nether Strike"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_night_vision_500",
+        "label": "+500 Night Vision",
+        "picked": 401,
+        "games": 672
+      },
+      "15": {
+        "name": "special_bonus_unique_spirit_breaker_increased_charge_speed",
+        "label": "Charge of Darkness Bonus Speed",
+        "picked": 356,
+        "games": 458
+      },
+      "20": {
+        "name": "special_bonus_unique_spirit_breaker_shield",
+        "label": "Bulldoze All Damage Barrier",
+        "picked": 73,
+        "games": 139
+      },
+      "25": {
+        "name": "special_bonus_unique_spirit_breaker_4",
+        "label": "Charge of Darkness Cooldown",
+        "picked": 15,
+        "games": 26
+      }
+    },
+    "basis": "694 games since 7.41: maxed spirit_breaker_greater_bash > spirit_breaker_charge_of_darkness > spirit_breaker_bulldoze 333 (win 56.2%), spirit_breaker_charge_of_darkness > spirit_breaker_greater_bash > spirit_breaker_bulldoze 158 (win 54.4%), spirit_breaker_greater_bash > spirit_breaker_charge_of_darkness 84 (win 22.6%); talents 10: +500 Night Vision 401/672 (50.4%), +4 Armor 271/672 (45.0%); 15: Charge of Darkness Bonus Speed 356/458 (55.3%), Bulldoze Cooldown 102/458 (68.6%); 20: Bulldoze All Damage Barrier 73/139 (71.2%), / Empowering Haste Movespeed Bonus 66/139 (62.1%); 25: Charge of Darkness Cooldown 15/26 (40.0%), Greater Bash Damage 11/26 (72.7%)."
+  },
+  "fight": [
+    "spirit_breaker_charge_of_darkness",
+    "spirit_breaker_nether_strike"
+  ]
+}

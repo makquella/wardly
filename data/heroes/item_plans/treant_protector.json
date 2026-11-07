@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "hero": "Treant Protector",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "612 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 57.8%. No item rules: STRATZ pos4/pos5 (331 and 962 games, win 44% and 43%) have no build rows, the league games are 57.8% won; the only 2x+ candidate (Essence Distiller against evasion) does not match its mechanics. One note: Overgrowth against escape heroes. Reproduce: python scripts/hero_item_stats.py treant_protector.",
+    "items": "Valve /datafeed/itemdata, 7.41f: no item named by a rule.",
+    "hero": "Valve /datafeed/herodata hero_id 83 (Overgrowth), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "solar_crest",
+      "name": "Solar Crest"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 100% (1), ring_of_basilius 74% (10), magic_wand 53% (10), arcane_boots 68% (12), pavise 30% (21), great_famango 24% (22), solar_crest 28% (24), aghanims_shard 30% (25), blink 80% (25), force_staff 25% (29), staff_of_wizardry 46% (31). Reviewed: dropped Ring of Basilius, Pavise (30%, 21 min, the Solar Crest part), Great Famango and Staff of Wizardry. Blink Dagger is 80% of the won games (25 min), Solar Crest 28% (24 min); STRATZ has no build rows for this hero.",
+  "skills": {
+    "order": [
+      "treant_living_armor",
+      "treant_natures_grasp",
+      "treant_leech_seed"
+    ],
+    "games": 612,
+    "first_agree": 560,
+    "opening": {
+      "name": "treant_leech_seed",
+      "agree": 590
+    },
+    "names": {
+      "treant_living_armor": "Living Armor",
+      "treant_natures_grasp": "Nature's Grasp",
+      "treant_leech_seed": "Leech Seed",
+      "treant_overgrowth": "Overgrowth"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_treant_8",
+        "label": "Living Armor Heal Per Second",
+        "picked": 495,
+        "games": 605
+      },
+      "15": {
+        "name": "special_bonus_unique_treant_9",
+        "label": "Nature's Grasp Damage",
+        "picked": 399,
+        "games": 441
+      },
+      "20": {
+        "name": "special_bonus_unique_treant_13",
+        "label": "Living Armor Damage Block",
+        "picked": 155,
+        "games": 168
+      },
+      "25": {
+        "name": "special_bonus_unique_treant_7",
+        "label": "AoE Living Armor",
+        "picked": 38,
+        "games": 39
+      }
+    },
+    "basis": "612 games since 7.41: maxed treant_living_armor > treant_natures_grasp > treant_leech_seed 453 (win 63.4%), treant_living_armor > treant_natures_grasp 91 (win 34.1%), treant_living_armor > treant_leech_seed > treant_natures_grasp 16 (win 62.5%); talents 10: Living Armor Heal Per Second 495/605 (57.6%), +50 Base Damage 110/605 (61.8%); 15: Nature's Grasp Damage 399/441 (65.9%), Leech Seed Damage to Healing 42/441 (66.7%); 20: Living Armor Damage Block 155/168 (73.5%), Leech Seed Bonus Damage 13/168 (84.6%); 25: AoE Living Armor 38/39 (65.8%), Leech Seed Cooldown 1/39 (0.0%)."
+  },
+  "fight": [
+    "treant_overgrowth"
+  ],
+  "notes": [
+    {
+      "id": "escape_overgrowth",
+      "enemy": "escape",
+      "minute": 10,
+      "basis": "Valve 7.41f Overgrowth: 3/4/5 s in an 800 radius, deals damage and prevents moving, blinking, going invisible and attacking; works on Debuff Immune units (they break free only if they gain the immunity afterwards); 90-110 s cooldown. The escape group (draft_analysis.ESCAPES) lives on blinks and quick moves.",
+      "reason": {
+        "en": "{enemy} escapes from fights: keep Overgrowth until they are inside it, it stops them from moving, blinking and going invisible",
+        "uk": "{enemy} тікає з бою: тримайте Overgrowth, доки він не опиниться всередині — вона не дає йому рухатися, блінкатися й ставати невидимим"
+      }
+    }
+  ]
+}

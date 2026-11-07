@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "hero": "Dazzle",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "360 league games since 7.41 (data/heroes/item_stats), win 49.4%, hard support (STRATZ pos5, 4452 games). Reproduce: python scripts/hero_item_stats.py dazzle.",
+    "items": "No item rule: the only candidate rows (Ghost Scepter against break heroes and jumpers) have no mechanic behind them and win less; build from the games.",
+    "hero": "Valve /datafeed/herodata hero_id 50 (Shallow Grave), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "holy_locket",
+      "name": "Holy Locket"
+    },
+    {
+      "item": "mekansm",
+      "name": "Mekansm"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (1), magic_wand 98% (7), ring_of_basilius 70% (10), arcane_boots 67% (13), holy_locket 78% (19), headdress 33% (21), mekansm 28% (24), great_famango 24% (26), glimmer_cape 28% (27), blink 55% (31). Reviewed: the draft as is. STRATZ pos5 (4452 games) has only Holy Locket at 18 min (72%, won 56%); Mekansm (28% at 24 min) and Blink Dagger (55% at 31 min) come from the league games only (asked).",
+  "skills": {
+    "order": [
+      "dazzle_shadow_wave",
+      "dazzle_shallow_grave",
+      "dazzle_poison_touch"
+    ],
+    "games": 360,
+    "first_agree": 255,
+    "opening": {
+      "name": "dazzle_shadow_wave",
+      "agree": 203
+    },
+    "names": {
+      "dazzle_shadow_wave": "Shadow Wave",
+      "dazzle_shallow_grave": "Shallow Grave",
+      "dazzle_poison_touch": "Poison Touch"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_mp_regen_175",
+        "label": "+1.75 Mana Regen",
+        "picked": 177,
+        "games": 351
+      },
+      "15": {
+        "name": "special_bonus_unique_dazzle_2",
+        "label": "+45 Shadow Wave Heal / Damage",
+        "picked": 220,
+        "games": 259
+      },
+      "20": {
+        "name": "special_bonus_unique_dazzle_shallow_grave_cooldown",
+        "label": "-3s Shallow Grave Cooldown",
+        "picked": 93,
+        "games": 97
+      },
+      "25": {
+        "name": "special_bonus_unique_dazzle_4",
+        "label": "+1 Weave Armor Reduction/Increase",
+        "picked": 13,
+        "games": 19
+      }
+    },
+    "basis": "360 games since 7.41: maxed dazzle_shadow_wave > dazzle_shallow_grave > dazzle_poison_touch 191 (win 57.6%), dazzle_poison_touch > dazzle_shadow_wave > dazzle_shallow_grave 51 (win 66.7%), dazzle_shadow_wave > dazzle_shallow_grave 34 (win 23.5%); talents 10: +1.75 Mana Regen 177/351 (51.4%), +200 Poison Touch Attack Range 174/351 (50.0%); 15: +45 Shadow Wave Heal / Damage 220/259 (60.0%), special_bonus_unique_dazzle_nothl_projection_duration 39/259 (56.4%); 20: -3s Shallow Grave Cooldown 93/97 (69.9%), +75 Poison Touch DPS 4/97 (75.0%); 25: +1 Weave Armor Reduction/Increase 13/19 (76.9%), +40% Poison Touch Slow 6/19 (100.0%)."
+  },
+  "fight": [
+    "dazzle_shallow_grave"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "hero": "Rubick",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1943 league games since 7.41 (data/heroes/item_stats), win 47.1%. Reproduce: python scripts/hero_item_stats.py rubick.",
+    "items": "Valve 7.41f: Eul's Scepter of Divinity.",
+    "hero": "Valve /datafeed/herodata hero_id 86 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [
+    {
+      "id": "eul_jumpers",
+      "why": "jump_eul",
+      "family": "jump",
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity",
+      "enemy": "targeted_jumpers",
+      "minute": 22,
+      "basis": "Valve 7.41f Eul's Scepter of Divinity: Cyclone on an enemy or on yourself (never an ally), 2.5 s of invulnerability, 23 s cooldown, 175 mana; cast on yourself it goes through spell immunity. Whether a jump cast on a cycloned hero is lost is not in the datafeed (asked). High-rank games against heroes that jump onto a target: 28% of 122 games (12% otherwise), won 59% with it against 43% without; STRATZ pos4 has it at 27 min (25%, won 58%).",
+      "reason": {
+        "en": "{enemy} jumps onto a chosen target: {item} makes you invulnerable for 2.5 s or lifts the jumper out of the fight",
+        "uk": "{enemy} стрибає на обрану ціль: {item} робить вас невразливим на 2,5 с або підхоплює стрибуна й забирає його з бійки"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "essence_distiller",
+      "name": "Essence Distiller"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "aether_lens",
+      "name": "Aether Lens"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "force_staff",
+      "name": "Force Staff"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 74% (12), essence_distiller 36% (15), blink 79% (24), glimmer_cape 26% (25), aether_lens 35% (25), force_staff 26% (26), aghanims_shard 50% (27). STRATZ pos4 (16929 games): Essence Distiller 14, Aether Lens 21, Blink Dagger 21 (100%), Glimmer Cape 24, Eul's 27 (25%), Aghanim's Scepter 34 min (42%); the league build has Force Staff where STRATZ has Eul's. Ordered by the STRATZ high-rank pos4 minute where STRATZ lists the item (16929 games), else the league minute (the player review of 2026-11-07: the STRATZ order where the two disagree).",
+  "skills": {
+    "order": [
+      "rubick_fade_bolt",
+      "rubick_arcane_supremacy",
+      "rubick_telekinesis"
+    ],
+    "games": 1943,
+    "first_agree": 1926,
+    "opening": {
+      "name": "rubick_fade_bolt",
+      "agree": 1697
+    },
+    "names": {
+      "rubick_fade_bolt": "Fade Bolt",
+      "rubick_arcane_supremacy": "Arcane Supremacy",
+      "rubick_telekinesis": "Telekinesis",
+      "rubick_spell_steal": "Spell Steal"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_hp_200",
+        "label": "+200 Health",
+        "picked": 1606,
+        "games": 1896
+      },
+      "15": {
+        "name": "special_bonus_unique_rubick_3",
+        "label": "Fade Bolt Cooldown",
+        "picked": 699,
+        "games": 1352
+      },
+      "20": {
+        "name": "special_bonus_unique_rubick_fade_bolt_spell_reduction",
+        "label": "Fade Bolt Damage Reduction",
+        "picked": 267,
+        "games": 503
+      },
+      "25": {
+        "name": "special_bonus_unique_rubick_5",
+        "label": "Spell Amp For Stolen Spells",
+        "picked": 51,
+        "games": 91
+      }
+    },
+    "basis": "1943 games since 7.41: maxed rubick_fade_bolt > rubick_arcane_supremacy > rubick_telekinesis 1511 (win 54.6%), rubick_fade_bolt > rubick_arcane_supremacy 314 (win 17.5%), rubick_fade_bolt 43 (win 0.0%); talents 10: +200 Health 1606/1896 (48.1%), Telekinesis Cooldown 290/1896 (48.3%); 15: Fade Bolt Cooldown 699/1352 (55.1%), Stolen Spells Mana Cost 653/1352 (59.7%); 20: Fade Bolt Damage Reduction 267/503 (68.5%), Telekinesis Landing Deals Damage 236/503 (65.7%); 25: Spell Amp For Stolen Spells 51/91 (76.5%), Curiosity Bonuses 40/91 (52.5%)."
+  },
+  "fight": [
+    "rubick_telekinesis",
+    "rubick_spell_steal"
+  ]
+}

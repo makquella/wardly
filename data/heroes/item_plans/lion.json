@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "hero": "Lion",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "1581 league games since 7.41 (data/heroes/item_stats), win 50.9%. Reproduce: python scripts/hero_item_stats.py lion.",
+    "items": "Valve 7.41f: none (no item rule).",
+    "hero": "Valve /datafeed/herodata hero_id 26 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "ghost",
+      "name": "Ghost Scepter"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts, consumables and Tranquil Boots dropped): blink 96% (18), glimmer_cape 27% (26), ghost 28% (27), aghanims_shard 32% (27). STRATZ pos4 (7405 games): Blink Dagger 16 min (100%), Glimmer Cape 25 min (25%); pos5 (12232 games): Blink 17 min, Glimmer 26 min (42%). No group gives an item rule: every lift above 2x is a core or burst item, not an answer.",
+  "skills": {
+    "order": [
+      "lion_impale",
+      "lion_mana_drain",
+      "lion_voodoo"
+    ],
+    "games": 1581,
+    "first_agree": 1338,
+    "opening": {
+      "name": "lion_impale",
+      "agree": 1512
+    },
+    "names": {
+      "lion_impale": "Earth Spike",
+      "lion_mana_drain": "Mana Drain",
+      "lion_voodoo": "Hex",
+      "lion_finger_of_death": "Finger of Death"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_movement_speed_20",
+        "label": "+20 Movement Speed",
+        "picked": 904,
+        "games": 1529
+      },
+      "15": {
+        "name": "special_bonus_unique_lion_5",
+        "label": "Hex Cooldown",
+        "picked": 743,
+        "games": 1021
+      },
+      "20": {
+        "name": "special_bonus_unique_lion_10",
+        "label": "Earth Spike affects a 30 degree cone",
+        "picked": 262,
+        "games": 335
+      },
+      "25": {
+        "name": "special_bonus_unique_lion_2",
+        "label": "Earth Spike cast range/travel distance",
+        "picked": 39,
+        "games": 61
+      }
+    },
+    "basis": "1581 games since 7.41: maxed lion_impale > lion_mana_drain > lion_voodoo 697 (win 65.4%), lion_impale > lion_voodoo > lion_mana_drain 370 (win 50.5%), lion_impale > lion_mana_drain 196 (win 27.6%); talents 10: +20 Movement Speed 904/1529 (51.0%), Mana Drain Slow 625/1529 (54.2%); 15: Hex Cooldown 743/1021 (64.5%), To Hell And Back Debuff/Spell Amp 278/1021 (60.1%); 20: Earth Spike affects a 30 degree cone 262/335 (68.3%), Finger of Death Damage Per Kill 73/335 (72.6%); 25: Earth Spike cast range/travel distance 39/61 (76.9%), AoE Hex 22/61 (63.6%)."
+  },
+  "fight": [
+    "lion_finger_of_death",
+    "lion_voodoo"
+  ]
+}

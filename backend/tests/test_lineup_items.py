@@ -111,8 +111,8 @@ def test_the_service_prefers_the_lineup_item(monkeypatch):
     from app.player_api import PLAYER_SERVICE
 
     monkeypatch.setattr(PLAYER_SERVICE, "_live_meta", lambda hero_id: SAVE_META)
-    item = PLAYER_SERVICE.save_item("Crystal Maiden", ["item_boots"], MAGIC)
+    # Every support has a hero plan now (its save item comes from it): a hero
+    # without a support plan, played as a support, keeps the lineup item.
+    item = PLAYER_SERVICE.save_item("Mars", ["item_boots"], MAGIC)
     assert item["why"] == "magic"
-    assert PLAYER_SERVICE.save_item("Crystal Maiden", ["item_boots"], ["Axe"])["name"] == (
-        "Force Staff"
-    )
+    assert PLAYER_SERVICE.save_item("Mars", ["item_boots"], ["Axe"])["name"] == ("Force Staff")

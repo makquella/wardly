@@ -20,7 +20,7 @@ Three layers, so the same detail scales past one hero:
 - **Numbers (automatic).** `.github/workflows/hero-stats.yml` runs
   `scripts/hero_item_stats.py --all --write` every Wednesday and by hand after a
   patch: `data/heroes/item_stats/<hero>.json` per supported hero in its usual
-  position (OpenDota `lane_role`; supports unfiltered), from the open OpenDota
+  position (OpenDota `lane_role`; a support's games are filtered, see Supports), from the open OpenDota
   Explorer (league games; a hero under 300 games in the patch is read from the
   previous patch on too). It holds the usual and tempo builds, the tempo net
   worth line, the skill build with talents, and for every enemy group each
@@ -71,7 +71,8 @@ Three layers, so the same detail scales past one hero:
    Linken's Sphere blocks), `invisibility`,
    `illusion_clearers` (`draft_analysis.ILLUSION_CLEARERS`), `magic`
    (`draft_analysis.MAGIC_DAMAGE`; a rule names it with `count: 3`, the lineup
-   the generic counter needs too). A new group goes into those tables with its
+   the generic counter needs too), `physical` (`draft_analysis.PHYSICAL_CARRIES`;
+   `count: 2`, the lineup the save item needs). A new group goes into those tables with its
    own check, not into one plan.
 4. **The rules**, in order; the first that holds wins its `family`:
    - `why` — a short id of the reason;
@@ -334,3 +335,97 @@ Checked against Valve 7.41f: Shiva's Guard no longer cuts health restoration
 (Arctic Blast is damage and a slow), so no plan names it against healing; Spirit
 Vessel's Soul Release cuts it by 70% for 8 s. The Blink Dagger and other items
 bought whole are not in the assembled-item statistics, so no rule leans on them.
+
+## Supports
+
+A support carries the same kind of plan (`positions: ["support"]`): rules, build,
+skills, `fight` and notes, with the same checklist. It has **no `tempo`**
+(`validate` refuses one): a support's farm is not the sign of a won game. A
+support plan may name the `physical` group (`count: 2`, like `magic` with 3).
+
+What the live advice does with it, for the hero's own support plan only (a
+support without a plan behaves as before):
+
+- **Items only from the plan.** The plan's rules that hold (minute gate kept),
+  then its `build` in order; no death-pattern items (BKB, Linken's Sphere, Aeon
+  Disk), no generic counters, no OpenDota popularity.
+- **Save item tip.** The first save item (`map_hints.SAVE_ITEMS`) the plan names
+  (rules that hold now first, then the build), with its price. A plan that names
+  no save item gives no save item tip: the hero's high-rank players do not buy
+  one. Without a plan: the lineup save item (Glimmer Cape, Ghost Scepter), else
+  the most bought.
+- **Gold card.** Unspent gold names the plan's next item (and the part the gold
+  buys), as for a core; with nothing to name, the generic support card.
+- **Draft card, notes, skills, fight, death screen.** The same as for a core:
+  the draft card names the plan's item early in the match, notes show once per
+  match, the skill tips and the fight summary read the plan, and the death screen
+  gives «Why <item>:» with the plan's reason.
+
+The numbers: `scripts/hero_item_stats.py --position support` keeps only a
+support's games (last hits under 2.5 a minute, `map_hints.SUPPORT_LH_PER_MIN`)
+and whole items of 1000+ gold; it has no tempo line and counts the `physical`
+lineup (`physical_lineup`) beside `magic_lineup`.
+
+## Support wave: the 25 supports (7.41f, 2026-11-07)
+
+Every supported hero has a plan now (`data/heroes/plan_coverage.json` lists
+none pending). The numbers are the support games of `--position support` (7.41,
+or from 7.40 on for a hero under 300 games); three batches drafted the plans from
+the stats, STRATZ pos4/pos5 and the Valve datafeed, and the doubtful points
+went to the player (2026-11-07):
+
+- **The build order.** Where STRATZ (Divine–Immortal pubs, thousands of games)
+  and the league games disagree, the STRATZ minute orders the items it lists
+  (Blink Dagger earlier for Crystal Maiden, Lich, Snapfire, Witch Doctor;
+  Aether Lens before Glimmer Cape for Rubick); the league minute orders the rest.
+  No item is added from STRATZ alone.
+- **Eul's Scepter against Phantom Strike and Charge of Darkness** (Jakiro,
+  Rubick, Skywrath Mage, Tusk): the self-cast invulnerability answers the jump,
+  the player's call (Valve's text gives only the 2.5 s invulnerability).
+- **Rod of Atos for Hoodwink against escapes**: a root stops walking and blink
+  escapes (826 games, 27% against 16%, won 52% against 47%).
+- **Ghost Scepter against two physical carries** stays for Lich, Ogre Magi and
+  Skywrath Mage on thin samples (6-14 games with the item): the mechanics fit.
+- **Dropped:** Mirana's Solar Crest against evasion (its barrier and armor do
+  nothing against evasion) and Shadow Shaman's Ghost Scepter against break
+  heroes (no physical lineup: Huskar deals magic damage, which Ghost raises).
+- Skill builds and talents are the most common ones; no `instead`/`never`.
+
+Earthshaker and Earth Spirit are cores in most league games (Earthshaker: 51
+support games from 7.40, his build leans on STRATZ pos4). Oracle and Vengeful
+Spirit are read from 7.40 on. A plan with no rule still carries the build (for
+the gold card and the save item tip), the skills and the fight abilities.
+
+| Hero | Rules | Build | Notes |
+|---|---|---|---|
+| Bounty Hunter (pos 4, 421 games, from 7.40) | healing: Spirit Vessel from 14:00 | Drum of Endurance → Eul's → Boots of Bearing → Force Staff → Perseverance → Aghanim's Shard | invisibility |
+| Clockwerk (pos 4, 1007 games) | — | Essence Distiller → Blink Dagger → Eul's → Force Staff → Aghanim's Shard → Ghost Scepter | invisibility |
+| Crystal Maiden (pos 5, 476 games) | — | Aghanim's Shard → Blink Dagger → Glimmer Cape | jumpers |
+| Dazzle (pos 5, 360 games) | — | Arcane Boots → Holy Locket → Mekansm → Glimmer Cape → Blink Dagger | — |
+| Disruptor (pos 5, 1077 games) | — | Arcane Boots → Blink Dagger → Glimmer Cape → Aghanim's Scepter | escape |
+| Earth Spirit (pos 4, 270 games, from 7.40) | — | Spirit Vessel → Blink Dagger → Eul's → Aether Lens → Aghanim's Shard | escape |
+| Earthshaker (pos 4, 51 games, from 7.40) | — | Arcane Boots → Blink Dagger → Aghanim's Shard → Force Staff → Kaya | — |
+| Hoodwink (pos 4, 1816 games) | healing: Spirit Vessel from 14:00; escape: Rod of Atos from 18:00 | Arcane Boots → Essence Distiller → Aghanim's Shard → Glimmer Cape → Force Staff → Blink Dagger | — |
+| Jakiro (pos 5, 792 games) | magic ×3: Glimmer Cape from 18:00; targeted jumpers: Eul's Scepter from 19:00 | Arcane Boots → Glimmer Cape → Eul's → Force Staff → Aghanim's Scepter | — |
+| Lich (pos 5, 1067 games) | magic ×3: Glimmer Cape from 16:00; physical ×2: Ghost Scepter from 22:00 | Glimmer Cape → Blink Dagger → Aghanim's Shard → Force Staff → Aghanim's Scepter | — |
+| Lion (pos 5, 1581 games) | — | Blink Dagger → Glimmer Cape → Ghost Scepter → Aghanim's Shard | — |
+| Mirana (pos 4, 410 games) | — | Arcane Boots → Essence Distiller → Eul's → Aghanim's Scepter | — |
+| Nyx Assassin (pos 4, 494 games) | — | Arcane Boots → Eul's → Blink Dagger → Aghanim's Shard → Aghanim's Scepter | — |
+| Ogre Magi (pos 5, 602 games) | physical ×2: Ghost Scepter from 20:00 | Arcane Boots → Hand of Midas → Glimmer Cape → Aether Lens → Solar Crest → Aghanim's Shard | — |
+| Oracle (pos 5, 329 games, from 7.40) | — | Arcane Boots → Blink Dagger → Glimmer Cape → Aether Lens | — |
+| Rubick (pos 4, 1943 games) | targeted jumpers: Eul's Scepter from 22:00 | Arcane Boots → Essence Distiller → Blink Dagger → Aether Lens → Glimmer Cape → Force Staff → Aghanim's Shard | — |
+| Shadow Shaman (pos 5, 713 games) | — | Arcane Boots → Blink Dagger → Aghanim's Shard → Aether Lens → Glimmer Cape | — |
+| Skywrath Mage (pos 4, 569 games) | targeted jumpers: Eul's Scepter from 20:00; magic ×3: Glimmer Cape from 18:00; physical ×2: Ghost Scepter from 21:00 | Arcane Boots → Rod of Atos → Aghanim's Shard → Kaya → Ghost Scepter → Blink Dagger | escape |
+| Snapfire (pos 4, 453 games) | magic ×3: Glimmer Cape from 17:00 | Arcane Boots → Aghanim's Shard → Blink Dagger → Glimmer Cape → Force Staff | — |
+| Spirit Breaker (pos 4, 694 games) | — | Phase Boots → Drum of Endurance → Shadow Blade | — |
+| Treant Protector (pos 5, 612 games) | — | Arcane Boots → Solar Crest → Aghanim's Shard → Blink Dagger | escape |
+| Tusk (pos 4, 1427 games) | magic ×3: Eul's Scepter from 24:00; targeted jumpers: Eul's Scepter from 24:00 | Blink Dagger → Aghanim's Scepter | — |
+| Vengeful Spirit (pos 5, 600 games, from 7.40) | physical ×2: Solar Crest from 18:00 | Drum of Endurance → Solar Crest → Vladmir's Offering | — |
+| Warlock (pos 5, 486 games) | — | Arcane Boots → Glimmer Cape → Aghanim's Shard → Aghanim's Scepter | — |
+| Witch Doctor (pos 5, 637 games) | healing: Spirit Vessel from 18:00 | Arcane Boots → Glimmer Cape → Blink Dagger → Aghanim's Shard → Ghost Scepter → Aghanim's Scepter | — |
+
+`tests/test_support_plans.py` runs the 101 scenarios of the batches
+(`tests/support_plan_scenarios.json`: each rule firing, the one that must not,
+the minute gate, an owned item answering its family, the notes). Every `fight`
+ability now needs its in-game name in `skills.names` (`hero_items.validate`):
+Phantom Assassin's fight summary showed the raw `phantom_assassin_blur`.

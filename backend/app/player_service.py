@@ -75,7 +75,14 @@ from app.finding_history import finding_history
 from app.focus_goal import can_focus, focus_summary, match_result, new_focus, played_after
 from app.friend_compare import compare
 from app.game_plan import build_game_plan, key_item
-from app.hero_items import plan_fight, plan_for, plan_note, plan_skills
+from app.hero_items import (
+    format_reason,
+    hero_rows,
+    plan_fight,
+    plan_for,
+    plan_note,
+    plan_skills,
+)
 from app.hero_meta import item_key, start_items
 from app.hero_profiles import get_hero_position
 from app.history_backup import export_backup, import_backup, preview_backup
@@ -638,12 +645,16 @@ class PlayerService:
         cost (app/next_item.py) for a core's live farm advice; None when unknown.
         `gold`: the gold carried, for the net worth a hero plan's tempo build
         reads (next_item.net_worth). `role`: the live role (live_role.py); a hero
-        plan applies only in its own position, else the hero's usual one."""
+        plan applies only in its own position, else the hero's usual one. A
+        support gets an item only from its plan (rules, then the build), never
+        the popular build."""
         hero_id = hero_id_from_name(hero)
         if hero_id is None or owned is None:
             return None
         meta = self._live_meta(hero_id)
         position = role or get_hero_position(hero)
+        if position == "support" and plan_for(hero, position) is None:
+            return None
         # How this match's deaths went and the enemy heroes seen pick the item
         # first (BKB after deaths under stuns, Linken's against Primal Roar),
         # then the hero's usual build.
@@ -664,6 +675,8 @@ class PlayerService:
         listed = (
             next_listed_item(plan["build"], meta, owned) if plan and plan.get("build") else None
         )
+        if position == "support":
+            return listed
         return listed or next_build_item(meta, owned)
 
     def buy_now(
@@ -707,22 +720,63 @@ class PlayerService:
         return plan_note(plan_for(hero, position or get_hero_position(hero)), enemies, minute)
 
     def save_item(
-        self, hero: str, owned: list[str] | None, enemies: list[str] | None = None
+        self,
+        hero: str,
+        owned: list[str] | None,
+        enemies: list[str] | None = None,
+        minute: int | None = None,
     ) -> dict[str, Any] | None:
-        """The save item for the support's «no save item» tip: the one against
-        the enemy lineup seen (situational_items.lineup_save_item), else the one
-        most bought on the hero, with the gold its missing parts cost; None
-        when unknown."""
+        """The save item for the support's «no save item» tip. A hero with a
+        support plan gets the first save item the plan names (planned_save_item);
+        otherwise the one against the enemy lineup seen
+        (situational_items.lineup_save_item), else the one most bought on the
+        hero, with the gold its missing parts cost; None when unknown."""
         hero_id = hero_id_from_name(hero)
         if owned is None:
             return None
         meta = self._live_meta(hero_id) if hero_id is not None else None
+        plan = plan_for(hero, "support")
+        if plan is not None:
+            return self._planned_save_item(plan, meta, owned, enemies, minute)
         lineup = lineup_save_item(enemies, owned, meta)
         if lineup is not None:
             return lineup
         if hero_id is None:
             return None
         return save_build_item(meta, owned, SAVE_ITEMS)
+
+    @staticmethod
+    def _planned_save_item(
+        plan: dict[str, Any],
+        meta: dict[str, Any] | None,
+        owned: list[str],
+        enemies: list[str] | None,
+        minute: int | None,
+    ) -> dict[str, Any] | None:
+        """The first save item (map_hints.SAVE_ITEMS) a support plan names: the
+        rules that hold now first, then the build in order; owned or built-from
+        ones are passed over. {key, name, cost, gold_left, why "plan", reason}."""
+        rows = hero_rows(plan, [e for e in enemies or [] if isinstance(e, str)], minute)
+        reasons = {row["key"]: row for row in rows}
+        entries = [{"item": row["key"], "name": row["name"]} for row in rows]
+        entries += [e for e in plan.get("build") or [] if e["item"] not in reasons]
+        entries = [e for e in entries if f"item_{e['item']}" in SAVE_ITEMS]
+        listed = next_listed_item(entries, meta, owned)
+        if listed is None:
+            return None
+        row = reasons.get(listed["key"])
+        reason = (
+            format_reason(
+                row["reason"],
+                item=listed["name"],
+                enemy=row["enemy"],
+                escape=row["escape"],
+                spell=row["spell"],
+            )
+            if row
+            else None
+        )
+        return {**listed, "why": "plan", "reason": reason}
 
     def start_items(self, hero: str, role: str | None = None) -> list[dict[str, Any]]:
         """The hero's usual starting purchase for the empty-bag and strategy-time

@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "hero": "Vengeful Spirit",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.40",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "600 league games since 7.40 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 50.5%. Thin: the stats are read from 7.40 on (7.41 alone had fewer games), the skill build from 7.41 (257 games), and the Solar Crest rule rests on 24 games of physical lineups (14 with it). Reproduce: python scripts/hero_item_stats.py vengeful_spirit.",
+    "items": "Valve /datafeed/itemdata, 7.41f: Solar Crest.",
+    "hero": "Valve /datafeed/herodata hero_id 20 (Magic Missile, Nether Swap), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [
+    {
+      "id": "physical_crest",
+      "why": "physical_crest",
+      "family": "crest",
+      "item": "solar_crest",
+      "name": "Solar Crest",
+      "enemy": "physical",
+      "count": 2,
+      "minute": 18,
+      "basis": "Valve 7.41f Solar Crest (2575 gold): Shine on an ally gives 5 armor, 60 attack speed, 15% movement speed and a 350 physical damage barrier for 7 s, 1000 cast range, 16 s cooldown (shares it with Pavise). It is in her build (32% of the won games, ~22 min); against two or more physical carries she buys it in 58% of 24 games (28% otherwise), won 71% against 50%.",
+      "reason": {
+        "en": "{enemy} and another physical carry are in their team: {item} is in your build, take it earlier, it gives an ally a 350 physical damage barrier and 5 armor for 7 seconds",
+        "uk": "{enemy} та ще один фізичний керрі в їхній команді: {item} і так у вашій збірці — візьміть його раніше, він дає союзнику бар'єр на 350 фізичної шкоди й 5 броні на 7 секунд"
+      }
+    }
+  ],
+  "build": [
+    {
+      "item": "ancient_janggo",
+      "name": "Drum of Endurance"
+    },
+    {
+      "item": "solar_crest",
+      "name": "Solar Crest"
+    },
+    {
+      "item": "vladmir",
+      "name": "Vladmir's Offering"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 86% (3), magic_wand 62% (5), tranquil_boots 61% (8), ring_of_basilius 60% (10), arcane_boots 33% (10), buckler 43% (16), ancient_janggo 41% (18), pavise 38% (19), headdress 20% (20), solar_crest 32% (22), glimmer_cape 21% (22), vladmir 40% (22), aghanims_shard 23% (25), staff_of_wizardry 31% (25), point_booster 22% (26), ogre_axe 22% (26). Reviewed: dropped boots (Tranquil Boots 61% is 900 gold, Arcane Boots only 33%), Ring of Basilius, Buckler (part of Vladmir's), Pavise (the Solar Crest part), Headdress, Staff of Wizardry and the Aghanim's Scepter parts. STRATZ pos4/pos5 (1678 and 2152 games) have no build rows.",
+  "skills": {
+    "order": [
+      "vengefulspirit_magic_missile",
+      "vengefulspirit_wave_of_terror",
+      "vengefulspirit_command_aura"
+    ],
+    "games": 257,
+    "first_agree": 177,
+    "opening": {
+      "name": "vengefulspirit_magic_missile",
+      "agree": 144
+    },
+    "names": {
+      "vengefulspirit_magic_missile": "Magic Missile",
+      "vengefulspirit_wave_of_terror": "Wave of Terror",
+      "vengefulspirit_command_aura": "Vengeance Aura",
+      "vengefulspirit_nether_swap": "Nether Swap"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_vengeful_spirit_swap_damage",
+        "label": "Nether Swap Enemy Damage",
+        "picked": 145,
+        "games": 250
+      },
+      "15": {
+        "name": "special_bonus_unique_vengeful_spirit_4",
+        "label": "Wave of Terror Armor",
+        "picked": 85,
+        "games": 152
+      },
+      "20": {
+        "name": "special_bonus_unique_vengeful_spirit_wave_of_terror_steal",
+        "label": "Wave Of Terror Steals Of Reduced Damage And Armor",
+        "picked": 17,
+        "games": 31
+      },
+      "25": {
+        "name": "special_bonus_unique_vengeful_spirit_9",
+        "label": "Nether Swap Cooldown",
+        "picked": 6,
+        "games": 7
+      }
+    },
+    "basis": "257 games since 7.41: maxed vengefulspirit_magic_missile > vengefulspirit_wave_of_terror > vengefulspirit_command_aura 140 (win 57.1%), vengefulspirit_magic_missile > vengefulspirit_wave_of_terror 37 (win 29.7%), vengefulspirit_wave_of_terror > vengefulspirit_magic_missile > vengefulspirit_command_aura 29 (win 69.0%); talents 10: Nether Swap Enemy Damage 145/250 (49.0%), Magic Missile Cast Range 105/250 (56.2%); 15: Wave of Terror Armor 85/152 (69.4%), Magic Missile Stun Duration 67/152 (56.7%); 20: Wave Of Terror Steals Of Reduced Damage And Armor 17/31 (82.4%), Magic Missile Cooldown 14/31 (71.4%); 25: Nether Swap Cooldown 6/7 (83.3%), Vengeance Aura Base Damage Bonus 1/7 (0.0%)."
+  },
+  "fight": [
+    "vengefulspirit_nether_swap",
+    "vengefulspirit_magic_missile"
+  ]
+}

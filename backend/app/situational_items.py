@@ -23,7 +23,9 @@ its counters come right after the death patterns and replace the generic ones
 of the same family (Terrorblade: Bloodthorn or Monkey King Bar against
 evasion, his Eye of Skadi earlier against healing, no Maelstrom).
 
-Cores only (the carry advisor): a support's item advice is the save item tip.
+A support's items come only from its plan (position "support"): its rules, with
+no death patterns, no generic counters and no tempo. A support without a plan
+gets none; its item advice is the save item tip.
 Nothing when the item (or something built from it) is already owned.
 """
 
@@ -32,7 +34,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
-from app.hero_items import TEMPO_WHY, format_reason
+from app.hero_items import TEMPO_WHY, format_reason, has_plan
 from app.hero_meta import item_key, item_name
 from app.next_item import _contains, _cost, gold_left, has_components
 
@@ -123,6 +125,26 @@ def _candidates(
     )
     from app.hero_items import hero_rows, plan_for, replaced, tempo_rows
 
+    if position == "support":
+        # A support buys what its plan says: no BKB or Aeon Disk after deaths,
+        # no generic carry counter. Without a plan, no rows.
+        plan = plan_for(hero, position)
+        return [
+            (
+                row["why"],
+                row["key"],
+                row["name"],
+                0,
+                row["enemy"],
+                row["spell"],
+                {
+                    "escape": row["escape"],
+                    "family_items": row["family_items"],
+                    "reason": row["reason"],
+                },
+            )
+            for row in (hero_rows(plan, enemies, minute) if plan else [])
+        ]
     rows: list[Candidate] = []
     held = kinds.get("disabled", 0)
     targeted = next((e for e in enemies if e in TARGETED_DISABLES), None)
@@ -297,9 +319,12 @@ def draft_item(
 ) -> dict[str, Any] | None:
     """The counter item to plan for against the enemy lineup (situational_item's
     enemy counters, no deaths and no minute gates) once DRAFT_MIN_ENEMIES enemy
-    heroes are seen; cores only. None otherwise or when it is already owned."""
+    heroes are seen; cores, and a support whose hero has a support plan. None
+    otherwise or when it is already owned."""
     seen = [e for e in enemies or [] if isinstance(e, str)]
-    if position not in CORE_POSITIONS or len(seen) < DRAFT_MIN_ENEMIES:
+    if len(seen) < DRAFT_MIN_ENEMIES or not (
+        position in CORE_POSITIONS or has_plan(hero, position)
+    ):
         return None
     return situational_item(
         [], owned_names, meta, enemies=seen, position=position, minute=_ANY_MINUTE, hero=hero

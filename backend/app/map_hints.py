@@ -328,6 +328,22 @@ TIPS = {
             "{item} найкращий проти цього складу ворога, і золота на нього вистачає.",
         ),
     },
+    # A support's hero plan (hero_items.py): its rule's own reason for the lineup,
+    # else the save item of its high-rank build.
+    "save_item_plan": {
+        "en": ("No save item yet: {item}", "{reason}."),
+        "uk": ("Немає рятівного предмета: {item}", "{reason}."),
+    },
+    "save_item_plan_build": {
+        "en": (
+            "No save item yet: {item}",
+            "{item} is the save item high-rank players buy next on this hero.",
+        ),
+        "uk": (
+            "Немає рятівного предмета: {item}",
+            "{item} — рятівний предмет, який сильні гравці на цьому герої беруть наступним.",
+        ),
+    },
     "save_item_magic": {
         "en": (
             "{item} against their magic",
@@ -1593,6 +1609,7 @@ class RoleTips:
         lane_record: dict[str, Any] | None = None,
         draft_item: dict[str, Any] | None = None,
         plan_note: dict[str, Any] | None = None,
+        save_tip: bool = True,
     ) -> dict[str, Any] | None:
         held_for = self._observe_wards(ward_charges, clock)
         if not alive or role is None:
@@ -1641,6 +1658,15 @@ class RoleTips:
             return self._offlane(clock, lang, deaths, level)
         if role != "support":
             return None
+        # A support with a hero plan: the enemy draft read and the plan's notes.
+        if draft_item is not None:
+            planned = self._draft_item(clock, lang, draft_item)
+            if planned is not None:
+                return planned
+        if plan_note is not None:
+            noted = self._plan_note(clock, lang, plan_note)
+            if noted is not None:
+                return noted
         if (
             last_hits is not None
             and LAST_HITS_FROM <= clock <= LAST_HITS_UNTIL
@@ -1685,7 +1711,8 @@ class RoleTips:
             if start is not None:
                 return _ward_bag_tip(f"ward_bag@{start}", lang, clock, score_gap, roshan_open)
         if (
-            items is not None
+            save_tip
+            and items is not None
             and clock >= SAVE_FROM
             and not SAVE_ITEMS & set(items)
             and gold is not None
@@ -1999,6 +2026,15 @@ def _save_item_tip(
     """The save item against the enemy lineup, the hero's usual one with its
     price, else Glimmer Cape or Force Staff."""
     why = (item or {}).get("why")
+    if why == "plan" and item and item.get("name"):
+        reason = item.get("reason")
+        left = item.get("gold_left")
+        if isinstance(reason, dict) and reason.get(lang if lang == "uk" else "en"):
+            text = reason["uk" if lang == "uk" else "en"]
+            text = text[:1].upper() + text[1:]
+            return _tip("save_item_plan", hint_id, lang, item=item["name"], reason=text)
+        if not isinstance(left, int):
+            return _tip("save_item_plan_build", hint_id, lang, item=item["name"])
     if why in ("magic", "physical") and item and item.get("name"):
         left = item.get("gold_left")
         if isinstance(left, int) and left <= gold:
@@ -2041,6 +2077,7 @@ def map_hint(
     ward_charges: int | None = None,
     skill: dict[str, Any] | None = None,
     save_item: dict[str, Any] | None = None,
+    save_tip: bool = True,
     score_gap: int | None = None,
     roshan_open: bool = False,
     enemies: list[str] | None = None,
@@ -2148,6 +2185,7 @@ def map_hint(
         key_item=key_item,
         ward_charges=ward_charges,
         save_item=save_item,
+        save_tip=save_tip,
         score_gap=score_gap,
         roshan_open=roshan_open,
         enemies=enemies,

@@ -287,7 +287,8 @@ def test_the_service_reads_the_save_item_from_the_heros_build(monkeypatch):
     from app.player_api import PLAYER_SERVICE
 
     monkeypatch.setattr(PLAYER_SERVICE, "_live_meta", lambda hero_id: SAVE_META)
-    item = PLAYER_SERVICE.save_item("Crystal Maiden", ["item_boots"])
+    # A hero without a support plan (every support has one now): the build's save item.
+    item = PLAYER_SERVICE.save_item("Mars", ["item_boots"])
     assert item is not None and item["name"] == "Force Staff"
     assert PLAYER_SERVICE.save_item("Not A Hero", []) is None
 

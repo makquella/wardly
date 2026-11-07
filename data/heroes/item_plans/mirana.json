@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "hero": "Mirana",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "410 league games since 7.41 (data/heroes/item_stats), win 46.3%. Reproduce: python scripts/hero_item_stats.py mirana.",
+    "items": "Valve 7.41f: Solar Crest.",
+    "hero": "Valve /datafeed/herodata hero_id 9 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones. Solar Crest against evasion dropped: its barrier and armor do nothing against evasion."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "essence_distiller",
+      "name": "Essence Distiller"
+    },
+    {
+      "item": "cyclone",
+      "name": "Eul's Scepter of Divinity"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 52% (13), essence_distiller 42% (15), cyclone 43% (24), ultimate_scepter 43% (34). STRATZ pos4 (8648 games): Essence Distiller 13 min, Eul's 21 min (58%), Aghanim's Scepter 29 min (82%); pos5 the same at 12, 21, 30 min. The league build is later by 3-5 min. Ordered by the STRATZ high-rank pos4 minute where STRATZ lists the item (8648 games), else the league minute; Arcane Boots stay first, the league's 13.4 against STRATZ's 13 for the Essence Distiller is no reorder (the player review of 2026-11-07: the STRATZ order where the two disagree).",
+  "skills": {
+    "order": [
+      "mirana_starfall",
+      "mirana_arrow",
+      "mirana_leap"
+    ],
+    "games": 410,
+    "first_agree": 364,
+    "opening": {
+      "name": "mirana_starfall",
+      "agree": 212
+    },
+    "names": {
+      "mirana_starfall": "Starstorm",
+      "mirana_arrow": "Sacred Arrow",
+      "mirana_leap": "Leap",
+      "mirana_invis": "Moonlight Shadow"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_mirana_6",
+        "label": "+150 Leap Distance",
+        "picked": 264,
+        "games": 401
+      },
+      "15": {
+        "name": "special_bonus_unique_mirana_5",
+        "label": "Moonlight Shadow gives +20% Evasion",
+        "picked": 253,
+        "games": 277
+      },
+      "20": {
+        "name": "special_bonus_unique_mirana_7",
+        "label": "+200 Starstorm Damage",
+        "picked": 96,
+        "games": 97
+      },
+      "25": {
+        "name": "special_bonus_unique_mirana_2",
+        "label": "+2 Multishot Sacred Arrows",
+        "picked": 13,
+        "games": 13
+      }
+    },
+    "basis": "410 games since 7.41: maxed mirana_starfall > mirana_arrow > mirana_leap 235 (win 58.3%), mirana_starfall > mirana_arrow 66 (win 13.6%), mirana_starfall > mirana_leap > mirana_arrow 49 (win 53.1%); talents 10: +150 Leap Distance 264/401 (48.1%), -2s Starstorm Cooldown 137/401 (46.0%); 15: Moonlight Shadow gives +20% Evasion 253/277 (57.3%), +90 Leap Attack Speed 24/277 (70.8%); 20: +200 Starstorm Damage 96/97 (76.0%), Celestial Quiver Damage 1/97 (100.0%); 25: +2 Multishot Sacred Arrows 13/13 (76.9%)."
+  },
+  "fight": [
+    "mirana_arrow",
+    "mirana_invis"
+  ]
+}

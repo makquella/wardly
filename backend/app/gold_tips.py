@@ -136,8 +136,8 @@ class GoldTips:
         start_items: list[dict[str, Any]] | None = None,
         pre_spawn: bool = False,
     ) -> dict[str, Any] | None:
-        """`next_item`: {key, name} of the next build item (cores), `buy_now`: its
-        part the gold buys now (next_item.buy_now), both drawn as icons.
+        """`next_item`: {key, name} of the next build item (cores, and a support
+        with a hero plan), `buy_now`: its part the gold buys now (next_item.buy_now), both drawn as icons.
         `start_items`: the hero's usual start ([{key, name}], hero_meta.start_items
         or the high-rank builds), named and drawn as icons on the start card.
         `pre_spawn`: strategy time, the hero not on the map yet — the shop is open,
@@ -183,7 +183,8 @@ class GoldTips:
         if start is None:
             return None
         hint_id = f"gold-stall@{start}"
-        if role == "support" or not next_item:
+        if not next_item:
+            # A support with no plan item has no build to name.
             key = "stall_support" if role == "support" else "stall"
             return _hint(key, hint_id, lang, gold=_round(spare))
         item = {"key": next_item["key"], "name": next_item["name"]}

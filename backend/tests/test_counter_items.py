@@ -106,9 +106,9 @@ def test_deaths_under_stuns_against_a_targeted_disable_ask_for_linkens():
     # Linken's already owned: the next answer.
     owned = situational_item(deaths, ["item_sphere"], META, enemies=["Beastmaster"], position="mid")
     assert owned["key"] == "black_king_bar"
-    # A support is not told to buy Linken's.
+    # A support is not told to buy Linken's, nor BKB: its items come from its plan.
     support = situational_item(deaths, [], META, enemies=["Beastmaster"], position="support")
-    assert support["key"] == "black_king_bar"
+    assert support is None
 
 
 def test_counters_to_the_enemy_heroes_seen():

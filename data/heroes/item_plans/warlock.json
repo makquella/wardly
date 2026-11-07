@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "hero": "Warlock",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "486 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 46.1%. No rules: the one candidate (Solar Crest against escape heroes, 174 games) has a 7-point win gap and Solar Crest's barrier is physical only. Reproduce: python scripts/hero_item_stats.py warlock.",
+    "items": "Valve /datafeed/itemdata, 7.41f: no item named by a rule.",
+    "hero": "Valve /datafeed/herodata hero_id 37 (Fatal Bonds, Chaotic Offering), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "ultimate_scepter",
+      "name": "Aghanim's Scepter"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (3), magic_wand 84% (4), ring_of_basilius 100% (7), arcane_boots 100% (11), pavise 22% (19), glimmer_cape 77% (19), solar_crest 21% (22), aghanims_shard 47% (23), ghost 24% (25), staff_of_wizardry 57% (26), force_staff 22% (27), point_booster 37% (27), ogre_axe 35% (28), blade_of_alacrity 29% (31), ultimate_scepter 21% (32). Reviewed: dropped Ring of Basilius, Pavise/Solar Crest (21-22%), Ghost Scepter (24%), Force Staff (22%) and the Aghanim's Scepter parts (Staff of Wizardry, Point Booster, Ogre Axe, Blade of Alacrity), keeping the Scepter itself (21% whole at 32 min). STRATZ pos5 (3400 games): Glimmer Cape 18 min (52%), the same; pos4 has no build rows.",
+  "skills": {
+    "order": [
+      "warlock_shadow_word",
+      "warlock_fatal_bonds",
+      "warlock_upheaval"
+    ],
+    "games": 486,
+    "first_agree": 371,
+    "opening": {
+      "name": "warlock_fatal_bonds",
+      "agree": 262
+    },
+    "names": {
+      "warlock_shadow_word": "Shadow Word",
+      "warlock_fatal_bonds": "Fatal Bonds",
+      "warlock_upheaval": "Upheaval",
+      "warlock_rain_of_chaos": "Chaotic Offering"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_warlock_5",
+        "label": "Fatal Bonds Damage",
+        "picked": 425,
+        "games": 471
+      },
+      "15": {
+        "name": "special_bonus_unique_warlock_10",
+        "label": "Upheaval Attack Speed per second on Allies",
+        "picked": 243,
+        "games": 281
+      },
+      "20": {
+        "name": "special_bonus_unique_warlock_1",
+        "label": "Damage Resistance for Chaotic Offering Golems",
+        "picked": 28,
+        "games": 45
+      },
+      "25": {
+        "name": "special_bonus_unique_warlock_4",
+        "label": "Summons a Golem on death",
+        "picked": 3,
+        "games": 4
+      }
+    },
+    "basis": "486 games since 7.41: maxed warlock_shadow_word > warlock_fatal_bonds > warlock_upheaval 274 (win 56.9%), warlock_shadow_word > warlock_fatal_bonds 97 (win 19.6%), warlock_fatal_bonds > warlock_shadow_word > warlock_upheaval 38 (win 60.5%); talents 10: Fatal Bonds Damage 425/471 (48.0%), Upheaval Radius 46/471 (43.5%); 15: Upheaval Attack Speed per second on Allies 243/281 (61.7%), Shadow Word AoE 38/281 (63.2%); 20: Damage Resistance for Chaotic Offering Golems 28/45 (75.0%), Upheaval Damage 17/45 (70.6%); 25: Summons a Golem on death 3/4 (66.7%), Fatal Bonds Targets 1/4 (0.0%)."
+  },
+  "fight": [
+    "warlock_rain_of_chaos",
+    "warlock_fatal_bonds"
+  ]
+}

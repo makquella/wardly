@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "hero": "Oracle",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.40",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "329 league games since 7.40 (data/heroes/item_stats; 7.41 alone had too few), win 50.5%. Thin sample: the build leans on STRATZ pos5 (4097 games) and no rule is kept. Reproduce: python scripts/hero_item_stats.py oracle.",
+    "items": "Valve 7.41f: none (no item rule).",
+    "hero": "Valve /datafeed/herodata hero_id 111 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "arcane_boots",
+      "name": "Arcane Boots"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    },
+    {
+      "item": "aether_lens",
+      "name": "Aether Lens"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 92% (11), blink 64% (24), glimmer_cape 28% (25), aether_lens 48% (25). STRATZ pos5 (4097 games): Blink Dagger 20 min (35%); pos4 (844 games) has no build rows. 329 games are too few for a rule.",
+  "skills": {
+    "order": [
+      "oracle_purifying_flames",
+      "oracle_fortunes_end",
+      "oracle_fates_edict"
+    ],
+    "games": 198,
+    "first_agree": 187,
+    "opening": {
+      "name": "oracle_fortunes_end",
+      "agree": 195
+    },
+    "names": {
+      "oracle_purifying_flames": "Purifying Flames",
+      "oracle_fortunes_end": "Fortune's End",
+      "oracle_fates_edict": "Fate's Edict",
+      "oracle_false_promise": "False Promise"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_unique_oracle_9",
+        "label": "Armor False Promise",
+        "picked": 120,
+        "games": 193
+      },
+      "15": {
+        "name": "special_bonus_unique_oracle_3",
+        "label": "Fortune's End Radius",
+        "picked": 98,
+        "games": 131
+      },
+      "20": {
+        "name": "special_bonus_unique_oracle_6",
+        "label": "False Promise Cooldown",
+        "picked": 36,
+        "games": 40
+      },
+      "25": {
+        "name": "special_bonus_unique_oracle",
+        "label": "False Promise Duration",
+        "picked": 5,
+        "games": 7
+      }
+    },
+    "basis": "198 games since 7.41: maxed oracle_purifying_flames > oracle_fortunes_end > oracle_fates_edict 102 (win 54.9%), oracle_purifying_flames > oracle_fates_edict > oracle_fortunes_end 45 (win 55.6%), oracle_purifying_flames > oracle_fortunes_end 19 (win 21.1%); talents 10: Armor False Promise 120/193 (50.0%), Fortune's End Duration 73/193 (49.3%); 15: Fortune's End Radius 98/131 (56.1%), Purifying Flames Enemy Damage 33/131 (60.6%); 20: False Promise Cooldown 36/40 (66.7%), Purifying Flames Cooldown 4/40 (100.0%); 25: False Promise Duration 5/7 (80.0%), Fortune's End constantly Dispels 2/7 (0.0%)."
+  },
+  "fight": [
+    "oracle_false_promise",
+    "oracle_fates_edict"
+  ]
+}

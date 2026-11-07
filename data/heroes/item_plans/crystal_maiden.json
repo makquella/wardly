@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "hero": "Crystal Maiden",
+  "positions": [
+    "support"
+  ],
+  "patch": "7.41",
+  "checked": "2026-11-07",
+  "sources": {
+    "games": "476 league games since 7.41 (data/heroes/item_stats), win 49.2%, hard support (STRATZ pos5, 9500 games). Reproduce: python scripts/hero_item_stats.py crystal_maiden.",
+    "items": "No item rule: Glimmer Cape against magic lineups is 61% vs 52% of 31 games, too weak; build from the games.",
+    "hero": "Valve /datafeed/herodata hero_id 5 (Frostbite, Freezing Field), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
+  },
+  "rules": [],
+  "build": [
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
+    },
+    {
+      "item": "blink",
+      "name": "Blink Dagger"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
+    }
+  ],
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (4), magic_wand 82% (6), tranquil_boots 93% (8), aghanims_shard 58% (17), headdress 24% (22), glimmer_cape 56% (22), blink 50% (24), staff_of_wizardry 42% (24), force_staff 22% (25). Reviewed: Staff of Wizardry (a part, 42% at 24 min) dropped. STRATZ pos5 (9500 games) disagrees: Blink Dagger 22 min 83% (won 56%), Glimmer Cape 23 min 40%, Black King Bar 32 min 46% (won 60%); the league games have Blink in 50% and no Black King Bar at 25%+ (asked). Ordered by the STRATZ high-rank pos5 minute where STRATZ lists the item (9500 games), else the league minute (the player review of 2026-11-07: the STRATZ order where the two disagree).",
+  "skills": {
+    "order": [
+      "crystal_maiden_frostbite",
+      "crystal_maiden_crystal_nova",
+      "crystal_maiden_brilliance_aura"
+    ],
+    "games": 476,
+    "first_agree": 397,
+    "opening": {
+      "name": "crystal_maiden_crystal_nova",
+      "agree": 290
+    },
+    "names": {
+      "crystal_maiden_frostbite": "Frostbite",
+      "crystal_maiden_crystal_nova": "Crystal Nova",
+      "crystal_maiden_brilliance_aura": "Arcane Aura",
+      "crystal_maiden_freezing_field": "Freezing Field"
+    },
+    "talents": {
+      "10": {
+        "name": "special_bonus_hp_200",
+        "label": "+200 Health",
+        "picked": 325,
+        "games": 473
+      },
+      "15": {
+        "name": "special_bonus_unique_crystal_maiden_frostbite_castrange",
+        "label": "Frostbite Cast Range",
+        "picked": 219,
+        "games": 275
+      },
+      "20": {
+        "name": "special_bonus_unique_crystal_maiden_3",
+        "label": "Freezing Field Damage",
+        "picked": 33,
+        "games": 48
+      },
+      "25": {
+        "name": "special_bonus_unique_crystal_maiden_1",
+        "label": "Frostbite Duration",
+        "picked": 3,
+        "games": 5
+      }
+    },
+    "basis": "476 games since 7.41: maxed crystal_maiden_frostbite > crystal_maiden_crystal_nova > crystal_maiden_brilliance_aura 212 (win 59.0%), crystal_maiden_frostbite > crystal_maiden_brilliance_aura > crystal_maiden_crystal_nova 91 (win 65.9%), crystal_maiden_frostbite > crystal_maiden_crystal_nova 64 (win 23.4%); talents 10: +200 Health 325/473 (48.6%), +12 Intelligence 148/473 (51.4%); 15: Frostbite Cast Range 219/275 (60.3%), Crystal Nova Cooldown 56/275 (67.9%); 20: Freezing Field Damage 33/48 (63.6%), Glacial Guard Mana Spent To Barrier 15/48 (73.3%); 25: Frostbite Duration 3/5 (66.7%), Crystal Nova Damage 2/5 (50.0%)."
+  },
+  "fight": [
+    "crystal_maiden_freezing_field",
+    "crystal_maiden_frostbite"
+  ],
+  "notes": [
+    {
+      "id": "jumpers_field",
+      "enemy": "jumpers",
+      "minute": 8,
+      "basis": "Valve Freezing Field (fetched 2026-11-07): a 10 s channel (can_move 0, 90-100 s cooldown); Frostbite (6-9 s cooldown) stops movement and attack for 1.5-3 s and is considered a root. High-rank Crystal Maidens won 41.5% of 82 games against Slark, Phantom Assassin or Spirit Breaker (49.2% overall).",
+      "reason": {
+        "en": "{enemy} jumps onto casters: Freezing Field is a 10 s channel you cannot move in, so start it only with your team around you and keep Frostbite for the one who jumps",
+        "uk": "{enemy} стрибає на кастерів: Freezing Field — канал на 10 с без руху, тож починайте його лише коли команда поруч і приберігайте Frostbite для того, хто стрибає"
+      }
+    }
+  ]
+}

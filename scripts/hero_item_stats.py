@@ -52,8 +52,15 @@ NET_WORTH_SHARE = 0.96  # final net worth / gold earned, Terrorblade 7.41 games
 TIMEOUT = 150
 RETRIES = (5, 20, 60)
 PAUSE = 2  # seconds between Explorer queries (a shared free service)
-# OpenDota lane_role of a hero's usual position; supports are not filtered.
+# OpenDota lane_role of a hero's usual position. A support has no lane of its
+# own (lane_role 1 or 3, often roaming): its games are the ones it farmed under
+# map_hints.SUPPORT_LH_PER_MIN last hits a minute, as the live «farming like a
+# core» tip reads a support (Mirana, Spirit Breaker are played as cores too).
 LANE_ROLE = {"carry": 1, "mid": 2, "offlane": 3}
+POSITIONS = (*LANE_ROLE, "support")
+# A support's key items are bought whole (Blink Dagger, Aghanim's Scepter, Ghost
+# Scepter): its statistics count those of this cost too, not only assembled ones.
+SUPPORT_WHOLE_MIN_COST = 1000
 MIN_LINE_GAMES = 10
 # A skill build read from the latest patch alone needs this many games.
 SKILL_MIN_GAMES = 50
@@ -116,12 +123,22 @@ def rate(group: list[dict]) -> float | None:
     return round(100 * sum(g["win"] for g in group) / len(group), 1) if group else None
 
 
-def _filter(hero_id: int, since: int, lane: int | None) -> str:
+def position_sql(position: str | None) -> str:
+    """The SQL condition of a position's games ("" for none)."""
+    if position == "support":
+        from app.map_hints import SUPPORT_LH_PER_MIN
+
+        return f"pm.last_hits * 60.0 < {SUPPORT_LH_PER_MIN} * m.duration"
+    lane = LANE_ROLE.get(position or "")
+    return f"pm.lane_role={lane}" if lane else ""
+
+
+def _filter(hero_id: int, since: int, lane: str) -> str:
     where = f"pm.hero_id={hero_id} AND m.start_time > {since}"
-    return where + (f" AND pm.lane_role={lane}" if lane else "")
+    return where + (f" AND {lane}" if lane else "")
 
 
-def games(hero_id: int, since: int, lane: int | None) -> list[dict]:
+def games(hero_id: int, since: int, lane: str) -> list[dict]:
     rows = explorer(
         "SELECT pm.match_id, pm.player_slot, m.radiant_win, m.start_time, pm.gold_t[21] AS g20, "
         "pm.gold_t[26] AS g25, pm.gold_t[31] AS g30, pm.purchase_log, "
@@ -133,7 +150,7 @@ def games(hero_id: int, since: int, lane: int | None) -> list[dict]:
     return rows
 
 
-def lineups(hero_id: int, since: int, lane: int | None, rows: list[dict]) -> dict[int, set[str]]:
+def lineups(hero_id: int, since: int, lane: str, rows: list[dict]) -> dict[int, set[str]]:
     from app.dota_constants import hero_name
 
     side = {r["match_id"]: r["player_slot"] < 128 for r in rows}
@@ -148,11 +165,20 @@ def lineups(hero_id: int, since: int, lane: int | None, rows: list[dict]) -> dic
     return enemies
 
 
-def built_items() -> set[str]:
+def built_items(position: str | None = None) -> set[str]:
     items = constants("items")
-    return {k for k, v in items.items() if isinstance(v, dict) and v.get("components")} | {
+    built = {k for k, v in items.items() if isinstance(v, dict) and v.get("components")} | {
         "aghanims_shard"
     }
+    if position == "support":
+        built |= {
+            k
+            for k, v in items.items()
+            if isinstance(v, dict)
+            and not v.get("components")
+            and int(v.get("cost") or 0) >= SUPPORT_WHOLE_MIN_COST
+        }
+    return built
 
 
 def bought(game: dict, built: set[str]) -> dict[str, float]:
@@ -225,7 +251,13 @@ def skills(rows: list[dict], npc: str) -> dict[str, Any]:
     ids = constants("ability_ids")
     abilities = constants("abilities")
     hero = constants("hero_abilities").get(npc) or {}
-    tiers = {t["name"]: (10, 15, 20, 25)[t["level"] - 1] for t in hero.get("talents") or []}
+    # Rubick's list has two hidden «talents» at level 5: only the four rows count.
+    rows_of = (10, 15, 20, 25)
+    tiers = {
+        t["name"]: rows_of[t["level"] - 1]
+        for t in hero.get("talents") or []
+        if 1 <= t.get("level", 0) <= len(rows_of)
+    }
     orders: dict[tuple[str, ...], list[dict]] = defaultdict(list)
     openings: dict[str, list[dict]] = defaultdict(list)
     talents: dict[int, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
@@ -290,13 +322,17 @@ def skills(rows: list[dict], npc: str) -> dict[str, Any]:
 def counters(
     rows: list[dict], lineup: dict[int, set[str]], built: set[str]
 ) -> tuple[dict[str, Any], list[dict]]:
-    from app.draft_analysis import MAGIC_DAMAGE
+    from app.draft_analysis import MAGIC_DAMAGE, PHYSICAL_CARRIES, PHYSICAL_LINEUP_MIN
     from app.hero_items import groups
 
-    # One magic hero is no lineup: the magic group is read as magic_lineup below.
-    sets = {name: set(heroes) for name, heroes in groups().items() if name != "magic"}
+    # One magic hero (one right-click carry) is no lineup: those groups are read
+    # as magic_lineup and physical_lineup below (a support's Glimmer Cape and
+    # Ghost Scepter, situational_items.lineup_save_item).
+    lineup_groups = {"magic", "physical"}
+    sets = {name: set(h) for name, h in groups().items() if name not in lineup_groups}
     tests = {name: (lambda e, h=heroes: bool(e & h)) for name, heroes in sets.items()}
     tests["magic_lineup"] = lambda e: len(e & MAGIC_DAMAGE) >= MAGIC_LINEUP
+    tests["physical_lineup"] = lambda e: len(e & PHYSICAL_CARRIES) >= PHYSICAL_LINEUP_MIN
     purchases = {r["match_id"]: bought(r, built) for r in rows}
     table: dict[str, Any] = {}
     candidates: list[dict] = []
@@ -372,7 +408,7 @@ def hero_stats(
 
     plan = load_plans().get(hero_id)
     position = position or (plan["positions"][0] if plan else None) or get_hero_position(hero)
-    lane = LANE_ROLE.get(position or "")
+    lane = position_sql(position)
     patches = patch_starts()
     names = [n for n, _ in patches]
     index = names.index(since_name) if since_name in names else len(patches) - 1
@@ -390,9 +426,10 @@ def hero_stats(
             skill_rows = latest
         else:
             skill_rows, skills_since = rows, since_label
-    built = built_items()
+    built = built_items(position)
     won = [r for r in rows if r["win"]]
-    win, line = tempo_target(rows, win)
+    # A support has no tempo line: its farm is not the sign of a won game.
+    win, line = tempo_target(rows, win) if position != "support" else (None, {})
     # The tempo build: the won games over the earliest line found.
     first = min(line, key=int) if line else None
     rich = [r for r in won if first and (r.get(f"g{first}") or 0) >= line[first]["gold"]]
@@ -401,7 +438,7 @@ def hero_stats(
         "hero": hero,
         "hero_id": hero_id,
         "position": position,
-        "lane_role": lane,
+        "lane_role": LANE_ROLE.get(position or ""),
         "since_patch": since_label,
         "generated": datetime.now(UTC).date().isoformat(),
         "source": "OpenDota Explorer: league games with parsed gold timelines",
@@ -587,7 +624,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--position",
-        choices=sorted(LANE_ROLE),
+        choices=sorted(POSITIONS),
         default=None,
         help="read the hero in this position (default: the usual one)",
     )

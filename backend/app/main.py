@@ -59,6 +59,7 @@ from app.gsi_state import (
     reset_latest_gsi,
     update_latest_gsi,
 )
+from app.hero_items import has_plan
 from app.lane_duel import lane_record_for
 from app.live_hints import GoldHintInputs, LiveHintInputs
 from app.live_operation import live_operation
@@ -126,7 +127,7 @@ app = LocalApiApp(
     lifespan=_lifespan,
     title="Wardly",
     description="MVP-1: rule-based carry coach with local knowledge-base RAG.",
-    version="0.64.0",
+    version="0.65.0",
 )
 app.include_router(player_router)
 
@@ -162,7 +163,7 @@ if _DEBUG_PAGES is not None:
 @app.get("/", summary="Health check")
 def root():
     """Simple health-check endpoint."""
-    return {"status": "ok", "service": "Wardly", "version": "0.64.0"}
+    return {"status": "ok", "service": "Wardly", "version": "0.65.0"}
 
 
 @app.get("/health", summary="Health check")
@@ -516,8 +517,11 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         if map_enabled and role and role.get("role") != "support"
         else None
     )
+    planned_support = _has_support_plan(hero, role)
     save_item = (
-        PLAYER_SERVICE.save_item(hero, names, trackers.enemies or None)
+        PLAYER_SERVICE.save_item(
+            hero, names, trackers.enemies or None, clock // 60 if isinstance(clock, int) else None
+        )
         if map_enabled and role and role.get("role") == "support"
         else None
     )
@@ -526,14 +530,17 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         PLAYER_SERVICE.draft_item(hero, names, trackers.enemies or None, role.get("role"))
         if map_enabled
         and role
-        and role.get("role") != "support"
+        and (role.get("role") != "support" or planned_support)
         and isinstance(clock, int)
         and clock <= DRAFT_UNTIL
         else None
     )
     note = (
         PLAYER_SERVICE.plan_note(hero, trackers.enemies or None, clock // 60, role.get("role"))
-        if map_enabled and role and role.get("role") != "support" and isinstance(clock, int)
+        if map_enabled
+        and role
+        and (role.get("role") != "support" or planned_support)
+        and isinstance(clock, int)
         else None
     )
     inputs = LiveHintInputs(
@@ -543,6 +550,8 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         carry_advisor=carry_advisor,
         key_item=key_item,
         save_item=save_item,
+        # A planned support whose plan names no save item gets no save item tip.
+        save_tip=not planned_support or save_item is not None,
         lane_record=lane_record,
         draft_item=draft,
         plan_note=note,
@@ -552,6 +561,11 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         skill_build=PLAYER_SERVICE.skill_build(hero, trackers.enemies or None),
     )
     return MATCH_MEMORY.live_hints(state, extra, trackers, inputs, lang)
+
+
+def _has_support_plan(hero: str, role: dict[str, Any] | None) -> bool:
+    """A support live role on a hero with a support plan (hero_items.py)."""
+    return role is not None and role.get("role") == "support" and has_plan(hero, "support")
 
 
 def _gold_hint_inputs(
@@ -565,7 +579,11 @@ def _gold_hint_inputs(
     names = owned_items(extra)
     next_item = None
     part = None
-    if role_name != "support" and isinstance(clock, int) and clock >= 3 * 60:
+    if (
+        (role_name != "support" or _has_support_plan(hero, role))
+        and isinstance(clock, int)
+        and clock >= 3 * 60
+    ):
         try:
             item = PLAYER_SERVICE.next_item(hero, names, minute=state.get("minute"), role=role_name)
             if isinstance(item, dict) and isinstance(item.get("key"), str):
@@ -637,13 +655,15 @@ def _death_screen_for_overlay(response: dict[str, object], lang: str) -> dict[st
     extra = state.get("extra_context") if isinstance(state.get("extra_context"), dict) else {}
     if extra.get("source_type") != "live_gsi" or extra.get("alive") is not False:
         return None
-    carry = hero_coverage(str(state.get("hero") or "")) == "full" and not _plays_support(state)
+    hero = str(state.get("hero") or "")
+    carry = hero_coverage(hero) == "full" and not _plays_support(state)
+    role = _live_role(state)
     try:
         return PLAYER_SERVICE.death_screen(
             _with_enemies(state),
             lang,
-            next_item_for_hero=carry,
-            role=(_live_role(state) or {}).get("role"),
+            next_item_for_hero=carry or _has_support_plan(hero, role),
+            role=(role or {}).get("role"),
         )
     except Exception as error:  # noqa: BLE001 - never breaks the live path
         record_error("death-screen", error)
