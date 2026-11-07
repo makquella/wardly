@@ -346,6 +346,14 @@
      "win_without": 0.0
     },
     {
+     "item": "oblivion_staff",
+     "share": 0.2,
+     "elsewhere": 0.048,
+     "lift": 4.16,
+     "win_with": 0.0,
+     "win_without": 0.0
+    },
+    {
      "item": "vanguard",
      "share": 0.2,
      "elsewhere": 0.048,
@@ -363,14 +371,6 @@
     },
     {
      "item": "orchid",
-     "share": 0.2,
-     "elsewhere": 0.048,
-     "lift": 4.16,
-     "win_with": 0.0,
-     "win_without": 0.0
-    },
-    {
-     "item": "oblivion_staff",
      "share": 0.2,
      "elsewhere": 0.048,
      "lift": 4.16,
@@ -778,20 +778,20 @@
      "win_without": 51.9
     },
     {
-     "item": "tiara_of_selemene",
-     "share": 0.107,
-     "elsewhere": 0.088,
-     "lift": 1.22,
-     "win_with": 82.4,
-     "win_without": 52.1
-    },
-    {
      "item": "urn_of_shadows",
      "share": 0.447,
      "elsewhere": 0.366,
      "lift": 1.22,
      "win_with": 62.0,
      "win_without": 50.0
+    },
+    {
+     "item": "tiara_of_selemene",
+     "share": 0.107,
+     "elsewhere": 0.088,
+     "lift": 1.22,
+     "win_with": 82.4,
+     "win_without": 52.1
     },
     {
      "item": "greater_famango",
@@ -834,12 +834,12 @@
      "win_without": 55.6
     },
     {
-     "item": "magic_wand",
-     "share": 0.698,
-     "elsewhere": 0.649,
+     "item": "ring_of_tarrasque",
+     "share": 0.321,
+     "elsewhere": 0.298,
      "lift": 1.08,
-     "win_with": 58.6,
-     "win_without": 47.9
+     "win_with": 66.7,
+     "win_without": 50.0
     }
    ]
   },
@@ -1350,6 +1350,108 @@
      "lift": 1.02,
      "win_with": 44.4,
      "win_without": 57.1
+    }
+   ]
+  },
+  "physical_lineup": {
+   "games": 6,
+   "win": 66.7,
+   "items": [
+    {
+     "item": "ghost",
+     "share": 0.333,
+     "elsewhere": 0.048,
+     "lift": 6.92,
+     "win_with": 50.0,
+     "win_without": 75.0
+    },
+    {
+     "item": "point_booster",
+     "share": 0.333,
+     "elsewhere": 0.048,
+     "lift": 6.92,
+     "win_with": 50.0,
+     "win_without": 75.0
+    },
+    {
+     "item": "ultimate_scepter",
+     "share": 0.167,
+     "elsewhere": 0.027,
+     "lift": 6.29,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "blade_of_alacrity",
+     "share": 0.167,
+     "elsewhere": 0.031,
+     "lift": 5.32,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "wind_waker",
+     "share": 0.167,
+     "elsewhere": 0.039,
+     "lift": 4.32,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "great_famango",
+     "share": 0.667,
+     "elsewhere": 0.217,
+     "lift": 3.07,
+     "win_with": 75.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "mystic_staff",
+     "share": 0.333,
+     "elsewhere": 0.128,
+     "lift": 2.61,
+     "win_with": 100.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "ogre_axe",
+     "share": 0.167,
+     "elsewhere": 0.067,
+     "lift": 2.47,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "guardian_greaves",
+     "share": 0.167,
+     "elsewhere": 0.072,
+     "lift": 2.31,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "sheepstick",
+     "share": 0.167,
+     "elsewhere": 0.08,
+     "lift": 2.1,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "vladmir",
+     "share": 0.167,
+     "elsewhere": 0.082,
+     "lift": 2.03,
+     "win_with": 100.0,
+     "win_without": 60.0
+    },
+    {
+     "item": "buckler",
+     "share": 0.167,
+     "elsewhere": 0.089,
+     "lift": 1.87,
+     "win_with": 100.0,
+     "win_without": 60.0
     }
    ]
   }

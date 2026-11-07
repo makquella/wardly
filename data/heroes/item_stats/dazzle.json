@@ -265,20 +265,20 @@
      "win_without": 56.1
     },
     {
-     "item": "ward_dispenser",
-     "share": 0.982,
-     "elsewhere": 0.987,
-     "lift": 0.99,
-     "win_with": 57.4,
-     "win_without": 0.0
-    },
-    {
      "item": "guardian_greaves",
      "share": 0.145,
      "elsewhere": 0.148,
      "lift": 0.99,
      "win_with": 62.5,
      "win_without": 55.3
+    },
+    {
+     "item": "ward_dispenser",
+     "share": 0.982,
+     "elsewhere": 0.987,
+     "lift": 0.99,
+     "win_with": 57.4,
+     "win_without": 0.0
     },
     {
      "item": "headdress",
@@ -743,20 +743,20 @@
      "win_without": 44.8
     },
     {
-     "item": "arcane_boots",
-     "share": 0.641,
-     "elsewhere": 0.576,
-     "lift": 1.11,
-     "win_with": 50.0,
-     "win_without": 40.4
-    },
-    {
      "item": "ring_of_basilius",
      "share": 0.664,
      "elsewhere": 0.598,
      "lift": 1.11,
      "win_with": 50.6,
      "win_without": 38.6
+    },
+    {
+     "item": "arcane_boots",
+     "share": 0.641,
+     "elsewhere": 0.576,
+     "lift": 1.11,
+     "win_with": 50.0,
+     "win_without": 40.4
     },
     {
      "item": "holy_locket",
@@ -1183,20 +1183,20 @@
      "win_without": 0.0
     },
     {
-     "item": "magic_wand",
-     "share": 0.967,
-     "elsewhere": 0.976,
-     "lift": 0.99,
-     "win_with": 52.0,
-     "win_without": 60.0
-    },
-    {
      "item": "holy_locket",
      "share": 0.725,
      "elsewhere": 0.734,
      "lift": 0.99,
      "win_with": 55.0,
      "win_without": 45.2
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.967,
+     "elsewhere": 0.976,
+     "lift": 0.99,
+     "win_with": 52.0,
+     "win_without": 60.0
     }
    ]
   },
@@ -1293,12 +1293,114 @@
      "win_without": 50.0
     },
     {
-     "item": "aghanims_shard",
+     "item": "guardian_greaves",
      "share": 0.129,
      "elsewhere": 0.149,
      "lift": 0.87,
      "win_with": 75.0,
      "win_without": 44.4
+    }
+   ]
+  },
+  "physical_lineup": {
+   "games": 9,
+   "win": 44.4,
+   "items": [
+    {
+     "item": "soul_ring",
+     "share": 0.111,
+     "elsewhere": 0.014,
+     "lift": 7.8,
+     "win_with": 0.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "cyclone",
+     "share": 0.222,
+     "elsewhere": 0.037,
+     "lift": 6.0,
+     "win_with": 50.0,
+     "win_without": 42.9
+    },
+    {
+     "item": "aether_lens",
+     "share": 0.222,
+     "elsewhere": 0.066,
+     "lift": 3.39,
+     "win_with": 50.0,
+     "win_without": 42.9
+    },
+    {
+     "item": "staff_of_wizardry",
+     "share": 0.444,
+     "elsewhere": 0.154,
+     "lift": 2.89,
+     "win_with": 50.0,
+     "win_without": 40.0
+    },
+    {
+     "item": "point_booster",
+     "share": 0.111,
+     "elsewhere": 0.04,
+     "lift": 2.79,
+     "win_with": 0.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "ghost",
+     "share": 0.222,
+     "elsewhere": 0.103,
+     "lift": 2.17,
+     "win_with": 50.0,
+     "win_without": 42.9
+    },
+    {
+     "item": "great_famango",
+     "share": 0.222,
+     "elsewhere": 0.185,
+     "lift": 1.2,
+     "win_with": 50.0,
+     "win_without": 42.9
+    },
+    {
+     "item": "force_staff",
+     "share": 0.111,
+     "elsewhere": 0.103,
+     "lift": 1.08,
+     "win_with": 100.0,
+     "win_without": 37.5
+    },
+    {
+     "item": "magic_wand",
+     "share": 1.0,
+     "elsewhere": 0.972,
+     "lift": 1.03,
+     "win_with": 44.4,
+     "win_without": null
+    },
+    {
+     "item": "arcane_boots",
+     "share": 0.556,
+     "elsewhere": 0.601,
+     "lift": 0.92,
+     "win_with": 60.0,
+     "win_without": 25.0
+    },
+    {
+     "item": "holy_locket",
+     "share": 0.667,
+     "elsewhere": 0.732,
+     "lift": 0.91,
+     "win_with": 33.3,
+     "win_without": 66.7
+    },
+    {
+     "item": "ward_dispenser",
+     "share": 0.889,
+     "elsewhere": 0.989,
+     "lift": 0.9,
+     "win_with": 37.5,
+     "win_without": 100.0
     }
    ]
   }
