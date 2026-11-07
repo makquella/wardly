@@ -9,7 +9,8 @@
   "sources": {
     "games": "453 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 46.1%. One rule: Glimmer Cape against three or more magic damage heroes (42 games, 11 without it). Reproduce: python scripts/hero_item_stats.py snapfire.",
     "items": "Valve /datafeed/itemdata, 7.41f: Glimmer Cape.",
-    "hero": "Valve /datafeed/herodata hero_id 128 (Firesnap Cookie, Mortimer Kisses), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 128 (Firesnap Cookie, Mortimer Kisses), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {
@@ -38,19 +39,19 @@
       "name": "Aghanim's Shard"
     },
     {
-      "item": "glimmer_cape",
-      "name": "Glimmer Cape"
-    },
-    {
       "item": "blink",
       "name": "Blink Dagger"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
     },
     {
       "item": "force_staff",
       "name": "Force Staff"
     }
   ],
-  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 97% (1), magic_wand 84% (4), ring_of_basilius 97% (8), arcane_boots 97% (12), aghanims_shard 66% (20), glimmer_cape 63% (21), headdress 24% (21), mekansm 21% (23), staff_of_wizardry 54% (25), blink 36% (25), force_staff 31% (27). Reviewed: dropped Ring of Basilius, Headdress, Mekansm (21%), Staff of Wizardry (parts). STRATZ pos4: Blink Dagger 21 min (44% of 4628 games), earlier than the league games (36%, 25 min); pos5 has no build.",
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 97% (1), magic_wand 84% (4), ring_of_basilius 97% (8), arcane_boots 97% (12), aghanims_shard 66% (20), glimmer_cape 63% (21), headdress 24% (21), mekansm 21% (23), staff_of_wizardry 54% (25), blink 36% (25), force_staff 31% (27). Reviewed: dropped Ring of Basilius, Headdress, Mekansm (21%), Staff of Wizardry (parts). STRATZ pos4: Blink Dagger 21 min (44% of 4628 games), earlier than the league games (36%, 25 min); pos5 has no build. Ordered by the STRATZ high-rank pos4 minute where STRATZ lists the item (4628 games), else the league minute (the player review of 2026-11-07: the STRATZ order where the two disagree).",
   "skills": {
     "order": [
       "snapfire_scatterblast",

@@ -9,7 +9,8 @@
   "sources": {
     "games": "329 league games since 7.40 (data/heroes/item_stats; 7.41 alone had too few), win 50.5%. Thin sample: the build leans on STRATZ pos5 (4097 games) and no rule is kept. Reproduce: python scripts/hero_item_stats.py oracle.",
     "items": "Valve 7.41f: none (no item rule).",
-    "hero": "Valve /datafeed/herodata hero_id 111 (abilities named in fight and skills), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 111 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [

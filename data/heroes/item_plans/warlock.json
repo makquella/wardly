@@ -9,7 +9,8 @@
   "sources": {
     "games": "486 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 46.1%. No rules: the one candidate (Solar Crest against escape heroes, 174 games) has a 7-point win gap and Solar Crest's barrier is physical only. Reproduce: python scripts/hero_item_stats.py warlock.",
     "items": "Valve /datafeed/itemdata, 7.41f: no item named by a rule.",
-    "hero": "Valve /datafeed/herodata hero_id 37 (Fatal Bonds, Chaotic Offering), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 37 (Fatal Bonds, Chaotic Offering), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [

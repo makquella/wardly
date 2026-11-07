@@ -9,24 +9,10 @@
   "sources": {
     "games": "713 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 49.5%. Thin sample note: none of the groups under 20 games is used; the Ghost Scepter rule rests on 57 games of Bristleback, Spectre or Huskar lineups. Glimmer Cape in the build follows STRATZ pos5 (38% of 8439 games), not the league games (24% of the won games). Reproduce: python scripts/hero_item_stats.py shadow_shaman.",
     "items": "Valve /datafeed/itemdata, 7.41f: Ghost Scepter, Glimmer Cape.",
-    "hero": "Valve /datafeed/herodata hero_id 27 (Shackles, Hex, Mass Serpent Ward), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 27 (Shackles, Hex, Mass Serpent Ward), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones. Ghost Scepter against break heroes dropped: the group is no physical lineup (Huskar deals magic damage, which Ghost Scepter raises)."
   },
-  "rules": [
-    {
-      "id": "break_ghost",
-      "why": "break_ghost",
-      "family": "ghost",
-      "item": "ghost",
-      "name": "Ghost Scepter",
-      "enemy": "break",
-      "minute": 22,
-      "basis": "Valve 7.41f Ghost Scepter (1500 gold): 4 s ghost form, immune to physical damage but unable to attack and more vulnerable to magic damage, 22 s cooldown. Ghost Scepter is not in the usual build (under 25% of the won games); high-rank Shadow Shamans against Bristleback, Spectre or Huskar buy it in 19% of 57 games against them (9% otherwise), won 64% against 57%. Shackles is channeled, so the 4 s of ghost form do not stop the cast.",
-      "reason": {
-        "en": "{enemy} kills with attacks: {item} makes you immune to physical damage for 4 seconds, but you cannot attack and take more magic damage",
-        "uk": "{enemy} вбиває атаками: {item} робить вас невразливим до фізичної шкоди на 4 секунди, але ви не можете атакувати й отримуєте більше магічної шкоди"
-      }
-    }
-  ],
+  "rules": [],
   "build": [
     {
       "item": "arcane_boots",

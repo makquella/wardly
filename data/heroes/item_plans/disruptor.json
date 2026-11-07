@@ -9,7 +9,8 @@
   "sources": {
     "games": "1077 league games since 7.41 (data/heroes/item_stats), win 47.0%, hard support (STRATZ pos5, 9655 games). Reproduce: python scripts/hero_item_stats.py disruptor.",
     "items": "No item rule: Ghost Scepter against break heroes (21% vs 11% of 84 games) was not bought more in won games and has no mechanic against them; build from the games.",
-    "hero": "Valve /datafeed/herodata hero_id 87 (Glimpse, Static Storm), fetched 2026-11-07."
+    "hero": "Valve /datafeed/herodata hero_id 87 (Glimpse, Static Storm), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [
@@ -46,7 +47,8 @@
     "names": {
       "disruptor_glimpse": "Glimpse",
       "disruptor_thunder_strike": "Thunder Strike",
-      "disruptor_kinetic_field": "Kinetic Field"
+      "disruptor_kinetic_field": "Kinetic Field",
+      "disruptor_static_storm": "Static Storm"
     },
     "talents": {
       "10": {

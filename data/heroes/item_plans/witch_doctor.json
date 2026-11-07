@@ -9,7 +9,8 @@
   "sources": {
     "games": "637 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 52.9%. Thin: the Spirit Vessel rule has 94 healing games but only ~12 with the item. Reproduce: python scripts/hero_item_stats.py witch_doctor.",
     "items": "Valve /datafeed/itemdata, 7.41f: Spirit Vessel.",
-    "hero": "Valve /datafeed/herodata hero_id 30 (Maledict, Death Ward), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 30 (Maledict, Death Ward), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {
@@ -37,12 +38,12 @@
       "name": "Glimmer Cape"
     },
     {
-      "item": "aghanims_shard",
-      "name": "Aghanim's Shard"
-    },
-    {
       "item": "blink",
       "name": "Blink Dagger"
+    },
+    {
+      "item": "aghanims_shard",
+      "name": "Aghanim's Shard"
     },
     {
       "item": "ghost",
@@ -53,7 +54,7 @@
       "name": "Aghanim's Scepter"
     }
   ],
-  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (2), magic_wand 90% (9), ring_of_basilius 94% (10), arcane_boots 93% (12), glimmer_cape 51% (22), aghanims_shard 61% (25), blink 43% (28), staff_of_wizardry 39% (29), ghost 26% (30), point_booster 21% (32), ogre_axe 21% (34), vitality_booster 20% (34). Reviewed: dropped Ring of Basilius, Staff of Wizardry, Point Booster, Ogre Axe and Vitality Booster (parts). STRATZ pos5 (10364 games): Glimmer Cape 22 (64%), Blink Dagger 23 (69%), Aghanim's Scepter 35 (38%) -> Blink earlier and the Scepter added; the league games have Glimmer 21.5, Shard 25, Blink 28 and Ghost 30 (26%).",
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute: ward_dispenser 98% (2), magic_wand 90% (9), ring_of_basilius 94% (10), arcane_boots 93% (12), glimmer_cape 51% (22), aghanims_shard 61% (25), blink 43% (28), staff_of_wizardry 39% (29), ghost 26% (30), point_booster 21% (32), ogre_axe 21% (34), vitality_booster 20% (34). Reviewed: dropped Ring of Basilius, Staff of Wizardry, Point Booster, Ogre Axe and Vitality Booster (parts). STRATZ pos5 (10364 games): Glimmer Cape 22 (64%), Blink Dagger 23 (69%), Aghanim's Scepter 35 (38%) -> Blink earlier and the Scepter added; the league games have Glimmer 21.5, Shard 25, Blink 28 and Ghost 30 (26%). Ordered by the STRATZ high-rank pos5 minute where STRATZ lists the item (10364 games), else the league minute (the player review of 2026-11-07: the STRATZ order where the two disagree).",
   "skills": {
     "order": [
       "witch_doctor_maledict",

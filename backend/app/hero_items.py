@@ -213,6 +213,11 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
     fight = plan.get("fight", [])
     if not isinstance(fight, list) or not all(isinstance(n, str) and n for n in fight):
         raise fail("fight lists ability names")
+    # The fight summary reads its labels from the skill names: a missing one
+    # showed the raw key (phantom_assassin_blur) on the overlay.
+    labels = (plan.get("skills") or {}).get("names") or {}
+    if plan.get("skills") and any(n not in labels for n in fight):
+        raise fail("every fight ability needs its in-game name in skills.names")
     notes = plan.get("notes", [])
     if not isinstance(notes, list):
         raise fail("notes is a list")

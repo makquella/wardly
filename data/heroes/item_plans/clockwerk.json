@@ -9,7 +9,8 @@
   "sources": {
     "games": "1007 league games since 7.41 (data/heroes/item_stats), win 51.6%. STRATZ pos4/pos5 have no build for him (3050 games). Reproduce: python scripts/hero_item_stats.py clockwerk.",
     "items": "No item rule: the build is from the games; Valve /datafeed/itemdata not needed.",
-    "hero": "Valve /datafeed/herodata hero_id 51 (Power Cogs, Hookshot), fetched 2026-11-07."
+    "hero": "Valve /datafeed/herodata hero_id 51 (Power Cogs, Hookshot), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [
@@ -54,7 +55,8 @@
     "names": {
       "rattletrap_power_cogs": "Power Cogs",
       "rattletrap_rocket_flare": "Rocket Flare",
-      "rattletrap_battery_assault": "Battery Assault"
+      "rattletrap_battery_assault": "Battery Assault",
+      "rattletrap_hookshot": "Hookshot"
     },
     "talents": {
       "10": {

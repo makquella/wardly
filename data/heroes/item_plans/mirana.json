@@ -9,24 +9,10 @@
   "sources": {
     "games": "410 league games since 7.41 (data/heroes/item_stats), win 46.3%. Reproduce: python scripts/hero_item_stats.py mirana.",
     "items": "Valve 7.41f: Solar Crest.",
-    "hero": "Valve /datafeed/herodata hero_id 9 (abilities named in fight and skills), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 9 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones. Solar Crest against evasion dropped: its barrier and armor do nothing against evasion."
   },
-  "rules": [
-    {
-      "id": "evasion_solar",
-      "why": "evasion_solar",
-      "family": "barrier",
-      "item": "solar_crest",
-      "name": "Solar Crest",
-      "enemy": "evasion",
-      "minute": 21,
-      "basis": "Valve 7.41f Solar Crest: Shine on an ally: +5 armor, +60 attack speed, +15% movement speed and a 350 physical damage barrier for 7 s (16 s cooldown, 100 mana, cast range 1000); shared cooldown with Pavise. It has no effect on evasion itself. High-rank games against an evasion hero: 32% of 50 games (14% otherwise), won 56% with it against 38% without; Pavise 34% (15%).",
-      "reason": {
-        "en": "{enemy} dodges attacks and hits hard: {item} gives an ally a 350 physical damage barrier, armor and attack speed for 7 s",
-        "uk": "{enemy} ухиляється від атак і боляче б'є: {item} дає союзнику бар'єр на 350 фізичної шкоди, броню та швидкість атаки на 7 с"
-      }
-    }
-  ],
+  "rules": [],
   "build": [
     {
       "item": "arcane_boots",
@@ -45,7 +31,7 @@
       "name": "Aghanim's Scepter"
     }
   ],
-  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 52% (13), essence_distiller 42% (15), cyclone 43% (24), ultimate_scepter 43% (34). STRATZ pos4 (8648 games): Essence Distiller 13 min, Eul's 21 min (58%), Aghanim's Scepter 29 min (82%); pos5 the same at 12, 21, 30 min. The league build is later by 3-5 min.",
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 52% (13), essence_distiller 42% (15), cyclone 43% (24), ultimate_scepter 43% (34). STRATZ pos4 (8648 games): Essence Distiller 13 min, Eul's 21 min (58%), Aghanim's Scepter 29 min (82%); pos5 the same at 12, 21, 30 min. The league build is later by 3-5 min. Ordered by the STRATZ high-rank pos4 minute where STRATZ lists the item (8648 games), else the league minute; Arcane Boots stay first, the league's 13.4 against STRATZ's 13 for the Essence Distiller is no reorder (the player review of 2026-11-07: the STRATZ order where the two disagree).",
   "skills": {
     "order": [
       "mirana_starfall",

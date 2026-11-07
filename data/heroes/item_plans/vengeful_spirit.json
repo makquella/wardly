@@ -9,7 +9,8 @@
   "sources": {
     "games": "600 league games since 7.40 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 50.5%. Thin: the stats are read from 7.40 on (7.41 alone had fewer games), the skill build from 7.41 (257 games), and the Solar Crest rule rests on 24 games of physical lineups (14 with it). Reproduce: python scripts/hero_item_stats.py vengeful_spirit.",
     "items": "Valve /datafeed/itemdata, 7.41f: Solar Crest.",
-    "hero": "Valve /datafeed/herodata hero_id 20 (Magic Missile, Nether Swap), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 20 (Magic Missile, Nether Swap), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {

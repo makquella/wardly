@@ -8,8 +8,9 @@
   "checked": "2026-11-07",
   "sources": {
     "games": "1816 league games since 7.41 (data/heroes/item_stats), win 48.9%, soft support (STRATZ pos4, 8014 games). Reproduce: python scripts/hero_item_stats.py hoodwink.",
-    "items": "Valve /datafeed/itemdata item_id 267 (Spirit Vessel) and 206 (Rod of Atos, no rule), current patch, fetched 2026-11-07.",
-    "hero": "Valve /datafeed/herodata hero_id 123 (Bushwhack, Sharpshooter), fetched 2026-11-07."
+    "items": "Valve /datafeed/itemdata item_id 267 (Spirit Vessel) and 206 (Rod of Atos), current patch, fetched 2026-11-07.",
+    "hero": "Valve /datafeed/herodata hero_id 123 (Bushwhack, Sharpshooter), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {
@@ -24,6 +25,20 @@
       "reason": {
         "en": "{enemy} heals a lot: your {item} cuts their health restoration by 70% for 8 s, so Bushwhack and Sharpshooter damage is not healed back",
         "uk": "{enemy} багато лікується: ваш {item} на 8 с знижує їхнє відновлення здоров'я на 70%, тож шкода від Bushwhack і Sharpshooter не відновиться"
+      }
+    },
+    {
+      "id": "escape_atos",
+      "why": "escape_atos",
+      "family": "atos",
+      "item": "rod_of_atos",
+      "name": "Rod of Atos",
+      "enemy": "escape",
+      "minute": 18,
+      "basis": "Valve /datafeed/itemdata Rod of Atos (item 206, fetched 2026-11-07): Cripple roots the target for 2 s from 1100 range (18 s cooldown; +275 health, +12 intelligence). A rooted hero cannot move or use movement spells (Blink, Ball Lightning), the player review of 2026-11-07. High-rank Hoodwinks against an escape hero: Rod of Atos in 27% of 826 games (16% otherwise), won 52% against 47%.",
+      "reason": {
+        "en": "{enemy} gets away with {spell}: {item} roots them for 2 s from 1100 range, so they cannot walk or blink out of Bushwhack and Sharpshooter",
+        "uk": "{enemy} тікає через {spell}: {item} з відстані 1100 приковує його до місця на 2 с, тож він не втече ні пішки, ні блінком від Bushwhack і Sharpshooter"
       }
     }
   ],
@@ -69,7 +84,8 @@
     "names": {
       "hoodwink_bushwhack": "Bushwhack",
       "hoodwink_acorn_shot": "Acorn Shot",
-      "hoodwink_scurry": "Scurry"
+      "hoodwink_scurry": "Scurry",
+      "hoodwink_sharpshooter": "Sharpshooter"
     },
     "talents": {
       "10": {

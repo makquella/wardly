@@ -9,7 +9,8 @@
   "sources": {
     "games": "612 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 57.8%. No item rules: STRATZ pos4/pos5 (331 and 962 games, win 44% and 43%) have no build rows, the league games are 57.8% won; the only 2x+ candidate (Essence Distiller against evasion) does not match its mechanics. One note: Overgrowth against escape heroes. Reproduce: python scripts/hero_item_stats.py treant_protector.",
     "items": "Valve /datafeed/itemdata, 7.41f: no item named by a rule.",
-    "hero": "Valve /datafeed/herodata hero_id 83 (Overgrowth), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 83 (Overgrowth), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [

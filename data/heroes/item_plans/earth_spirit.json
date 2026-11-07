@@ -9,7 +9,8 @@
   "sources": {
     "games": "270 league games since 7.40 (data/heroes/item_stats; 7.41 alone had under 300; the skill build has 130 games of 7.41), win 52.2%, soft support (STRATZ pos4, 2369 games). Under 150 games in any group: build checked against STRATZ pos4, which has only Spirit Vessel (16 min, 23%). Reproduce: python scripts/hero_item_stats.py earth_spirit.",
     "items": "No item rule: Spirit Vessel against healing heroes is 39% vs 32% of 36 games, won 64% vs 27% on a handful of games (asked); build from the games.",
-    "hero": "Valve /datafeed/herodata hero_id 107 (Boulder Smash, Geomagnetic Grip, Magnetize), fetched 2026-11-07."
+    "hero": "Valve /datafeed/herodata hero_id 107 (Boulder Smash, Geomagnetic Grip, Magnetize), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [
@@ -50,7 +51,8 @@
     "names": {
       "earth_spirit_boulder_smash": "Boulder Smash",
       "earth_spirit_rolling_boulder": "Rolling Boulder",
-      "earth_spirit_geomagnetic_grip": "Geomagnetic Grip"
+      "earth_spirit_geomagnetic_grip": "Geomagnetic Grip",
+      "earth_spirit_magnetize": "Magnetize"
     },
     "talents": {
       "10": {

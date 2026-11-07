@@ -1,0 +1,1242 @@
+[
+ {
+  "hero": "Bounty Hunter",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "spirit_vessel",
+  "why": "healing rule fires: Huskar in the lineup, minute 20 past the gate of 14"
+ },
+ {
+  "hero": "Bounty Hunter",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 10,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate: the rule waits until 14"
+ },
+ {
+  "hero": "Bounty Hunter",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 20,
+  "owned": [
+   "item_spirit_vessel"
+  ],
+  "expect": null,
+  "why": "Spirit Vessel owned answers the healing family"
+ },
+ {
+  "hero": "Bounty Hunter",
+  "enemies": [
+   "Phantom Assassin",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "no healing hero: nothing fires, and no generic counter or death-pattern item for a support"
+ },
+ {
+  "hero": "Bounty Hunter",
+  "enemies": [
+   "Lion",
+   "Zeus",
+   "Lina",
+   "Axe"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "three magic damage heroes: no Pipe/Glimmer rule in this plan, no generic counter for a support"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "spirit_vessel",
+  "why": "healing rule fires: Huskar in the lineup, minute 20 past the gate of 14"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 10,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate: the rule waits until 14"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 20,
+  "owned": [
+   "item_spirit_vessel"
+  ],
+  "expect": null,
+  "why": "Spirit Vessel owned answers the healing family"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Phantom Assassin",
+   "Lion",
+   "Axe",
+   "Crystal Maiden"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "no healing hero: nothing fires, and no generic counter or death-pattern item for a support"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Lion",
+   "Zeus",
+   "Lina",
+   "Axe"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "three magic damage heroes: no Pipe/Glimmer rule in this plan, no generic counter for a support"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Queen of Pain",
+   "Storm Spirit",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": "rod_of_atos",
+  "why": "escape heroes: Rod of Atos roots them (player review 2026-11-07)"
+ },
+ {
+  "hero": "Bounty Hunter",
+  "enemies": [
+   "Clinkz",
+   "Lion",
+   "Axe",
+   "Pudge"
+  ],
+  "minute": 10,
+  "owned": [],
+  "expect": null,
+  "why": "invisibility hero: the plan has a note only (invisibility_track), no item",
+  "note": "invisibility_track"
+ },
+ {
+  "hero": "Clockwerk",
+  "enemies": [
+   "Huskar",
+   "Slark",
+   "Lion",
+   "Axe"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "no rules: healing and jumpers fire nothing"
+ },
+ {
+  "hero": "Clockwerk",
+  "enemies": [
+   "Clinkz",
+   "Lion",
+   "Axe",
+   "Pudge"
+  ],
+  "minute": 10,
+  "owned": [],
+  "expect": null,
+  "why": "invisibility: note invisibility_cogs only, no item",
+  "note": "invisibility_cogs"
+ },
+ {
+  "hero": "Crystal Maiden",
+  "enemies": [
+   "Lion",
+   "Zeus",
+   "Lina",
+   "Axe"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "3 magic damage heroes: no Glimmer Cape rule (61% vs 52% of 31 games); Glimmer comes from the build"
+ },
+ {
+  "hero": "Crystal Maiden",
+  "enemies": [
+   "Slark",
+   "Lion",
+   "Axe",
+   "Pudge"
+  ],
+  "minute": 10,
+  "owned": [],
+  "expect": null,
+  "why": "jumper: note jumpers_field only, no item",
+  "note": "jumpers_field"
+ },
+ {
+  "hero": "Dazzle",
+  "enemies": [
+   "Slark",
+   "Phantom Assassin",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "jumpers: no Ghost Scepter rule (47 games, won 44% with it vs 50%)"
+ },
+ {
+  "hero": "Dazzle",
+  "enemies": [
+   "Huskar",
+   "Lion",
+   "Axe",
+   "Pudge"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "healing: no Spirit Vessel rule for Dazzle (not in his build, 47 games)"
+ },
+ {
+  "hero": "Disruptor",
+  "enemies": [
+   "Bristleback",
+   "Spectre",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "break heroes: no Ghost Scepter rule (84 games, won 44% with it vs 46%)"
+ },
+ {
+  "hero": "Disruptor",
+  "enemies": [
+   "Queen of Pain",
+   "Storm Spirit",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 12,
+  "owned": [],
+  "expect": null,
+  "why": "escape heroes: note escape_storm only, no item",
+  "note": "escape_storm"
+ },
+ {
+  "hero": "Earth Spirit",
+  "enemies": [
+   "Huskar",
+   "Lifestealer",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": null,
+  "why": "healing: no rule (36 games, asked); Spirit Vessel is the first build item"
+ },
+ {
+  "hero": "Earth Spirit",
+  "enemies": [
+   "Puck",
+   "Void Spirit",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 12,
+  "owned": [],
+  "expect": null,
+  "why": "escape heroes: note escape_grip only, no item",
+  "note": "escape_grip"
+ },
+ {
+  "hero": "Earthshaker",
+  "enemies": [
+   "Huskar",
+   "Slark",
+   "Queen of Pain",
+   "Lion"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "thin sample (51 games): no rules at all"
+ },
+ {
+  "hero": "Hoodwink",
+  "enemies": [
+   "Phantom Assassin",
+   "Slark",
+   "Axe",
+   "Lion"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "physical carries: no Ghost Scepter rule (33 games, 7 buys)"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Zeus",
+   "Lina",
+   "Leshrac"
+  ],
+  "minute": 18,
+  "owned": [],
+  "expect": "glimmer_cape",
+  "why": "3 magic heroes at the gate minute"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Zeus",
+   "Lina",
+   "Leshrac"
+  ],
+  "minute": 17,
+  "owned": [],
+  "expect": null,
+  "why": "no rule names it (the build may): minute gate: before 18 the Glimmer rule is held back, the build head (Arcane Boots) is named"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Zeus",
+   "Lina"
+  ],
+  "minute": 18,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": null,
+  "why": "no rule holds: 2 magic heroes: rule does not fire, the plan build names Glimmer Cape (next after boots)"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Zeus",
+   "Lina",
+   "Leshrac"
+  ],
+  "minute": 18,
+  "owned": [
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "no rule holds: Glimmer owned answers the magic family; build goes on to Eul's"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Phantom Assassin",
+   "Axe"
+  ],
+  "minute": 19,
+  "owned": [
+   "item_arcane_boots",
+   "item_glimmer_cape"
+  ],
+  "expect": "cyclone",
+  "why": "targeted jumper seen: Eul's by rule"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 18,
+  "owned": [
+   "item_arcane_boots",
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "no rule holds: minute 18 is before the rule's 19, the build names Eul's anyway (same item)"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 19,
+  "owned": [
+   "item_arcane_boots",
+   "item_glimmer_cape",
+   "item_cyclone"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): owned Eul's answers the jump family; build goes on to Force Staff"
+ },
+ {
+  "hero": "Jakiro",
+  "enemies": [
+   "Slark",
+   "Axe"
+  ],
+  "minute": 19,
+  "owned": [
+   "item_arcane_boots",
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "no rule holds: Slark is no targeted jumper: no rule fires; Eul's comes from the build (same item, so the card has no rule reason)"
+ },
+ {
+  "hero": "Lich",
+  "enemies": [
+   "Zeus",
+   "Lina",
+   "Leshrac"
+  ],
+  "minute": 16,
+  "owned": [],
+  "expect": "glimmer_cape",
+  "why": "3 magic heroes at minute 16"
+ },
+ {
+  "hero": "Lich",
+  "enemies": [
+   "Zeus",
+   "Lina"
+  ],
+  "minute": 16,
+  "owned": [],
+  "expect": null,
+  "why": "2 magic heroes: no rule, Glimmer is also the build head"
+ },
+ {
+  "hero": "Lich",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_glimmer_cape"
+  ],
+  "expect": "ghost",
+  "why": "2 physical carries at minute 22: Ghost Scepter"
+ },
+ {
+  "hero": "Lich",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut"
+  ],
+  "minute": 21,
+  "owned": [
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): before minute 22: build, not the rule"
+ },
+ {
+  "hero": "Lich",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): one physical carry is not enough (count 2): build"
+ },
+ {
+  "hero": "Lich",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_glimmer_cape",
+   "item_ghost"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): owned Ghost Scepter answers the physical family"
+ },
+ {
+  "hero": "Lion",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut",
+   "Zeus"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "no rule names it (the build may): no rules: the build head, whatever the lineup"
+ },
+ {
+  "hero": "Mirana",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 21,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): evasion hero at minute 21: Solar Crest"
+ },
+ {
+  "hero": "Mirana",
+  "enemies": [
+   "Windranger"
+  ],
+  "minute": 20,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): before minute 21: build"
+ },
+ {
+  "hero": "Mirana",
+  "enemies": [
+   "Axe",
+   "Zeus"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): no evasion hero: build"
+ },
+ {
+  "hero": "Mirana",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots",
+   "item_solar_crest"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): owned Solar Crest answers the family"
+ },
+ {
+  "hero": "Mirana",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots",
+   "item_pavise"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): Pavise is not in the rule's family items (only Solar Crest): the rule still fires; check what the player expects"
+ },
+ {
+  "hero": "Nyx Assassin",
+  "enemies": [
+   "Phantom Assassin",
+   "Spirit Breaker"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "no rule names it (the build may): no rules: the build head"
+ },
+ {
+  "hero": "Ogre Magi",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut"
+  ],
+  "minute": 20,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": "ghost",
+  "why": "2 physical carries at minute 20: Ghost Scepter"
+ },
+ {
+  "hero": "Ogre Magi",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut"
+  ],
+  "minute": 19,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): before minute 20: build"
+ },
+ {
+  "hero": "Ogre Magi",
+  "enemies": [
+   "Juggernaut"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): one physical carry: build"
+ },
+ {
+  "hero": "Ogre Magi",
+  "enemies": [
+   "Phantom Assassin",
+   "Juggernaut"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots",
+   "item_ghost"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): owned Ghost Scepter answers the physical family"
+ },
+ {
+  "hero": "Oracle",
+  "enemies": [
+   "Phantom Assassin",
+   "Zeus",
+   "Lina"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "no rule names it (the build may): no rules: the build head"
+ },
+ {
+  "hero": "Rubick",
+  "enemies": [
+   "Spirit Breaker"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_arcane_boots",
+   "item_blink"
+  ],
+  "expect": "cyclone",
+  "why": "targeted jumper at minute 22: Eul's"
+ },
+ {
+  "hero": "Rubick",
+  "enemies": [
+   "Spirit Breaker"
+  ],
+  "minute": 21,
+  "owned": [
+   "item_arcane_boots",
+   "item_essence_distiller",
+   "item_blink"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): before minute 22: the build"
+ },
+ {
+  "hero": "Rubick",
+  "enemies": [
+   "Slark",
+   "Axe"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots",
+   "item_essence_distiller",
+   "item_blink"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): Slark is no targeted jumper: build"
+ },
+ {
+  "hero": "Rubick",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_arcane_boots",
+   "item_essence_distiller",
+   "item_blink",
+   "item_cyclone"
+  ],
+  "expect": null,
+  "why": "no rule names it (the build may): owned Eul's answers the jump family"
+ },
+ {
+  "hero": "Shadow Shaman",
+  "enemies": [
+   "Spectre",
+   "Juggernaut"
+  ],
+  "minute": 24,
+  "owned": [],
+  "expect": null,
+  "why": "no rule names it (the build may): Spectre is in the break group, 57 games, Ghost Scepter from 22"
+ },
+ {
+  "hero": "Shadow Shaman",
+  "enemies": [
+   "Bristleback",
+   "Lion"
+  ],
+  "minute": 30,
+  "owned": [],
+  "expect": null,
+  "why": "no rule names it (the build may): Bristleback is in the break group"
+ },
+ {
+  "hero": "Shadow Shaman",
+  "enemies": [
+   "Spectre"
+  ],
+  "minute": 15,
+  "owned": [],
+  "expect": null,
+  "why": "before minute 22 the rule is silent (the build goes on)"
+ },
+ {
+  "hero": "Shadow Shaman",
+  "enemies": [
+   "Spectre"
+  ],
+  "minute": 26,
+  "owned": [
+   "item_ghost"
+  ],
+  "expect": null,
+  "why": "Ghost Scepter owned answers the family"
+ },
+ {
+  "hero": "Shadow Shaman",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": null,
+  "why": "physical carries are not the break group; no rule for them"
+ },
+ {
+  "hero": "Shadow Shaman",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": null,
+  "why": "evasion gets no item from Shadow Shaman (47 games, 15% vs 10%)"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Phantom Assassin",
+   "Axe"
+  ],
+  "minute": 22,
+  "owned": [],
+  "expect": "cyclone",
+  "why": "Phantom Strike is a targeted jump, Eul's from 20"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Spirit Breaker"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "cyclone",
+  "why": "Charge of Darkness is a targeted jump, minute gate is 20"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 18,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate 20"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 25,
+  "owned": [
+   "item_cyclone"
+  ],
+  "expect": null,
+  "why": "Eul's owned"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Slark",
+   "Axe"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "Slark Pounce is a jumper but not a targeted one (Eul's rule uses targeted_jumpers)"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "glimmer_cape",
+  "why": "three magic damage heroes (Lina, Zeus, Lion), Glimmer Cape from 18"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Lina",
+   "Zeus"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": null,
+  "why": "only two magic damage heroes, count is 3"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 16,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate 18"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "Glimmer Cape owned"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 22,
+  "owned": [],
+  "expect": "ghost",
+  "why": "two physical carries, Ghost Scepter from 21 (in his build)"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Juggernaut"
+  ],
+  "minute": 22,
+  "owned": [],
+  "expect": null,
+  "why": "one physical carry is not enough, count 2"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_ghost"
+  ],
+  "expect": null,
+  "why": "Ghost Scepter owned"
+ },
+ {
+  "hero": "Skywrath Mage",
+  "enemies": [
+   "Queen of Pain"
+  ],
+  "minute": 10,
+  "owned": [],
+  "expect": null,
+  "why": "note escape_seal shows (minute 8, once per match); no item"
+ },
+ {
+  "hero": "Snapfire",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "glimmer_cape",
+  "why": "three magic damage heroes, Glimmer Cape from 17"
+ },
+ {
+  "hero": "Snapfire",
+  "enemies": [
+   "Lina",
+   "Zeus"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": null,
+  "why": "two magic heroes only"
+ },
+ {
+  "hero": "Snapfire",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 15,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate 17"
+ },
+ {
+  "hero": "Snapfire",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_glimmer_cape"
+  ],
+  "expect": null,
+  "why": "Glimmer Cape owned"
+ },
+ {
+  "hero": "Snapfire",
+  "enemies": [
+   "Slark",
+   "Phantom Assassin"
+  ],
+  "minute": 22,
+  "owned": [],
+  "expect": null,
+  "why": "jumpers get no rule (mechanics not verified; question 2)"
+ },
+ {
+  "hero": "Spirit Breaker",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "no rules in the plan; the build (Phase Boots, Drum of Endurance, Shadow Blade) goes on"
+ },
+ {
+  "hero": "Spirit Breaker",
+  "enemies": [
+   "Queen of Pain",
+   "Puck"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "escape heroes: no Black King Bar rule (question 1)"
+ },
+ {
+  "hero": "Treant Protector",
+  "enemies": [
+   "Phantom Assassin",
+   "Windranger"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "evasion: no Essence Distiller rule (does not match its mechanics); note only for escape"
+ },
+ {
+  "hero": "Treant Protector",
+  "enemies": [
+   "Queen of Pain"
+  ],
+  "minute": 12,
+  "owned": [],
+  "expect": null,
+  "why": "note escape_overgrowth shows (minute 10, once per match); no item"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": "cyclone",
+  "why": "three magic damage heroes, Eul's from 24"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Phantom Assassin",
+   "Axe"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": "cyclone",
+  "why": "targeted jumper, Eul's from 24"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Phantom Assassin",
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": "cyclone",
+  "why": "both rules hold, the magic one comes first (same item)"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Lina",
+   "Zeus",
+   "Lion"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate 24"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Lina",
+   "Zeus"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": null,
+  "why": "two magic heroes only"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Phantom Assassin"
+  ],
+  "minute": 26,
+  "owned": [
+   "item_cyclone"
+  ],
+  "expect": null,
+  "why": "Eul's owned"
+ },
+ {
+  "hero": "Tusk",
+  "enemies": [
+   "Slark"
+  ],
+  "minute": 26,
+  "owned": [],
+  "expect": null,
+  "why": "Slark Pounce is not a targeted jump"
+ },
+ {
+  "hero": "Vengeful Spirit",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "solar_crest",
+  "why": "two physical carries, Solar Crest from 18"
+ },
+ {
+  "hero": "Vengeful Spirit",
+  "enemies": [
+   "Juggernaut"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": null,
+  "why": "one physical carry only"
+ },
+ {
+  "hero": "Vengeful Spirit",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 15,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate 18"
+ },
+ {
+  "hero": "Vengeful Spirit",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_solar_crest"
+  ],
+  "expect": null,
+  "why": "Solar Crest owned"
+ },
+ {
+  "hero": "Vengeful Spirit",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_pavise"
+  ],
+  "expect": "solar_crest",
+  "why": "Pavise only is the part: the crest is still the next step (check that the family list does not count Pavise as the answer)"
+ },
+ {
+  "hero": "Warlock",
+  "enemies": [
+   "Queen of Pain",
+   "Puck",
+   "Storm Spirit"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "escape heroes: no Solar Crest/Pavise rule (question 1)"
+ },
+ {
+  "hero": "Warlock",
+  "enemies": [
+   "Juggernaut",
+   "Sven"
+  ],
+  "minute": 25,
+  "owned": [],
+  "expect": null,
+  "why": "no rules in the plan"
+ },
+ {
+  "hero": "Witch Doctor",
+  "enemies": [
+   "Huskar",
+   "Axe"
+  ],
+  "minute": 20,
+  "owned": [],
+  "expect": "spirit_vessel",
+  "why": "Huskar is in the healing group, Spirit Vessel from 18"
+ },
+ {
+  "hero": "Witch Doctor",
+  "enemies": [
+   "Alchemist"
+  ],
+  "minute": 18,
+  "owned": [],
+  "expect": "spirit_vessel",
+  "why": "minute gate is 18 and holds"
+ },
+ {
+  "hero": "Witch Doctor",
+  "enemies": [
+   "Huskar"
+  ],
+  "minute": 15,
+  "owned": [],
+  "expect": null,
+  "why": "minute gate 18"
+ },
+ {
+  "hero": "Witch Doctor",
+  "enemies": [
+   "Huskar"
+  ],
+  "minute": 22,
+  "owned": [
+   "item_spirit_vessel"
+  ],
+  "expect": null,
+  "why": "Spirit Vessel owned"
+ },
+ {
+  "hero": "Witch Doctor",
+  "enemies": [
+   "Axe",
+   "Juggernaut"
+  ],
+  "minute": 22,
+  "owned": [],
+  "expect": null,
+  "why": "no healing hero"
+ }
+]

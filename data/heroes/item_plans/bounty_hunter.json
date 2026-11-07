@@ -9,7 +9,8 @@
   "sources": {
     "games": "421 league games since 7.40 (data/heroes/item_stats; 7.41 alone had under 300), win 58.2%, soft support (STRATZ pos4, 8044 games). Reproduce: python scripts/hero_item_stats.py bounty_hunter.",
     "items": "Valve /datafeed/itemdata item_id 267 (Spirit Vessel), current patch, fetched 2026-11-07.",
-    "hero": "Valve /datafeed/herodata hero_id 62 (Shuriken Toss, Shadow Walk, Track), fetched 2026-11-07."
+    "hero": "Valve /datafeed/herodata hero_id 62 (Shuriken Toss, Shadow Walk, Track), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {

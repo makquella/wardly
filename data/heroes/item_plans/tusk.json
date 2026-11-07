@@ -9,7 +9,8 @@
   "sources": {
     "games": "1427 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 50.2%. Eul's against magic damage lineups rests on 108 games; against targeted jumpers on 97 games with a small win gap (56% against 46%). Reproduce: python scripts/hero_item_stats.py tusk.",
     "items": "Valve /datafeed/itemdata, 7.41f: Eul's Scepter of Divinity.",
-    "hero": "Valve /datafeed/herodata hero_id 100 (Snowball, Walrus Kick), 44 (Phantom Assassin: Phantom Strike is a unit-targeted jump) and 71 (Spirit Breaker: Charge of Darkness is unit-targeted), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 100 (Snowball, Walrus Kick), 44 (Phantom Assassin: Phantom Strike is a unit-targeted jump) and 71 (Spirit Breaker: Charge of Darkness is unit-targeted), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {

@@ -9,7 +9,8 @@
   "sources": {
     "games": "694 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 46.8%. No rules: the largest signals sit on 20 games (physical lineup) or on selection (Black King Bar against escape heroes, 14% of 262 games). Reproduce: python scripts/hero_item_stats.py spirit_breaker.",
     "items": "Valve /datafeed/itemdata, 7.41f: no item named by a rule.",
-    "hero": "Valve /datafeed/herodata hero_id 71 (Charge of Darkness, Nether Strike), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 71 (Charge of Darkness, Nether Strike), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [

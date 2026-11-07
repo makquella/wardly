@@ -9,7 +9,8 @@
   "sources": {
     "games": "569 league games since 7.41 (data/heroes/item_stats, support position: under 2.5 last hits a minute), win 43.9%. Eul's, Glimmer Cape and Ghost Scepter rules rest on 61, 40 and 35 games; the Ghost Scepter one is thin (14 games with it). Reproduce: python scripts/hero_item_stats.py skywrath_mage.",
     "items": "Valve /datafeed/itemdata, 7.41f: Eul's Scepter of Divinity, Glimmer Cape, Ghost Scepter.",
-    "hero": "Valve /datafeed/herodata hero_id 101 (Ancient Seal, Mystic Flare), 44 (Phantom Assassin: Phantom Strike is a unit-targeted jump) and 71 (Spirit Breaker: Charge of Darkness is unit-targeted), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 101 (Ancient Seal, Mystic Flare), 44 (Phantom Assassin: Phantom Strike is a unit-targeted jump) and 71 (Spirit Breaker: Charge of Darkness is unit-targeted), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {

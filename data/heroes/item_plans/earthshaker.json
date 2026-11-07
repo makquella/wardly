@@ -9,7 +9,8 @@
   "sources": {
     "games": "51 league games since 7.40 (data/heroes/item_stats; most of his games are cores), win 37.3%; soft support by STRATZ pos4 (5489 games) and pos5 (1275). Under 150 games: the build leans on STRATZ pos4 (Blink Dagger 16 min 100%, Kaya 25 min 45%, won 57%), no rule. Reproduce: python scripts/hero_item_stats.py earthshaker.",
     "items": "No item rule: no group has 20 games with a signal (illusion clearers 22 games, 4 Yasha buys).",
-    "hero": "Valve /datafeed/herodata hero_id 7 (Fissure, Echo Slam), fetched 2026-11-07."
+    "hero": "Valve /datafeed/herodata hero_id 7 (Fissure, Echo Slam), fetched 2026-11-07.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [],
   "build": [
@@ -50,7 +51,8 @@
     "names": {
       "earthshaker_fissure": "Fissure",
       "earthshaker_aftershock": "Aftershock",
-      "earthshaker_enchant_totem": "Enchant Totem"
+      "earthshaker_enchant_totem": "Enchant Totem",
+      "earthshaker_echo_slam": "Echo Slam"
     },
     "talents": {
       "10": {

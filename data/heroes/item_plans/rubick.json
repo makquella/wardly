@@ -9,7 +9,8 @@
   "sources": {
     "games": "1943 league games since 7.41 (data/heroes/item_stats), win 47.1%. Reproduce: python scripts/hero_item_stats.py rubick.",
     "items": "Valve 7.41f: Eul's Scepter of Divinity.",
-    "hero": "Valve /datafeed/herodata hero_id 86 (abilities named in fight and skills), 7.41f."
+    "hero": "Valve /datafeed/herodata hero_id 86 (abilities named in fight and skills), 7.41f.",
+    "player": "Player review, 2026-11-07 (support wave): the build follows the STRATZ high-rank order where it and the league games disagree; Eul's Scepter answers Phantom Strike and Charge of Darkness (Jakiro, Rubick, Skywrath Mage, Tusk); Rod of Atos against escapes (a root stops walking and blink escapes); Ghost Scepter against two physical carries stays on thin samples; the skill builds and talents are the most common ones."
   },
   "rules": [
     {
@@ -41,12 +42,12 @@
       "name": "Blink Dagger"
     },
     {
-      "item": "glimmer_cape",
-      "name": "Glimmer Cape"
-    },
-    {
       "item": "aether_lens",
       "name": "Aether Lens"
+    },
+    {
+      "item": "glimmer_cape",
+      "name": "Glimmer Cape"
     },
     {
       "item": "force_staff",
@@ -57,7 +58,7 @@
       "name": "Aghanim's Shard"
     }
   ],
-  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 74% (12), essence_distiller 36% (15), blink 79% (24), glimmer_cape 26% (25), aether_lens 35% (25), force_staff 26% (26), aghanims_shard 50% (27). STRATZ pos4 (16929 games): Essence Distiller 14, Aether Lens 21, Blink Dagger 21 (100%), Glimmer Cape 24, Eul's 27 (25%), Aghanim's Scepter 34 min (42%); the league build has Force Staff where STRATZ has Eul's.",
+  "build_basis": "Assembled items bought in 25%+ of the won games, by median minute (parts and consumables dropped): arcane_boots 74% (12), essence_distiller 36% (15), blink 79% (24), glimmer_cape 26% (25), aether_lens 35% (25), force_staff 26% (26), aghanims_shard 50% (27). STRATZ pos4 (16929 games): Essence Distiller 14, Aether Lens 21, Blink Dagger 21 (100%), Glimmer Cape 24, Eul's 27 (25%), Aghanim's Scepter 34 min (42%); the league build has Force Staff where STRATZ has Eul's. Ordered by the STRATZ high-rank pos4 minute where STRATZ lists the item (16929 games), else the league minute (the player review of 2026-11-07: the STRATZ order where the two disagree).",
   "skills": {
     "order": [
       "rubick_fade_bolt",
