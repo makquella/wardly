@@ -20,7 +20,7 @@ Three layers, so the same detail scales past one hero:
 - **Numbers (automatic).** `.github/workflows/hero-stats.yml` runs
   `scripts/hero_item_stats.py --all --write` every Wednesday and by hand after a
   patch: `data/heroes/item_stats/<hero>.json` per supported hero in its usual
-  position (OpenDota `lane_role`; supports unfiltered), from the open OpenDota
+  position (OpenDota `lane_role`; a support's games are filtered, see Supports), from the open OpenDota
   Explorer (league games; a hero under 300 games in the patch is read from the
   previous patch on too). It holds the usual and tempo builds, the tempo net
   worth line, the skill build with talents, and for every enemy group each
@@ -71,7 +71,8 @@ Three layers, so the same detail scales past one hero:
    Linken's Sphere blocks), `invisibility`,
    `illusion_clearers` (`draft_analysis.ILLUSION_CLEARERS`), `magic`
    (`draft_analysis.MAGIC_DAMAGE`; a rule names it with `count: 3`, the lineup
-   the generic counter needs too). A new group goes into those tables with its
+   the generic counter needs too), `physical` (`draft_analysis.PHYSICAL_CARRIES`;
+   `count: 2`, the lineup the save item needs). A new group goes into those tables with its
    own check, not into one plan.
 4. **The rules**, in order; the first that holds wins its `family`:
    - `why` — a short id of the reason;
@@ -334,3 +335,33 @@ Checked against Valve 7.41f: Shiva's Guard no longer cuts health restoration
 (Arctic Blast is damage and a slow), so no plan names it against healing; Spirit
 Vessel's Soul Release cuts it by 70% for 8 s. The Blink Dagger and other items
 bought whole are not in the assembled-item statistics, so no rule leans on them.
+
+## Supports
+
+A support carries the same kind of plan (`positions: ["support"]`): rules, build,
+skills, `fight` and notes, with the same checklist. It has **no `tempo`**
+(`validate` refuses one): a support's farm is not the sign of a won game. A
+support plan may name the `physical` group (`count: 2`, like `magic` with 3).
+
+What the live advice does with it, for the hero's own support plan only (a
+support without a plan behaves as before):
+
+- **Items only from the plan.** The plan's rules that hold (minute gate kept),
+  then its `build` in order; no death-pattern items (BKB, Linken's Sphere, Aeon
+  Disk), no generic counters, no OpenDota popularity.
+- **Save item tip.** The first save item (`map_hints.SAVE_ITEMS`) the plan names
+  (rules that hold now first, then the build), with its price. A plan that names
+  no save item gives no save item tip: the hero's high-rank players do not buy
+  one. Without a plan: the lineup save item (Glimmer Cape, Ghost Scepter), else
+  the most bought.
+- **Gold card.** Unspent gold names the plan's next item (and the part the gold
+  buys), as for a core; with nothing to name, the generic support card.
+- **Draft card, notes, skills, fight, death screen.** The same as for a core:
+  the draft card names the plan's item early in the match, notes show once per
+  match, the skill tips and the fight summary read the plan, and the death screen
+  gives «Why <item>:» with the plan's reason.
+
+The numbers: `scripts/hero_item_stats.py --position support` keeps only a
+support's games (last hits under 2.5 a minute, `map_hints.SUPPORT_LH_PER_MIN`)
+and whole items of 1000+ gold; it has no tempo line and counts the `physical`
+lineup (`physical_lineup`) beside `magic_lineup`.

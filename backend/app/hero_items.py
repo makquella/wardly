@@ -36,6 +36,12 @@ wait and the next item is the tempo build's (Terrorblade, in the order of his
 farmed won games: Manta Style, Aghanim's Shard, Dragon Lance, Eye of Skadi,
 Butterfly, Daedalus), then the Aegis and the throne. A player's GSI
 shows no enemy net worth, so the hero's own farm is the observed sign.
+
+A support can carry a plan too (positions ["support"]): rules, build, skills,
+fight and notes, but no tempo, since a support's farm is not the sign of a won
+game. Its items come only from the plan (situational_items), with no death
+patterns and no generic counters, and its save item tip names the plan's save
+item or none. A support without a plan gets what it always got.
 """
 
 from __future__ import annotations
@@ -57,7 +63,7 @@ SCHEMA = 1
 PLACEHOLDERS = {"enemy", "escape", "spell", "item", "net_worth"}
 TEMPO_WHY = "tempo"
 NOTE_KEYS = {"id", "enemy", "minute", "reason", "basis"}
-POSITIONS = {"carry", "mid", "offlane"}
+POSITIONS = {"carry", "mid", "offlane", "support"}
 RULE_KEYS = {
     "id",
     "why",
@@ -82,6 +88,7 @@ def groups() -> dict[str, dict[str, str | None]]:
         ILLUSION_CLEARERS,
         JUMPERS,
         MAGIC_DAMAGE,
+        PHYSICAL_CARRIES,
         TARGETED_JUMPERS,
     )
     from app.situational_items import BREAK_PASSIVES
@@ -100,6 +107,9 @@ def groups() -> dict[str, dict[str, str | None]]:
         # Magic damage heroes; a rule names how many with `count` (the generic
         # counter needs draft_analysis.MAGIC_LINEUP_MIN).
         "magic": dict.fromkeys(MAGIC_DAMAGE),
+        # Right-click carries; a rule names how many with `count` (the lineup
+        # save item needs draft_analysis.PHYSICAL_LINEUP_MIN, 2), like magic with 3.
+        "physical": dict.fromkeys(PHYSICAL_CARRIES),
     }
 
 
@@ -242,6 +252,8 @@ def validate(plan: Any, source: str = "plan") -> dict[str, Any]:
     ):
         raise fail("build needs items [{item, name, unless?}] and a build_basis")
     tempo = plan.get("tempo")
+    if tempo is not None and "support" in positions:
+        raise fail("a support plan has no tempo line: its farm is not the sign of a won game")
     if tempo is not None:
         items = tempo.get("items") if isinstance(tempo, dict) else None
         raw = tempo.get("net_worth") if isinstance(tempo, dict) else None
@@ -297,6 +309,12 @@ def plan_for(hero: Any, position: str | None) -> dict[str, Any] | None:
     if plan is None or position not in plan["positions"]:
         return None
     return plan
+
+
+def has_plan(hero: Any, position: str | None) -> bool:
+    """True when the hero has a plan for this position (the live support paths
+    ask this, not plan_for's content)."""
+    return plan_for(hero, position) is not None
 
 
 def plan_fight(plan: dict[str, Any] | None) -> dict[str, Any] | None:

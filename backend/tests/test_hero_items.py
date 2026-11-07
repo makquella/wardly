@@ -1151,3 +1151,298 @@ def test_axe_levels_battle_hunger_second():
     axe = plan_skills(plan_for("Axe", "offlane"))
     assert axe["order"] == ["axe_counter_helix", "axe_battle_hunger", "axe_berserkers_call"]
     assert axe["opening"]["name"] == "axe_battle_hunger"
+
+
+# --- a support's plan ------------------------------------------------------------------
+
+
+def _support_plan(**changes):
+    return {
+        "schema": 1,
+        "hero": "Crystal Maiden",
+        "positions": ["support"],
+        "patch": "7.41f",
+        "checked": "2026-11-07",
+        "sources": ["test"],
+        "rules": [
+            {
+                "id": "glimmer_magic",
+                "why": "magic_glimmer",
+                "family": "magic",
+                "item": "glimmer_cape",
+                "name": "Glimmer Cape",
+                "enemy": "magic",
+                "count": 3,
+                "minute": 12,
+                "basis": "test",
+                "reason": {
+                    "en": "{enemy} and others deal magic damage, and {item} saves an ally from it",
+                    "uk": "{enemy} та інші б'ють магією, а {item} рятує союзника від неї",
+                },
+            },
+            {
+                "id": "ghost_physical",
+                "why": "physical_ghost",
+                "family": "physical",
+                "item": "ghost",
+                "name": "Ghost Scepter",
+                "enemy": "physical",
+                "count": 2,
+                "minute": 10,
+                "basis": "test",
+                "reason": {
+                    "en": "{enemy} and another carry hit with the hand, and {item} stops them",
+                    "uk": "{enemy} та інший керрі б'ють рукою, а {item} їх зупиняє",
+                },
+            },
+        ],
+        "build": [
+            {"item": "blink", "name": "Blink Dagger"},
+            {"item": "force_staff", "name": "Force Staff"},
+            {"item": "aghanims_scepter", "name": "Aghanim's Scepter"},
+        ],
+        "build_basis": "test",
+        **changes,
+    }
+
+
+SUPPORT_ITEMS = {
+    "glimmer_cape": {"name": "Glimmer Cape", "cost": 1950, "components": ["cloak"]},
+    "cloak": {"name": "Cloak", "cost": 800, "components": []},
+    "ghost": {"name": "Ghost Scepter", "cost": 1500, "components": []},
+    "blink": {"name": "Blink Dagger", "cost": 2250, "components": []},
+    "force_staff": {"name": "Force Staff", "cost": 2200, "components": ["staff_of_wizardry"]},
+    "staff_of_wizardry": {"name": "Staff of Wizardry", "cost": 1000, "components": []},
+    "hurricane_pike": {"name": "Hurricane Pike", "cost": 4450, "components": ["force_staff"]},
+    "aghanims_scepter": {"name": "Aghanim's Scepter", "cost": 4200, "components": []},
+    "black_king_bar": {"name": "Black King Bar", "cost": 4050, "components": []},
+}
+SUPPORT_META = {"constants": {"items": SUPPORT_ITEMS, "by_id": {}}, "popularity": {}}
+PHYSICAL_LINEUP = ["Juggernaut", "Sven", "Lion", "Axe"]
+
+
+@pytest.fixture
+def support_plan(monkeypatch):
+    """Crystal Maiden gets the fixture plan; every other hero keeps no support plan."""
+    from app import hero_items
+    from app.dota_constants import hero_id_from_name
+    from app.player_api import PLAYER_SERVICE
+
+    plans = {hero_id_from_name("Crystal Maiden"): validate(_support_plan())}
+    monkeypatch.setattr(hero_items, "load_plans", lambda: plans)
+    monkeypatch.setattr(PLAYER_SERVICE, "_live_meta", lambda hero_id: SUPPORT_META)
+    return plans
+
+
+def _cm(enemies, owned=(), *, minute=20, deaths=(), hero="Crystal Maiden"):
+    return situational_item(
+        list(deaths),
+        list(owned),
+        SUPPORT_META,
+        enemies=list(enemies),
+        position="support",
+        minute=minute,
+        hero=hero,
+    )
+
+
+def test_a_support_plan_is_valid_and_has_no_tempo():
+    plan = _support_plan()
+    assert validate(plan) is plan
+    tempo = {
+        "items": [{"item": "blink", "name": "Blink Dagger"}],
+        "net_worth": [[20, 9000]],
+        "basis": "x",
+        "reason": {"en": "{item} wins", "uk": "{item} виграє"},
+    }
+    with pytest.raises(ValueError, match="no tempo"):
+        validate({**plan, "tempo": tempo})
+    validate({**plan, "positions": ["carry"], "tempo": tempo})  # a core keeps its tempo
+
+
+def test_physical_group_counts_right_click_carries():
+    assert {"Juggernaut", "Sven"} <= set(groups()["physical"])
+    assert "physical" in groups()
+
+
+def test_a_support_item_comes_only_from_its_plan(support_plan):
+    item = _cm(MAGIC_LINEUP)
+    assert (item["key"], item["why"], item["enemy"]) == ("glimmer_cape", "magic_glimmer", "Lion")
+    assert item["reason"]["en"].startswith("Lion and others deal magic damage")
+    assert _cm(MAGIC_LINEUP, minute=11) is None  # the minute gate holds
+    assert _cm(["Lion", "Lina", "Axe", "Sven"]) is None  # two magic heroes are not three
+    physical = _cm(PHYSICAL_LINEUP)
+    assert (physical["key"], physical["why"]) == ("ghost", "physical_ghost")
+    assert _cm(["Juggernaut", "Lion", "Axe", "Sniper"]) is None  # one carry is not two
+    assert _cm(MAGIC_LINEUP, ["item_glimmer_cape"]) is None  # owned
+
+
+def test_a_support_never_gets_death_pattern_or_generic_items(support_plan):
+    deaths = [_stunned(100), _stunned(200), _burst_death(300), _burst_death(400)]
+    # Evasion, illusions, break and a magic lineup would give a core BKB, Monkey King
+    # Bar, Maelstrom and Silver Edge; the deaths BKB and Aeon Disk.
+    lineup = ["Phantom Assassin", "Phantom Lancer", "Huskar", "Lion"]
+    # Only the plan's own Ghost Scepter (two right-click carries) answers.
+    assert _cm(lineup, deaths=deaths, minute=30)["key"] == "ghost"
+    assert _cm(lineup, ["item_ghost"], deaths=deaths, minute=30) is None
+    assert situational_item(
+        deaths, [], META, enemies=lineup, position="carry", minute=30, hero="Axe"
+    )  # the same input gives a core an item
+
+
+def _burst_death(t):
+    return {"t": t, "last": {"hp": [[-3, 90], [-1, 30], [0, 0]], "free_s": 5, "burst_s": 2}}
+
+
+def test_a_support_without_a_plan_gets_no_item(support_plan):
+    assert _cm(MAGIC_LINEUP, hero="Lion") is None
+    assert _cm(MAGIC_LINEUP, deaths=[_stunned(1), _stunned(2)], hero="Lion") is None
+
+
+def test_the_draft_card_for_a_planned_support(support_plan):
+    enemies = ["Lion", "Lina", "Leshrac", "Axe"]
+    item = draft_item(enemies, [], SUPPORT_META, "support", "Crystal Maiden")
+    assert (item["key"], item["why"]) == ("glimmer_cape", "magic_glimmer")
+    assert draft_item(enemies, [], SUPPORT_META, "support", "Lion") is None
+    assert draft_item(enemies[:3], [], SUPPORT_META, "support", "Crystal Maiden") is None
+
+
+def test_a_planned_support_next_item_falls_to_the_plan_build(support_plan):
+    from app.player_api import PLAYER_SERVICE
+
+    def next_key(owned, enemies=(), role="support", hero="Crystal Maiden"):
+        item = PLAYER_SERVICE.next_item(hero, owned, enemies=list(enemies), minute=25, role=role)
+        return item and item["key"]
+
+    assert next_key([]) == "blink"
+    assert next_key(["item_blink"]) == "force_staff"
+    assert next_key(["item_blink", "item_hurricane_pike"]) == "aghanims_scepter"  # built from
+    assert next_key(["item_blink", "item_force_staff", "item_aghanims_scepter"]) is None
+    # The plan's rule goes first.
+    assert next_key([], MAGIC_LINEUP) == "glimmer_cape"
+    # No plan, no item: never the popular build.
+    assert next_key([], hero="Lion") is None
+    assert next_key([], role=None, hero="Lion") is None
+
+
+def test_the_save_item_is_the_plans_not_the_most_bought(support_plan):
+    from app.player_api import PLAYER_SERVICE
+
+    def save(owned=(), enemies=(), minute=20):
+        return PLAYER_SERVICE.save_item("Crystal Maiden", list(owned), list(enemies), minute)
+
+    # No rule holds: the first save item of the build (Blink Dagger is no save item).
+    build = save()
+    assert (build["key"], build["why"], build["reason"]) == ("force_staff", "plan", None)
+    assert build["gold_left"] == 2200
+    # A rule that holds comes before the build, with its reason.
+    rule = save(enemies=PHYSICAL_LINEUP)
+    assert (rule["key"], rule["why"]) == ("ghost", "plan")
+    assert rule["reason"]["en"].startswith("Juggernaut and another carry")
+    assert rule["gold_left"] == 1500
+    # Before its minute the rule waits; owned and built-from items are passed over.
+    assert save(enemies=PHYSICAL_LINEUP, minute=9)["key"] == "force_staff"
+    assert save(["item_ghost"], PHYSICAL_LINEUP)["key"] == "force_staff"
+    assert save(["item_hurricane_pike"]) is None
+    # A part owned lowers the price.
+    assert save(["item_staff_of_wizardry"])["gold_left"] == 1200
+    # A hero without a plan keeps the lineup tip, then the most bought.
+    other = PLAYER_SERVICE.save_item("Lion", [], MAGIC_LINEUP, 20)
+    assert (other["key"], other["why"]) == ("glimmer_cape", "magic")
+
+
+def test_a_plan_without_a_save_item_gives_no_save_item(support_plan):
+    from app import hero_items
+    from app.dota_constants import hero_id_from_name
+    from app.player_api import PLAYER_SERVICE
+
+    plan = _support_plan(
+        rules=[],
+        build=[
+            {"item": "blink", "name": "Blink Dagger"},
+            {"item": "aghanims_scepter", "name": "Aghanim's Scepter"},
+        ],
+    )
+    support_plan[hero_id_from_name("Crystal Maiden")] = validate(plan)
+    assert hero_items.has_plan("Crystal Maiden", "support")
+    assert PLAYER_SERVICE.save_item("Crystal Maiden", [], MAGIC_LINEUP, 20) is None
+
+
+def test_the_save_tip_is_off_when_the_plan_names_none():
+    from app.map_hints import RoleTips
+
+    def tip(save_tip):
+        return RoleTips().tip(
+            13 * 60,
+            "support",
+            alive=True,
+            has_ward=True,
+            lang="en",
+            items=["item_tango"],
+            gold=1500,
+            save_item=None,
+            save_tip=save_tip,
+        )
+
+    assert tip(True)["id"].startswith("save_item@")
+    assert tip(False) is None
+
+
+def test_a_planned_support_gold_card_names_the_plan_item():
+    from app.gold_tips import GoldTips
+
+    bag = ["item_tango"]
+
+    def card(item):
+        tips = GoldTips()
+        for clock in range(180, 421, 5):
+            tips.observe(clock, bag)
+        return tips.tip(420, "en", gold=1000, alive=True, role="support", next_item=item)
+
+    named = card({"key": "blink", "name": "Blink Dagger"})
+    assert "Blink Dagger is next in your build" in named["hint"]
+    assert named["items"] == [{"key": "blink", "name": "Blink Dagger"}]
+    assert "wards" in card(None)["hint"]  # stall_support as before
+
+
+def test_the_death_screen_of_a_planned_support_names_the_plan_reason(support_plan):
+    from app.player_api import PLAYER_SERVICE
+
+    item = PLAYER_SERVICE.next_item(
+        "Crystal Maiden", [], enemies=MAGIC_LINEUP, minute=20, role="support"
+    )
+    screen = build_death_screen(
+        death=None,
+        place=None,
+        respawn=30,
+        gold=3000,
+        buyback_cost=None,
+        minute=20,
+        next_item={**item, "gold_left": 1000},
+        lang="en",
+    )
+    assert any(
+        line.startswith("Why Glimmer Cape: Lion and others deal") for line in screen["lines"]
+    )
+
+
+def test_a_planned_support_gets_the_plan_item_card_live(client, support_plan):
+    from app.live_role import set_role_setting
+
+    set_role_setting("support")
+    lineup = {
+        f"o{i}": {"image": "minimap_enemyicon", "unitname": f"npc_dota_hero_{name}", "team": 3}
+        for i, name in enumerate(("lion", "lina", "leshrac", "axe"))
+    }
+    texts = []
+    for payload in gsi_match_stream(minutes=5, death_minutes=(), step_seconds=5):
+        payload["hero"]["name"] = "npc_dota_hero_crystal_maiden"
+        payload["minimap"] = lineup
+        client.post("/gsi", json=payload)
+        if payload["map"]["clock_time"] >= 180:
+            hint = client.get("/overlay/recommendation?lang=en").json().get("map_hint") or {}
+            texts.append((hint.get("title"), hint.get("hint")))
+    assert any(
+        title == "Against their draft: Glimmer Cape" and "deal magic damage" in (text or "")
+        for title, text in texts
+    )

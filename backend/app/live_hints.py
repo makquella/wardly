@@ -29,6 +29,8 @@ class LiveHintInputs:
     carry_advisor: bool
     key_item: dict[str, Any] | None = None
     save_item: dict[str, Any] | None = None
+    # False for a support whose hero plan names no save item to buy: no save tip.
+    save_tip: bool = True
     lane_record: dict[str, Any] | None = None
     # The counter item to plan for against the enemy draft (situational_items.draft_item).
     draft_item: dict[str, Any] | None = None
@@ -101,6 +103,7 @@ def render_live_hints(
             items=extra.get("item_names") if isinstance(extra.get("item_names"), list) else None,
             key_item=inputs.key_item,
             save_item=inputs.save_item,
+            save_tip=inputs.save_tip,
             score_gap=score_gap(dict(extra)),
             enemies=trackers.enemies or None,
             bottle_rune=extra.get("bottle_rune")
