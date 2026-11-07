@@ -57,7 +57,9 @@
           demoHint: "The overlay shows advice from a recorded match.",
           fullscreenTitle: "Advice is hidden by fullscreen",
           fullscreenHint:
-            "Dota runs in exclusive fullscreen, where no window can be drawn on top. In Dota: Settings → Video → Display mode → Borderless window. Or turn on the voice in Settings → Advice: it is heard in any mode."
+            "Dota runs in exclusive fullscreen, where no window can be drawn on top. In Dota: Settings → Video → Display mode → Borderless window. Or turn on the voice in Settings → Advice: it is heard in any mode.",
+          fullscreenHintLinux:
+            "Dota runs in fullscreen, and the window manager draws it above every other window. In Dota: Settings → Video → Display mode → Borderless window. Or turn on the voice in Settings → Advice: it is heard in any mode."
         },
         actions: {
           start: "Start the coach",
@@ -182,6 +184,10 @@
           all: "Speaks every piece of advice; heard even in exclusive fullscreen. Ctrl+Alt+R repeats"
         },
         voiceNoVoice: "No English voice in the system: Windows Settings → Time & language → Speech",
+        voiceNoVoiceLinux:
+          "No voices found. Install speech-dispatcher and a voice (Arch: speech-dispatcher espeak-ng; Ukrainian: RHVoice), then restart Wardly.",
+        voiceEnglishFallbackLinux: (name) =>
+          `No voice for the app language: advice is read in English (${name}). For Ukrainian install a speech-dispatcher voice, e.g. RHVoice, then restart Wardly`,
         voiceEnglishFallback: (name) =>
           `No voice for the app language: advice is read in English (${name}). Add one in Windows Settings → Time & language → Speech`,
         voiceSettings: "Add a voice",
@@ -289,13 +295,18 @@
           fallback: "Could not post: try again later."
         },
         autostart: "Start with Windows",
+        autostartLinux: "Start with the system",
         autostartOn: "Wardly opens by itself when the computer starts and waits quietly next to the clock, so you never forget it before a game.",
         autostartOff: "Off: open Wardly yourself before you play. Turn it on and Wardly will open with the computer and wait quietly next to the clock.",
         autostartUnavailable: "Available in the installed app",
         updates: "Updates",
         updateCheck: "Check",
         updateInstall: "Restart and update",
+        updateOpen: "Open download page",
         updateHint: {
+          idleNotify: (v) => `Version ${v} · new versions are announced here; install them yourself`,
+          available: (v, next) => `Version ${next} is out. Download it and install it over this one.`,
+          availableBlocked: (v, next) => `Version ${next} is out. Open the download page after you close Dota.`,
           disabled: (v) => `Version ${v} · updates work in the installed app`,
           idle: (v) => `Version ${v} · updates install by themselves`,
           checking: (v) => `Version ${v} · checking…`,
@@ -639,7 +650,9 @@
           demoHint: "Оверлей показує підказки із записаного матчу.",
           fullscreenTitle: "Підказок не видно через повноекранний режим",
           fullscreenHint:
-            "Дота запущена в ексклюзивному повноекранному режимі — поверх нього вікна не малюються. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть голос у «Налаштування → Поради» — його чути в будь-якому режимі."
+            "Дота запущена в ексклюзивному повноекранному режимі — поверх нього вікна не малюються. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть голос у «Налаштування → Поради» — його чути в будь-якому режимі.",
+          fullscreenHintLinux:
+            "Дота запущена в повноекранному режимі, і менеджер вікон малює її над усіма іншими вікнами. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть голос у «Налаштування → Поради» — його чути в будь-якому режимі."
         },
         actions: {
           start: "Запустити тренера",
@@ -764,6 +777,10 @@
           all: "Озвучує всі поради; чути навіть у повноекранному режимі. Ctrl+Alt+R — повторити"
         },
         voiceNoVoice: "У Windows немає українського голосу: Параметри → Час і мова → Мовлення → Додати голоси",
+        voiceNoVoiceLinux:
+          "Голосів не знайдено. Встановіть speech-dispatcher і голос (Arch: speech-dispatcher espeak-ng; український: RHVoice), потім перезапустіть Wardly.",
+        voiceEnglishFallbackLinux: (name) =>
+          `Українського голосу немає, тому поради читаються англійською (${name}). Для української встановіть голос speech-dispatcher, наприклад RHVoice, і перезапустіть Wardly`,
         voiceEnglishFallback: (name) =>
           `Українського голосу в Windows немає, тому поради читаються англійською (${name}). Щоб чути українською, додайте голос: Параметри → Час і мова → Мовлення → Додати голоси → Українська`,
         voiceSettings: "Додати голос",
@@ -871,13 +888,18 @@
           fallback: "Не вдалося надіслати: спробуйте пізніше."
         },
         autostart: "Автозапуск із Windows",
+        autostartLinux: "Автозапуск із системою",
         autostartOn: "Wardly сам відкриється під час увімкнення комп'ютера й тихо чекатиме біля годинника. Так ви не забудете запустити його перед грою.",
         autostartOff: "Зараз вимкнено: Wardly треба відкривати самому перед грою. Увімкніть — і він сам запускатиметься з комп'ютером і тихо чекатиме біля годинника.",
         autostartUnavailable: "Доступно у встановленому застосунку",
         updates: "Оновлення",
         updateCheck: "Перевірити",
         updateInstall: "Перезапустити й оновити",
+        updateOpen: "Відкрити сторінку завантаження",
         updateHint: {
+          idleNotify: (v) => `Версія ${v} · про нові версії повідомимо тут, встановлювати треба самому`,
+          available: (v, next) => `Вийшла версія ${next}. Завантажте її й встановіть поверх цієї.`,
+          availableBlocked: (v, next) => `Вийшла версія ${next}. Відкрийте сторінку завантаження, коли закриєте Доту.`,
           disabled: (v) => `Версія ${v} · оновлення працюють у встановленому застосунку`,
           idle: (v) => `Версія ${v} · оновлюється сама`,
           checking: (v) => `Версія ${v} · перевіряємо…`,

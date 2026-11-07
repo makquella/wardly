@@ -235,6 +235,8 @@
   function renderRelease() {
     const buttons = document.querySelectorAll(".js-download");
     buttons.forEach((a) => (a.href = DOWNLOAD));
+    // Linux packages: the same counted redirect, asking for a package.
+    document.querySelectorAll("[data-os]").forEach((a) => (a.href = `${DOWNLOAD}?os=${encodeURIComponent(a.dataset.os)}`));
     if (!release) {
       return;
     }
