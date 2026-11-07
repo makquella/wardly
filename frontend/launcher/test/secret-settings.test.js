@@ -160,9 +160,9 @@ test("Linux basic_text storage (no keyring) does not count as OS sealing", t => 
 
   // The settings store then keeps secrets as before instead of sealing them.
   storage.getSelectedStorageBackend = () => "basic_text";
-  const directory = workspace(t);
-  const store = createSettingsStore({directory, defaults:DEFAULTS, secretKeys:SECRET, codec:createSecretCodec(storage)});
-  store.unlock();
-  store.set({discordWebhook:WEBHOOK});
-  assert.ok(fs.readFileSync(path.join(directory, "settings.json"), "utf8").includes(WEBHOOK));
+  const file = workspace(t);
+  const store = open(file, storage);
+  assert.deepEqual(store.unlockSecrets(), {sealing:false, locked:0});
+  store.set("discordWebhook", WEBHOOK);
+  assert.equal(JSON.parse(fs.readFileSync(file, "utf8")).discordWebhook, WEBHOOK);
 });

@@ -54,12 +54,16 @@ const {
   gsiDirForDotaDir,
   locateDota
 } = require("./steam-locator");
-const { createUpdater, UPDATE_STATUS } = require("./updater");
+const { createUpdater, fetchLatestRelease, updateModeFor, UPDATE_STATUS } = require("./updater");
+const linuxDesktop = require("./linux-desktop");
 
 const APP_ID = "com.dotaai.coach";
 const APP_NAME = "Wardly";
 // Shared with the frozen backend (backend/app/config.py -> %APPDATA%\DotaAICoach).
 const APP_DATA_DIR_NAME = "DotaAICoach";
+
+// Linux: the overlay needs X11/XWayland (see linux-desktop.js); before "ready".
+const linuxStartup = linuxDesktop.applyStartupSwitches({ commandLine: app.commandLine });
 
 app.setName(APP_NAME);
 app.setPath("userData", path.join(app.getPath("appData"), APP_DATA_DIR_NAME));
@@ -322,10 +326,15 @@ dotaWatcher.on("change", (state) => {
   }
 });
 
+const UPDATE_MODE = updateModeFor({ isPackaged: IS_PACKAGED, isSmokeTest: IS_SMOKE_TEST });
 const updater = createUpdater({
   currentVersion: app.getVersion(),
-  // NSIS build only: the portable exe and dev runs are not updated.
-  supported: IS_PACKAGED && process.platform === "win32" && !process.env.PORTABLE_EXECUTABLE_DIR && !IS_SMOKE_TEST,
+  // Windows NSIS build and the Linux AppImage update themselves; Linux
+  // pacman/deb installs only announce a newer release. The portable exe and dev
+  // runs are not updated.
+  supported: UPDATE_MODE !== "off",
+  mode: UPDATE_MODE === "notify" ? "notify" : "auto",
+  checkLatest: () => fetchLatestRelease({ fetchImpl: (...args) => electronNet.fetch(...args) }),
   // Never while Dota runs or a match feeds GSI (manual installs included).
   isGameRunning,
   // The unattended install also waits for the demo and a hidden panel.
@@ -352,6 +361,7 @@ const TRAY_TEXT = {
     open: "Open",
     overlay: "Advice over the game",
     autostartWindows: "Start with Windows",
+    autostartSystem: "Start with the system",
     autostartLogin: "Start at login",
     quit: "Quit",
     backend: "Coach",
@@ -366,6 +376,11 @@ const TRAY_TEXT = {
       "Dota runs in exclusive fullscreen, so advice cannot be drawn over it. In Dota: Settings → Video → Display mode → Borderless window. Or turn on spoken advice in the app.",
     updateDownloading: (version, percent) => `Downloading update ${version}… ${percent}%`,
     updateReady: (version) => `Restart and update to ${version}`,
+    updateAvailable: (version) => `Version ${version} is out: open the download page`,
+    trayHint:
+      "Still running in the tray. Right-click the icon to toggle the overlay or quit. No tray icon (GNOME)? Install the AppIndicator extension, or start Wardly again to open the window.",
+    fullscreenBalloonLinux:
+      "Dota runs in fullscreen, and the window manager draws it above every other window, so advice cannot be drawn over it. In Dota: Settings → Video → Display mode → Borderless window. Or turn on spoken advice in the app.",
     updateAfterGame: (version) => `Update ${version} installs after you close Dota`,
     updated: (version) => `Updated to ${version}.`,
     reviewReady: (score, focusMet) =>
@@ -384,6 +399,7 @@ const TRAY_TEXT = {
     open: "Відкрити",
     overlay: "Підказки поверх гри",
     autostartWindows: "Автозапуск із Windows",
+    autostartSystem: "Автозапуск із системою",
     autostartLogin: "Автозапуск під час входу",
     quit: "Вихід",
     backend: "Тренер",
@@ -398,6 +414,11 @@ const TRAY_TEXT = {
       "Дота запущена в ексклюзивному повноекранному режимі — поверх нього підказки не малюються. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть озвучення порад у застосунку.",
     updateDownloading: (version, percent) => `Завантажується оновлення ${version}… ${percent}%`,
     updateReady: (version) => `Перезапустити й оновити до ${version}`,
+    updateAvailable: (version) => `Вийшла версія ${version}: відкрити сторінку завантаження`,
+    trayHint:
+      "Працює в треї. Клацніть правою кнопкою на значку, щоб вимкнути підказки або вийти. Немає значка в треї (GNOME)? Встановіть розширення AppIndicator або запустіть Wardly ще раз, щоб відкрити вікно.",
+    fullscreenBalloonLinux:
+      "Дота запущена в повноекранному режимі, і менеджер вікон малює її над усіма іншими вікнами, тому підказки поверх неї не видно. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть озвучення порад у застосунку.",
     updateAfterGame: (version) => `Оновлення ${version} встановиться після виходу з Доти`,
     updated: (version) => `Оновлено до версії ${version}.`,
     reviewReady: (score, focusMet) =>
@@ -696,7 +717,8 @@ function publicStatus() {
     llm: "off",
     logMode,
     autostart: autostartEnabled,
-    autostartSupported: isAutostartSupported()
+    autostartSupported: isAutostartSupported(),
+    platform: process.platform
   };
 }
 
@@ -733,7 +755,7 @@ function noteExclusiveFullscreen(state) {
   fullscreenBalloonShown = true;
   appendLog("overlay", "Dota runs in exclusive fullscreen; the overlay cannot be drawn over it.", { force: true });
   if (fullscreenWarningActive()) {
-    showTrayBalloon(t("fullscreenBalloon"));
+    showTrayBalloon(t(process.platform === "linux" ? "fullscreenBalloonLinux" : "fullscreenBalloon"));
   }
 }
 
