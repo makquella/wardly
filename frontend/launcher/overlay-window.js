@@ -1,7 +1,7 @@
 const { BrowserWindow, globalShortcut, screen } = require("electron");
 const path = require("node:path");
 
-const { anchorArea, isReachable, presetBounds, sameBounds } = require("./overlay-placement");
+const { anchorArea, isReachable, physicalRectToDip, presetBounds, sameBounds } = require("./overlay-placement");
 const { protectWindow } = require("./renderer-security");
 
 // Always-on-top advice card. It used to be a separate Electron app
@@ -11,6 +11,9 @@ const { protectWindow } = require("./renderer-security");
 const WINDOW_WIDTH = 420;
 // Room for a 3-line action + 2-line reason (Ukrainian text runs ~25% longer).
 const WINDOW_HEIGHT = 212; // the card and, under it, the timer strip
+// Windows/macOS stack "screen-saver" above fullscreen games. On Linux/X11
+// Electron ignores the level and sets _NET_WM_STATE_ABOVE, which the window
+// manager keeps over normal and borderless windows (not over a fullscreen one).
 const ALWAYS_ON_TOP_LEVEL = "screen-saver";
 const ENFORCE_ALWAYS_ON_TOP_MS = 2500;
 const MUTE_MS = 5 * 60 * 1000;
@@ -309,6 +312,9 @@ function createOverlayController({
       } catch {
         // Fall through to the raw rect.
       }
+    }
+    if (process.platform === "linux") {
+      return physicalRectToDip(rect, screen.getAllDisplays());
     }
     return rect;
   }

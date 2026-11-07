@@ -11,7 +11,7 @@ const {
   manualBar,
   validFrame
 } = require("./skill-arrow-placement");
-const { sameBounds } = require("./overlay-placement");
+const { physicalRectToDip, sameBounds } = require("./overlay-placement");
 const { trustedHandlers, protectWindow } = require("./renderer-security");
 
 // Skill arrows (0.43): while the overlay names the ability to level («Learn
@@ -71,6 +71,9 @@ function createSkillArrowController({ settings, getDotaRect = () => null, getLoc
         } catch {
           // Fall through to the raw rect.
         }
+      }
+      if (process.platform === "linux") {
+        return physicalRectToDip(physical, screen.getAllDisplays());
       }
       return physical;
     }

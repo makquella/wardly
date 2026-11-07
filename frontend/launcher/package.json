@@ -5,6 +5,8 @@
   "private": true,
   "description": "Wardly, a Dota 2 coach: tray launcher, local backend and always-on-top overlay.",
   "author": "Wardly",
+  "homepage": "https://luhovyimvp.dev",
+  "desktopName": "wardly.desktop",
   "main": "main.js",
   "scripts": {
     "dev": "electron .",
@@ -121,6 +123,7 @@
       "category": "Game",
       "icon": "linux-icons",
       "executableName": "wardly",
+      "syncDesktopName": true,
       "maintainer": "Wardly <noreply@luhovyimvp.dev>",
       "synopsis": "Dota 2 coach: live advice overlay and match reviews",
       "description": "Wardly watches your Dota 2 match through Game State Integration and gives short advice on screen and by voice; after the game it reviews the match. Everything runs on your computer.",
