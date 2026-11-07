@@ -8,6 +8,7 @@ const {
   ipcMain,
   nativeImage,
   net: electronNet,
+  Notification,
   protocol,
   safeStorage,
   screen,
@@ -3452,19 +3453,62 @@ function showPanel() {
 }
 
 function showTrayHintOnce() {
-  if (settings.get("trayHintShown") || !tray || process.platform !== "win32") {
+  if (settings.get("trayHintShown") || !tray) {
     return;
   }
-  settings.set("trayHintShown", true);
-  tray.displayBalloon({
-    iconType: "info",
-    title: APP_NAME,
-    content: "Still running in the tray. Right-click the icon to toggle the overlay or quit."
-  });
+  if (process.platform === "win32") {
+    settings.set("trayHintShown", true);
+    tray.displayBalloon({
+      iconType: "info",
+      title: APP_NAME,
+      content: "Still running in the tray. Right-click the icon to toggle the overlay or quit."
+    });
+  } else if (process.platform === "linux") {
+    // A desktop notification stands in for the tray balloon. Marked as shown
+    // only when the desktop could show one, so a missing notification service
+    // does not use up the hint.
+    if (showDesktopNotification(t("trayHint"))) {
+      settings.set("trayHintShown", true);
+    }
+  }
 }
 
+// Linux has no tray balloons: Electron's Notification (libnotify / D-Bus) is used.
+let activeNotification = null;
+function showDesktopNotification(content) {
+  try {
+    if (!Notification.isSupported()) {
+      return false;
+    }
+    const notification = new Notification({ title: APP_NAME, body: content, icon: path.join(ICON_DIR, "icon.png") });
+    notification.on("click", () => {
+      showMainWindow();
+      if (balloonAction) {
+        send("launcher:player-event", balloonAction);
+        balloonAction = null;
+      }
+    });
+    // Held until it is closed, or the garbage collector may drop it before it shows.
+    activeNotification = notification;
+    notification.on("close", () => {
+      if (activeNotification === notification) {
+        activeNotification = null;
+      }
+    });
+    notification.show();
+    return true;
+  } catch (error) {
+    appendLog("launcher", `Desktop notification failed: ${error.message}`, { force: true });
+    return false;
+  }
+}
+
+const xdgAutostart = linuxDesktop.createXdgAutostart({
+  log: (message) => appendLog("launcher", message, { force: true })
+});
+
 function isAutostartSupported() {
-  return IS_PACKAGED && (process.platform === "win32" || process.platform === "darwin");
+  return IS_PACKAGED && (process.platform === "win32" || process.platform === "darwin" || process.platform === "linux");
 }
 
 // Before 0.5 the app was DotaAICoach.exe in the same folder. Its Start with
@@ -3500,6 +3544,9 @@ function isAutostartEnabled() {
   if (!isAutostartSupported()) {
     return false;
   }
+  if (process.platform === "linux") {
+    return xdgAutostart.isEnabled();
+  }
   try {
     return Boolean(app.getLoginItemSettings(loginItemOptions()).openAtLogin);
   } catch {
@@ -3509,11 +3556,15 @@ function isAutostartEnabled() {
 
 function setAutostart(enabled) {
   if (!isAutostartSupported()) {
-    appendLog("launcher", "Start with Windows is available in the installed build only.", { force: true });
+    appendLog("launcher", "Start with the system is available in the installed build only.", { force: true });
     return false;
   }
-  app.setLoginItemSettings({ ...loginItemOptions(), openAtLogin: Boolean(enabled) });
-  appendLog("launcher", `Start with Windows: ${enabled ? "on" : "off"}.`, { force: true });
+  if (process.platform === "linux") {
+    xdgAutostart.set(Boolean(enabled));
+  } else {
+    app.setLoginItemSettings({ ...loginItemOptions(), openAtLogin: Boolean(enabled) });
+  }
+  appendLog("launcher", `Start with the system: ${enabled ? "on" : "off"}.`, { force: true });
   autostartEnabled = isAutostartEnabled();
   updateStatus();
   refreshTray();
@@ -3551,7 +3602,9 @@ function refreshTray() {
   if (fullscreen) {
     topItems.push({ label: t("fullscreenMenu"), enabled: false });
   }
-  if (update.status === UPDATE_STATUS.READY && isGameRunning()) {
+  if (update.status === UPDATE_STATUS.AVAILABLE && !isGameRunning()) {
+    topItems.push({ label: t("updateAvailable", update.version), click: () => updater.openDownload(openExternalUrl) });
+  } else if (update.status === UPDATE_STATUS.READY && isGameRunning()) {
     topItems.push({ label: t("updateAfterGame", update.version), enabled: false });
   } else if (update.status === UPDATE_STATUS.READY) {
     topItems.push({ label: t("updateReady", update.version), click: () => updater.install() });
@@ -3590,7 +3643,7 @@ function refreshTray() {
         }))
       },
       {
-        label: process.platform === "win32" ? t("autostartWindows") : t("autostartLogin"),
+        label: t(process.platform === "win32" ? "autostartWindows" : process.platform === "linux" ? "autostartSystem" : "autostartLogin"),
         type: "checkbox",
         checked: autostartEnabled,
         enabled: isAutostartSupported(),
@@ -3607,10 +3660,19 @@ function refreshTray() {
 
 function showTrayBalloon(content, action = null) {
   balloonAction = action;
+  if (process.platform === "linux") {
+    showDesktopNotification(content);
+    return;
+  }
   if (!tray || tray.isDestroyed() || process.platform !== "win32") {
     return;
   }
   tray.displayBalloon({ iconType: "info", title: APP_NAME, content });
+}
+
+// Only addresses the launcher itself produced (the update check's release link).
+function openExternalUrl(url) {
+  shell.openExternal(url).catch((error) => appendLog("update", `Could not open ${url}: ${error.message}`, { force: true }));
 }
 
 // ---------------------------------------------------------------------------
@@ -3729,6 +3791,7 @@ function registerIpc() {
     return publicStatus();
   });
   handleLauncher("launcher:install-update", () => updater.install());
+  handleLauncher("launcher:open-update-page", () => updater.openDownload(openExternalUrl));
   handleLauncher("launcher:player", (_event, op, args) => playerRequest(String(op || ""), args || {}));
   handleLauncher("launcher:open-logs", () => openPath(LOGS_DIR));
   handleLauncher("launcher:save-problem-report", () => saveProblemReport());

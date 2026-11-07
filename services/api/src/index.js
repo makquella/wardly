@@ -21,7 +21,7 @@
 //   GET    /v1/admin/report/<id>    -> one report as text (same)
 //   GET    /v1/admin/stats?days=N   -> the statistics summed over the last N days (same)
 //   POST   /v1/hit                  -> +1 visit of the site for a source (src/channels.js; the site sends it once per visit)
-//   GET    /d/<source>              -> +1 download for that source, then a redirect to the latest installer
+//   GET    /d/<source>[?os=linux|linux-pacman|linux-deb] -> +1 download for that source, then a redirect to the latest installer (Windows by default)
 //   PUT    /v1/profile/<id>         -> publishes the player's profile card (src/profile.js; header x-profile-token)
 //   POST   /v1/profiles             -> the cards of up to 50 friend codes { ids } -> { profiles: {id: card} }
 //   DELETE /v1/profile/<id>         -> hides the card (same token)
@@ -815,7 +815,7 @@ export async function handleDownload(request, src, env, now = Date.now(), fetchI
   }
   return new Response(null, {
     status: 302,
-    headers: { location: await latestInstaller(fetchImpl, now), "cache-control": "no-store", "referrer-policy": "no-referrer" }
+    headers: { location: await latestInstaller(fetchImpl, now, new URL(request.url).searchParams.get("os")), "cache-control": "no-store", "referrer-policy": "no-referrer" }
   });
 }
 
