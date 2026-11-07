@@ -2,13 +2,20 @@
 // safeStorage: DPAPI for the current Windows user. A sealed value is
 // "safe:v1:<base64>" of the JSON value. `open` returns undefined for a seal that
 // cannot be opened (another user or computer), never throws; nothing is logged.
+// On Linux Electron falls back to the "basic_text" backend (a hardcoded password)
+// when no keyring (libsecret/kwallet) is running: that is not protection, so the
+// codec then reports "not available" and values stay unsealed rather than claim sealing.
 const PREFIX = "safe:v1:";
 
 function createSecretCodec(safeStorage) {
   return {
     available() {
       try {
-        return Boolean(safeStorage && safeStorage.isEncryptionAvailable());
+        if (!safeStorage || !safeStorage.isEncryptionAvailable()) {
+          return false;
+        }
+        return !(typeof safeStorage.getSelectedStorageBackend === "function"
+          && safeStorage.getSelectedStorageBackend() === "basic_text");
       } catch {
         return false;
       }

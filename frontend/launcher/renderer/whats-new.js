@@ -9,6 +9,10 @@
 
   const TEXT = {
     en: {
+      "0.64.0": [
+        "Wardly now runs on Linux (x86_64): an AppImage for any distro that updates itself, plus pacman (Arch, CachyOS) and deb (Debian, Ubuntu) packages that tell you about new versions. Same overlay, voice, tray and reviews as on Windows; in Dota use «Borderless window». Install xprop and xwininfo so the overlay hides when Dota is not focused, and speech-dispatcher with a voice for spoken advice.",
+        "Reviews and build advice stay full when OpenDota is slow: hero statistics, items and per-hero item timings now come from the Wardly server, refreshed from OpenDota once a day. The app asks OpenDota itself only for your matches (and for this data if the server has nothing fresh), so you hit its limits less. Only the table name and a hero number go to the server, nothing about you; the Privacy page says so."
+      ],
       "0.63.0": [
         "Send a match to the developer: with «Keep match recordings for a week» on, each recording in More settings has a «Send to developer» button. Before sending the app shows what goes (what the game reported about your hero and the advice shown) and what does not (nickname, Steam ID, match ID, chat, the date and time); every recording needs its own confirmation. It is kept for 60 days and can be deleted earlier with «Delete my data on the server». The button is offered to some installations first."
       ],
@@ -599,6 +603,10 @@
       ]
     },
     uk: {
+      "0.64.0": [
+        "Wardly тепер і на Linux (x86_64): AppImage для будь-якого дистрибутива, що оновлюється сам, і пакети pacman (Arch, CachyOS) та deb (Debian, Ubuntu), які повідомляють про нові версії. Ті самі підказки поверх гри, голос, трей і розбори, що й на Windows; у Доті — режим «Вікно без рамки». Встановіть xprop і xwininfo, щоб підказки ховалися, коли Дота не у фокусі, і speech-dispatcher з голосом для озвучення.",
+        "Розбори й поради щодо збірки лишаються повними, коли OpenDota повільний: статистика героїв, предмети й таймінги предметів героя тепер приходять зі сервера Wardly, який раз на добу оновлює їх з OpenDota. До самого OpenDota застосунок звертається по ваші матчі (і по ці дані, якщо на сервері нічого свіжого), тож ви рідше впираєтеся в його ліміти. На сервер іде лише назва таблиці й номер героя, нічого про вас; це сказано на сторінці «Конфіденційність»."
+      ],
       "0.63.0": [
         "Надішліть матч розробникові: коли ввімкнено «Зберігати записи матчів тиждень», біля кожного запису в «Ще налаштуваннях» є кнопка «Надіслати розробникові». Перед відправкою застосунок показує, що піде (що гра повідомила про вашого героя й показані поради) і що ні (нік, Steam ID, номер матчу, чат, дата й час); кожен запис потребує окремого підтвердження. Він зберігається 60 днів, раніше його можна видалити кнопкою «Видалити мої дані на сервері». Спочатку кнопку пропонують не всім."
       ],

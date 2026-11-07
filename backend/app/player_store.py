@@ -15,8 +15,10 @@ Nothing here talks to the network; see opendota.py and player_service.py.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import math
+import os
 import sqlite3
 import threading
 import time
@@ -163,6 +165,11 @@ class PlayerStore:
                     self._conn.execute(f"ALTER TABLE matches ADD COLUMN {column} {kind}")
             self._set_meta("schema_version", str(SCHEMA_VERSION))
             self._conn.commit()
+        if os.name == "posix":
+            # Keys are stored unsealed outside Windows: only the owner reads the file
+            # (SQLite gives the -wal/-shm files the same mode).
+            with contextlib.suppress(OSError):
+                self.db_path.chmod(0o600)
 
     def close(self) -> None:
         with self._lock:

@@ -5,7 +5,7 @@ const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 
-const { CLIENT_ID, OP, buildActivity, createDiscordPresence, decode, encode, ipcPath, trackMatchStart } = require("../discord-presence");
+const { CLIENT_ID, OP, buildActivity, createDiscordPresence, decode, encode, ipcPath, ipcPaths, trackMatchStart } = require("../discord-presence");
 
 test("frames: int32 op, int32 length, JSON; partial frames wait for the rest", () => {
   const one = encode(OP.FRAME, { cmd: "SET_ACTIVITY" });
@@ -150,3 +150,47 @@ async function waitFor(check, ms = 2000) {
     await new Promise((resolve) => setTimeout(resolve, 10));
   }
 }
+
+test("linux: the plain, Flatpak and Snap Discord sockets are all looked for", () => {
+  const env = { XDG_RUNTIME_DIR: "/run/user/1000/" };
+  assert.deepEqual(ipcPaths(0, { platform: "linux", env }), [
+    "/run/user/1000/discord-ipc-0",
+    "/run/user/1000/app/com.discordapp.Discord/discord-ipc-0",
+    "/run/user/1000/snap.discord/discord-ipc-0",
+    "/tmp/discord-ipc-0"
+  ]);
+  assert.deepEqual(ipcPaths(2, { platform: "linux", env: { TMPDIR: "/var/tmp" } }), [
+    "/var/tmp/discord-ipc-2",
+    "/tmp/discord-ipc-2"
+  ]);
+  assert.deepEqual(ipcPaths(1, { platform: "win32", env: {} }), ["\\\\?\\pipe\\discord-ipc-1"]);
+  assert.deepEqual(ipcPaths(0, { platform: "darwin", env: {} }), ["/tmp/discord-ipc-0"]);
+});
+
+test("linux: the client connects to a Flatpak Discord socket below XDG_RUNTIME_DIR", async (t) => {
+  if (process.platform === "win32") {
+    t.skip("unix socket fake");
+    return;
+  }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wardly-flatpak-"));
+  const flatpak = path.join(dir, "app", "com.discordapp.Discord");
+  fs.mkdirSync(flatpak, { recursive: true });
+  let handshakes = 0;
+  const server = net.createServer((socket) => {
+    socket.on("error", () => {});
+    socket.on("data", () => {
+      handshakes += 1;
+      socket.write(encode(OP.FRAME, { cmd: "DISPATCH", evt: "READY", data: {} }));
+    });
+  });
+  await new Promise((resolve) => server.listen(path.join(flatpak, "discord-ipc-0"), resolve));
+  const presence = createDiscordPresence({
+    pathFor: (i) => ipcPaths(i, { platform: "linux", env: { XDG_RUNTIME_DIR: dir } }),
+    pid: 1
+  });
+  presence.update(buildActivity({ dotaRunning: true, inMatch: false, hero: null, startedAt: null, lang: "en" }));
+  await waitFor(() => handshakes > 0);
+  presence.stop();
+  server.close();
+  fs.rmSync(dir, { recursive: true, force: true });
+});

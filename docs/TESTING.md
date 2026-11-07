@@ -79,6 +79,8 @@ xvfb-run -a ./node_modules/.bin/electron . --no-sandbox --smoke-test=/tmp/wardly
 
 Windows packaging: з кореня `scripts/build-windows.ps1`, потім `scripts/smoke-windows.ps1`. `-SkipBackend` підходить лише frontend-змінам за наявності валідного backend build; release потребує повного build. Linux Electron smoke не замінює Windows installer, watcher і реальної Dota GSI перевірки.
 
+Linux packaging: з кореня `scripts/build-linux.sh` (потрібні `libarchive-tools`/`bsdtar`, `zstd`, для smoke ще `xvfb`), потім `scripts/smoke-linux.sh`: backend `/health` і права 0700/0600, `--smoke-test` розпакованого застосунку та AppImage (`--appimage-extract-and-run`) під `xvfb-run`, вміст і метадані `.pacman`/`.deb`. Це не перевіряє реальний робочий стіл, overlay поверх Dota і трей; див. [PACKAGING_LINUX.md](PACKAGING_LINUX.md). Backend: `python -m pytest tests/test_packaging_runtime.py`.
+
 Після перевірки: `git diff --check`, перегляд фінального diff і untracked files. Логи, SQLite, записи матчів і локальні результати не комітити. Звіт має розрізняти passed, failed, skipped і unrun перевірки. Portable runner і version gate: [DEV_RUNNER.md](DEV_RUNNER.md); `python scripts/dev.py check --changed --dry-run` показує поточні шляхи, profiles, argv і cwd. Actual Electron smoke й local D1 harness уже існують; їхні межі описано вище.
 
 ## Перевірити виправлення на записі (0.53.58)

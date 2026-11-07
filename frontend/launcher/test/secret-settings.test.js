@@ -142,3 +142,27 @@ test("a seal that does not open back is refused and the write fails safely", t =
   assert.equal(store.get("discordWebhook"), WEBHOOK);
   assert.equal(JSON.parse(fs.readFileSync(file, "utf8")).discordWebhook, WEBHOOK);
 });
+
+test("Linux basic_text storage (no keyring) does not count as OS sealing", t => {
+  const storage = fakeSafeStorage();
+  storage.ready = true;
+  storage.getSelectedStorageBackend = () => "basic_text";
+  assert.equal(createSecretCodec(storage).available(), false);
+  for (const backend of ["gnome_libsecret", "kwallet5", "kwallet6", "unknown"]) {
+    storage.getSelectedStorageBackend = () => backend;
+    assert.equal(createSecretCodec(storage).available(), true, backend);
+  }
+  // Windows/macOS have no such method: the plain readiness check decides.
+  delete storage.getSelectedStorageBackend;
+  assert.equal(createSecretCodec(storage).available(), true);
+  storage.getSelectedStorageBackend = () => { throw new Error("boom"); };
+  assert.equal(createSecretCodec(storage).available(), false);
+
+  // The settings store then keeps secrets as before instead of sealing them.
+  storage.getSelectedStorageBackend = () => "basic_text";
+  const file = workspace(t);
+  const store = open(file, storage);
+  assert.deepEqual(store.unlockSecrets(), {sealing:false, locked:0});
+  store.set("discordWebhook", WEBHOOK);
+  assert.equal(JSON.parse(fs.readFileSync(file, "utf8")).discordWebhook, WEBHOOK);
+});

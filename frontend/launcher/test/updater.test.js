@@ -2,7 +2,15 @@ const assert = require("node:assert/strict");
 const { EventEmitter } = require("node:events");
 const test = require("node:test");
 
-const { createUpdater, IDLE_INSTALL_AFTER_MS, UPDATE_STATUS } = require("../updater");
+const {
+  RELEASES_URL,
+  compareVersions,
+  createUpdater,
+  fetchLatestRelease,
+  IDLE_INSTALL_AFTER_MS,
+  UPDATE_STATUS,
+  updateModeFor
+} = require("../updater");
 
 function fakeAutoUpdater() {
   const updater = new EventEmitter();
@@ -147,4 +155,116 @@ test("no install while Dota runs, manual or unattended", () => {
   gameRunning = false;
   assert.equal(updater.install(), true);
   assert.equal(fake.installs.length, 1);
+});
+
+// --- Linux: AppImage updates itself, pacman/deb only notify -------------------
+
+test("the update mode per platform and install kind", () => {
+  const base = { isPackaged: true, env: {} };
+  assert.equal(updateModeFor({ ...base, platform: "win32" }), "auto");
+  assert.equal(updateModeFor({ ...base, platform: "win32", env: { PORTABLE_EXECUTABLE_DIR: "C:\\x" } }), "off");
+  assert.equal(updateModeFor({ ...base, platform: "linux", env: { APPIMAGE: "/home/u/Wardly.AppImage" } }), "auto");
+  assert.equal(updateModeFor({ ...base, platform: "linux" }), "notify", "pacman, deb, unpacked");
+  assert.equal(updateModeFor({ ...base, platform: "darwin" }), "off");
+  assert.equal(updateModeFor({ ...base, platform: "linux", isSmokeTest: true }), "off");
+  assert.equal(updateModeFor({ platform: "linux", env: { APPIMAGE: "/x" }, isPackaged: false }), "off", "dev runs");
+});
+
+test("versions compare numerically, a pre-release is older than its release", () => {
+  assert.equal(compareVersions("0.65.0", "0.64.9"), 1);
+  assert.equal(compareVersions("0.64.10", "0.64.9"), 1);
+  assert.equal(compareVersions("v0.64.0", "0.64.0"), 0);
+  assert.equal(compareVersions("0.64", "0.64.0"), 0);
+  assert.equal(compareVersions("0.63.9", "0.64.0"), -1);
+  assert.equal(compareVersions("0.65.0-beta.1", "0.65.0"), -1);
+});
+
+function notifier(options = {}) {
+  let latest = { version: "0.65.0", url: "https://github.com/makquella/wardly/releases/tag/v0.65.0" };
+  const fake = fakeAutoUpdater();
+  const updater = createUpdater({
+    currentVersion: "0.64.0",
+    supported: true,
+    mode: "notify",
+    loadAutoUpdater: () => {
+      throw new Error("notify mode must not load electron-updater");
+    },
+    checkLatest: async () => {
+      if (latest instanceof Error) throw latest;
+      return latest;
+    },
+    ...options
+  });
+  return { updater, fake, set: (value) => (latest = value) };
+}
+
+test("notify mode offers the download page of a newer release and never installs", async () => {
+  const { updater } = notifier();
+  updater.start();
+  updater.stop();
+  assert.equal(updater.getState().mode, "notify");
+  const state = await updater.check();
+  assert.equal(state.status, UPDATE_STATUS.AVAILABLE);
+  assert.equal(state.version, "0.65.0");
+  assert.match(state.url, /^https:\/\/github\.com\/makquella\/wardly\//);
+  assert.equal(updater.install(), false);
+  const opened = [];
+  assert.equal(updater.openDownload((url) => opened.push(url)), true);
+  assert.deepEqual(opened, [state.url]);
+});
+
+test("notify mode: up to date, a failed lookup, and a lookup that fails after one succeeded", async () => {
+  const { updater, set } = notifier();
+  set({ version: "0.64.0", url: RELEASES_URL });
+  assert.equal((await updater.check()).status, UPDATE_STATUS.UP_TO_DATE);
+  assert.equal(updater.openDownload(() => assert.fail("nothing to open")), false);
+
+  set(new Error("offline"));
+  const failed = await updater.check();
+  assert.equal(failed.status, UPDATE_STATUS.ERROR);
+  assert.match(failed.error, /offline/);
+
+  set({ version: "0.66.0", url: RELEASES_URL });
+  assert.equal((await updater.check()).status, UPDATE_STATUS.AVAILABLE);
+  set(new Error("offline"));
+  const kept = await updater.check();
+  assert.equal(kept.status, UPDATE_STATUS.AVAILABLE, "a known newer version is not hidden");
+  assert.equal(kept.version, "0.66.0");
+});
+
+test("notify mode: the download page is not opened while Dota runs, and scheduled checks wait", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout", "setInterval"] });
+  let running = true;
+  let lookups = 0;
+  const { updater } = notifier({
+    isGameRunning: () => running,
+    checkLatest: async () => {
+      lookups += 1;
+      return { version: "0.65.0", url: RELEASES_URL };
+    }
+  });
+  updater.start();
+  t.after(() => updater.stop());
+  t.mock.timers.tick(15 * 1000);
+  await Promise.resolve();
+  assert.equal(lookups, 0, "no scheduled lookup mid-game");
+  await updater.check(); // a manual one is fine
+  assert.equal(lookups, 1);
+  assert.equal(updater.openDownload(() => assert.fail("not mid-game")), false);
+  running = false;
+  assert.equal(updater.openDownload(() => {}), true);
+});
+
+test("the GitHub lookup reads the tag and keeps only links into the repository", async () => {
+  const reply = (body, ok = true, status = 200) => async () => ({ ok, status, json: async () => body });
+  assert.deepEqual(
+    await fetchLatestRelease({ fetchImpl: reply({ tag_name: "v0.65.1", html_url: "https://github.com/makquella/wardly/releases/tag/v0.65.1" }) }),
+    { version: "0.65.1", url: "https://github.com/makquella/wardly/releases/tag/v0.65.1" }
+  );
+  assert.equal(
+    (await fetchLatestRelease({ fetchImpl: reply({ tag_name: "0.65.1", html_url: "https://evil.example/x" }) })).url,
+    RELEASES_URL
+  );
+  await assert.rejects(fetchLatestRelease({ fetchImpl: reply({}, false, 403) }), /403/);
+  await assert.rejects(fetchLatestRelease({ fetchImpl: reply({ tag_name: "nightly" }) }), /version tag/);
 });

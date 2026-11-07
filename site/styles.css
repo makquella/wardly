@@ -414,6 +414,24 @@ h1 span {
 .meta-row a:hover {
   color: var(--text);
 }
+/* Linux packages under the Windows download button. */
+.linux-dl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 14px 0 0;
+  color: var(--faint);
+  font-size: 14px;
+}
+.linux-dl a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+}
+.linux-dl a:hover {
+  color: var(--text);
+}
 
 /* «Windows warns?»: the SmartScreen steps next to a small picture of the
    dialog, then the installer's SHA-256 (from the GitHub release). Closed until

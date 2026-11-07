@@ -21,7 +21,7 @@
 //   GET    /v1/admin/report/<id>    -> one report as text (same)
 //   GET    /v1/admin/stats?days=N   -> the statistics summed over the last N days (same)
 //   POST   /v1/hit                  -> +1 visit of the site for a source (src/channels.js; the site sends it once per visit)
-//   GET    /d/<source>              -> +1 download for that source, then a redirect to the latest installer
+//   GET    /d/<source>[?os=linux|linux-pacman|linux-deb] -> +1 download for that source, then a redirect to the latest installer (Windows by default)
 //   PUT    /v1/profile/<id>         -> publishes the player's profile card (src/profile.js; header x-profile-token)
 //   POST   /v1/profiles             -> the cards of up to 50 friend codes { ids } -> { profiles: {id: card} }
 //   DELETE /v1/profile/<id>         -> hides the card (same token)
@@ -31,7 +31,10 @@
 //   GET    /m/<media key>/<file>    -> a promo video or cover (public while not rejected or expired)
 //   POST   /v1/telegram/webhook     -> the bot's approve / reject buttons (secret header, TELEGRAM_CHAT_ID only)
 //   GET    /oauth/<network>/callback -> connects YouTube, Instagram or TikTok after the bot's /connect
-//   cron */5                        -> the promo delivery queue (uploads, polling, reports)
+//   cron */5                        -> the promo delivery queue (uploads, polling, reports) and, as a separate task, the
+//                                      OpenDota cache refresh (src/opendota-cache.js, up to 8 entries per run)
+//   GET    /v1/opendota/<path>      -> public OpenDota reference data from R2 (heroStats, constants/items, heroes/<id>/itemPopularity,
+//                                      heroes/<id>/matchups, scenarios/itemTimings?hero_id=<id>; nothing else; GET/HEAD; 503 without R2)
 //   GET    /admin, /admin/app.js    -> the statistics page (src/admin-page.js; asks for the token, holds no data;
 //                                      404 while ADMIN_TOKEN is not set)
 //   cron                            -> deletes reports older than RETENTION_DAYS, expired shares, old rate counters,
@@ -110,6 +113,7 @@ import {
   channelSource,
   latestInstaller
 } from "./channels.js";
+import { refreshOpenDotaCache, serveOpenDota } from "./opendota-cache.js";
 import { PROMO_CRON, oauthCallback, promoList, promoMaintenance, promoMedia, promoPublish, putPromoFile, registerPromo, telegramWebhook } from "./promo.js";
 import {
   TRANSFER_MAX_BYTES,
@@ -811,7 +815,7 @@ export async function handleDownload(request, src, env, now = Date.now(), fetchI
   }
   return new Response(null, {
     status: 302,
-    headers: { location: await latestInstaller(fetchImpl, now), "cache-control": "no-store", "referrer-policy": "no-referrer" }
+    headers: { location: await latestInstaller(fetchImpl, now, new URL(request.url).searchParams.get("os")), "cache-control": "no-store", "referrer-policy": "no-referrer" }
   });
 }
 
@@ -1018,6 +1022,9 @@ export default {
       if (request.method === "POST" && path === "/v1/hit") {
         return await handleHit(request, env);
       }
+      if (path.startsWith("/v1/opendota/")) {
+        return await serveOpenDota(request, env, ctx);
+      }
       const download = path.match(/^\/d(?:\/([^/]{1,40}))?$/);
       if (download && (request.method === "GET" || request.method === "HEAD")) {
         return await handleDownload(request, download[1], env);
@@ -1127,8 +1134,10 @@ export default {
 
   async scheduled(event, env, ctx) {
     if (event?.cron === PROMO_CRON) {
-      // Every five minutes: the promo delivery queue (src/promo.js), nothing else.
+      // Every five minutes: the promo delivery queue (src/promo.js) and the OpenDota
+      // cache (src/opendota-cache.js), each its own task so one failing leaves the other.
       ctx.waitUntil(promoPublish(env).catch((error) => console.log(`promo publish: ${error.message}`)));
+      ctx.waitUntil(refreshOpenDotaCache(env).catch((error) => console.log(`opendota cache: ${error.name}`)));
       return;
     }
     ctx.waitUntil(cleanup(env).then((count) => console.log(`cleanup: ${count} old reports`)));

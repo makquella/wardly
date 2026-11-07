@@ -36,6 +36,13 @@ MIN_REQUEST_INTERVAL_SECONDS = 1.1
 # With a (paid) API key OpenDota allows far more calls per minute.
 KEYED_REQUEST_INTERVAL_SECONDS = 0.25
 
+# Reference data (hero stats, items, per-hero timings) is read from Wardly's
+# shared cache first (services/api/src/opendota-cache.js, refreshed daily from
+# OpenDota). The cache is a convenience: short timeouts, no retries, and a body
+# older than CACHE_MAX_AGE_SECONDS is only used when OpenDota itself fails.
+CACHE_TIMEOUT_SECONDS: tuple[float, float] = (3.05, 15)
+CACHE_MAX_AGE_SECONDS = 3 * 24 * 3600
+
 RECENT_MATCH_FIELDS = (
     "hero_id",
     "start_time",
@@ -155,8 +162,11 @@ class OpenDotaClient:
         session: requests.Session | None = None,
         timeout: float | tuple[float, float] = DEFAULT_TIMEOUT_SECONDS,
         min_interval: float = MIN_REQUEST_INTERVAL_SECONDS,
+        cache_url: str = "",
     ) -> None:
         self.base_url = base_url.rstrip("/")
+        # "" = no shared cache. Only reference data goes through it (_reference_get).
+        self.cache_url = cache_url.strip().rstrip("/")
         self.api_key = api_key
         self.session = session or requests.Session()
         self.timeout = timeout
@@ -208,7 +218,7 @@ class OpenDotaClient:
     def item_constants(self) -> dict[str, Any]:
         """/constants/items -> {"by_id": {id: key},
         "items": {key: {name, cost, assembled, components}}} (components: item keys)."""
-        data = self._get("/constants/items")
+        data = self._reference_get("/constants/items", dict)
         if not isinstance(data, dict):
             raise OpenDotaError("bad_response", "Unexpected OpenDota response for items.")
         by_id: dict[str, str] = {}
@@ -228,7 +238,7 @@ class OpenDotaClient:
 
     def item_popularity(self, hero_id: int) -> dict[str, dict[str, int]]:
         """/heroes/{id}/itemPopularity (professional matches): {phase: {item_id: count}}."""
-        data = self._get(f"/heroes/{int(hero_id)}/itemPopularity")
+        data = self._reference_get(f"/heroes/{int(hero_id)}/itemPopularity", dict)
         if not isinstance(data, dict):
             raise OpenDotaError("bad_response", "Unexpected OpenDota response for item popularity.")
         return {
@@ -243,7 +253,9 @@ class OpenDotaClient:
 
     def item_timings(self, hero_id: int) -> list[dict[str, Any]]:
         """/scenarios/itemTimings (public matches): games/wins per item and time bucket."""
-        data = self._get("/scenarios/itemTimings", params=[("hero_id", int(hero_id))])
+        data = self._reference_get(
+            "/scenarios/itemTimings", list, params=[("hero_id", int(hero_id))]
+        )
         if not isinstance(data, list):
             raise OpenDotaError("bad_response", "Unexpected OpenDota response for item timings.")
         rows = []
@@ -263,7 +275,7 @@ class OpenDotaClient:
 
     def hero_matchups(self, hero_id: int) -> dict[str, list[int]]:
         """/heroes/{id}/matchups: {enemy hero id: [games, wins of hero_id]}."""
-        data = self._get(f"/heroes/{int(hero_id)}/matchups")
+        data = self._reference_get(f"/heroes/{int(hero_id)}/matchups", list)
         if not isinstance(data, list):
             raise OpenDotaError("bad_response", "Unexpected OpenDota response for matchups.")
         result: dict[str, list[int]] = {}
@@ -349,7 +361,7 @@ class OpenDotaClient:
 
     def hero_stats(self) -> list[dict[str, Any]]:
         """/heroStats: picks and wins per rank bracket 1 (Herald) .. 8 (Immortal)."""
-        data = self._get("/heroStats")
+        data = self._reference_get("/heroStats", list)
         if not isinstance(data, list):
             raise OpenDotaError("bad_response", "Unexpected OpenDota response for hero stats.")
         rows = []
@@ -376,6 +388,55 @@ class OpenDotaClient:
 
     def _get(self, path: str, params: list[tuple[str, Any]] | None = None) -> Any:
         return self._request("GET", path, params=params)
+
+    def _reference_get(
+        self,
+        path: str,
+        expect: type,
+        params: list[tuple[str, Any]] | None = None,
+    ) -> Any:
+        """Public reference data: Wardly's shared cache first, then OpenDota.
+
+        The cache request carries only the path and the hero number: never the
+        player's API key, account or anything else. A fresh body is used as is;
+        a stale one only if OpenDota fails too. Player and match endpoints do
+        not come through here.
+        """
+        cached = self._cache_read(path, expect, params)
+        if cached is not None and cached[1]:
+            return cached[0]
+        try:
+            return self._get(path, params=params)
+        except OpenDotaError:
+            if cached is not None:
+                return cached[0]
+            raise
+
+    def _cache_read(
+        self, path: str, expect: type, params: list[tuple[str, Any]] | None
+    ) -> tuple[Any, bool] | None:
+        """(body, fresh) from the shared cache, or None when it has nothing usable."""
+        if not self.cache_url:
+            return None
+        try:
+            response = self.session.request(
+                "GET",
+                f"{self.cache_url}{path}",
+                params=list(params or []),
+                timeout=CACHE_TIMEOUT_SECONDS,
+                allow_redirects=False,
+            )
+            if response.status_code != 200:
+                return None
+            body = response.json()
+            fetched_ms = int(response.headers.get("x-fetched-at", ""))
+        except (requests.RequestException, ValueError, TypeError, AttributeError):
+            # No usable answer: bad JSON, no x-fetched-at (age unknown) or the
+            # server is down. The caller asks OpenDota.
+            return None
+        if not isinstance(body, expect):
+            return None
+        return body, time.time() - fetched_ms / 1000 <= CACHE_MAX_AGE_SECONDS
 
     def _request(self, method: str, path: str, params: list[tuple[str, Any]] | None = None) -> Any:
         query = list(params or [])

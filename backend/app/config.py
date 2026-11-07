@@ -34,17 +34,37 @@ def _resource_root() -> Path:
 
 
 def _user_data_dir() -> Path:
-    """Writable per-user directory for the frozen app (``%APPDATA%\\DotaAICoach``)."""
+    """Writable per-user directory for the frozen app.
+
+    Windows: ``%APPDATA%\\DotaAICoach``. Linux: ``$XDG_CONFIG_HOME/DotaAICoach``
+    (``~/.config/DotaAICoach`` by default, the same place the fallback always used).
+    """
     appdata = os.getenv("APPDATA", "").strip()
-    base = Path(appdata) if appdata else Path.home() / ".config"
-    return base / APP_DIR_NAME
+    if appdata:
+        return Path(appdata) / APP_DIR_NAME
+    xdg = os.getenv("XDG_CONFIG_HOME", "").strip()
+    # The XDG spec ignores a relative XDG_CONFIG_HOME.
+    if sys.platform.startswith("linux") and xdg and os.path.isabs(xdg):
+        return Path(xdg) / APP_DIR_NAME
+    return Path.home() / ".config" / APP_DIR_NAME
+
+
+def _private_dir(path: Path) -> Path:
+    """Create the per-user data folder; on POSIX only its owner may enter it."""
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        if os.name == "posix":
+            path.chmod(0o700)
+    except OSError:
+        pass  # Read-only or foreign folder: the first real write reports it.
+    return path
 
 
 RESOURCE_ROOT = _resource_root()
 DATA_DIR = RESOURCE_ROOT / "data"
 
 # Root for logs, recordings and other files the backend writes at runtime.
-WRITABLE_DIR = _user_data_dir() if IS_FROZEN else BACKEND_DIR
+WRITABLE_DIR = _private_dir(_user_data_dir()) if IS_FROZEN else BACKEND_DIR
 
 if IS_FROZEN:
     # Packaged users keep their optional LLM keys next to the logs.
@@ -133,3 +153,11 @@ PLAYER_DATA_DIR = path_from_env("PLAYER_DATA_DIR", WRITABLE_DIR / "player_data")
 OPENDOTA_ENABLED = os.getenv("OPENDOTA_ENABLED", "true").strip().lower() != "false"
 OPENDOTA_API_URL = os.getenv("OPENDOTA_API_URL", "https://api.opendota.com/api").strip().rstrip("/")
 OPENDOTA_API_KEY = os.getenv("OPENDOTA_API_KEY", "").strip()
+# Wardly's shared cache of OpenDota reference data (hero stats, items, per-hero
+# timings), tried before OpenDota. Set to an empty value to switch it off.
+_opendota_cache_url = os.getenv("WARDLY_OPENDOTA_CACHE_URL")
+OPENDOTA_CACHE_URL = (
+    "https://api.luhovyimvp.dev/v1/opendota"
+    if _opendota_cache_url is None
+    else _opendota_cache_url.strip().rstrip("/")
+)

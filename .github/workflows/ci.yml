@@ -15,6 +15,10 @@ on:
         description: Caller performs its own signed Windows build and smoke
         default: false
         type: boolean
+      skip_linux:
+        description: Caller performs its own Linux build and smoke
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -221,6 +225,79 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-smoke-logs
+          path: |
+            ${{ runner.temp }}/smoke-*.json
+            ${{ runner.temp }}/launcher.log
+          if-no-files-found: ignore
+
+  linux-build:
+    # Same scope rule as Windows (any desktop/backend/unknown path). Built on the
+    # oldest practical glibc so the PyInstaller backend also runs on older distros.
+    name: Linux build and package smoke
+    needs: changes
+    runs-on: ubuntu-22.04
+    if: ${{ needs.changes.outputs.windows_required == 'true' && !inputs.skip_linux }}
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-build.txt
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: frontend/launcher/package-lock.json
+
+      - name: Install packaging tools (bsdtar and zstd for pacman, Xvfb for the app smoke test)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libarchive-tools zstd xvfb
+
+      - name: Verify source commit
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+        run: python scripts/verify_source.py "$SOURCE_SHA"
+
+      - name: Build backend, Electron app, AppImage, pacman and deb
+        run: ./scripts/build-linux.sh
+
+      - name: Smoke test (backend /health, app, AppImage, packages)
+        run: ./scripts/smoke-linux.sh
+
+      - name: Verify source after packaging
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+        run: python scripts/verify_source.py "$SOURCE_SHA"
+
+      - name: Upload Linux packages
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Wardly-linux-packages
+          path: |
+            frontend/launcher/dist/Wardly-*.AppImage
+            frontend/launcher/dist/Wardly-*.pacman
+            frontend/launcher/dist/Wardly_*.deb
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-smoke-logs
           path: |
             ${{ runner.temp }}/smoke-*.json
             ${{ runner.temp }}/launcher.log

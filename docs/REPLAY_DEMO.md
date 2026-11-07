@@ -118,3 +118,8 @@ The server fixes the side from the recording's number (about a quarter is
 rule once on `holdout` and report those numbers separately, as a check no rule
 was set on. A `holdout` recording that informs a rule becomes a `tune` one in
 the audit notes.
+
+To replay all of them at once, `scripts/rule_table.py` prints one table per rule
+(cards, repeats, recorded use after the card) for `tune` and `holdout` apart, and
+`--compare base.json --gate` checks that a change did not make `holdout` worse
+(`docs/LIVE_ADVICE_AUDIT.md`, «Recordings from players»).

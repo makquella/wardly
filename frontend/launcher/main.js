@@ -8,6 +8,7 @@ const {
   ipcMain,
   nativeImage,
   net: electronNet,
+  Notification,
   protocol,
   safeStorage,
   screen,
@@ -54,12 +55,16 @@ const {
   gsiDirForDotaDir,
   locateDota
 } = require("./steam-locator");
-const { createUpdater, UPDATE_STATUS } = require("./updater");
+const { createUpdater, fetchLatestRelease, updateModeFor, UPDATE_STATUS } = require("./updater");
+const linuxDesktop = require("./linux-desktop");
 
 const APP_ID = "com.dotaai.coach";
 const APP_NAME = "Wardly";
 // Shared with the frozen backend (backend/app/config.py -> %APPDATA%\DotaAICoach).
 const APP_DATA_DIR_NAME = "DotaAICoach";
+
+// Linux: the overlay needs X11/XWayland (see linux-desktop.js); before "ready".
+const linuxStartup = linuxDesktop.applyStartupSwitches({ commandLine: app.commandLine });
 
 app.setName(APP_NAME);
 app.setPath("userData", path.join(app.getPath("appData"), APP_DATA_DIR_NAME));
@@ -89,6 +94,8 @@ const BACKEND_HOST = "127.0.0.1";
 const PREFERRED_BACKEND_PORT = 8000;
 const BACKEND_HEALTH_TIMEOUT_MS = 45000;
 const BACKEND_GRACEFUL_STOP_MS = 8000;
+// Linux/macOS: time for SIGTERM to work before SIGKILL.
+const SIGTERM_GRACE_MS = 3000;
 const BACKEND_MAX_RESTARTS = 3;
 const BACKEND_RESTART_WINDOW_MS = 2 * 60 * 1000;
 const GSI_STATUS_POLL_MS = 1000;
@@ -322,10 +329,15 @@ dotaWatcher.on("change", (state) => {
   }
 });
 
+const UPDATE_MODE = updateModeFor({ isPackaged: IS_PACKAGED, isSmokeTest: IS_SMOKE_TEST });
 const updater = createUpdater({
   currentVersion: app.getVersion(),
-  // NSIS build only: the portable exe and dev runs are not updated.
-  supported: IS_PACKAGED && process.platform === "win32" && !process.env.PORTABLE_EXECUTABLE_DIR && !IS_SMOKE_TEST,
+  // Windows NSIS build and the Linux AppImage update themselves; Linux
+  // pacman/deb installs only announce a newer release. The portable exe and dev
+  // runs are not updated.
+  supported: UPDATE_MODE !== "off",
+  mode: UPDATE_MODE === "notify" ? "notify" : "auto",
+  checkLatest: () => fetchLatestRelease({ fetchImpl: (...args) => electronNet.fetch(...args) }),
   // Never while Dota runs or a match feeds GSI (manual installs included).
   isGameRunning,
   // The unattended install also waits for the demo and a hidden panel.
@@ -352,6 +364,7 @@ const TRAY_TEXT = {
     open: "Open",
     overlay: "Advice over the game",
     autostartWindows: "Start with Windows",
+    autostartSystem: "Start with the system",
     autostartLogin: "Start at login",
     quit: "Quit",
     backend: "Coach",
@@ -366,6 +379,11 @@ const TRAY_TEXT = {
       "Dota runs in exclusive fullscreen, so advice cannot be drawn over it. In Dota: Settings → Video → Display mode → Borderless window. Or turn on spoken advice in the app.",
     updateDownloading: (version, percent) => `Downloading update ${version}… ${percent}%`,
     updateReady: (version) => `Restart and update to ${version}`,
+    updateAvailable: (version) => `Version ${version} is out: open the download page`,
+    trayHint:
+      "Still running in the tray. Right-click the icon to toggle the overlay or quit. No tray icon (GNOME)? Install the AppIndicator extension, or start Wardly again to open the window.",
+    fullscreenBalloonLinux:
+      "Dota runs in fullscreen, and the window manager draws it above every other window, so advice cannot be drawn over it. In Dota: Settings → Video → Display mode → Borderless window. Or turn on spoken advice in the app.",
     updateAfterGame: (version) => `Update ${version} installs after you close Dota`,
     updated: (version) => `Updated to ${version}.`,
     reviewReady: (score, focusMet) =>
@@ -384,6 +402,7 @@ const TRAY_TEXT = {
     open: "Відкрити",
     overlay: "Підказки поверх гри",
     autostartWindows: "Автозапуск із Windows",
+    autostartSystem: "Автозапуск із системою",
     autostartLogin: "Автозапуск під час входу",
     quit: "Вихід",
     backend: "Тренер",
@@ -398,6 +417,11 @@ const TRAY_TEXT = {
       "Дота запущена в ексклюзивному повноекранному режимі — поверх нього підказки не малюються. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть озвучення порад у застосунку.",
     updateDownloading: (version, percent) => `Завантажується оновлення ${version}… ${percent}%`,
     updateReady: (version) => `Перезапустити й оновити до ${version}`,
+    updateAvailable: (version) => `Вийшла версія ${version}: відкрити сторінку завантаження`,
+    trayHint:
+      "Працює в треї. Клацніть правою кнопкою на значку, щоб вимкнути підказки або вийти. Немає значка в треї (GNOME)? Встановіть розширення AppIndicator або запустіть Wardly ще раз, щоб відкрити вікно.",
+    fullscreenBalloonLinux:
+      "Дота запущена в повноекранному режимі, і менеджер вікон малює її над усіма іншими вікнами, тому підказки поверх неї не видно. У Доті: Налаштування → Відео → режим екрана «Вікно без рамки» (Borderless window). Або ввімкніть озвучення порад у застосунку.",
     updateAfterGame: (version) => `Оновлення ${version} встановиться після виходу з Доти`,
     updated: (version) => `Оновлено до версії ${version}.`,
     reviewReady: (score, focusMet) =>
@@ -696,7 +720,8 @@ function publicStatus() {
     llm: "off",
     logMode,
     autostart: autostartEnabled,
-    autostartSupported: isAutostartSupported()
+    autostartSupported: isAutostartSupported(),
+    platform: process.platform
   };
 }
 
@@ -733,7 +758,7 @@ function noteExclusiveFullscreen(state) {
   fullscreenBalloonShown = true;
   appendLog("overlay", "Dota runs in exclusive fullscreen; the overlay cannot be drawn over it.", { force: true });
   if (fullscreenWarningActive()) {
-    showTrayBalloon(t("fullscreenBalloon"));
+    showTrayBalloon(t(process.platform === "linux" ? "fullscreenBalloonLinux" : "fullscreenBalloon"));
   }
 }
 
@@ -1624,6 +1649,18 @@ async function stopManaged(name, { timeoutMs = 5000 } = {}) {
 
   if (await exited) {
     return "graceful";
+  }
+  if (process.platform !== "win32") {
+    // Still up: ask once more the POSIX way (uvicorn handles SIGTERM) before the kill.
+    appendLog("launcher", `${name} did not exit within ${timeoutMs / 1000}s; sending SIGTERM.`, { force: true });
+    try {
+      child.kill("SIGTERM");
+    } catch (error) {
+      appendLog("launcher", `Stop signal failed for ${name}: ${error.message}`, { force: true });
+    }
+    if (await waitForExit(child, SIGTERM_GRACE_MS)) {
+      return "forced";
+    }
   }
   appendLog("launcher", `${name} did not exit within ${timeoutMs / 1000}s; forcing it to stop.`, { force: true });
   try {
@@ -3430,19 +3467,77 @@ function showPanel() {
 }
 
 function showTrayHintOnce() {
-  if (settings.get("trayHintShown") || !tray || process.platform !== "win32") {
+  if (settings.get("trayHintShown") || !tray) {
     return;
   }
-  settings.set("trayHintShown", true);
-  tray.displayBalloon({
-    iconType: "info",
-    title: APP_NAME,
-    content: "Still running in the tray. Right-click the icon to toggle the overlay or quit."
-  });
+  if (process.platform === "win32") {
+    settings.set("trayHintShown", true);
+    tray.displayBalloon({
+      iconType: "info",
+      title: APP_NAME,
+      content: "Still running in the tray. Right-click the icon to toggle the overlay or quit."
+    });
+  } else if (process.platform === "linux") {
+    // A desktop notification stands in for the tray balloon. Marked as shown
+    // only when the desktop could show one, so a missing notification service
+    // does not use up the hint.
+    if (showDesktopNotification(t("trayHint"))) {
+      settings.set("trayHintShown", true);
+    }
+  }
+}
+
+// Linux has no tray balloons: Electron's Notification (libnotify / D-Bus) is used.
+let activeNotification = null;
+function showDesktopNotification(content) {
+  try {
+    if (!Notification.isSupported()) {
+      return false;
+    }
+    const notification = new Notification({ title: APP_NAME, body: content, icon: path.join(ICON_DIR, "icon.png") });
+    notification.on("click", () => {
+      showMainWindow();
+      if (balloonAction) {
+        send("launcher:player-event", balloonAction);
+        balloonAction = null;
+      }
+    });
+    // Held until it is closed, or the garbage collector may drop it before it shows.
+    activeNotification = notification;
+    notification.on("close", () => {
+      if (activeNotification === notification) {
+        activeNotification = null;
+      }
+    });
+    notification.show();
+    return true;
+  } catch (error) {
+    appendLog("launcher", `Desktop notification failed: ${error.message}`, { force: true });
+    return false;
+  }
+}
+
+const xdgAutostart = linuxDesktop.createXdgAutostart({
+  log: (message) => appendLog("launcher", message, { force: true })
+});
+
+// Linux, at every start: say which display backend runs, make an AppImage show
+// up in the app menu, and keep an enabled autostart entry pointing at the file
+// that is running now (the AppImage may have been moved or updated).
+function setUpLinuxDesktop() {
+  const log = (message) => appendLog("launcher", message, { force: true });
+  if (linuxStartup) {
+    log(`Linux display backend: ${linuxStartup.display} (session ${linuxStartup.session || "unknown"}, DISPLAY=${process.env.DISPLAY || "none"}).`);
+  }
+  if (!IS_PACKAGED) {
+    return;
+  }
+  linuxDesktop.ensureAppImageIntegration({ iconSource: path.join(ICON_DIR, "icon.png"), log });
+  xdgAutostart.refresh();
 }
 
 function isAutostartSupported() {
-  return IS_PACKAGED && (process.platform === "win32" || process.platform === "darwin");
+  return IS_PACKAGED && (process.platform === "win32" || process.platform === "darwin" || process.platform === "linux");
 }
 
 // Before 0.5 the app was DotaAICoach.exe in the same folder. Its Start with
@@ -3478,6 +3573,9 @@ function isAutostartEnabled() {
   if (!isAutostartSupported()) {
     return false;
   }
+  if (process.platform === "linux") {
+    return xdgAutostart.isEnabled();
+  }
   try {
     return Boolean(app.getLoginItemSettings(loginItemOptions()).openAtLogin);
   } catch {
@@ -3487,11 +3585,15 @@ function isAutostartEnabled() {
 
 function setAutostart(enabled) {
   if (!isAutostartSupported()) {
-    appendLog("launcher", "Start with Windows is available in the installed build only.", { force: true });
+    appendLog("launcher", "Start with the system is available in the installed build only.", { force: true });
     return false;
   }
-  app.setLoginItemSettings({ ...loginItemOptions(), openAtLogin: Boolean(enabled) });
-  appendLog("launcher", `Start with Windows: ${enabled ? "on" : "off"}.`, { force: true });
+  if (process.platform === "linux") {
+    xdgAutostart.set(Boolean(enabled));
+  } else {
+    app.setLoginItemSettings({ ...loginItemOptions(), openAtLogin: Boolean(enabled) });
+  }
+  appendLog("launcher", `Start with the system: ${enabled ? "on" : "off"}.`, { force: true });
   autostartEnabled = isAutostartEnabled();
   updateStatus();
   refreshTray();
@@ -3529,7 +3631,9 @@ function refreshTray() {
   if (fullscreen) {
     topItems.push({ label: t("fullscreenMenu"), enabled: false });
   }
-  if (update.status === UPDATE_STATUS.READY && isGameRunning()) {
+  if (update.status === UPDATE_STATUS.AVAILABLE && !isGameRunning()) {
+    topItems.push({ label: t("updateAvailable", update.version), click: () => updater.openDownload(openExternalUrl) });
+  } else if (update.status === UPDATE_STATUS.READY && isGameRunning()) {
     topItems.push({ label: t("updateAfterGame", update.version), enabled: false });
   } else if (update.status === UPDATE_STATUS.READY) {
     topItems.push({ label: t("updateReady", update.version), click: () => updater.install() });
@@ -3568,7 +3672,7 @@ function refreshTray() {
         }))
       },
       {
-        label: process.platform === "win32" ? t("autostartWindows") : t("autostartLogin"),
+        label: t(process.platform === "win32" ? "autostartWindows" : process.platform === "linux" ? "autostartSystem" : "autostartLogin"),
         type: "checkbox",
         checked: autostartEnabled,
         enabled: isAutostartSupported(),
@@ -3585,10 +3689,19 @@ function refreshTray() {
 
 function showTrayBalloon(content, action = null) {
   balloonAction = action;
+  if (process.platform === "linux") {
+    showDesktopNotification(content);
+    return;
+  }
   if (!tray || tray.isDestroyed() || process.platform !== "win32") {
     return;
   }
   tray.displayBalloon({ iconType: "info", title: APP_NAME, content });
+}
+
+// Only addresses the launcher itself produced (the update check's release link).
+function openExternalUrl(url) {
+  shell.openExternal(url).catch((error) => appendLog("update", `Could not open ${url}: ${error.message}`, { force: true }));
 }
 
 // ---------------------------------------------------------------------------
@@ -3707,6 +3820,7 @@ function registerIpc() {
     return publicStatus();
   });
   handleLauncher("launcher:install-update", () => updater.install());
+  handleLauncher("launcher:open-update-page", () => updater.openDownload(openExternalUrl));
   handleLauncher("launcher:player", (_event, op, args) => playerRequest(String(op || ""), args || {}));
   handleLauncher("launcher:open-logs", () => openPath(LOGS_DIR));
   handleLauncher("launcher:save-problem-report", () => saveProblemReport());
@@ -3919,9 +4033,10 @@ async function runSmokeTest(resultPath) {
     const install = await locateDota();
     step("steam/dota locator", true, install.dotaDir || `Dota 2 not installed; libraries: ${install.libraries.join(", ") || "none"}`);
 
-    if (process.platform === "win32" && process.env.DOTA_AI_SMOKE_FAKE_DOTA === "1") {
-      // scripts/smoke-windows.ps1 runs a plain window named dota2.exe: the
-      // helper must find its window rect and the overlay must move into it.
+    if ((process.platform === "win32" || process.platform === "linux") && process.env.DOTA_AI_SMOKE_FAKE_DOTA === "1") {
+      // scripts/smoke-windows.ps1 runs a plain window named dota2.exe (Linux: a
+      // process called dota2 with an X window): the helper must find its window
+      // rect and the overlay must move into it.
       dotaWatcher.start();
       const state = await waitForWatcherState((item) => item.running && item.windowRect, 30000);
       step("dota watcher finds the dota2.exe window", Boolean(state), JSON.stringify(dotaWatcher.getState()));
@@ -3953,9 +4068,30 @@ async function runSmokeTest(resultPath) {
       refreshPresence();
       step("overlay hidden without Dota", !overlay.isVisible(), presence.reason);
       dotaWatcher.stop();
+    } else if (process.platform === "linux") {
+      // The /proc scan (and xprop/xwininfo when installed) must report, and with
+      // no dota2 process running the overlay must stay hidden. Without the X
+      // tools focus tracking is off by design (the overlay follows its switch),
+      // so "supported" is only required when DOTA_AI_SMOKE_REQUIRE_FOCUS_TRACKING=1.
+      const report = waitForEvent(dotaWatcher, "report", 30000);
+      dotaWatcher.start();
+      const state = await report;
+      const requireTracking = process.env.DOTA_AI_SMOKE_REQUIRE_FOCUS_TRACKING === "1";
+      step(
+        "dota watcher reports",
+        Boolean(state) && !state.running && (!requireTracking || state.supported),
+        JSON.stringify(state)
+      );
+      refreshPresence();
+      step(
+        "overlay hidden without Dota",
+        !overlay.isVisible() || !state || !state.supported,
+        state && state.supported ? presence.reason : "focus tracking unavailable (xprop/xwininfo missing or no X display)"
+      );
+      dotaWatcher.stop();
     }
 
-    if (IS_PACKAGED && process.platform === "win32") {
+    if (IS_PACKAGED && (process.platform === "win32" || process.platform === "linux")) {
       // electron-builder writes app-update.yml only when "publish" is set.
       let updaterDetail = path.join(process.resourcesPath, "app-update.yml");
       let updaterOk = fs.existsSync(updaterDetail);
@@ -3965,7 +4101,7 @@ async function runSmokeTest(resultPath) {
         updaterOk = false;
         updaterDetail = error.message;
       }
-      step("auto-update configured", updaterOk, updaterDetail);
+      step("auto-update configured", updaterOk, `${updaterDetail} (a real run would use mode ${updateModeFor({ isPackaged: IS_PACKAGED })})`);
     }
 
     const started = await startBackend();
@@ -4105,6 +4241,9 @@ function bootstrap() {
       settings.set("installedAt", Date.parse(settings.get("gsiSeenAt")) || Date.now());
     }
     migrateAutostartPath();
+    if (process.platform === "linux") {
+      setUpLinuxDesktop();
+    }
     autostartEnabled = isAutostartEnabled();
     createTray();
     // After an update the app comes back the way it was: hidden in the tray
@@ -4180,7 +4319,8 @@ function bootstrap() {
     }
   });
 
-  for (const signal of ["SIGINT", "SIGTERM"]) {
+  // SIGHUP: the terminal that started the app (Linux) was closed.
+  for (const signal of process.platform === "linux" ? ["SIGINT", "SIGTERM", "SIGHUP"] : ["SIGINT", "SIGTERM"]) {
     process.on(signal, () => quitApp(`signal ${signal}`));
   }
 }

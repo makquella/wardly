@@ -15,11 +15,19 @@ const readline = require("node:readline");
 // whenever the state changes (plus a heartbeat line every ~20 polls so the
 // launcher can tell it is alive). No native Node modules are needed, and the
 // helper exits by itself when the launcher process disappears.
-// Linux (dev): /proc is scanned for a "dota2" process; focus is not tracked.
+// Linux: /proc is scanned for a "dota2" process. When an X display (X11 or
+// XWayland, where Dota runs) and the xprop + xwininfo tools exist, they give the
+// rest: the active window (_NET_ACTIVE_WINDOW) is Dota's, its absolute
+// geometry, and _NET_WM_STATE_FULLSCREEN. Without them focus is not tracked
+// (supported: false) and the overlay follows its on/off switch only.
 
 const WINDOWS_POLL_RUNNING_MS = 300;
 const WINDOWS_POLL_IDLE_MS = 1500;
 const LINUX_POLL_MS = 2000;
+const LINUX_POLL_RUNNING_MS = 1000;
+const LINUX_TOOL_TIMEOUT_MS = 1500;
+// Consecutive failed X queries before focus tracking is reported unavailable.
+const LINUX_MAX_TOOL_FAILURES = 5;
 const MAX_FAST_FAILURES = 5;
 
 // SHQueryUserNotificationState returns QUNS_RUNNING_D3D_FULL_SCREEN (3) while
@@ -140,37 +148,156 @@ function powershellPath(env = process.env) {
   return fs.existsSync(candidate) ? candidate : "powershell.exe";
 }
 
-function isDotaRunningOnLinux(procDir = "/proc") {
+// [{ pid, exe }] of every running "dota2" process; [] when none (or no /proc).
+function findDotaProcessesOnLinux(procDir = "/proc") {
   let entries = [];
   try {
     entries = fs.readdirSync(procDir);
   } catch {
-    return false;
+    return [];
   }
+  const found = [];
   for (const entry of entries) {
     if (!/^\d+$/.test(entry)) {
       continue;
     }
     try {
-      if (fs.readFileSync(path.join(procDir, entry, "comm"), "utf8").trim() === "dota2") {
-        return true;
+      if (fs.readFileSync(path.join(procDir, entry, "comm"), "utf8").trim() !== "dota2") {
+        continue;
       }
     } catch {
       // Process exited while scanning.
+      continue;
+    }
+    let exe = "";
+    try {
+      exe = fs.readlinkSync(path.join(procDir, entry, "exe"));
+    } catch {
+      // Not readable (another user's process): the pid alone is enough.
+    }
+    found.push({ pid: Number(entry), exe });
+  }
+  return found;
+}
+
+function isDotaRunningOnLinux(procDir = "/proc") {
+  return findDotaProcessesOnLinux(procDir).length > 0;
+}
+
+// First executable called `name` on PATH, or "".
+function findOnPath(name, envPath = process.env.PATH || "") {
+  for (const dir of String(envPath).split(path.delimiter)) {
+    if (!dir) {
+      continue;
+    }
+    const candidate = path.join(dir, name);
+    try {
+      fs.accessSync(candidate, fs.constants.X_OK);
+      if (fs.statSync(candidate).isFile()) {
+        return candidate;
+      }
+    } catch {
+      // Not here.
     }
   }
-  return false;
+  return "";
+}
+
+// "_NET_ACTIVE_WINDOW(WINDOW): window id # 0x4a00007" -> 0x4a00007 (0 = none).
+function parseActiveWindow(output) {
+  const match = String(output || "").match(/window id # (0x[0-9a-fA-F]+)/);
+  if (!match) {
+    return null;
+  }
+  const id = Number.parseInt(match[1], 16);
+  return id > 0 ? match[1].toLowerCase() : "";
+}
+
+// The output of `xprop -id <w> _NET_WM_PID WM_CLASS _NET_WM_STATE`.
+function parseWindowProps(output) {
+  const text = String(output || "");
+  const pid = text.match(/_NET_WM_PID\(CARDINAL\) = (\d+)/);
+  const classes = text.match(/WM_CLASS\(STRING\) = (.*)/);
+  const state = text.match(/_NET_WM_STATE\(ATOM\) = (.*)/);
+  const states = state ? state[1].split(",").map((item) => item.trim()) : [];
+  return {
+    pid: pid ? Number(pid[1]) : 0,
+    classes: classes ? [...classes[1].matchAll(/"([^"]*)"/g)].map((item) => item[1].toLowerCase()) : [],
+    fullscreen: states.includes("_NET_WM_STATE_FULLSCREEN"),
+    hidden: states.includes("_NET_WM_STATE_HIDDEN")
+  };
+}
+
+// `xwininfo -id <w>`: the client area in absolute screen pixels.
+function parseXwininfo(output) {
+  const text = String(output || "");
+  const pick = (label) => {
+    const match = text.match(new RegExp(`^\\s*${label}:\\s*(-?\\d+)`, "m"));
+    return match ? Number(match[1]) : NaN;
+  };
+  const x = pick("Absolute upper-left X");
+  const y = pick("Absolute upper-left Y");
+  const width = pick("Width");
+  const height = pick("Height");
+  return parseRect([x, y, x + width, y + height]);
+}
+
+// Runs a tool with an argv array (no shell), time-boxed; never rejects.
+function runTool(spawnImpl, command, args, { env, timeoutMs = LINUX_TOOL_TIMEOUT_MS } = {}) {
+  return new Promise((resolve) => {
+    let child;
+    let out = "";
+    let done = false;
+    let timer = null;
+    const finish = (ok) => {
+      if (done) {
+        return;
+      }
+      done = true;
+      clearTimeout(timer);
+      resolve({ ok, stdout: out });
+    };
+    try {
+      child = spawnImpl(command, args, { env, stdio: ["ignore", "pipe", "ignore"] });
+    } catch {
+      finish(false);
+      return;
+    }
+    timer = setTimeout(() => {
+      try {
+        child.kill("SIGKILL");
+      } catch {
+        // Already gone.
+      }
+      finish(false);
+    }, timeoutMs);
+    timer.unref?.();
+    child.stdout?.on("data", (chunk) => {
+      out += String(chunk);
+    });
+    child.on("error", () => finish(false));
+    child.on("close", (code) => finish(code === 0));
+  });
 }
 
 /**
  * state: { supported, running, focused, exePath, exclusiveFullscreen, windowRect }
- *   supported           - focus tracking works on this platform (Windows only).
+ *   supported           - focus tracking works (Windows; Linux with an X display
+ *                         and xprop + xwininfo).
  *   exclusiveFullscreen - Dota was last seen in exclusive fullscreen (no overlay
  *                         can be drawn over it); reset when Dota exits.
  *   windowRect          - Dota's window in physical pixels, or null.
  * Emits "change" with the new state.
  */
-function createDotaWatcher({ platform = process.platform, log = () => {}, spawnImpl = spawn, parentPid = process.pid } = {}) {
+function createDotaWatcher({
+  platform = process.platform,
+  log = () => {},
+  spawnImpl = spawn,
+  parentPid = process.pid,
+  env = process.env,
+  procDir = "/proc",
+  findTool = (name) => findOnPath(name, env.PATH)
+} = {}) {
   const emitter = new EventEmitter();
   let state = {
     supported: platform === "win32",
@@ -273,15 +400,167 @@ function createDotaWatcher({ platform = process.platform, log = () => {}, spawnI
     emitter.emit("report", { ...state });
   }
 
-  function startLinux() {
-    const tick = () => {
-      const running = isDotaRunningOnLinux();
-      update({ running, focused: running });
+  // X11 queries (xprop/xwininfo) are looked up once; without them, or without a
+  // display, only the process scan runs, as before.
+  let xTools = null;
+  let xFailures = 0;
+  let linuxBusy = false;
+  let idleTicks = 0;
+  let lastDotaWindow = null;
+  let linuxFullscreen = false;
+  let linuxRect = null;
+
+  function resolveXTools() {
+    if (xTools) {
+      return xTools;
+    }
+    xTools = { xprop: "", xwininfo: "" };
+    if (!env.DISPLAY) {
+      log("Dota focus tracking is off: no X display (X11 or XWayland). The overlay follows its on/off switch only.");
+      return xTools;
+    }
+    const xprop = findTool("xprop");
+    const xwininfo = findTool("xwininfo");
+    if (!xprop || !xwininfo) {
+      log(
+        `Dota focus tracking is off: ${[!xprop && "xprop", !xwininfo && "xwininfo"].filter(Boolean).join(" and ")} not found on PATH ` +
+          "(Arch: xorg-xprop xorg-xwininfo; Debian/Ubuntu: x11-utils). The overlay follows its on/off switch only."
+      );
+      return xTools;
+    }
+    xTools = { xprop, xwininfo };
+    return xTools;
+  }
+
+  const xEnv = () => ({ ...env, LC_ALL: "C", LANG: "C" });
+
+  // One X query round: is the active window Dota's, where it is, is it fullscreen.
+  // Returns { focused, rect?, fullscreen? } or null when X did not answer.
+  async function queryX(tools, dota) {
+    const root = await runTool(spawnImpl, tools.xprop, ["-root", "_NET_ACTIVE_WINDOW"], { env: xEnv() });
+    if (!root.ok) {
+      return null;
+    }
+    const active = parseActiveWindow(root.stdout);
+    if (active === null) {
+      return null;
+    }
+    if (!active) {
+      return { focused: false };
+    }
+    const props = await runTool(
+      spawnImpl,
+      tools.xprop,
+      ["-id", active, "_NET_WM_PID", "WM_CLASS", "_NET_WM_STATE"],
+      { env: xEnv() }
+    );
+    if (!props.ok) {
+      // The window vanished between the two calls: not an X failure.
+      return { focused: false };
+    }
+    const info = parseWindowProps(props.stdout);
+    const isDota = dota.some((item) => item.pid === info.pid) || info.classes.includes("dota2");
+    if (!isDota || info.hidden) {
+      return { focused: false };
+    }
+    lastDotaWindow = active;
+    const result = { focused: true, fullscreen: info.fullscreen };
+    const geometry = await runTool(spawnImpl, tools.xwininfo, ["-id", active], { env: xEnv() });
+    if (geometry.ok) {
+      result.rect = parseXwininfo(geometry.stdout);
+    }
+    return result;
+  }
+
+  async function linuxTick() {
+    if (linuxBusy || stopped) {
+      return;
+    }
+    linuxBusy = true;
+    try {
+      const dota = findDotaProcessesOnLinux(procDir);
+      const running = dota.length > 0;
+      const exePath = (dota.find((item) => item.exe) || {}).exe || "";
+      const tools = resolveXTools();
+      if (!running) {
+        lastDotaWindow = null;
+        linuxFullscreen = false;
+        linuxRect = null;
+        update({
+          running: false,
+          focused: false,
+          exclusiveFullscreen: false,
+          windowRect: null,
+          // Probe the display even before Dota starts, so the overlay is in
+          // focus-driven mode (hidden on the desktop) from the first report.
+          supported: tools.xprop ? await idleProbe(tools) : false
+        });
+      } else if (!tools.xprop) {
+        update({ running: true, focused: true, exePath, supported: false, windowRect: null });
+      } else {
+        const result = await queryX(tools, dota);
+        if (stopped) {
+          return;
+        }
+        if (result === null) {
+          xFailures += 1;
+          if (xFailures >= LINUX_MAX_TOOL_FAILURES && state.supported) {
+            log("Dota focus tracking stopped: the X server does not answer xprop.");
+          }
+          update({ running: true, exePath, supported: xFailures < LINUX_MAX_TOOL_FAILURES });
+        } else {
+          xFailures = 0;
+          if (result.focused) {
+            // Sampled while Dota is in front, kept until it exits (as on Windows).
+            linuxFullscreen = Boolean(result.fullscreen);
+            if (result.rect) {
+              linuxRect = result.rect;
+            }
+          }
+          update({
+            running: true,
+            focused: result.focused,
+            exePath,
+            supported: true,
+            exclusiveFullscreen: linuxFullscreen,
+            windowRect: linuxRect
+          });
+        }
+      }
+    } catch (error) {
+      log(`Dota watcher: ${error.message}`);
+    } finally {
+      linuxBusy = false;
+    }
+    if (!stopped) {
       emitter.emit("report", { ...state });
-    };
-    tick();
-    linuxTimer = setInterval(tick, LINUX_POLL_MS);
-    linuxTimer.unref?.();
+      clearTimeout(linuxTimer);
+      linuxTimer = setTimeout(linuxTick, state.running ? LINUX_POLL_RUNNING_MS : LINUX_POLL_MS);
+      linuxTimer.unref?.();
+    }
+  }
+
+  // One xprop call at start and then every ~30 s while Dota is not running.
+  async function idleProbe(tools) {
+    idleTicks += 1;
+    if (state.supported && idleTicks % 15 !== 0) {
+      return true;
+    }
+    return probeX(tools);
+  }
+
+  async function probeX(tools) {
+    const root = await runTool(spawnImpl, tools.xprop, ["-root", "_NET_ACTIVE_WINDOW"], { env: xEnv() });
+    const ok = root.ok && parseActiveWindow(root.stdout) !== null;
+    xFailures = ok ? 0 : xFailures + 1;
+    if (!ok && state.supported === false && xFailures === 1) {
+      log("Dota focus tracking is off: xprop cannot read the X server.");
+    }
+    return ok;
+  }
+
+  function startLinux() {
+    linuxTick();
   }
 
   emitter.start = () => {
@@ -299,7 +578,7 @@ function createDotaWatcher({ platform = process.platform, log = () => {}, spawnI
   emitter.stop = () => {
     stopped = true;
     clearTimeout(restartTimer);
-    clearInterval(linuxTimer);
+    clearTimeout(linuxTimer);
     if (child) {
       try {
         child.kill();
@@ -314,4 +593,15 @@ function createDotaWatcher({ platform = process.platform, log = () => {}, spawnI
   return emitter;
 }
 
-module.exports = { createDotaWatcher, parseWatcherLine, parseRect, windowsWatchScript, encodePowerShell };
+module.exports = {
+  createDotaWatcher,
+  findDotaProcessesOnLinux,
+  findOnPath,
+  parseActiveWindow,
+  parseRect,
+  parseWatcherLine,
+  parseWindowProps,
+  parseXwininfo,
+  windowsWatchScript,
+  encodePowerShell
+};

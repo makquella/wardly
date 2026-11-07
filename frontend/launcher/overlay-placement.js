@@ -63,8 +63,38 @@ function isReachable(bounds, displayAreas) {
   });
 }
 
+// Linux/X11: the watcher reports X pixels, Electron places windows in DIP and
+// has no screenToDipRect there. Chromium on X11 scales every display by one
+// factor, so DIP = pixels / scaleFactor; the display holding the window's
+// centre (its bounds scaled back to pixels) decides, else the first one.
+function physicalRectToDip(rect, displays) {
+  const list = (displays || []).filter((display) => display && display.bounds);
+  if (!rect || !list.length) {
+    return rect;
+  }
+  const factorOf = (display) => (Number(display.scaleFactor) > 0 ? Number(display.scaleFactor) : 1);
+  const cx = rect.x + rect.width / 2;
+  const cy = rect.y + rect.height / 2;
+  const holder =
+    list.find((display) => {
+      const f = factorOf(display);
+      const b = display.bounds;
+      return cx >= b.x * f && cx < (b.x + b.width) * f && cy >= b.y * f && cy < (b.y + b.height) * f;
+    }) || list[0];
+  const factor = factorOf(holder);
+  if (factor === 1) {
+    return rect;
+  }
+  return {
+    x: Math.round(rect.x / factor),
+    y: Math.round(rect.y / factor),
+    width: Math.round(rect.width / factor),
+    height: Math.round(rect.height / factor)
+  };
+}
+
 function sameBounds(a, b) {
   return Boolean(a && b) && a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 }
 
-module.exports = { MARGIN, PRESETS, anchorArea, intersect, isReachable, presetBounds, sameBounds };
+module.exports = { MARGIN, PRESETS, anchorArea, intersect, isReachable, physicalRectToDip, presetBounds, sameBounds };

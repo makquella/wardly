@@ -13,6 +13,11 @@ REPORTS_ENABLED = "true"
 # (0..1, by a stable hash of the installation id); 1 = everyone, 0 = nobody.
 RECORDINGS_ENABLED = "true"
 RECORDINGS_SAMPLE = "1"
+# Shared cache of OpenDota reference data (src/opendota-cache.js): the */5 cron
+# refreshes it into R2 and GET /v1/opendota/<path> serves it. "false" stops both
+# (the launcher then asks OpenDota itself). Optional secret OPENDOTA_API_KEY
+# raises OpenDota's limits for the refresh.
+OPENDOTA_CACHE_ENABLED = "true"
 # Share links point at the site: a Workers route (Cloudflare dashboard) sends
 # luhovyimvp.dev/r/* to this Worker.
 SHARE_ORIGIN = "https://luhovyimvp.dev"

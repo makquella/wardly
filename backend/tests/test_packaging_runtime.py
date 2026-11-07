@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import importlib.util
 import io
+import os
+import stat
 import sys
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
@@ -66,6 +68,46 @@ def test_frozen_paths_use_meipass_and_appdata(clean_env, tmp_path):
     assert user_dir / "session_records" == config.SESSION_RECORDS_DIR
     assert user_dir / "gsi_debug_samples" == config.GSI_DEBUG_SAMPLES_DIR
     assert config.BACKEND_PORT == 51234
+
+
+def test_frozen_linux_uses_xdg_config_home_and_private_dir(clean_env, tmp_path):
+    xdg = tmp_path / "xdg"
+    clean_env.setattr(sys, "frozen", True, raising=False)
+    clean_env.setattr(sys, "_MEIPASS", str(tmp_path / "bundle"), raising=False)
+    clean_env.setattr(sys, "platform", "linux")
+    clean_env.delenv("APPDATA", raising=False)
+    clean_env.setenv("XDG_CONFIG_HOME", str(xdg))
+
+    config = _load_config()
+
+    assert xdg / "DotaAICoach" == config.WRITABLE_DIR
+    assert xdg / "DotaAICoach" / "logs" == config.LOGS_DIR
+    if os.name == "posix":
+        assert stat.S_IMODE(config.WRITABLE_DIR.stat().st_mode) == 0o700
+
+
+def test_frozen_linux_defaults_to_home_config(clean_env, tmp_path):
+    clean_env.setattr(sys, "frozen", True, raising=False)
+    clean_env.setattr(sys, "_MEIPASS", str(tmp_path / "bundle"), raising=False)
+    clean_env.setattr(sys, "platform", "linux")
+    clean_env.delenv("APPDATA", raising=False)
+    clean_env.setenv("HOME", str(tmp_path / "home"))
+    clean_env.setenv("USERPROFILE", str(tmp_path / "home"))
+    # A relative XDG_CONFIG_HOME is ignored (XDG Base Directory spec).
+    for value in ("", "relative/path"):
+        clean_env.setenv("XDG_CONFIG_HOME", value)
+        assert tmp_path / "home" / ".config" / "DotaAICoach" == _load_config().WRITABLE_DIR
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX permissions")
+def test_player_database_is_owner_only(tmp_path):
+    from app.player_store import PlayerStore
+
+    store = PlayerStore(tmp_path / "player_data" / "coach.sqlite3")
+    try:
+        assert stat.S_IMODE(store.db_path.stat().st_mode) == 0o600
+    finally:
+        store.close()
 
 
 @pytest.mark.parametrize("raw_port", ["not-a-port", "0", "70000"])

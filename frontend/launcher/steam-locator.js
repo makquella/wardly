@@ -161,10 +161,14 @@ function defaultSteamRoots({ platform = process.platform, env = process.env, hom
     const programFiles = env.ProgramFiles || "C:\\Program Files";
     return [path.win32.join(programFilesX86, "Steam"), path.win32.join(programFiles, "Steam")];
   }
+  const dataHome = env && env.XDG_DATA_HOME && path.isAbsolute(env.XDG_DATA_HOME) ? env.XDG_DATA_HOME : "";
   return [
     path.join(homedir, ".steam", "steam"),
     path.join(homedir, ".local", "share", "Steam"),
-    path.join(homedir, ".var", "app", "com.valvesoftware.Steam", ".local", "share", "Steam")
+    ...(dataHome ? [path.join(dataHome, "Steam")] : []),
+    // Flatpak and Snap keep Steam in their own home.
+    path.join(homedir, ".var", "app", "com.valvesoftware.Steam", ".local", "share", "Steam"),
+    path.join(homedir, "snap", "steam", "common", ".local", "share", "Steam")
   ];
 }
 
@@ -238,10 +242,27 @@ async function locateDota(options = {}) {
     }
   }
 
+  // ~/.steam/steam is a symlink to ~/.local/share/Steam on most Linux installs:
+  // list each real folder once.
+  const realOf = (dir) => {
+    if (platform === "win32" || typeof fsImpl.realpathSync !== "function") {
+      return dir;
+    }
+    try {
+      return fsImpl.realpathSync(dir);
+    } catch {
+      return dir;
+    }
+  };
   const steamRoots = uniqueDirs(
-    [...registryRoots, ...defaultSteamRoots({ platform, env: options.env, homedir: options.homedir })],
+    uniqueDirs(
+      [...registryRoots, ...defaultSteamRoots({ platform, env: options.env, homedir: options.homedir })],
+      platform
+    )
+      .filter(exists)
+      .map(realOf),
     platform
-  ).filter(exists);
+  );
 
   const libraries = [];
   for (const root of steamRoots) {

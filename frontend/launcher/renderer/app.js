@@ -65,6 +65,7 @@ const els = {
   weeklySend: $("#weekly-send"),
   weeklyClear: $("#weekly-clear"),
   autostartHint: $("#autostart-hint"),
+  autostartTitle: $("#autostart-title"),
   updateHint: $("#update-hint"),
   updateAction: $("#update-action"),
   updateLabel: $("#update-label"),
@@ -184,6 +185,8 @@ let gsiEndpoint = "";
 let statusAction = null;
 let lastVoice = { mode: "off", volume: 1 };
 let voiceListChecked = false;
+// process.platform of the launcher, from the status ("linux" has its own wording).
+let hostPlatform = "";
 let openDotaLoaded = false;
 // Problem report row: a result message stays until the panel is opened again.
 let reportSticky = false;
@@ -423,6 +426,8 @@ async function init() {
     run(async () => {
       if (els.updateAction.dataset.mode === "install") {
         await window.launcherApi.installUpdate();
+      } else if (els.updateAction.dataset.mode === "open") {
+        await window.launcherApi.openUpdatePage();
       } else {
         renderStatus(await window.launcherApi.checkForUpdates());
       }
@@ -1073,6 +1078,7 @@ function renderStatus(status) {
     return;
   }
   locale = I18N[status.locale] ? status.locale : "en";
+  hostPlatform = status.platform || "";
   applyStaticTexts();
   gsiEndpoint = status.gsiEndpoint || "";
   document.body.dataset.loading = String(isLoading(status));
@@ -1423,7 +1429,7 @@ function resolveStatusLine(status) {
     return {
       state: "warn",
       title: tr("status.fullscreenTitle"),
-      hint: tr("status.fullscreenHint"),
+      hint: tr(status.platform === "linux" ? "status.fullscreenHintLinux" : "status.fullscreenHint"),
       action: actions.fullscreenSeen
     };
   }
@@ -1744,6 +1750,8 @@ function renderOverlaySettings(status) {
       ? tr("discordStates.rejected", discordState.error || "?")
       : trOr(`discordStates.${discordState.state}`, tr("discordStates.idle"));
   renderWeekly(status.discordWeekly || null);
+  els.autostartTitle.dataset.i18n = status.platform === "linux" ? "autostartLinux" : "autostart";
+  els.autostartTitle.textContent = tr(els.autostartTitle.dataset.i18n);
   els.autostart.checked = Boolean(status.autostart);
   els.autostart.disabled = !status.autostartSupported;
   els.autostartHint.textContent = !status.autostartSupported
@@ -1773,9 +1781,10 @@ function renderVoiceHint(voice) {
   const mode = voice?.mode || "off";
   const choice = systemSpeech();
   const missing = mode !== "off" && voiceListLoaded() && (!choice || choice.fallback);
-  els.voiceSettings.classList.toggle("hidden", !missing);
+  // «Add a voice» opens Windows Settings: Linux has no such page, only the hint.
+  els.voiceSettings.classList.toggle("hidden", !missing || hostPlatform === "linux");
   if (missing) {
-    els.voiceHint.textContent = choice ? tr("voiceEnglishFallback", choice.voice.name) : tr("voiceNoVoice");
+    els.voiceHint.textContent = choice ? tr(voiceKey("voiceEnglishFallback"), choice.voice.name) : tr(voiceKey("voiceNoVoice"));
     return;
   }
   els.voiceHint.textContent = [tr(`voiceHint.${mode}`), mode !== "off" && choice ? choice.voice.name : ""]
@@ -1785,6 +1794,10 @@ function renderVoiceHint(voice) {
 
 // Chromium fills the voice list asynchronously: an empty list right after
 // start does not yet mean there are no voices.
+function voiceKey(key) {
+  return hostPlatform === "linux" ? `${key}Linux` : key;
+}
+
 function voiceListLoaded() {
   return (window.speechSynthesis?.getVoices() || []).length > 0 || voiceListChecked;
 }
@@ -1793,8 +1806,8 @@ function testVoice() {
   const choice = systemSpeech();
   if (!choice) {
     voiceListChecked = true;
-    els.voiceHint.textContent = tr("voiceNoVoice");
-    els.voiceSettings.classList.remove("hidden");
+    els.voiceHint.textContent = tr(voiceKey("voiceNoVoice"));
+    els.voiceSettings.classList.toggle("hidden", hostPlatform === "linux");
     return;
   }
   const { voice } = choice;
@@ -1810,17 +1823,19 @@ function testVoice() {
 function renderUpdate(status) {
   const update = status.update || { status: "disabled" };
   const current = status.appVersion || update.currentVersion || "";
-  const known = ["disabled", "idle", "checking", "up-to-date", "downloading", "ready", "error"];
+  const known = ["disabled", "idle", "checking", "up-to-date", "available", "downloading", "ready", "error"];
   const state = known.includes(update.status) ? update.status : "idle";
-  // Installing restarts the app, so it is never offered while Dota runs.
-  const blocked = state === "ready" && Boolean(update.blockedByGame);
-  const hintKey = blocked ? "blocked" : state;
+  // Installing restarts the app, so it is never offered while Dota runs (nor
+  // the download page of a package that is installed by hand).
+  const blocked = (state === "ready" || state === "available") && Boolean(update.blockedByGame);
+  const hintKey = blocked ? (state === "available" ? "availableBlocked" : "blocked") : state === "idle" && update.mode === "notify" ? "idleNotify" : state;
   els.updateHint.textContent = tr(`updateHint.${hintKey}`, current, update.version || "", update.percent || 0);
   els.updateHint.title = state === "error" ? update.error || "" : "";
   const install = state === "ready";
-  els.updateAction.dataset.mode = install ? "install" : "check";
-  els.updateAction.classList.toggle("btn-primary", install);
-  els.updateLabel.textContent = install ? tr("updateInstall") : tr("updateCheck");
+  const open = state === "available";
+  els.updateAction.dataset.mode = install ? "install" : open ? "open" : "check";
+  els.updateAction.classList.toggle("btn-primary", install || open);
+  els.updateLabel.textContent = install ? tr("updateInstall") : open ? tr("updateOpen") : tr("updateCheck");
   els.updateAction.disabled = blocked || state === "disabled" || state === "checking" || state === "downloading";
 }
 

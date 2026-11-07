@@ -63,6 +63,16 @@ npm run dev
 
 The launcher starts its own backend (`backend/packaging/backend_server.py`) on a free port, so do not run `uvicorn` at the same time unless you need a standalone backend. `DOTA_AI_BACKEND_PORT=<port> npm run dev` forces a port.
 
+## Linux Build (one command)
+
+```bash
+# from repository root, on Linux x86_64 (CI: ubuntu-22.04); needs bsdtar, zstd, xvfb
+scripts/build-linux.sh            # AppImage + pacman + deb in frontend/launcher/dist
+scripts/smoke-linux.sh
+```
+
+`--skip-backend` reuses `backend/dist`. Details: [PACKAGING_LINUX.md](PACKAGING_LINUX.md).
+
 ## Windows Build (one command)
 
 ```powershell

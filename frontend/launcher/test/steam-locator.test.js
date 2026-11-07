@@ -3,6 +3,7 @@ const path = require("node:path");
 const test = require("node:test");
 
 const {
+  defaultSteamRoots,
   dotaDirFromExecutable,
   libraryFoldersFromVdf,
   locateDota,
@@ -202,4 +203,64 @@ test("the text scan agrees with the full parse and skips other 570 blocks", () =
   assert.equal(dotaLaunchOptionsFromText(localConfig(null)), null);
   const withCloud = `"UserLocalConfigStore" { "Apps" { "570" { "cloud" { "quota" "1" } } } ${localConfig("-gamestateintegration").slice(22)} }`;
   assert.equal(dotaLaunchOptionsFromText(withCloud), "-gamestateintegration");
+});
+
+// --- Linux: real temporary folders (symlinks and a second "drive") ------------
+
+function linuxHome(t) {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), "wardly-linux-"));
+  t.after(() => fs.rmSync(base, { recursive: true, force: true }));
+  return { fs, home: path.join(base, "home"), drive: path.join(base, "mnt", "games"), base };
+}
+
+function libraryVdf(libraryPath) {
+  return `"libraryfolders" { "0" { "path" "/nonexistent/main" "apps" { "228980" "1" } } "1" { "path" "${libraryPath}" "apps" { "570" "1" } } }`;
+}
+
+test("linux: Dota in a library on another drive; the ~/.steam/steam symlink is listed once", async (t) => {
+  const { fs, home, drive } = linuxHome(t);
+  const steam = path.join(home, ".local", "share", "Steam");
+  fs.mkdirSync(path.join(steam, "steamapps"), { recursive: true });
+  fs.mkdirSync(path.join(home, ".steam"), { recursive: true });
+  fs.symlinkSync(steam, path.join(home, ".steam", "steam"));
+  fs.writeFileSync(path.join(steam, "steamapps", "libraryfolders.vdf"), libraryVdf(drive));
+  const dota = path.join(drive, "steamapps", "common", "dota 2 beta");
+  fs.mkdirSync(path.join(dota, "game", "dota"), { recursive: true });
+
+  const result = await locateDota({ platform: "linux", env: {}, homedir: home });
+  assert.deepEqual(result.steamRoots, [steam]);
+  assert.equal(result.dotaDir, dota);
+  assert.equal(result.gsiDir, path.join(dota, "game", "dota", "cfg", "gamestate_integration"));
+  assert.deepEqual(result.libraries.filter((dir) => dir === steam).length, 1);
+});
+
+test("linux: the Snap and Flatpak Steam roots are searched", async (t) => {
+  const { fs, home, drive } = linuxHome(t);
+  const roots = defaultSteamRoots({ platform: "linux", env: {}, homedir: home });
+  assert.ok(roots.includes(path.join(home, "snap", "steam", "common", ".local", "share", "Steam")));
+  assert.ok(roots.includes(path.join(home, ".var", "app", "com.valvesoftware.Steam", ".local", "share", "Steam")));
+
+  const snap = path.join(home, "snap", "steam", "common", ".local", "share", "Steam");
+  fs.mkdirSync(path.join(snap, "config"), { recursive: true });
+  fs.writeFileSync(path.join(snap, "config", "libraryfolders.vdf"), libraryVdf(drive));
+  fs.mkdirSync(path.join(drive, "steamapps", "common", "dota 2 beta", "game", "dota"), { recursive: true });
+  const result = await locateDota({ platform: "linux", env: {}, homedir: home });
+  assert.deepEqual(result.steamRoots, [snap]);
+  assert.equal(result.dotaDir, path.join(drive, "steamapps", "common", "dota 2 beta"));
+});
+
+test("linux: XDG_DATA_HOME is honoured and the running game's folder is derived from its exe", async (t) => {
+  const { fs, home, base } = linuxHome(t);
+  const data = path.join(base, "xdg-data");
+  assert.ok(defaultSteamRoots({ platform: "linux", env: { XDG_DATA_HOME: data }, homedir: home }).includes(path.join(data, "Steam")));
+  assert.equal(
+    dotaDirFromExecutable("/mnt/games/steamapps/common/dota 2 beta/game/bin/linuxsteamrt64/dota2", "linux"),
+    "/mnt/games/steamapps/common/dota 2 beta"
+  );
+  assert.equal(dotaDirFromExecutable("/usr/bin/dota2", "linux"), "");
+  const result = await locateDota({ platform: "linux", env: {}, homedir: home, extraDotaDirs: ["/nonexistent/dota 2 beta"] });
+  assert.equal(result.dotaDir, "");
+  assert.equal(fs.existsSync(home), false);
 });

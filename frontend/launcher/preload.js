@@ -51,6 +51,7 @@ contextBridge.exposeInMainWorld("launcherApi", {
   dismissFullscreenWarning: () => ipcRenderer.invoke("launcher:dismiss-fullscreen-warning"),
   checkForUpdates: () => ipcRenderer.invoke("launcher:check-updates"),
   installUpdate: () => ipcRenderer.invoke("launcher:install-update"),
+  openUpdatePage: () => ipcRenderer.invoke("launcher:open-update-page"),
   // Linked player, match table, post-match review, career (see PLAYER_OPS in main.js).
   player: (op, args) => ipcRenderer.invoke("launcher:player", op, args),
   onPlayerEvent: (callback) => {
