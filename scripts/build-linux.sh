@@ -12,8 +12,8 @@
 #        frontend/launcher/dist/latest-linux.yml      (AppImage auto-update feed)
 #        frontend/launcher/dist/linux-unpacked/wardly (unpacked app)
 #
-# Needs: Python 3.11+, Node.js 22.12+ with npm, bsdtar (Ubuntu/Debian:
-# libarchive-tools; Arch: libarchive; used by the pacman target). For the
+# Needs: Python 3.11+, Node.js 22.12+ with npm, bsdtar and zstd (Ubuntu/Debian:
+# libarchive-tools zstd; Arch: libarchive zstd; used by the pacman target). For the
 # smoke test also xvfb (xvfb-run) and dpkg-deb. Build on the oldest distro you
 # want to support (CI: ubuntu-22.04): the PyInstaller backend needs a glibc at
 # least as new as the build machine's.
@@ -56,9 +56,9 @@ case "$(uname -m)" in
   x86_64) ;;
   *) echo "Only x86_64 is supported (got $(uname -m))." >&2; exit 1 ;;
 esac
-if [[ " $TARGETS " == *" pacman "* ]] && ! command -v bsdtar >/dev/null 2>&1; then
-  echo "bsdtar is required for the pacman target (Ubuntu/Debian: libarchive-tools, Arch: libarchive)." >&2
-  exit 1
+if [[ " $TARGETS " == *" pacman "* ]]; then
+  command -v bsdtar >/dev/null 2>&1 || { echo "bsdtar is required for the pacman target (Ubuntu/Debian: libarchive-tools, Arch: libarchive)." >&2; exit 1; }
+  command -v zstd >/dev/null 2>&1 || { echo "zstd is required for the pacman target (package: zstd)." >&2; exit 1; }
 fi
 
 # No code signing on Linux: do not let electron-builder look for a certificate.

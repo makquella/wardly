@@ -260,10 +260,10 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/launcher/package-lock.json
 
-      - name: Install packaging tools (bsdtar for pacman, Xvfb for the app smoke test)
+      - name: Install packaging tools (bsdtar and zstd for pacman, Xvfb for the app smoke test)
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libarchive-tools xvfb
+          sudo apt-get install -y --no-install-recommends libarchive-tools zstd xvfb
 
       - name: Verify source commit
         env:
