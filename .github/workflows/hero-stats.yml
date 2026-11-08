@@ -7,6 +7,8 @@ name: Hero stats
 # and the counter items bought against each enemy group, with win rates.
 # scripts/hero_item_stats.py writes them; hero item plans
 # (data/heroes/item_plans, docs/HERO_ITEM_PLANS.md) are checked against them.
+# After them scripts/lane_matchups.py rebuilds data/heroes/lane_matchups/<hero>.json
+# for every core hero (how its lane goes against each enemy hero, last 365 days).
 # No key is needed. A changed file becomes a pull request (Settings → Actions →
 # General → "Allow GitHub Actions to create and approve pull requests").
 on:
@@ -54,11 +56,32 @@ jobs:
           else
             python scripts/hero_item_stats.py --all --write
           fi
+      - name: Rebuild lane matchups
+        env:
+          HERO: ${{ inputs.hero }}
+        run: |
+          if [ -z "$HERO" ]; then
+            python scripts/lane_matchups.py --all --write
+          else
+            # A support has no lane file: skip it instead of failing the run.
+            KEY=$(printf '%s' "$HERO" | tr 'A-Z -' 'a-z__' | tr -d "'")
+            if python - "$KEY" <<'PY'
+          import json, sys
+          from pathlib import Path
+          stats = Path("data/heroes/item_stats") / f"{sys.argv[1]}.json"
+          sys.exit(0 if stats.exists() and json.loads(stats.read_text())["position"] in ("carry", "mid", "offlane") else 1)
+          PY
+            then
+              python scripts/lane_matchups.py "$KEY" --write
+            else
+              echo "$HERO is not a core hero: no lane matchups"
+            fi
+          fi
       - name: Check the plans against the new files
         working-directory: backend
         run: python -m pytest -q tests/test_hero_plans.py tests/test_hero_items.py
       - name: Show exact data change summary
-        run: git diff --stat -- data/heroes/item_stats >> "$GITHUB_STEP_SUMMARY"
+        run: git diff --stat -- data/heroes/item_stats data/heroes/lane_matchups >> "$GITHUB_STEP_SUMMARY"
       - name: Open a pull request when it changed
         id: pr
         uses: peter-evans/create-pull-request@v7
@@ -67,9 +90,11 @@ jobs:
           commit-message: "Refresh high-rank hero stats"
           title: "Refresh high-rank hero stats"
           body: |
-            `scripts/hero_item_stats.py` rebuilt `data/heroes/item_stats/` from the OpenDota Explorer (league games).
+            `scripts/hero_item_stats.py` rebuilt `data/heroes/item_stats/` and `scripts/lane_matchups.py` rebuilt `data/heroes/lane_matchups/` from the OpenDota Explorer (league games).
             Compare the changed heroes with their plans in `data/heroes/item_plans/` (docs/HERO_ITEM_PLANS.md): a rule whose item is no longer bought against its group, or a tempo line that moved, needs a review.
-          add-paths: data/heroes/item_stats
+          add-paths: |
+            data/heroes/item_stats
+            data/heroes/lane_matchups
           delete-branch: true
   validate:
     needs: refresh

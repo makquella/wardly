@@ -1,0 +1,71 @@
+{
+  "hero": "Templar Assassin",
+  "hero_id": 46,
+  "position": "mid",
+  "lane_role": 2,
+  "window_days": 365,
+  "generated": "2026-11-08",
+  "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
+  "lanes": 314,
+  "baseline": {
+    "won": 61,
+    "even": 218,
+    "lost": 35
+  },
+  "opponents": [
+    {
+      "hero": "Shadow Fiend",
+      "hero_id": 11,
+      "lanes": 39,
+      "won": 5,
+      "even": 28,
+      "lost": 6,
+      "gold_diff": -39
+    },
+    {
+      "hero": "Sniper",
+      "hero_id": 35,
+      "lanes": 27,
+      "won": 3,
+      "even": 17,
+      "lost": 7,
+      "gold_diff": -293
+    },
+    {
+      "hero": "Lina",
+      "hero_id": 25,
+      "lanes": 21,
+      "won": 2,
+      "even": 18,
+      "lost": 1,
+      "gold_diff": 81
+    },
+    {
+      "hero": "Queen of Pain",
+      "hero_id": 39,
+      "lanes": 21,
+      "won": 2,
+      "even": 14,
+      "lost": 5,
+      "gold_diff": -215
+    },
+    {
+      "hero": "Ember Spirit",
+      "hero_id": 106,
+      "lanes": 17,
+      "won": 5,
+      "even": 12,
+      "lost": 0,
+      "gold_diff": 322
+    },
+    {
+      "hero": "Storm Spirit",
+      "hero_id": 17,
+      "lanes": 17,
+      "won": 1,
+      "even": 16,
+      "lost": 0,
+      "gold_diff": 210
+    }
+  ]
+}

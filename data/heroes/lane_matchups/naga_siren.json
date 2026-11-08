@@ -1,0 +1,152 @@
+{
+  "hero": "Naga Siren",
+  "hero_id": 89,
+  "position": "carry",
+  "lane_role": 1,
+  "window_days": 365,
+  "generated": "2026-11-08",
+  "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
+  "lanes": 397,
+  "baseline": {
+    "won": 81,
+    "even": 179,
+    "lost": 137
+  },
+  "opponents": [
+    {
+      "hero": "Night Stalker",
+      "hero_id": 60,
+      "lanes": 30,
+      "won": 11,
+      "even": 17,
+      "lost": 2,
+      "gold_diff": 436
+    },
+    {
+      "hero": "Lycan",
+      "hero_id": 77,
+      "lanes": 29,
+      "won": 17,
+      "even": 10,
+      "lost": 2,
+      "gold_diff": 854
+    },
+    {
+      "hero": "Mars",
+      "hero_id": 129,
+      "lanes": 29,
+      "won": 4,
+      "even": 14,
+      "lost": 11,
+      "gold_diff": -591
+    },
+    {
+      "hero": "Slardar",
+      "hero_id": 28,
+      "lanes": 27,
+      "won": 7,
+      "even": 15,
+      "lost": 5,
+      "gold_diff": 119
+    },
+    {
+      "hero": "Snapfire",
+      "hero_id": 128,
+      "lanes": 27,
+      "won": 6,
+      "even": 8,
+      "lost": 13,
+      "gold_diff": -746
+    },
+    {
+      "hero": "Shadow Demon",
+      "hero_id": 79,
+      "lanes": 24,
+      "won": 1,
+      "even": 13,
+      "lost": 10,
+      "gold_diff": -660
+    },
+    {
+      "hero": "Centaur Warrunner",
+      "hero_id": 96,
+      "lanes": 21,
+      "won": 2,
+      "even": 7,
+      "lost": 12,
+      "gold_diff": -967
+    },
+    {
+      "hero": "Rubick",
+      "hero_id": 86,
+      "lanes": 21,
+      "won": 5,
+      "even": 12,
+      "lost": 4,
+      "gold_diff": 54
+    },
+    {
+      "hero": "Skywrath Mage",
+      "hero_id": 101,
+      "lanes": 21,
+      "won": 4,
+      "even": 9,
+      "lost": 8,
+      "gold_diff": -625
+    },
+    {
+      "hero": "Tusk",
+      "hero_id": 100,
+      "lanes": 21,
+      "won": 2,
+      "even": 13,
+      "lost": 6,
+      "gold_diff": -568
+    },
+    {
+      "hero": "Hoodwink",
+      "hero_id": 123,
+      "lanes": 18,
+      "won": 3,
+      "even": 6,
+      "lost": 9,
+      "gold_diff": -658
+    },
+    {
+      "hero": "Pudge",
+      "hero_id": 14,
+      "lanes": 18,
+      "won": 3,
+      "even": 8,
+      "lost": 7,
+      "gold_diff": -751
+    },
+    {
+      "hero": "Lion",
+      "hero_id": 26,
+      "lanes": 17,
+      "won": 2,
+      "even": 9,
+      "lost": 6,
+      "gold_diff": -189
+    },
+    {
+      "hero": "Enigma",
+      "hero_id": 33,
+      "lanes": 16,
+      "won": 2,
+      "even": 11,
+      "lost": 3,
+      "gold_diff": -326
+    },
+    {
+      "hero": "Spirit Breaker",
+      "hero_id": 71,
+      "lanes": 16,
+      "won": 2,
+      "even": 8,
+      "lost": 6,
+      "gold_diff": -507
+    }
+  ]
+}

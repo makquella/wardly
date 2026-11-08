@@ -2007,6 +2007,17 @@
       )
     );
     const others = (lane.enemies || []).filter((hero) => hero !== lane.enemy);
+    // How the pair usually goes in public games (backend lane_matchup.py); a row
+    // without a clear call says nothing.
+    const pub = lane.matchup;
+    const publicLaneLine = pub && (pub.kind === "hard" || pub.kind === "easy")
+      ? h("p", {
+          class: "muted small lane-public",
+          text: pub.kind === "hard"
+            ? t("laneMatchupHard", lane.hero, pub.enemy || lane.enemy, pub.lost, pub.lanes)
+            : t("laneMatchupEasy", lane.hero, pub.enemy || lane.enemy, pub.won, pub.lanes)
+        })
+      : null;
     return card(
       t("laneTitle"),
       "swords",
@@ -2021,6 +2032,7 @@
           heroLabel(lane.enemy_id, lane.enemy),
           h("span", { class: `lane-result lane-${lane.result}`, text: t(`laneResult.${lane.result}`) })
         ),
+        publicLaneLine,
         h(
           "div",
           { class: "table-wrap table-wrap-tight" },

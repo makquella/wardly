@@ -249,3 +249,64 @@ def test_the_pace_tip_names_how_far_behind_the_opponent_the_player_is():
     assert RoleTips().tip(300, "offlane", lang="en", last_hits=5, **base) is None
     english = RoleTips().tip(420, "mid", lang="en", last_hits=20, **base)
     assert english["title"] == "Behind Axe's pace: 20 last hits"
+
+
+def _public_files(position="carry", lanes=20, lost=12):
+    return {
+        8: {
+            "hero": "Juggernaut",
+            "hero_id": 8,
+            "position": position,
+            "lane_role": 1,
+            "window_days": 365,
+            "generated": "2026-11-08",
+            "source": "OpenDota Explorer",
+            "lanes": 400,
+            "baseline": {"won": 160, "even": 100, "lost": 140},
+            "opponents": [
+                {
+                    "hero": "Axe",
+                    "hero_id": 2,
+                    "lanes": lanes,
+                    "won": 4,
+                    "even": lanes - 4 - lost,
+                    "lost": lost,
+                    "gold_diff": -620,
+                }
+            ],
+        }
+    }
+
+
+def test_the_public_matchup_sits_beside_the_lane_and_changes_nothing():
+    plain, plain_findings = analyze_lane(_match(), "carry", files={})
+    block, findings = analyze_lane(_match(), "carry", files=_public_files())
+    assert "matchup" not in plain
+    assert block["matchup"] == {
+        "enemy": "Axe",
+        "lanes": 20,
+        "won": 4,
+        "even": 4,
+        "lost": 12,
+        "kind": "hard",
+        "baseline_lost": 0.35,
+        "baseline_won": 0.4,
+        "generated": "2026-11-08",
+    }
+    assert {k: v for k, v in block.items() if k != "matchup"} == plain
+    assert findings == plain_findings
+
+
+def test_no_public_matchup_for_another_position_a_support_or_a_thin_row():
+    files = _public_files()
+    assert "matchup" not in analyze_lane(_match(), "mid", files=files)[0]
+    assert "matchup" not in analyze_lane(_match(), "support", files=files)[0]
+    assert "matchup" not in analyze_lane(_match(), "carry", files=_public_files("mid"))[0]
+    assert (
+        "matchup" not in analyze_lane(_match(), "carry", files=_public_files(lanes=10, lost=6))[0]
+    )
+
+
+def test_a_row_without_a_clear_call_keeps_kind_none():
+    block, _ = analyze_lane(_match(), "carry", files=_public_files(lost=7))
+    assert block["matchup"]["kind"] is None and block["matchup"]["lost"] == 7

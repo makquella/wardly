@@ -38,7 +38,7 @@ from app.skill_build import review_skills
 from app.usage_stats import advice_counts
 
 # Bump when the rules change: stored reviews of an older version are rebuilt on read.
-ANALYSIS_VERSION = 21
+ANALYSIS_VERSION = 22
 # Dota replays run at 30 ticks a second.
 REPLAY_TICK_RATE = 30
 # Last seconds before deaths (last_moments.py, via death_review.py).

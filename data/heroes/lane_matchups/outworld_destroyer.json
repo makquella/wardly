@@ -1,0 +1,107 @@
+{
+  "hero": "Outworld Destroyer",
+  "hero_id": 76,
+  "position": "mid",
+  "lane_role": 2,
+  "window_days": 365,
+  "generated": "2026-11-08",
+  "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
+  "lanes": 528,
+  "baseline": {
+    "won": 106,
+    "even": 305,
+    "lost": 117
+  },
+  "opponents": [
+    {
+      "hero": "Shadow Fiend",
+      "hero_id": 11,
+      "lanes": 41,
+      "won": 1,
+      "even": 20,
+      "lost": 20,
+      "gold_diff": -675
+    },
+    {
+      "hero": "Invoker",
+      "hero_id": 74,
+      "lanes": 39,
+      "won": 11,
+      "even": 22,
+      "lost": 6,
+      "gold_diff": 217
+    },
+    {
+      "hero": "Sniper",
+      "hero_id": 35,
+      "lanes": 36,
+      "won": 5,
+      "even": 21,
+      "lost": 10,
+      "gold_diff": -152
+    },
+    {
+      "hero": "Queen of Pain",
+      "hero_id": 39,
+      "lanes": 34,
+      "won": 7,
+      "even": 17,
+      "lost": 10,
+      "gold_diff": -95
+    },
+    {
+      "hero": "Lina",
+      "hero_id": 25,
+      "lanes": 28,
+      "won": 9,
+      "even": 15,
+      "lost": 4,
+      "gold_diff": 152
+    },
+    {
+      "hero": "Ember Spirit",
+      "hero_id": 106,
+      "lanes": 27,
+      "won": 14,
+      "even": 12,
+      "lost": 1,
+      "gold_diff": 737
+    },
+    {
+      "hero": "Pangolier",
+      "hero_id": 120,
+      "lanes": 25,
+      "won": 3,
+      "even": 16,
+      "lost": 6,
+      "gold_diff": -335
+    },
+    {
+      "hero": "Dragon Knight",
+      "hero_id": 49,
+      "lanes": 24,
+      "won": 5,
+      "even": 19,
+      "lost": 0,
+      "gold_diff": 289
+    },
+    {
+      "hero": "Storm Spirit",
+      "hero_id": 17,
+      "lanes": 22,
+      "won": 7,
+      "even": 8,
+      "lost": 7,
+      "gold_diff": -95
+    },
+    {
+      "hero": "Viper",
+      "hero_id": 47,
+      "lanes": 18,
+      "won": 1,
+      "even": 10,
+      "lost": 7,
+      "gold_diff": -313
+    }
+  ]
+}

@@ -429,3 +429,35 @@ the gold card and the save item tip), the skills and the fight abilities.
 the minute gate, an owned item answering its family, the notes). Every `fight`
 ability now needs its in-game name in `skills.names` (`hero_items.validate`):
 Phantom Assassin's fight summary showed the raw `phantom_assassin_blur`.
+
+## Lane matchups
+
+`scripts/lane_matchups.py` writes `data/heroes/lane_matchups/<hero>.json` for
+every core hero (the 39 whose `item_stats` file has the position carry, mid or
+offlane; supports are skipped), weekly with the item stats
+(`.github/workflows/hero-stats.yml`). It reads the open OpenDota Explorer: the
+hero's league games of the last 365 days in its usual lane role (carry 1, mid 2,
+offlane 3) with parsed gold and last-hit series. In each game the enemies who
+stood in the hero's physical lane (not roaming) are the lane; the enemy core is
+the one with the most last hits at 10:00, and the lane is won, even or lost by the
+gold difference at 10:00 against it (`lane_duel.GOLD_MARGIN`, the rule of the
+review's lane card). Every enemy of the lane, core or support, gets the lane
+counted. `baseline` is the hero's own won/even/lost over all counted lanes.
+
+`opponents` keeps heroes with `lane_matchup.MIN_LANES` lanes or more;
+`lane_matchup.classify` calls one «hard» or «easy» only when its share of lost
+(won) lanes is `KIND_GAP` above the baseline, lost (won) outnumber the other and
+the one-sided 95% Wilson lower bound of that share (`Z_ONE_SIDED`) is still at or
+above the baseline share, so a thin row of noise (0 won / 10 even / 5 lost) is not
+called. The 365-day window spans several patches, so a matchup can change with a
+patch. Support rows can lean «easy»: when the enemy offlaner roamed, the support
+becomes the lane's «core» (the most last hits) and the player wins that lane more
+often. A broken file is read as «nothing known» live and in reviews (reported once
+to diagnostics); `--all` keeps a failed hero's file as it was, lists it on stderr
+and in the job summary and does not fail the run.
+The file format, the thresholds and the lookup the advice uses are in
+`backend/app/lane_matchup.py`. The data is for the hero in that position only.
+
+    python scripts/lane_matchups.py juggernaut          # a report with each opponent's call
+    python scripts/lane_matchups.py juggernaut --write
+    python scripts/lane_matchups.py --all --write

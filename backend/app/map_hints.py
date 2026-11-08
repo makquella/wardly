@@ -387,6 +387,30 @@ TIPS = {
             "Проти {hero} ви виграли лінію {won} з {games} разів: тисніть із перших хвилин і не давайте добивати.",
         ),
     },
+    # The same from public games, when the player has no record of their own
+    # (lane_matchup.py); {my_hero} is the player's hero.
+    "lane_public_hard": {
+        "en": (
+            "Hard lane: {hero}",
+            "In high-rank games {my_hero} loses this lane to {hero} in {lost} of {games} games: "
+            "play for experience, take only the safe last hits and keep regen.",
+        ),
+        "uk": (
+            "Важка лінія: {hero}",
+            "В іграх сильних гравців {my_hero} програє цю лінію проти {hero} {lost} з {games} разів: грайте від досвіду, добивайте лише безпечних кріпів і тримайте реген при собі.",
+        ),
+    },
+    "lane_public_easy": {
+        "en": (
+            "Your lane: {hero}",
+            "In high-rank games {my_hero} wins this lane against {hero} in {won} of {games} games: "
+            "press from the first minutes and take their last hits away.",
+        ),
+        "uk": (
+            "Зручна лінія: {hero}",
+            "В іграх сильних гравців {my_hero} виграє цю лінію проти {hero} {won} з {games} разів: тисніть із перших хвилин і не давайте добивати.",
+        ),
+    },
     # An enemy gone from the minimap in the laning stage (enemy_lanes.py).
     "missing_mid": {
         "en": (
@@ -1417,14 +1441,16 @@ class RoleTips:
         if clock - self._shown[key] > LANE_RECORD_SHOW:
             return None
         shown = self._shown_record
+        public = shown.get("source") == "public"
         return _tip(
-            f"lane_{shown['kind']}",
+            f"lane_public_{shown['kind']}" if public else f"lane_{shown['kind']}",
             f"lane_record@{self._shown[key]}",
             lang,
             hero=shown["hero"],
             won=shown["won"],
             lost=shown["lost"],
             games=shown["games"],
+            my_hero=shown.get("my_hero") or "",
         )
 
     def fight(self, clock: int, lang: str, fight: dict[str, Any] | None) -> dict[str, Any] | None:

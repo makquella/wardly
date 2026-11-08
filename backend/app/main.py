@@ -45,6 +45,7 @@ from app.config import (
 from app.decision_points import detect_decision_point
 from app.demo_overlay_cache import DemoOverlayCache, DemoToken
 from app.diagnostics import recent_errors, record_error, runtime_info
+from app.dota_constants import hero_id_from_any, hero_name
 from app.game_plan import SHOW_FROM_CLOCK as GAME_PLAN_SHOW_FROM_CLOCK
 from app.game_plan import SHOW_UNTIL_CLOCK as GAME_PLAN_SHOW_UNTIL_CLOCK
 from app.gsi_census import CENSUS_FILE, GSI_CENSUS, load_previous
@@ -61,6 +62,8 @@ from app.gsi_state import (
 )
 from app.hero_items import has_plan
 from app.lane_duel import lane_record_for
+from app.lane_matchup import POSITIONS as LANE_MATCHUP_POSITIONS
+from app.lane_matchup import lane_matchup_for
 from app.live_hints import GoldHintInputs, LiveHintInputs
 from app.live_operation import live_operation
 from app.live_path_metrics import LIVE_PATH_METRICS
@@ -127,7 +130,7 @@ app = LocalApiApp(
     lifespan=_lifespan,
     title="Wardly",
     description="MVP-1: rule-based carry coach with local knowledge-base RAG.",
-    version="0.65.0",
+    version="0.66.0",
 )
 app.include_router(player_router)
 
@@ -163,7 +166,7 @@ if _DEBUG_PAGES is not None:
 @app.get("/", summary="Health check")
 def root():
     """Simple health-check endpoint."""
-    return {"status": "ok", "service": "Wardly", "version": "0.65.0"}
+    return {"status": "ok", "service": "Wardly", "version": "0.66.0"}
 
 
 @app.get("/health", summary="Health check")
@@ -452,12 +455,47 @@ def _advisor_coverage(state: Mapping[str, object]) -> str | None:
     return coverage
 
 
-def _lane_record(opponents: list[str]) -> dict[str, Any] | None:
+# The lane the live role read reports for each file position (live_role.lane_kind).
+_PUBLIC_LANE = {"carry": "safe", "mid": "mid", "offlane": "off"}
+
+
+def _public_position(role: Mapping[str, Any] | None) -> str | None:
+    """The core position public lane data applies to, only when the lane read
+    confirms it: a prior-only role (no lane), another lane than the position's or
+    a flagged mismatch gets none."""
+    position = (role or {}).get("role")
+    if (
+        position not in LANE_MATCHUP_POSITIONS
+        or (role or {}).get("mismatch")
+        or (role or {}).get("lane") != _PUBLIC_LANE[position]
+    ):
+        return None
+    return position
+
+
+def _lane_record(
+    opponents: list[str], hero: str = "", role: Mapping[str, Any] | None = None
+) -> dict[str, Any] | None:
     """The player's past lanes against the enemy now in their lane
-    (lane_duel.lane_record_for over PlayerService.lane_records)."""
+    (lane_duel.lane_record_for over PlayerService.lane_records). Without a clear
+    own record (none, or only the pace) a core's hero in its position falls back
+    to public games (lane_matchup.lane_matchup_for) when the live `role` (live_role
+    dict) confirms the position by its lane: the public kind and numbers with the
+    own pace kept. The own record always wins."""
     if not opponents:
         return None
-    return lane_record_for(opponents, PLAYER_SERVICE.lane_records())
+    own = lane_record_for(opponents, PLAYER_SERVICE.lane_records())
+    position = _public_position(role)
+    if (own or {}).get("kind") in ("hard", "easy") or position is None:
+        return own
+    public = lane_matchup_for(hero, position, opponents)
+    if public is None:
+        return own
+    hero_id = hero_id_from_any(hero)
+    record = {**public, "my_hero": hero_name(hero_id) if hero_id is not None else hero}
+    if own and own.get("pace") is not None:
+        record["pace"] = own["pace"]
+    return record
 
 
 def _player_lane(extra: dict[str, Any]) -> str | None:
@@ -525,7 +563,7 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         if map_enabled and role and role.get("role") == "support"
         else None
     )
-    lane_record = _lane_record(trackers.opponents) if map_enabled else None
+    lane_record = _lane_record(trackers.opponents, hero, role) if map_enabled else None
     draft = (
         PLAYER_SERVICE.draft_item(hero, names, trackers.enemies or None, role.get("role"))
         if map_enabled
