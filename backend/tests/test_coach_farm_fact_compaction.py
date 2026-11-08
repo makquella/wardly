@@ -80,7 +80,16 @@ def test_the_public_lane_matchup_is_told_as_league_games() -> None:
         "hero": "Juggernaut",
         "enemy": "Axe",
         "points": [{"minute": 10, "lh": 50, "dn": 2, "enemy_lh": 30, "enemy_dn": 1}],
-        "matchup": {"enemy": "Axe", "lanes": 20, "won": 4, "even": 4, "lost": 12, "kind": "hard"},
+        "matchup": {
+            "enemy": "Axe",
+            "lanes": 20,
+            "won": 4,
+            "even": 4,
+            "lost": 12,
+            "kind": "hard",
+            "baseline_lost": 0.35,
+            "baseline_won": 0.4,
+        },
     }
     facts = match_facts({"analysis": {"headline": {"hero": "Juggernaut"}, "lane": lane}})
     assert facts is not None
@@ -92,6 +101,10 @@ def test_the_public_lane_matchup_is_told_as_league_games() -> None:
         12,
         "hard",
     )
+    assert (public["baseline_lost"], public["baseline_won"]) == (0.35, 0.4)
+    lane["matchup"]["kind"] = None
+    facts = match_facts({"analysis": {"headline": {"hero": "Juggernaut"}, "lane": lane}})
+    assert "public_matchup" not in facts["lane"]
     del lane["matchup"]
     facts = match_facts({"analysis": {"headline": {"hero": "Juggernaut"}, "lane": lane}})
     assert "public_matchup" not in facts["lane"]

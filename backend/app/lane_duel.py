@@ -87,6 +87,7 @@ def public_matchup(
         "kind": row["kind"],
         "baseline_lost": row["baseline_lost"],
         "baseline_won": row["baseline_won"],
+        "generated": row["generated"],
     }
 
 

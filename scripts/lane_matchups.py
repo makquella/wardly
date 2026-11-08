@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -69,7 +70,12 @@ def _get(url: str) -> Any:
 
 
 def explorer(sql: str) -> list[dict]:
-    rows = _get(EXPLORER + urllib.parse.quote(sql)).get("rows") or []
+    answer = _get(EXPLORER + urllib.parse.quote(sql))
+    if not isinstance(answer, dict):
+        raise SystemExit("OpenDota Explorer: unexpected answer (not an object)")
+    rows = answer.get("rows") or []
+    if not isinstance(rows, list):
+        raise SystemExit("OpenDota Explorer: unexpected answer (rows is not a list)")
     time.sleep(PAUSE)
     return list(rows)
 
@@ -219,6 +225,18 @@ def report(data: dict[str, Any]) -> None:
         )
 
 
+def report_failures(failed: list[str]) -> None:
+    """List the heroes whose file was kept as it was: on stderr and, in a
+    workflow, in the job summary. The run itself does not fail (the item-stats
+    pull request still opens)."""
+    line = "Lane matchups not refreshed (files kept as they were): " + ", ".join(failed)
+    print(line, file=sys.stderr)
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with open(summary, "a", encoding="utf-8") as handle:
+            handle.write(f"\n**{line}**\n")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("hero", nargs="?", help="e.g. juggernaut or anti_mage (the file name)")
@@ -237,8 +255,8 @@ def main() -> int:
     for key, _, stats in heroes:
         try:
             data = hero_matchups(stats)
-        except SystemExit as error:
-            if len(heroes) == 1:
+        except (SystemExit, ValueError, KeyError, TypeError) as error:
+            if len(heroes) == 1 and isinstance(error, SystemExit):
                 raise
             print(f"{key}: failed ({error})", file=sys.stderr)
             failed.append(key)
@@ -253,8 +271,7 @@ def main() -> int:
         else:
             report(data)
     if failed:
-        print("failed: " + ", ".join(failed), file=sys.stderr)
-        return 1
+        report_failures(failed)
     return 0
 
 

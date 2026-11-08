@@ -291,6 +291,7 @@ def test_the_public_matchup_sits_beside_the_lane_and_changes_nothing():
         "kind": "hard",
         "baseline_lost": 0.35,
         "baseline_won": 0.4,
+        "generated": "2026-11-08",
     }
     assert {k: v for k, v in block.items() if k != "matchup"} == plain
     assert findings == plain_findings

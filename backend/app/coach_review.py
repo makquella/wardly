@@ -261,8 +261,9 @@ def match_facts(detail: dict[str, Any]) -> dict[str, Any] | None:
             "gap_opened_at_minute": lane.get("turn"),
         }
         matchup = lane.get("matchup")
-        if isinstance(matchup, dict):
-            # Public league games, not the player's own lanes.
+        if isinstance(matchup, dict) and matchup.get("kind") in ("hard", "easy"):
+            # Public league games, not the player's own lanes; the baseline is
+            # the hero's usual result there, the call is against it.
             facts["lane"]["public_matchup"] = {
                 "source": "high-rank league games of this hero in this role (OpenDota), not the player's own lanes",
                 "enemy": matchup.get("enemy"),
@@ -270,6 +271,8 @@ def match_facts(detail: dict[str, Any]) -> dict[str, Any] | None:
                 "lost": matchup.get("lost"),
                 "won": matchup.get("won"),
                 "kind": matchup.get("kind"),
+                "baseline_lost": matchup.get("baseline_lost"),
+                "baseline_won": matchup.get("baseline_won"),
             }
     draft = analysis.get("draft")
     if draft:

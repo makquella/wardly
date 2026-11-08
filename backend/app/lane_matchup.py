@@ -18,21 +18,29 @@ One file per hero, for one position:
      "opponents": [{"hero", "hero_id", "lanes", "won", "even", "lost",
                     "gold_diff" (average at 10:00, the hero minus the enemy core)}]}
 
-A matchup is called only with MIN_LANES+ lanes and a share of lost (won) lanes
-KIND_GAP above the hero's own baseline, with more lost than won (or the other
-way): «hard» / «easy». Anything else is not known and says nothing. The data
-is about the hero in a position: played elsewhere (a mid Juggernaut) it does
-not apply.
+A matchup is called only with MIN_LANES+ lanes, a share of lost (won) lanes
+KIND_GAP above the hero's own baseline, more lost than won (or the other way),
+and a one-sided 95% Wilson lower bound of that share (Z_ONE_SIDED) that is still
+at or above the baseline share, so a thin row of noise is not called: «hard» /
+«easy». Anything else is not known and says nothing. The data is about the hero
+in a position: played elsewhere (a mid Juggernaut) it does not apply.
+
+`matchup()` also returns `generated` (the file's date, so a stored review shows
+which data it used). `load_matchups` is strict (tests, CI); the live and review
+callers use `safe_files()`: a broken file or directory is reported once to
+app.diagnostics and read as «nothing known».
 """
 
 from __future__ import annotations
 
 import json
+import math
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 from app.config import DATA_DIR
+from app.diagnostics import record_error
 
 LANE_MATCHUPS_DIR = DATA_DIR / "heroes" / "lane_matchups"
 POSITIONS = ("carry", "mid", "offlane")
@@ -41,6 +49,9 @@ RESULTS = ("won", "even", "lost")
 MIN_LANES = 15
 # ... and a share of lost (won) lanes this far above the hero's own baseline.
 KIND_GAP = 0.12
+# One-sided 95% confidence for the Wilson lower bound of the called share.
+Z_ONE_SIDED = 1.645
+LANE_ROLES = {"carry": 1, "mid": 2, "offlane": 3}
 
 
 def _count(value: Any) -> bool:
@@ -59,9 +70,16 @@ def validate(data: Any, name: str = "lane matchups") -> dict[str, Any]:
     for key in ("hero_id", "lanes", "window_days"):
         if not _count(data.get(key)):
             raise ValueError(f"{name}: {key} must be a non-negative integer")
+    role = data.get("lane_role")
+    if not _count(role) or role != LANE_ROLES[data["position"]]:
+        raise ValueError(
+            f"{name}: lane_role must be {LANE_ROLES[data['position']]} for the position"
+        )
     baseline = data.get("baseline")
     if not isinstance(baseline, dict) or not all(_count(baseline.get(k)) for k in RESULTS):
         raise ValueError(f"{name}: baseline needs won, even and lost counts")
+    if sum(baseline[k] for k in RESULTS) != data["lanes"]:
+        raise ValueError(f"{name}: baseline won + even + lost must equal lanes")
     opponents = data.get("opponents")
     if not isinstance(opponents, list):
         raise ValueError(f"{name}: opponents must be a list")
@@ -98,17 +116,56 @@ def load_matchups(directory: Path = LANE_MATCHUPS_DIR) -> dict[int, dict[str, An
     return files
 
 
+_failed = False
+
+
+def reset_safe_files() -> None:
+    """Forget a remembered failure (tests); the next safe_files() reads again."""
+    global _failed
+    _failed = False
+    load_matchups.cache_clear()
+
+
+def safe_files() -> dict[int, dict[str, Any]]:
+    """load_matchups() for the live and review callers: a broken file or directory
+    is reported once (diagnostics scope "lane-matchups"), remembered so it is not
+    re-read every poll, and nothing is known."""
+    global _failed
+    if _failed:
+        return {}
+    try:
+        return load_matchups()
+    except (OSError, ValueError) as error:  # JSONDecodeError is a ValueError
+        _failed = True
+        record_error("lane-matchups", error, with_trace=False)
+        return {}
+
+
+def wilson_lower(successes: int, total: int, z: float = Z_ONE_SIDED) -> float:
+    """Lower bound of the Wilson score interval of successes / total (0 when empty)."""
+    if total <= 0:
+        return 0.0
+    p = successes / total
+    z2 = z * z
+    centre = p + z2 / (2 * total)
+    spread = z * math.sqrt(p * (1 - p) / total + z2 / (4 * total * total))
+    return (centre - spread) / (1 + z2 / total)
+
+
 def classify(row: dict[str, Any], baseline: dict[str, Any]) -> str | None:
-    """«hard», «easy» or None (too few lanes, or no clear difference)."""
+    """«hard», «easy» or None (too few lanes, or no clear, significant difference)."""
     lanes = row.get("lanes") or 0
     total = sum(baseline.get(k) or 0 for k in RESULTS)
     if lanes < MIN_LANES or total <= 0:
         return None
-    lost, won = row["lost"] / lanes, row["won"] / lanes
-    if lost >= baseline["lost"] / total + KIND_GAP and row["lost"] > row["won"]:
-        return "hard"
-    if won >= baseline["won"] / total + KIND_GAP and row["won"] > row["lost"]:
-        return "easy"
+    for kind, other, key in (("hard", "won", "lost"), ("easy", "lost", "won")):
+        base = baseline[key] / total
+        if (
+            row[key] / lanes >= base + KIND_GAP
+            and row[key] > row[other]
+            and wilson_lower(row[key], lanes) >= base
+        ):
+            return kind
     return None
 
 
@@ -127,10 +184,10 @@ def matchup(
     files: dict[int, dict[str, Any]] | None = None,
 ) -> dict[str, Any] | None:
     """{hero (the enemy), hero_id, lanes, won, even, lost, gold_diff, kind,
-    baseline_lost, baseline_won (shares, 0..1), source: "public"} for `hero`
+    baseline_lost, baseline_won (shares, 0..1), generated (the file's date), source: "public"} for `hero`
     played in `position` against `enemy`; None when the hero has no file for
     that position or the enemy no row (kind None: a row without a clear call)."""
-    files = load_matchups() if files is None else files
+    files = safe_files() if files is None else files
     hero_id, enemy_id = _hero_id(hero), _hero_id(enemy)
     data = files.get(hero_id) if hero_id is not None else None
     if data is None or enemy_id is None or position != data["position"]:
@@ -151,6 +208,7 @@ def matchup(
         "kind": classify(row, baseline),
         "baseline_lost": round(baseline["lost"] / total, 3) if total else None,
         "baseline_won": round(baseline["won"] / total, 3) if total else None,
+        "generated": data["generated"],
         "source": "public",
     }
 

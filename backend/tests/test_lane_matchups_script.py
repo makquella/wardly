@@ -5,9 +5,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
-from lane_matchups import build_file, summarize  # noqa: E402
+import lane_matchups  # noqa: E402
+from lane_matchups import build_file, explorer, summarize  # noqa: E402
 
 from app.lane_duel import GOLD_MARGIN  # noqa: E402
 from app.lane_matchup import MIN_LANES, classify, validate  # noqa: E402
@@ -96,3 +99,38 @@ def test_build_file_cuts_min_lanes_and_validates():
     assert row["lost"] == MIN_LANES and row["gold_diff"] == -1500
     assert data["lane_role"] == 1 and data["window_days"] == 365
     assert classify(row, data["baseline"]) is None  # same as the baseline: no call
+
+
+def test_a_failed_hero_is_listed_and_does_not_fail_the_run(tmp_path, monkeypatch, capsys):
+    stats = {"hero": "Juggernaut", "hero_id": JUGG, "position": "carry"}
+    monkeypatch.setattr(
+        lane_matchups,
+        "core_heroes",
+        lambda: [("axe", tmp_path / "a.json", stats), ("juggernaut", tmp_path / "j.json", stats)],
+    )
+    good = build_file("Juggernaut", JUGG, "carry", [], [])
+
+    def fake(stats_file):
+        if not calls:
+            calls.append(1)
+            raise SystemExit("OpenDota: no answer")
+        return good
+
+    calls: list[int] = []
+    monkeypatch.setattr(lane_matchups, "hero_matchups", fake)
+    monkeypatch.setattr(lane_matchups, "OUT_DIR", tmp_path / "out")
+    monkeypatch.setattr(lane_matchups, "ROOT", tmp_path)
+    summary = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    monkeypatch.setattr(sys, "argv", ["lane_matchups.py", "--all", "--write"])
+    assert lane_matchups.main() == 0
+    assert "not refreshed" in capsys.readouterr().err
+    assert "axe" in summary.read_text(encoding="utf-8")
+    assert not (tmp_path / "out" / "axe.json").exists()
+    assert (tmp_path / "out" / "juggernaut.json").exists()
+
+
+def test_a_non_object_answer_is_a_failure_not_a_crash(monkeypatch):
+    monkeypatch.setattr(lane_matchups, "_get", lambda url: [1, 2])
+    with pytest.raises(SystemExit):
+        explorer("SELECT 1")

@@ -455,18 +455,38 @@ def _advisor_coverage(state: Mapping[str, object]) -> str | None:
     return coverage
 
 
+# The lane the live role read reports for each file position (live_role.lane_kind).
+_PUBLIC_LANE = {"carry": "safe", "mid": "mid", "offlane": "off"}
+
+
+def _public_position(role: Mapping[str, Any] | None) -> str | None:
+    """The core position public lane data applies to, only when the lane read
+    confirms it: a prior-only role (no lane), another lane than the position's or
+    a flagged mismatch gets none."""
+    position = (role or {}).get("role")
+    if (
+        position not in LANE_MATCHUP_POSITIONS
+        or (role or {}).get("mismatch")
+        or (role or {}).get("lane") != _PUBLIC_LANE[position]
+    ):
+        return None
+    return position
+
+
 def _lane_record(
-    opponents: list[str], hero: str = "", position: str | None = None
+    opponents: list[str], hero: str = "", role: Mapping[str, Any] | None = None
 ) -> dict[str, Any] | None:
     """The player's past lanes against the enemy now in their lane
     (lane_duel.lane_record_for over PlayerService.lane_records). Without a clear
     own record (none, or only the pace) a core's hero in its position falls back
-    to public games (lane_matchup.lane_matchup_for): the public kind and numbers
-    with the own pace kept. The own record always wins."""
+    to public games (lane_matchup.lane_matchup_for) when the live `role` (live_role
+    dict) confirms the position by its lane: the public kind and numbers with the
+    own pace kept. The own record always wins."""
     if not opponents:
         return None
     own = lane_record_for(opponents, PLAYER_SERVICE.lane_records())
-    if (own or {}).get("kind") in ("hard", "easy") or position not in LANE_MATCHUP_POSITIONS:
+    position = _public_position(role)
+    if (own or {}).get("kind") in ("hard", "easy") or position is None:
         return own
     public = lane_matchup_for(hero, position, opponents)
     if public is None:
@@ -543,9 +563,7 @@ def _live_role_and_hint(response: dict[str, object], lang: str) -> dict[str, obj
         if map_enabled and role and role.get("role") == "support"
         else None
     )
-    lane_record = (
-        _lane_record(trackers.opponents, hero, (role or {}).get("role")) if map_enabled else None
-    )
+    lane_record = _lane_record(trackers.opponents, hero, role) if map_enabled else None
     draft = (
         PLAYER_SERVICE.draft_item(hero, names, trackers.enemies or None, role.get("role"))
         if map_enabled

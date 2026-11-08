@@ -446,7 +446,15 @@ counted. `baseline` is the hero's own won/even/lost over all counted lanes.
 
 `opponents` keeps heroes with `lane_matchup.MIN_LANES` lanes or more;
 `lane_matchup.classify` calls one «hard» or «easy» only when its share of lost
-(won) lanes is `KIND_GAP` above the baseline and lost (won) outnumber the other.
+(won) lanes is `KIND_GAP` above the baseline, lost (won) outnumber the other and
+the one-sided 95% Wilson lower bound of that share (`Z_ONE_SIDED`) is still at or
+above the baseline share, so a thin row of noise (0 won / 10 even / 5 lost) is not
+called. The 365-day window spans several patches, so a matchup can change with a
+patch. Support rows can lean «easy»: when the enemy offlaner roamed, the support
+becomes the lane's «core» (the most last hits) and the player wins that lane more
+often. A broken file is read as «nothing known» live and in reviews (reported once
+to diagnostics); `--all` keeps a failed hero's file as it was, lists it on stderr
+and in the job summary and does not fail the run.
 The file format, the thresholds and the lookup the advice uses are in
 `backend/app/lane_matchup.py`. The data is for the hero in that position only.
 

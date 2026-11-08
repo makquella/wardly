@@ -7,7 +7,16 @@ import json
 import pytest
 
 from app import lane_matchup
-from app.lane_matchup import MIN_LANES, classify, lane_matchup_for, load_matchups, matchup, validate
+from app.lane_matchup import (
+    MIN_LANES,
+    classify,
+    lane_matchup_for,
+    load_matchups,
+    matchup,
+    safe_files,
+    validate,
+    wilson_lower,
+)
 
 
 def _file(**overrides):
@@ -81,6 +90,33 @@ def test_classify_against_the_baseline():
     assert classify(rows["Bristleback"], baseline) is None
 
 
+def _row(won, even, lost):
+    return {"won": won, "even": even, "lost": lost, "lanes": won + even + lost}
+
+
+def test_classify_wants_significance_not_just_a_gap():
+    baseline = {"won": 400, "even": 400, "lost": 200}  # 20 % lost, 40 % won
+    # 0 won / 10 even / 5 lost: 33 % lost, a gap, but 5 lanes of noise
+    assert classify(_row(0, 10, 5), baseline) is None
+    assert classify(_row(5, 10, 0), baseline) is None
+    # a clear row: 18 lost of 25 against 35 % lost
+    usual = {"won": 400, "even": 250, "lost": 350}
+    assert classify(_row(3, 4, 18), usual) == "hard"
+    assert classify(_row(18, 4, 3), {"won": 350, "even": 250, "lost": 400}) == "easy"
+    # symmetric: the lost side needs more lost than won too
+    assert classify(_row(10, 0, 10), usual) is None
+
+
+def test_wilson_lower_bound():
+    assert wilson_lower(0, 0) == 0.0
+    assert wilson_lower(18, 25) == pytest.approx(0.55, abs=0.02)
+    assert wilson_lower(5, 15) < wilson_lower(50, 150) < 1 / 3
+
+
+def test_matchup_returns_the_files_date():
+    assert matchup("Juggernaut", "carry", "Viper", FILES)["generated"] == "2026-11-08"
+
+
 def test_matchup_needs_the_files_position():
     assert matchup("Juggernaut", "carry", "Viper", FILES)["kind"] == "hard"
     # A mid Juggernaut: the carry numbers do not apply.
@@ -131,6 +167,9 @@ def test_lane_matchup_for_names_the_hard_one_first():
             * 2
         },
         {"hero_id": True},
+        {"lane_role": "safe"},
+        {"lane_role": 2},
+        {"lanes": 399},
     ],
 )
 def test_validate_rejects_broken_files(broken):
@@ -157,3 +196,30 @@ def test_shipped_files_are_valid():
         load_matchups.cache_clear()
     for data in files.values():
         assert data["position"] in ("carry", "mid", "offlane")
+
+
+@pytest.fixture
+def fresh_safe_files():
+    lane_matchup.reset_safe_files()
+    yield
+    lane_matchup.reset_safe_files()
+
+
+def test_safe_files_survive_a_broken_file_and_report_once(fresh_safe_files, tmp_path, monkeypatch):
+    from app import diagnostics
+
+    (tmp_path / "juggernaut.json").write_text("{not json", encoding="utf-8")
+    calls = []
+
+    def strict(directory=tmp_path):
+        calls.append(1)
+        return load_matchups.__wrapped__(directory)
+
+    monkeypatch.setattr(lane_matchup, "load_matchups", strict)
+    before = diagnostics.recent_errors()["counts"].get("lane-matchups", 0)
+    assert safe_files() == {} and safe_files() == {}
+    assert len(calls) == 1
+    assert diagnostics.recent_errors()["counts"]["lane-matchups"] == before + 1
+    assert matchup("Juggernaut", "carry", "Viper") is None
+    with pytest.raises(json.JSONDecodeError):
+        load_matchups.__wrapped__(tmp_path)
