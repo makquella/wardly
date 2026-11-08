@@ -9,6 +9,9 @@
 
   const TEXT = {
     en: {
+      "0.66.0": [
+        "Lane matchups from high-rank games for all 39 cores: how the lane usually goes against each frequent opponent (league games of the last year, gold at 10:00, refreshed weekly). With no reviewed lanes of your own against the hero in your lane, the «Hard lane» / «Your lane» card now leans on this data, and a hard lane makes the skill tip name your escape ability earlier. The review's «Lane» card says when a lane is usually hard or comfortable for your hero."
+      ],
       "0.65.0": [
         "Item plans for all 25 supports, as the cores have: the build in the order high-rank players buy it, items against the enemy lineup, the skill build and the fight abilities. The «gold unspent» card and the death screen name the plan's next item and why (Glimmer Cape against three magic heroes, Spirit Vessel against heavy healing, Rod of Atos for Hoodwink against escapes); the «no save item» tip names the save item of the hero's build, or stays off when high-rank players on that hero buy none."
       ],
@@ -606,6 +609,9 @@
       ]
     },
     uk: {
+      "0.66.0": [
+        "Матчапи на лінії з ігор сильних гравців для всіх 39 корів: як зазвичай іде лінія проти кожного частого суперника (лігові ігри за рік, золото на 10:00, оновлення щотижня). Коли ваших розборів проти героя на вашій лінії ще немає, картка «Важка лінія» / «Зручна лінія» спирається на ці дані, а важка лінія змушує підказку прокачки раніше назвати рятівну здібність. Картка «Лінія» в розборі каже, коли лінія зазвичай важка чи зручна для вашого героя."
+      ],
       "0.65.0": [
         "Плани предметів для всіх 25 саппортів, як у корів: збірка в порядку, у якому її беруть сильні гравці, предмети проти складу ворога, прокачка й здібності для підсумку бійки. Картка «золото лежить» і екран смерті називають наступний предмет із плану й пояснюють чому (Glimmer Cape проти трьох магів, Spirit Vessel проти сильного лікування, Rod of Atos для Hoodwink проти втеч); підказка «немає рятівного предмета» називає рятівний предмет зі збірки героя або мовчить, якщо сильні гравці на ньому такого не беруть."
       ],
