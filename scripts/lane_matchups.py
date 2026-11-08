@@ -152,6 +152,7 @@ def build_file(
     from app.dota_constants import hero_name
     from app.lane_matchup import MIN_LANES, validate
 
+    hero = hero_name(hero_id) or hero  # item_stats files spell some names lowercase
     baseline, table = summarize(hero_rows, other_rows)
     opponents = [
         {

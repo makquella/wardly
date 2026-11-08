@@ -1,0 +1,143 @@
+{
+  "hero": "Sniper",
+  "hero_id": 35,
+  "position": "carry",
+  "lane_role": 1,
+  "window_days": 365,
+  "generated": "2026-11-08",
+  "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
+  "lanes": 323,
+  "baseline": {
+    "won": 64,
+    "even": 197,
+    "lost": 62
+  },
+  "opponents": [
+    {
+      "hero": "Rubick",
+      "hero_id": 86,
+      "lanes": 30,
+      "won": 5,
+      "even": 18,
+      "lost": 7,
+      "gold_diff": -90
+    },
+    {
+      "hero": "Skywrath Mage",
+      "hero_id": 101,
+      "lanes": 28,
+      "won": 5,
+      "even": 19,
+      "lost": 4,
+      "gold_diff": -90
+    },
+    {
+      "hero": "Pudge",
+      "hero_id": 14,
+      "lanes": 25,
+      "won": 3,
+      "even": 16,
+      "lost": 6,
+      "gold_diff": -268
+    },
+    {
+      "hero": "Tidehunter",
+      "hero_id": 29,
+      "lanes": 25,
+      "won": 7,
+      "even": 17,
+      "lost": 1,
+      "gold_diff": 393
+    },
+    {
+      "hero": "Axe",
+      "hero_id": 2,
+      "lanes": 22,
+      "won": 3,
+      "even": 13,
+      "lost": 6,
+      "gold_diff": -310
+    },
+    {
+      "hero": "Snapfire",
+      "hero_id": 128,
+      "lanes": 20,
+      "won": 1,
+      "even": 15,
+      "lost": 4,
+      "gold_diff": -127
+    },
+    {
+      "hero": "Lion",
+      "hero_id": 26,
+      "lanes": 19,
+      "won": 2,
+      "even": 11,
+      "lost": 6,
+      "gold_diff": -525
+    },
+    {
+      "hero": "Spirit Breaker",
+      "hero_id": 71,
+      "lanes": 18,
+      "won": 5,
+      "even": 10,
+      "lost": 3,
+      "gold_diff": -7
+    },
+    {
+      "hero": "Dawnbreaker",
+      "hero_id": 135,
+      "lanes": 17,
+      "won": 3,
+      "even": 7,
+      "lost": 7,
+      "gold_diff": -285
+    },
+    {
+      "hero": "Beastmaster",
+      "hero_id": 38,
+      "lanes": 16,
+      "won": 2,
+      "even": 11,
+      "lost": 3,
+      "gold_diff": -76
+    },
+    {
+      "hero": "Mars",
+      "hero_id": 129,
+      "lanes": 16,
+      "won": 6,
+      "even": 9,
+      "lost": 1,
+      "gold_diff": 182
+    },
+    {
+      "hero": "Bristleback",
+      "hero_id": 99,
+      "lanes": 15,
+      "won": 1,
+      "even": 9,
+      "lost": 5,
+      "gold_diff": -404
+    },
+    {
+      "hero": "Chaos Knight",
+      "hero_id": 81,
+      "lanes": 15,
+      "won": 2,
+      "even": 9,
+      "lost": 4,
+      "gold_diff": -108
+    },
+    {
+      "hero": "Shadow Shaman",
+      "hero_id": 27,
+      "lanes": 15,
+      "won": 1,
+      "even": 13,
+      "lost": 1,
+      "gold_diff": 39
+    }
+  ]
+}

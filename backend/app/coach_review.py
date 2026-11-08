@@ -264,7 +264,7 @@ def match_facts(detail: dict[str, Any]) -> dict[str, Any] | None:
         if isinstance(matchup, dict):
             # Public league games, not the player's own lanes.
             facts["lane"]["public_matchup"] = {
-                "source": "public league games of this hero in this role, not the player's own lanes",
+                "source": "high-rank league games of this hero in this role (OpenDota), not the player's own lanes",
                 "enemy": matchup.get("enemy"),
                 "lanes": matchup.get("lanes"),
                 "lost": matchup.get("lost"),

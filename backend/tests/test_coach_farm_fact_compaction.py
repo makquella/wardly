@@ -75,7 +75,7 @@ def test_zero_samples_keep_exact_source_subject_and_time_after_compaction(source
     )
 
 
-def test_the_public_lane_matchup_is_told_as_public_games() -> None:
+def test_the_public_lane_matchup_is_told_as_league_games() -> None:
     lane = {
         "hero": "Juggernaut",
         "enemy": "Axe",
@@ -85,7 +85,7 @@ def test_the_public_lane_matchup_is_told_as_public_games() -> None:
     facts = match_facts({"analysis": {"headline": {"hero": "Juggernaut"}, "lane": lane}})
     assert facts is not None
     public = facts["lane"]["public_matchup"]
-    assert "public" in public["source"] and "not the player's" in public["source"]
+    assert "league games" in public["source"] and "not the player's" in public["source"]
     assert (public["enemy"], public["lanes"], public["lost"], public["kind"]) == (
         "Axe",
         20,

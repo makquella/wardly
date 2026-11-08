@@ -392,23 +392,23 @@ TIPS = {
     "lane_public_hard": {
         "en": (
             "Hard lane: {hero}",
-            "In public games {my_hero} loses this lane to {hero} {lost} times of {games}: "
+            "In high-rank games {my_hero} loses this lane to {hero} {lost} times of {games}: "
             "play for experience, take only the safe last hits and keep regen.",
         ),
         "uk": (
             "Важка лінія: {hero}",
-            "У публічних матчах {my_hero} програє цю лінію проти {hero} {lost} з {games} разів: грайте від досвіду, добивайте лише безпечних кріпів і майте реген.",
+            "В іграх сильних гравців {my_hero} програє цю лінію проти {hero} {lost} з {games} разів: грайте від досвіду, добивайте лише безпечних кріпів і майте реген.",
         ),
     },
     "lane_public_easy": {
         "en": (
             "Your lane: {hero}",
-            "In public games {my_hero} wins this lane against {hero} {won} times of {games}: "
+            "In high-rank games {my_hero} wins this lane against {hero} {won} times of {games}: "
             "press from the first minutes and take their last hits away.",
         ),
         "uk": (
             "Зручна лінія: {hero}",
-            "У публічних матчах {my_hero} виграє цю лінію проти {hero} {won} з {games} разів: тисніть із перших хвилин і не давайте добивати.",
+            "В іграх сильних гравців {my_hero} виграє цю лінію проти {hero} {won} з {games} разів: тисніть із перших хвилин і не давайте добивати.",
         ),
     },
     # An enemy gone from the minimap in the laning stage (enemy_lanes.py).
