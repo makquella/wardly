@@ -60,12 +60,45 @@ def _in_lane(player: dict[str, Any], lane: int) -> bool:
     return player.get("lane") == lane and not player.get("is_roaming")
 
 
+def public_matchup(
+    block: dict[str, Any],
+    position: str | None,
+    files: dict[int, dict[str, Any]] | None = None,
+) -> dict[str, Any] | None:
+    """How this lane usually goes in public league games (lane_matchup.py): the
+    player's hero in `position` against the lane's enemy core. Context only: the
+    result and findings never read it. None for a support, an unknown hero or a
+    pair without a public row."""
+    from app.lane_matchup import MIN_LANES, matchup
+
+    if position not in CORE_POSITIONS:
+        return None
+    hero = block.get("hero_id") if block.get("hero_id") is not None else block.get("hero")
+    enemy = block.get("enemy_id") if block.get("enemy_id") is not None else block.get("enemy")
+    row = matchup(hero, position, enemy, files)
+    if row is None or row["lanes"] < MIN_LANES:
+        return None
+    return {
+        "enemy": row["hero"],
+        "lanes": row["lanes"],
+        "won": row["won"],
+        "even": row["even"],
+        "lost": row["lost"],
+        "kind": row["kind"],
+        "baseline_lost": row["baseline_lost"],
+        "baseline_won": row["baseline_won"],
+    }
+
+
 def analyze_lane(
-    opendota: dict[str, Any] | None, position: str | None
+    opendota: dict[str, Any] | None,
+    position: str | None,
+    files: dict[int, dict[str, Any]] | None = None,
 ) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
     """(block, findings): block = {lane, hero, enemy, points [{minute, lh, enemy_lh,
     dn, enemy_dn, gold_diff, xp_diff}], gold_diff, xp_diff, total_diff, result
-    (won/even/lost), turn (the minute the gold gap opened and stayed)};
+    (won/even/lost), turn (the minute the gold gap opened and stayed), judged,
+    matchup (only for a judged core lane with a public row: see public_matchup)};
     None without a parsed lane."""
     if not opendota or not opendota.get("parsed"):
         return None, []
@@ -136,6 +169,9 @@ def analyze_lane(
         "turn": _turn(mine["gold"], theirs["gold"], result),
         "judged": position in CORE_POSITIONS,
     }
+    matchup = public_matchup(block, position, files)
+    if matchup is not None:
+        block["matchup"] = matchup
     findings: list[dict[str, Any]] = []
     last = points[-1]
     if block["judged"] and result != "even" and last["lh"] is not None:

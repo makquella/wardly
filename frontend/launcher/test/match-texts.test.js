@@ -46,3 +46,17 @@ test("every live decision point has a UK and EN label for the advice marks card"
     }
   }
 });
+
+test("the public lane matchup line reads in both languages", () => {
+  const text = create({});
+  assert.equal(
+    text.uk.laneMatchupHard("Juggernaut", "Viper", 12, 20),
+    "Ця лінія зазвичай важка: у публічних іграх Juggernaut програє її проти Viper 12 з 20."
+  );
+  assert.equal(
+    text.en.laneMatchupHard("Juggernaut", "Viper", 12, 20),
+    "A hard lane in general: in public games Juggernaut loses it to Viper 12 of 20 times."
+  );
+  assert.ok(text.uk.laneMatchupEasy("Juggernaut", "Lion", 13, 20).includes("зазвичай зручна"));
+  assert.ok(text.en.laneMatchupEasy("Juggernaut", "Lion", 13, 20).includes("wins it against Lion 13 of 20"));
+});

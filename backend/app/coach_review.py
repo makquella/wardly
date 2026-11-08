@@ -260,6 +260,17 @@ def match_facts(detail: dict[str, Any]) -> dict[str, Any] | None:
             "xp_difference_at_10": lane.get("xp_diff"),
             "gap_opened_at_minute": lane.get("turn"),
         }
+        matchup = lane.get("matchup")
+        if isinstance(matchup, dict):
+            # Public league games, not the player's own lanes.
+            facts["lane"]["public_matchup"] = {
+                "source": "public league games of this hero in this role, not the player's own lanes",
+                "enemy": matchup.get("enemy"),
+                "lanes": matchup.get("lanes"),
+                "lost": matchup.get("lost"),
+                "won": matchup.get("won"),
+                "kind": matchup.get("kind"),
+            }
     draft = analysis.get("draft")
     if draft:
         facts["draft"] = {
