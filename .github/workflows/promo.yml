@@ -42,9 +42,9 @@ on:
         type: boolean
         default: true
       beta_campaign:
-        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs; hook-review: the hook-format test pair; sfx: ElevenLabs sound effects and a music bed for the cut; film: render films/wardly-next-step for review; film-shorts: send a reviewed film run with the Shorts button"
+        description: "Beta recruitment videos (review builds, private delivery, Shorts buttons); release: the 0.57 carry pair; carry-review / carry-moments: the scheduled carry-beta pairs; hook-review: the hook-format test pair; sfx: ElevenLabs sound effects and a music bed for the cut; film: render films/wardly-next-step for review; film-shorts: send a reviewed film run with the Shorts button; cuts: the Wardly Cuts motion videos, each with a TikTok and a YouTube ending (an artifact for review, nothing is sent)"
         type: choice
-        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review, sfx, film, film-shorts]
+        options: ["off", build, validate, deliver, shorts, audit, outreach, series, release, carry-review, carry-moments, hook-review, sfx, film, film-shorts, cuts]
         default: "off"
       beta_run_id:
         description: "Reviewed artifact run ID (required for deliver/shorts/series/film-shorts; hook-review: the build whose narration to reuse)"
@@ -69,7 +69,7 @@ jobs:
   video:
     runs-on: ubuntu-latest
     # the film's motion-blurred render takes about 20 minutes on its own
-    timeout-minutes: ${{ inputs.beta_campaign == 'film' && 120 || 30 }}
+    timeout-minutes: ${{ (inputs.beta_campaign == 'film' || inputs.beta_campaign == 'cuts') && 120 || 30 }}
     permissions:
       contents: write
       actions: read
@@ -290,6 +290,14 @@ jobs:
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: python -m scripts.promo.sound_effects --out promo-out/sfx
+      - name: Build the Wardly Cuts
+        # scripts/promo/cuts.py: eight motion videos (four ideas, Ukrainian and
+        # English, one voice each) with a TikTok and a YouTube ending. Only an
+        # artifact: the files are posted by hand or through a later delivery.
+        if: inputs.beta_campaign == 'cuts'
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python -m scripts.promo.cuts --out promo-out/cuts --tidy
       - name: Check beta narration independently
         if: inputs.beta_campaign == 'build' || inputs.beta_campaign == 'validate' || inputs.beta_campaign == 'release' || inputs.beta_campaign == 'carry-review' || inputs.beta_campaign == 'carry-moments' || inputs.beta_campaign == 'hook-review'
         run: |

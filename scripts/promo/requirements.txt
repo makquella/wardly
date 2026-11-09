@@ -4,3 +4,5 @@
 # none; a system ffmpeg on PATH wins). The voice is ElevenLabs' API.
 playwright==1.56.0
 imageio-ffmpeg==0.5.1
+# cuts_sound.py synthesises the Cuts' effects and pulse.
+numpy==2.4.6

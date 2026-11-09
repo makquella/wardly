@@ -253,6 +253,53 @@ CHROME=/usr/bin/chromium python -m scripts.promo.beta --out promo-out/beta-draft
 These draft frames have estimated timings; they are not finished voiced videos.
 An application release/version bump is unnecessary for this campaign.
 
+## Wardly Cuts
+
+`scripts/promo/cuts.py` makes eight short videos (15–25 s, 1080×1920, 60 fps): four
+ideas, each in Ukrainian and English. Nothing in them is generated or recorded: the
+picture is one page drawn frame by frame (`cuts.js`, `cuts.css`: lines that land word
+by word with the voice, Valve's hero renders and idle loops, a darkened still of the
+game, counters, the app's own overlay card), and the sound under the voice is
+synthesised from sines and noise (`cuts_sound.py`: a pulse, a hit for every move on
+screen). The scheduled formats above are not changed.
+
+| Video | What it shows | Where the facts come from |
+|---|---|---|
+| `lanes-top5` | The five most one-sided lanes of league games, counted down | `data/heroes/lane_matchups`, the app's `lane_matchup.classify` |
+| `lane-bully` | The hero who makes the lane hard for the most cores, after two wrong guesses | the same |
+| `hero-lanes` | Phantom Assassin: two hard lanes, the easy one, the live «Hard lane» card | the same; the card is `map_hints.TIPS["lane_public_hard"]` |
+| `stun-bkb` | Stunned with Black King Bar ready, rewound, and the card the app shows | the real pipeline (`coach_demo.cards`): the `DISABLED_STATUS` card |
+
+`lane_facts()`, `lane_card()` and `stun_card()` stop the build when a claim is no
+longer true (the data is refreshed weekly). Every lane video shows its sample on
+screen (`13 of 15 league lanes`, the hero's usual share) and names the source on the
+end card.
+
+**Voices.** One ElevenLabs voice per video (`cuts.CAST`: Ihor Sydoreko, Taras Vovk,
+Illia and Alex Nekrasov in Ukrainian; Liam, Callum, Charlie and Adam in English;
+`eleven_v4`, speed 1.15), so the eight videos also compare eight voices. The take is
+one request; it is cut only in silence, where long pauses are shortened.
+`--voice <name>` gives every video the same voice.
+
+**Endings.** Links in the description of a Short, a TikTok or a Reel cannot be clicked,
+so the end card shows an address to type: `luhovyimvp.dev/tt`, `/yt` or `/ig`. The
+body is rendered once and each network gets its own ending
+(`<video>-<lang>-tiktok.mp4`, `-youtube.mp4`); the site counts them as `video-tt`,
+`video-yt`, `video-ig` («Звідки приходять» on the admin page). `<video>-<lang>.json`
+holds the title, description and tags.
+
+```bash
+python -m scripts.promo.cuts --out promo-out/cuts                          # all eight, both endings
+python -m scripts.promo.cuts --out promo-out/cuts --only stun-bkb --lang uk
+python -m scripts.promo.cuts --out promo-out/cuts --draft --stills         # no voice, no key: frames of every scene
+```
+
+In the workflow: `beta_campaign=cuts` builds the same and keeps it as the run's
+artifact; it sends and publishes nothing. A new idea is a function returning `Beat`s
+(what is said, the scene, its data) and a line in `CAST`; a new kind of picture is a
+function in `cuts.js` `SCENES` and its moments in `cuts_sound.events`. Tests:
+`backend/tests/test_promo_cuts.py`.
+
 ## Community lane post
 
 `scripts/promo/lane_post.py` writes a value-first text post (no video, no link)
