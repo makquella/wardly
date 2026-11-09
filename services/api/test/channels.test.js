@@ -7,7 +7,9 @@ import {
   CHANNEL_RATE_PER_HOUR,
   RELEASES_PAGE,
   aggregateChannels,
+  automated,
   channelSource,
+  clickedDownload,
   installerUrl,
   downloadKind,
   latestInstaller,
@@ -47,7 +49,7 @@ function fakeEnv(vars = {}) {
           if (sql.startsWith("SELECT day, src, visits, downloads FROM channel_counts WHERE day >= ?1 AND day < ?2")) {
             return { results: [...counts.values()].filter((r) => r.day >= args[0] && r.day < args[1]) };
           }
-          if (sql.startsWith("SELECT install_hash, day, version, body FROM daily_stats")) {
+          if (sql.startsWith("SELECT install_hash, day")) {
             return { results: [] };
           }
           if (sql.startsWith("SELECT id, r2_key FROM reports") || sql.startsWith("SELECT id, r2_key FROM sessions")) {
@@ -76,12 +78,22 @@ function fakeEnv(vars = {}) {
   return { DB, ADMIN_TOKEN: "secret", ...vars };
 }
 
-function hit(src, ip = "203.0.113.5") {
+const CHROME = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
+const SAFARI = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
+// What Chrome sends for a clicked link.
+const CLICK = { "user-agent": CHROME, "sec-fetch-mode": "navigate", "sec-fetch-dest": "document", "sec-fetch-user": "?1" };
+
+function hit(src, ip = "203.0.113.5", agent = CHROME) {
   return new Request("https://api.luhovyimvp.dev/v1/hit", {
     method: "POST",
-    headers: { "content-type": "text/plain", "cf-connecting-ip": ip },
+    headers: { "content-type": "text/plain", "cf-connecting-ip": ip, ...(agent ? { "user-agent": agent } : {}) },
     body: JSON.stringify({ src })
   });
+}
+
+/** A person's click on a download link (or what `headers` says instead). */
+function click(url, headers = {}, init = {}) {
+  return new Request(url, { ...init, headers: { ...CLICK, ...headers } });
 }
 
 function githubRedirect(tag) {
@@ -168,7 +180,7 @@ test("/d/<source>?os=linux redirects to the AppImage and still counts the downlo
   const env = fakeEnv();
   const fetchImpl = githubWithAssets("v0.70.0", ["Wardly-0.70.0-x86_64.AppImage"]);
   const response = await handleDownload(
-    new Request("https://api.luhovyimvp.dev/d/reddit?os=linux", { headers: { "cf-connecting-ip": "203.0.113.9" } }),
+    click("https://api.luhovyimvp.dev/d/reddit?os=linux", { "cf-connecting-ip": "203.0.113.9" }),
     "reddit",
     env,
     NOW,
@@ -176,7 +188,7 @@ test("/d/<source>?os=linux redirects to the AppImage and still counts the downlo
   );
   assert.equal(response.status, 302);
   assert.match(response.headers.get("location"), /Wardly-0\.70\.0-x86_64\.AppImage$/);
-  const plain = await handleDownload(new Request("https://api.luhovyimvp.dev/d/reddit"), "reddit", env, NOW, githubRedirect("v0.70.0"));
+  const plain = await handleDownload(click("https://api.luhovyimvp.dev/d/reddit"), "reddit", env, NOW, githubRedirect("v0.70.0"));
   assert.match(plain.headers.get("location"), /Wardly-Setup-0\.70\.0\.exe$/);
 });
 
@@ -186,7 +198,7 @@ test("a visit and a download are counted per source and day", async () => {
   await handleHit(hit("pikabu", "198.51.100.7"), env, NOW);
   resetInstallerCache();
   const response = await handleDownload(
-    new Request("https://api.luhovyimvp.dev/d/pikabu", { headers: { "cf-connecting-ip": "203.0.113.5" } }),
+    click("https://api.luhovyimvp.dev/d/pikabu", { "cf-connecting-ip": "203.0.113.5" }),
     "pikabu",
     env,
     NOW,
@@ -205,10 +217,65 @@ test("a bad source is refused for a visit and counted as the site for a download
   const bad = new Request("https://api.luhovyimvp.dev/v1/hit", { method: "POST", body: "{" });
   assert.equal((await handleHit(bad, env, NOW)).status, 400);
   resetInstallerCache();
-  await handleDownload(new Request("https://api.luhovyimvp.dev/d"), undefined, env, NOW, githubRedirect("v0.18.0"));
-  await handleDownload(new Request("https://api.luhovyimvp.dev/d/%20"), "%20", env, NOW, githubRedirect("v0.18.0"));
+  await handleDownload(click("https://api.luhovyimvp.dev/d"), undefined, env, NOW, githubRedirect("v0.18.0"));
+  await handleDownload(click("https://api.luhovyimvp.dev/d/%20"), "%20", env, NOW, githubRedirect("v0.18.0"));
   assert.equal(env.DB.counts.get(`${isoDay(NOW)}|site`).downloads, 2);
   assert.equal(env.DB.counts.size, 1);
+});
+
+test("crawlers, previews and HTTP libraries are answered and not counted", async () => {
+  const env = fakeEnv();
+  const agents = [
+    "",
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1) Chrome/141.0.0.0 Safari/537.36",
+    "TelegramBot (like TwitterBot)",
+    "facebookexternalhit/1.1",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36",
+    "curl/8.5.0",
+    "python-requests/2.32",
+    "Wardly research (read-only)"
+  ];
+  resetInstallerCache();
+  for (const agent of agents) {
+    assert.equal(automated(new Request("https://api.luhovyimvp.dev/d/yt", { headers: { "user-agent": agent } })), true, agent);
+    assert.equal((await handleHit(hit("yt", "203.0.113.5", agent), env, NOW)).status, 204);
+    const response = await handleDownload(click("https://api.luhovyimvp.dev/d/yt", { "user-agent": agent }), "yt", env, NOW, githubRedirect("v0.18.0"));
+    assert.equal(response.status, 302, "the download itself always works");
+  }
+  assert.equal(env.DB.counts.size, 0);
+  // A bot Cloudflare verified, whatever it calls itself, and a page fetched ahead of time.
+  const verified = click("https://api.luhovyimvp.dev/d/yt");
+  Object.defineProperty(verified, "cf", { value: { verifiedBotCategory: "Search Engine Crawler" } });
+  assert.equal(automated(verified), true);
+  assert.equal(automated(click("https://api.luhovyimvp.dev/d/yt", { "sec-purpose": "prefetch;prerender" })), true);
+  for (const agent of [CHROME, SAFARI, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0"]) {
+    assert.equal(automated(new Request("https://api.luhovyimvp.dev/d/yt", { headers: { "user-agent": agent } })), false, agent);
+  }
+});
+
+test("a download counts only when a person opened the link", async () => {
+  const url = "https://api.luhovyimvp.dev/d/yt";
+  assert.equal(clickedDownload(click(url)), true, "Chrome: a click");
+  // A browser that says nothing about the request (old ones, download managers).
+  assert.equal(clickedDownload(new Request(url, { headers: { "user-agent": CHROME } })), true);
+  // Safari describes the request and has no Sec-Fetch-User.
+  assert.equal(clickedDownload(new Request(url, { headers: { "user-agent": SAFARI, "sec-fetch-mode": "navigate" } })), true);
+  // A rendering crawler with a browser's name follows the link without a click.
+  assert.equal(clickedDownload(new Request(url, { headers: { "user-agent": CHROME, "sec-fetch-mode": "navigate" } })), false);
+  // A script on some page fetching the link.
+  assert.equal(clickedDownload(click(url, { "sec-fetch-mode": "no-cors" })), false);
+  // The developer's own browser (the site adds ?count=off after luhovyimvp.dev/?count=off).
+  assert.equal(clickedDownload(click(`${url}?count=off`)), false);
+  assert.equal(clickedDownload(click(`${url}?os=linux`)), true);
+
+  const env = fakeEnv();
+  resetInstallerCache();
+  const quiet = await handleDownload(click(`${url}?count=off&os=linux`), "yt", env, NOW, githubWithAssets("v0.70.0", ["Wardly-0.70.0-x86_64.AppImage"]));
+  assert.match(quiet.headers.get("location"), /AppImage$/, "not counted, still the right file");
+  assert.equal(env.DB.counts.size, 0);
+  await handleDownload(click(url), "yt", env, NOW, githubRedirect("v0.70.0"));
+  assert.equal(env.DB.counts.get(`${isoDay(NOW)}|yt`).downloads, 1);
 });
 
 test("one address counts only so often, but the download still works", async () => {
@@ -220,7 +287,7 @@ test("one address counts only so often, but the download still works", async () 
   resetInstallerCache();
   let last;
   for (let i = 0; i < CHANNEL_RATE_PER_HOUR.download + 3; i += 1) {
-    last = await handleDownload(new Request("https://api.luhovyimvp.dev/d/reddit"), "reddit", env, NOW, githubRedirect("v0.18.0"));
+    last = await handleDownload(click("https://api.luhovyimvp.dev/d/reddit"), "reddit", env, NOW, githubRedirect("v0.18.0"));
   }
   assert.equal(last.status, 302);
   assert.equal(env.DB.counts.get(`${isoDay(NOW)}|reddit`).downloads, CHANNEL_RATE_PER_HOUR.download);
@@ -242,7 +309,7 @@ test("the kill switch stops counting, never the download", async () => {
   const env = fakeEnv({ CHANNELS_ENABLED: "false" });
   assert.equal((await handleHit(hit("pikabu"), env, NOW)).status, 204);
   resetInstallerCache();
-  const response = await handleDownload(new Request("https://api.luhovyimvp.dev/d/pikabu"), "pikabu", env, NOW, githubRedirect("v0.18.0"));
+  const response = await handleDownload(click("https://api.luhovyimvp.dev/d/pikabu"), "pikabu", env, NOW, githubRedirect("v0.18.0"));
   assert.equal(response.status, 302);
   assert.equal(env.DB.counts.size, 0);
 });
@@ -254,9 +321,9 @@ test("routes: /v1/hit, /d and /d/<source>, and the admin summary lists the sourc
   globalThis.fetch = githubRedirect("v0.18.0");
   try {
     assert.equal((await worker.fetch(hit("dtf"), env)).status, 204);
-    const direct = await worker.fetch(new Request("https://api.luhovyimvp.dev/d/dtf"), env);
+    const direct = await worker.fetch(click("https://api.luhovyimvp.dev/d/dtf"), env);
     assert.equal(direct.status, 302);
-    assert.equal((await worker.fetch(new Request("https://api.luhovyimvp.dev/d"), env)).status, 302);
+    assert.equal((await worker.fetch(click("https://api.luhovyimvp.dev/d"), env)).status, 302);
   } finally {
     globalThis.fetch = realFetch;
   }
@@ -301,10 +368,10 @@ test("a HEAD probe gets the redirect but is not counted as a download", async ()
   const realFetch = globalThis.fetch;
   globalThis.fetch = githubRedirect("v0.18.0");
   try {
-    const probe = await worker.fetch(new Request("https://api.luhovyimvp.dev/d/pikabu", { method: "HEAD" }), env);
+    const probe = await worker.fetch(click("https://api.luhovyimvp.dev/d/pikabu", {}, { method: "HEAD" }), env);
     assert.equal(probe.status, 302);
     assert.equal(env.DB.counts.size, 0);
-    await worker.fetch(new Request("https://api.luhovyimvp.dev/d/pikabu"), env);
+    await worker.fetch(click("https://api.luhovyimvp.dev/d/pikabu"), env);
     assert.equal(env.DB.counts.get(`${isoDay(Date.now())}|pikabu`).downloads, 1);
   } finally {
     globalThis.fetch = realFetch;

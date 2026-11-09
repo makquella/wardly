@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import worker, { cleanup, config, sendWeeklyStats } from "../src/index.js";
-import { aggregateStats, isoDay, validateStats, weeklyStatsText } from "../src/stats.js";
+import { aggregateStats, deviceRetention, isoDay, validateStats, weeklyStatsText } from "../src/stats.js";
 
 const DAY = 24 * 3_600_000;
 // The Worker checks the day against the real clock, so the tests run on it too.
@@ -56,7 +56,7 @@ function fakeEnv(vars = {}) {
           throw new Error(`unexpected first(): ${sql}`);
         },
         async all() {
-          if (sql.startsWith("SELECT install_hash, day, version, body FROM daily_stats WHERE day >=")) {
+          if (sql.startsWith("SELECT install_hash, day")) {
             return { results: [...daily.values()].filter((r) => r.day >= args[0]) };
           }
           if (sql.startsWith("SELECT day, src, visits, downloads FROM channel_counts")) {
@@ -177,6 +177,8 @@ test("the admin summary and the weekly note", async () => {
   assert.deepEqual(answer.stats.advice, { LOW_HP_WARNING: 6, LANING_FARM_CHECK: 2 });
   assert.deepEqual(answer.stats.ignored_share, { LOW_HP_WARNING: 33 });
   assert.deepEqual(answer.stats.langs, { uk: 1, en: 1 });
+  assert.equal(answer.stats.retention.devices, 2);
+  assert.equal(answer.stats.retention.returned, 0);
 
   const sent = [];
   const realFetch = globalThis.fetch;
@@ -195,6 +197,52 @@ test("the admin summary and the weekly note", async () => {
   assert.equal(sent.length, 1);
   assert.ok(sent[0].body.text.includes("Devices: 2"));
   assert.ok(sent[0].body.text.includes("LOW_HP_WARNING 6"));
+});
+
+test("who comes back: active this week, on two or more days, after 7 and 30 days", () => {
+  const rows = [
+    // Installed long ago, still here.
+    { install_hash: "old", day: "2026-09-01" },
+    { install_hash: "old", day: "2026-09-09" },
+    { install_hash: "old", day: "2026-10-30" },
+    // Came back within the first week only.
+    { install_hash: "week", day: "2026-10-01" },
+    { install_hash: "week", day: "2026-10-04" },
+    // One day and gone.
+    { install_hash: "once", day: "2026-10-20" },
+    // Too new to say anything about 7 days.
+    { install_hash: "new", day: "2026-10-29" },
+    { install_hash: "new", day: "2026-10-30" },
+    { install_hash: "new", day: "2026-10-30" },
+    { install_hash: "bad", day: "yesterday" }
+  ];
+  assert.deepEqual(deviceRetention(rows, "2026-10-31"), {
+    devices: 4,
+    active7: 2,
+    returned: 3,
+    d7: { known: 3, kept: 1 },
+    d30: { known: 2, kept: 1 }
+  });
+  assert.deepEqual(deviceRetention([], "2026-10-31"), { devices: 0, active7: 0, returned: 0, d7: { known: 0, kept: 0 }, d30: { known: 0, kept: 0 } });
+  const note = weeklyStatsText({ ...aggregateStats([]), retention: deviceRetention(rows, "2026-10-31") });
+  assert.ok(note.includes("active in the last 7 days 2, on 2+ days 3, after 7 days 1/3, after 30 days 1/2"), note);
+  assert.ok(weeklyStatsText(aggregateStats([])).includes("Coming back: —"));
+});
+
+test("a day's devices are split into first-time and returning ones", () => {
+  const row = JSON.stringify({ matches: 0, advice: {}, ignored: {} });
+  const summary = aggregateStats([
+    { install_hash: "a", day: "2026-10-11", version: "0.56.0", body: row },
+    { install_hash: "a", day: "2026-10-10", version: "0.56.0", body: row },
+    { install_hash: "b", day: "2026-10-11", version: "0.56.0", body: row }
+  ]);
+  assert.deepEqual(
+    summary.by_day.map((d) => [d.day, d.devices, d.fresh]),
+    [
+      ["2026-10-10", 1, 1],
+      ["2026-10-11", 2, 1]
+    ]
+  );
 });
 
 test("aggregate skips broken rows", () => {
@@ -229,8 +277,8 @@ test("the summary has a row per day", () => {
     { install_hash: "b", day: "2026-09-27", version: "0.17.0", body: body(4, { C_D: 2 }, {}) }
   ]);
   assert.deepEqual(summary.by_day, [
-    { day: "2026-09-26", devices: 1, matches: 1, advice: 1, ignored: 0 },
-    { day: "2026-09-27", devices: 2, matches: 6, advice: 5, ignored: 1 }
+    { day: "2026-09-26", devices: 1, fresh: 1, matches: 1, advice: 1, ignored: 0 },
+    { day: "2026-09-27", devices: 2, fresh: 1, matches: 6, advice: 5, ignored: 1 }
   ]);
 });
 

@@ -13,6 +13,50 @@ const REPO = "makquella/wardly";
 export const RELEASES_PAGE = `https://github.com/${REPO}/releases/latest`;
 const SOURCE = /^[a-z0-9][a-z0-9_-]{0,23}$/;
 
+// Crawlers, link previews, monitors and HTTP libraries by what they call
+// themselves. A program that hides behind a browser's name passes this one and
+// is caught by the navigation headers below (downloads) or not at all (visits).
+const AUTOMATED_AGENT =
+  /bot\b|crawl|spider|slurp|preview|scan|monitor|uptime|pingdom|headless|lighthouse|pagespeed|phantomjs|puppeteer|playwright|selenium|facebookexternalhit|whatsapp|embedly|vkshare|skypeuri|feedfetcher|mediapartners|google-|googleother|apis-google|ahrefs|semrush|dataforseo|curl|wget|python|httpx|aiohttp|urllib|go-http|okhttp|java\/|libwww|node|undici|axios|postman|insomnia|httpie|ruby|perl|php|scrapy|wardly/i;
+
+/**
+ * True for a request no person made: an empty or self-declared automated user
+ * agent, a bot Cloudflare verified, or a browser fetching a page ahead of time.
+ * Such requests get their answer and are not counted.
+ */
+export function automated(request) {
+  const agent = String(request.headers.get("user-agent") || "").trim();
+  if (!agent || AUTOMATED_AGENT.test(agent)) {
+    return true;
+  }
+  if (request.cf?.verifiedBotCategory || request.cf?.botManagement?.verifiedBot) {
+    return true;
+  }
+  const purpose = `${request.headers.get("sec-purpose") || ""} ${request.headers.get("purpose") || ""} ${request.headers.get("x-moz") || ""}`;
+  return /prefetch|prerender|preview/i.test(purpose);
+}
+
+/**
+ * A download a person asked for. Browsers that describe the request
+ * (Sec-Fetch-*) must be opening a page, and Chrome, Edge and Firefox mark a
+ * click or a typed address with Sec-Fetch-User: a rendering crawler that
+ * follows every link has none. Safari and old browsers send less and pass.
+ */
+export function clickedDownload(request) {
+  if (automated(request) || new URL(request.url).searchParams.get("count") === "off") {
+    return false;
+  }
+  const mode = request.headers.get("sec-fetch-mode");
+  if (!mode) {
+    return true;
+  }
+  if (mode !== "navigate") {
+    return false;
+  }
+  const agent = request.headers.get("user-agent") || "";
+  return !/Chrome\/|Chromium\/|Firefox\//.test(agent) || request.headers.get("sec-fetch-user") === "?1";
+}
+
 /** The source name as stored, or null (the caller then counts nothing). */
 export function channelSource(value) {
   const src = String(value || "").trim().toLowerCase();

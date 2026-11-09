@@ -55,7 +55,14 @@ export const ADMIN_HTML = `<!doctype html>
   .bars div { display: grid; grid-template-columns: 110px 1fr 44px; gap: 8px; align-items: center; }
   .bars i { display: block; height: 8px; border-radius: 4px; background: var(--accent); min-width: 2px; }
   .days { display: flex; align-items: flex-end; gap: 3px; height: 120px; }
-  .days span { flex: 1; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; }
+  .days span { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-width: 2px; }
+  .days i { display: block; background: var(--accent); }
+  .days i.fresh { background: var(--ok); }
+  .days i:first-child { border-radius: 3px 3px 0 0; }
+  .days span.empty { border-bottom: 2px solid var(--line); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 0; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; background: var(--accent); }
+  .legend span.fresh::before { background: var(--ok); }
   .hidden { display: none; }
   .error { color: var(--accent); }
   code { font-size: 12px; color: var(--text); }
@@ -76,8 +83,8 @@ export const ADMIN_HTML = `<!doctype html>
   </form>
   <section id="view" class="hidden">
     <div class="tiles" id="tiles"></div>
-    <div class="card"><h2>Звідки приходять</h2><table id="channels"></table><p class="muted">Джерело — <code>?ref=</code> у посиланні на сайт (luhovyimvp.dev/?ref=tg). Без нього: search — пошуковики, direct — без переходу, other — інші сайти; site — завантаження кнопкою на сайті, коли джерело невідоме.</p></div>
-    <div class="card"><h2>За днями</h2><div class="days" id="days-chart" role="img" aria-label="Пристрої за днями"></div><p class="muted" id="days-note"></p></div>
+    <div class="card"><h2>Звідки приходять</h2><table id="channels"></table><p class="muted">Джерело — <code>?ref=</code> у посиланні на сайт (luhovyimvp.dev/?ref=tg). Без нього: search — пошуковики, direct — без переходу, other — інші сайти; site — завантаження кнопкою на сайті, коли джерело невідоме; video-yt, video-tt, video-ig — адреси luhovyimvp.dev/yt, /tt, /ig, набрані з фінального кадру відео. Боти, прев'ю посилань і браузери після luhovyimvp.dev/?count=off не рахуються.</p></div>
+    <div class="card"><h2>За днями</h2><div class="days" id="days-chart" role="img" aria-label="Пристрої за днями"></div><p class="muted legend"><span class="fresh">уперше за період</span><span>поверталися</span></p><p class="muted" id="days-note"></p></div>
     <div class="card"><h2>Підказки: показано й смерть протягом 30 с після термінової</h2><table id="advice"></table></div>
     <div class="grid" id="dists"></div>
   </section>
@@ -160,8 +167,15 @@ function adminApp() {
   }
 
   function render(stats, days) {
+    // Who comes back is counted over the last 90 days, whatever period is shown.
+    const back = stats.retention || { devices: 0 };
+    const kept = (r) => (r && r.known ? `${r.kept} з ${r.known}` : "—");
     $("tiles").replaceChildren(
       tile("Пристроїв", stats.devices),
+      tile("Активних за 7 днів", back.devices ? back.active7 : "—"),
+      tile("Поверталися (2+ дні)", back.devices ? `${back.returned} з ${back.devices}` : "—"),
+      tile("Лишилися через 7 днів", kept(back.d7)),
+      tile("Лишилися через 30 днів", kept(back.d30)),
       tile("Надсилань (днів)", stats.rows),
       tile("Розібрано матчів", stats.matches),
       tile("З підказками в грі", stats.with_advice),
@@ -174,12 +188,36 @@ function adminApp() {
         return total ? `${Math.round((100 * (m.useful || 0)) / total)}% з ${total}` : "—";
       })())
     );
-    const perDay = stats.by_day || [];
+    // Every date from the first to the last one with data: a day nobody sent is a gap, not a missing bar.
+    const sent = stats.by_day || [];
+    const perDay = [];
+    if (sent.length) {
+      const byDate = new Map(sent.map((d) => [d.day, d]));
+      const end = Date.parse(sent[sent.length - 1].day + "T00:00:00Z");
+      for (let at = Date.parse(sent[0].day + "T00:00:00Z"); at <= end; at += 86400000) {
+        const date = new Date(at).toISOString().slice(0, 10);
+        perDay.push(byDate.get(date) || { day: date, devices: 0, fresh: 0, matches: 0, advice: 0 });
+      }
+    }
     const maxDay = Math.max(1, ...perDay.map((d) => d.devices));
+    const part = (n, cls) => el("i", { class: cls, style: `height:${Math.round((100 * n) / maxDay)}%` });
     $("days-chart").replaceChildren(
-      ...perDay.map((d) => el("span", { title: `${d.day}: ${d.devices} пристр., ${d.matches} матчів, ${d.advice} підказок`, style: `height:${Math.round((100 * d.devices) / maxDay)}%` }))
+      ...perDay.map((d) => {
+        const fresh = Math.min(d.fresh || 0, d.devices);
+        const bar = el("span", {
+          class: d.devices ? "" : "empty",
+          title: `${d.day}: ${d.devices} пристр. (уперше ${fresh}, поверталися ${d.devices - fresh}), ${d.matches} матчів, ${d.advice} підказок`,
+          style: "height:100%"
+        });
+        if (fresh) bar.append(part(fresh, "fresh"));
+        if (d.devices - fresh) bar.append(part(d.devices - fresh, ""));
+        return bar;
+      })
     );
-    $("days-note").textContent = perDay.length ? `${perDay[0].day} — ${perDay[perDay.length - 1].day}, за ${days} дн.` : "Поки немає даних";
+    const silent = perDay.filter((d) => !d.devices).length;
+    $("days-note").textContent = perDay.length
+      ? `${perDay[0].day} — ${perDay[perDay.length - 1].day}, за ${days} дн.; найбільше за день — ${maxDay}; днів без жодного пристрою — ${silent}`
+      : "Поки немає даних";
 
     const channels = stats.channels || [];
     $("channels").replaceChildren(

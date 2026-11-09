@@ -94,7 +94,7 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
             const limit = Number(sql.match(/LIMIT (\d+)/)[1]);
             return { results: reports.filter((r) => r.created_at < args[0]).slice(0, limit) };
           }
-          if (sql.startsWith("SELECT install_hash, day, version, body FROM daily_stats WHERE day >=")) {
+          if (sql.startsWith("SELECT install_hash, day")) {
             return { results: [...daily.values()].filter((r) => r.day >= args[0]) };
           }
           if (sql.startsWith("SELECT id, created_at")) {

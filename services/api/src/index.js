@@ -100,7 +100,9 @@ import {
   STATS_MAX_BYTES,
   STATS_RATE_PER_HOUR,
   STATS_RETENTION_DAYS,
+  STATS_RETURN_WINDOW_DAYS,
   aggregateStats,
+  deviceRetention,
   isoDay,
   validateStats,
   weeklyStatsText
@@ -110,7 +112,9 @@ import {
   CHANNEL_RATE_PER_HOUR,
   CHANNEL_RETENTION_DAYS,
   aggregateChannels,
+  automated,
   channelSource,
+  clickedDownload,
   latestInstaller
 } from "./channels.js";
 import { refreshOpenDotaCache, serveOpenDota } from "./opendota-cache.js";
@@ -794,17 +798,18 @@ export async function handleHit(request, env, now = Date.now()) {
   if (!src) {
     return json({ ok: false, code: "bad_source" }, 400);
   }
-  if (await underChannelLimit(request, env, "visit", now)) {
+  if (!automated(request) && (await underChannelLimit(request, env, "visit", now))) {
     await countChannel(env, src, "visit", now);
   }
   return new Response(null, { status: 204 });
 }
 
 // Always redirects: counting is best effort and never blocks the download.
-// Only a GET counts: a HEAD (link checkers, previews) gets the redirect alone.
+// Only a person's GET counts (channels.js clickedDownload): a HEAD, a crawler, a
+// link preview or the developer's own browser (?count=off) gets the redirect alone.
 export async function handleDownload(request, src, env, now = Date.now(), fetchImpl = fetch) {
   const name = channelSource(src) || "site";
-  if (config(env).channels && request.method === "GET") {
+  if (config(env).channels && request.method === "GET" && clickedDownload(request)) {
     try {
       if (await underChannelLimit(request, env, "download", now)) {
         await countChannel(env, name, "download", now);
@@ -829,6 +834,11 @@ async function statsSummary(env, days, now, { finished = false } = {}) {
     .bind(isoDay(now - days * DAY))
     .all();
   const summary = aggregateStats(results || []);
+  // Who comes back needs more days than a weekly note covers: its own window, two columns.
+  const seen = await env.DB.prepare("SELECT install_hash, day FROM daily_stats WHERE day >= ?1")
+    .bind(isoDay(now - STATS_RETURN_WINDOW_DAYS * DAY))
+    .all();
+  summary.retention = deviceRetention(seen.results || [], isoDay(now - DAY));
   const from = isoDay(now - (finished ? days : days - 1) * DAY);
   const until = isoDay(now + (finished ? 0 : DAY));
   const channels = await env.DB.prepare(
