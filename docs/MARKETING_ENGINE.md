@@ -253,6 +253,20 @@ CHROME=/usr/bin/chromium python -m scripts.promo.beta --out promo-out/beta-draft
 These draft frames have estimated timings; they are not finished voiced videos.
 An application release/version bump is unnecessary for this campaign.
 
+## Community lane post
+
+`scripts/promo/lane_post.py` writes a value-first text post (no video, no link)
+from `data/heroes/lane_matchups/`: the method, the lane bullies, the most
+one-sided lanes and a table of every core's hard and easy lanes, called by the
+app's own `lane_matchup.classify`. English for Reddit, Ukrainian for Telegram;
+Wardly is named once, as the author's disclosure. It sends nothing. When and
+where to post it: [marketing/growth-plan.md](marketing/growth-plan.md).
+
+```bash
+python -m scripts.promo.lane_post --out lane-post-en.md
+python -m scripts.promo.lane_post --lang uk --out lane-post-uk.md
+```
+
 ## Safety
 
 - **Approval is the only way out.** A package is `pending` until a callback whose sender *and* chat are `TELEGRAM_CHAT_ID`. One conditional `UPDATE … WHERE status = 'pending'` moves it, so a double press or a Telegram redelivery publishes once (tested on real D1).
