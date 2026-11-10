@@ -65,6 +65,11 @@ LEAD = 0.1
 # and a pause inside a beat to that.
 MAX_GAP = 0.16
 MAX_INNER = 0.18
+# The take: silences longer than this are cut to it (cuts.tighten), measured this
+# far below the take's loudest moment; then the take is played this much faster.
+SILENCE_KEEP = 0.11
+SILENCE_DB = -34
+TEMPO = 1.08
 # The end card stays this long after the last word, for the address to be read.
 TAIL = 1.5
 CDN = "https://cdn.cloudflare.steamstatic.com/apps/dota2"
@@ -488,7 +493,7 @@ def lanes_top5(facts: dict[str, Any], language: str) -> list[Beat]:
                     else -1,
                 },
                 pause=0.25 if final else 0.0,
-                hold=0.6 if final else 0.35,
+                hold=0.6 if final else 0.3,
             )
         )
     count = thousands_words(facts["lanes"], language)
@@ -895,25 +900,103 @@ def synthesize(text: str, voice_key: str, language: str, out: Path) -> list[dict
     return tts.words_from_alignment(answer.get("alignment") or {})
 
 
+def tighten(take: Path, timed: list[dict[str, Any]], out: Path) -> list[dict[str, Any]]:
+    """The take without its long silences, a little faster, at `out`; the word times follow.
+
+    The voice breathes between sentences for a third of a second and more, and
+    the alignment hides it inside the word before. Every stretch quieter than
+    SILENCE_DB below the take's peak and longer than SILENCE_KEEP is cut to
+    SILENCE_KEEP (half of it kept on either side, so no word is clipped); then
+    the whole take is played TEMPO times faster without changing its pitch."""
+    import wave
+
+    import numpy as np
+
+    with wave.open(str(take), "rb") as source:
+        rate = source.getframerate()
+        audio = np.frombuffer(source.readframes(source.getnframes()), dtype="<i2").astype(
+            np.float64
+        )
+    hop = rate // 200
+    count = len(audio) // hop
+    level = np.sqrt(np.mean(audio[: count * hop].reshape(count, hop) ** 2, axis=1) + 1e-9)
+    quiet = level < level.max() * 10 ** (SILENCE_DB / 20)
+    # (start, end) in seconds of what is removed, oldest first.
+    removed: list[tuple[float, float]] = []
+    index = 0
+    while index < count:
+        if not quiet[index]:
+            index += 1
+            continue
+        last = index
+        while last < count and quiet[last]:
+            last += 1
+        start, end = index * hop / rate, last * hop / rate
+        if end - start > SILENCE_KEEP and index > 0 and last < count:
+            removed.append((start + SILENCE_KEEP / 2, end - SILENCE_KEEP / 2))
+        index = last
+    kept, at = [], 0.0
+    fade = int(0.004 * rate)
+    for start, end in [*removed, (len(audio) / rate, len(audio) / rate)]:
+        piece = audio[int(at * rate) : int(start * rate)].copy()
+        if len(piece) > 2 * fade:
+            piece[:fade] *= np.linspace(0, 1, fade)
+            piece[-fade:] *= np.linspace(1, 0, fade)
+        kept.append(piece)
+        at = end
+    trimmed = out.with_name(out.stem + "-trimmed.wav")
+    with wave.open(str(trimmed), "wb") as target:
+        target.setnchannels(1)
+        target.setsampwidth(2)
+        target.setframerate(rate)
+        target.writeframes(np.concatenate(kept).astype("<i2").tobytes())
+    subprocess.run(
+        [frames.ffmpeg(), "-y", "-loglevel", "error", "-i", str(trimmed), "-af", f"atempo={TEMPO}",
+         "-ac", "1", "-ar", "48000", "-c:a", "pcm_s16le", str(out)],
+        check=True,
+    )  # fmt: skip
+    trimmed.unlink()
+
+    def moved(t: float) -> float:
+        gone = 0.0
+        for start, end in removed:
+            if t >= end:
+                gone += end - start
+            elif t > start:
+                gone += t - start
+        return round((t - gone) / TEMPO, 3)
+
+    result = []
+    for word in timed:
+        start = moved(word["start"])
+        result.append(
+            {"word": word["word"], "start": start, "end": max(start + 0.02, moved(word["end"]))}
+        )
+    return result
+
+
 def narrate(
     beats: list[Beat], voice_key: str, language: str, workdir: Path
 ) -> tuple[Path, list[dict[str, Any]]]:
-    """The take and its word times, kept next to the text they were made from."""
+    """The take, tightened, and its word times. The raw take is kept next to the
+    text it was made from, so a rebuild does not ask for it again."""
     text = narration(beats)
     tag = hashlib.sha256(
         json.dumps([text, voice_key, VOICE_MODEL, VOICE_SETTINGS]).encode()
     ).hexdigest()[:12]
     wav, cache = workdir / f"voice-{tag}.wav", workdir / f"voice-{tag}.json"
     if wav.exists() and cache.exists():
-        return wav, json.loads(cache.read_text("utf-8"))
-    timed = synthesize(text, voice_key, language, wav)
-    expected = text.split()
-    if [w["word"] for w in timed] != expected:
-        raise SystemExit(
-            f"the voice's words do not match the script: {len(timed)} for {len(expected)}"
-        )
-    cache.write_text(json.dumps(timed, ensure_ascii=False), "utf-8")
-    return wav, timed
+        timed = json.loads(cache.read_text("utf-8"))
+    else:
+        timed = synthesize(text, voice_key, language, wav)
+        expected = text.split()
+        if [w["word"] for w in timed] != expected:
+            raise SystemExit(
+                f"the voice's words do not match the script: {len(timed)} for {len(expected)}"
+            )
+        cache.write_text(json.dumps(timed, ensure_ascii=False), "utf-8")
+    tight = workdir / "voice.wav"
+    return tight, tighten(wav, timed, tight)
 
 
 def arrange(beats: list[Beat], timed: list[dict[str, Any]]) -> dict[str, Any]:

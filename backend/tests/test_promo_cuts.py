@@ -273,3 +273,33 @@ def test_the_voice_is_cut_and_placed_by_the_timeline(tmp_path):
     assert np.abs(track[: int(1.9 * 48000)]).max() == 0  # nothing before the piece
     assert np.abs(track[int(2.1 * 48000) : int(2.4 * 48000)]).max() > 0.5
     assert np.abs(track[int(2.6 * 48000) :]).max() == 0  # and nothing after it
+
+
+def test_long_silences_in_the_take_are_cut_and_the_words_follow(tmp_path):
+    np = pytest.importorskip("numpy")
+    if not cuts.frames.shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg is needed to change the tempo")
+    rate = 48000
+    tone = np.sin(2 * np.pi * 300 * np.arange(rate) / rate) * 12000  # one second of voice
+    audio = np.concatenate([tone, np.zeros(rate), tone]).astype(
+        "<i2"
+    )  # a second of silence between
+    take = tmp_path / "take.wav"
+    with wave.open(str(take), "wb") as target:
+        target.setnchannels(1)
+        target.setsampwidth(2)
+        target.setframerate(rate)
+        target.writeframes(audio.tobytes())
+    # The alignment hides the pause inside the first word, as ElevenLabs does.
+    timed = [{"word": "One.", "start": 0.0, "end": 1.9}, {"word": "Two.", "start": 2.0, "end": 3.0}]
+    out = tmp_path / "voice.wav"
+    moved = cuts.tighten(take, timed, out)
+    with wave.open(str(out), "rb") as audio_out:
+        seconds = audio_out.getnframes() / audio_out.getframerate()
+        assert (audio_out.getframerate(), audio_out.getnchannels()) == (48000, 1)
+    expected = (2.0 + cuts.SILENCE_KEEP) / cuts.TEMPO
+    assert seconds == pytest.approx(expected, abs=0.05)
+    assert moved[1]["start"] == pytest.approx((1.0 + cuts.SILENCE_KEEP) / cuts.TEMPO, abs=0.03)
+    assert moved[1]["end"] == pytest.approx(expected, abs=0.03)
+    assert moved[0]["end"] <= moved[1]["start"] + 0.001
+    assert [w["word"] for w in moved] == ["One.", "Two."]
