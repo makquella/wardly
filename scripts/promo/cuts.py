@@ -483,7 +483,8 @@ def lanes_top5(facts: dict[str, Any], language: str) -> list[Beat]:
                 },
                 captions=False,
                 cues={
-                    "b": lead + hero_words + 1,
+                    # The opponent comes in on «into», a beat before its name.
+                    "b": lead + hero_words,
                     # The share lands on the last word of its number; without one, on the enemy's name.
                     "pct": lead
                     + hero_words

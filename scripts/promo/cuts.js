@@ -446,7 +446,7 @@
     const items = d.items.map((item, i) => {
       const glow = el(root, "glow");
       glow.style.cssText += "width:640px;height:640px;background:rgba(255,255,255,.2)";
-      const face = hero(root, item.key, 1150, i % 2 === 1);
+      const face = hero(root, item.key, 1500, i % 2 === 1);
       const word = local.words[item.word] || { start: 0.2 + i * 0.6 };
       return { item, glow, face, at: word.start, x: i === 0 ? 330 : 650, y: i === 0 ? 560 : 1040 };
     });
