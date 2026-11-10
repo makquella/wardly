@@ -255,7 +255,7 @@ An application release/version bump is unnecessary for this campaign.
 
 ## Wardly Cuts
 
-`scripts/promo/cuts.py` makes eight short videos (15–25 s, 1080×1920, 60 fps): four
+`scripts/promo/cuts.py` makes eight short videos (15–26 s, 1080×1920, 60 fps): four
 ideas, each in Ukrainian and English. Nothing in them is generated or recorded: the
 picture is one page drawn frame by frame (`cuts.js`, `cuts.css`: lines that land word
 by word with the voice, Valve's hero renders and idle loops, a darkened still of the
