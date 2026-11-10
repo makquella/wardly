@@ -196,7 +196,7 @@ def events(timeline: dict[str, Any]) -> list[tuple[float, str, float]]:
             found.append((start + 0.14, "impact", 1.0 if final else 0.6))
             found.append((cue("b", 0.5) - 0.2, "whoosh", 0.6))
             found.append((cue("b", 0.5) + 0.1, "thud", 0.9))
-            at = cue("pct", 1.2 if final else 0.55)
+            at = max(cue("pct", 1.2 if final else 0.55), cue("b", 0.5) + 0.5)
             if final:
                 found.append((at - 1.1, "riser:1.0", 0.8))
             found += [(at - 0.5 + step * 0.05, "tick", 0.5) for step in range(10)]
@@ -214,8 +214,8 @@ def events(timeline: dict[str, Any]) -> list[tuple[float, str, float]]:
             for item in data["items"]:
                 at = words[item["word"]]["start"] if item["word"] < len(words) else start + 0.3
                 found.append((at - 0.1, "whoosh", 0.5))
-                found.append((at + 0.2, "slash", 0.9))
-                found.append((at + 0.24, "thud", 0.8))
+                found.append((at + 0.32, "slash", 0.9))
+                found.append((at + 0.36, "thud", 0.8))
         elif kind == "reveal":
             found.append((start - 0.9, "riser:0.9", 0.9))
             found.append((start + 0.06, "impact", 1.6))

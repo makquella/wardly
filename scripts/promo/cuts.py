@@ -71,7 +71,7 @@ SILENCE_KEEP = 0.11
 SILENCE_DB = -34
 TEMPO = 1.08
 # The end card stays this long after the last word, for the address to be read.
-TAIL = 1.5
+TAIL = 1.4
 CDN = "https://cdn.cloudflare.steamstatic.com/apps/dota2"
 RENDER_PNG = CDN + "/videos/dota_react/heroes/renders/{key}.png"
 RENDER_VIDEO = CDN + "/videos/dota_react/heroes/renders/{key}.webm"
@@ -376,12 +376,12 @@ def stun_card(language: str) -> dict[str, str]:
 
 END = {
     "uk": {
-        "say": "Безкоштовний тренер|для Dota 2.",
+        "say": "Wardly —|безкоштовний.",
         "what": "Тренер для Dota 2: підказки в грі й розбір після",
         "free": "Безкоштовно · Windows і Linux",
     },
     "en": {
-        "say": "A free coach|for Dota 2.",
+        "say": "Wardly|is free.",
         "what": "A Dota 2 coach: tips in game, a review after",
         "free": "Free · Windows and Linux",
     },
@@ -493,7 +493,7 @@ def lanes_top5(facts: dict[str, Any], language: str) -> list[Beat]:
                     else -1,
                 },
                 pause=0.25 if final else 0.0,
-                hold=0.6 if final else 0.3,
+                hold=0.6 if final else 0.5,
             )
         )
     count = thousands_words(facts["lanes"], language)
@@ -1065,8 +1065,10 @@ def arrange(beats: list[Beat], timed: list[dict[str, Any]]) -> dict[str, Any]:
     for scene, following_scene in zip(scenes, scenes[1:], strict=False):
         scene["end"] = following_scene["start"]
     scenes[-1]["end"] = round(scenes[-1]["words"][-1]["end"] + beats[-1].hold + TAIL, 3)
-    # The end card's address starts typing as its last word ends.
-    scenes[-1]["cues"]["site"] = scenes[-1]["words"][-1]["end"] - 0.15
+    # The end card's address starts typing half a second in, under the voice.
+    scenes[-1]["cues"]["site"] = round(
+        min(scenes[-1]["words"][-1]["end"] - 0.15, scenes[-1]["start"] + 0.55), 3
+    )
     return {"scenes": scenes, "cuts": cuts, "total": scenes[-1]["end"]}
 
 

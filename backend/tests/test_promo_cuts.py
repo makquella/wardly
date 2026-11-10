@@ -151,7 +151,7 @@ def test_a_long_pause_in_the_take_is_cut_and_a_beats_own_pause_is_added():
     gap = second["words"][0]["start"] - first["words"][-1]["end"]
     assert 0.5 <= gap <= 0.5 + cuts.MAX_GAP + cuts.LEAD + 0.1
     assert third["end"] == pytest.approx(third["words"][-1]["end"] + cuts.TAIL, abs=0.002)
-    assert third["cues"]["site"] < third["words"][-1]["end"]
+    assert third["start"] < third["cues"]["site"] < third["words"][-1]["end"]
 
 
 def test_a_long_pause_inside_a_beat_is_trimmed_without_touching_the_words():

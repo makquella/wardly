@@ -330,8 +330,9 @@
     usualTick.style.height = "58px";
     const usualLabel = el(root, "small abs", esc(d.labels.usual));
     usualLabel.style.fontSize = "28px";
-    const cue = local.cue("pct", d.final ? 1.2 : 0.55);
     const second = local.cue("b", 0.5);
+    // The share never comes before the hero it is about (cuts_sound.py keeps the same rule).
+    const cue = Math.max(local.cue("pct", d.final ? 1.2 : 0.55), second + 0.5);
     const NAMES = 950;
     const BASE = 1150;
     return (t, dur) => {
@@ -385,8 +386,10 @@
     }
     const big = el(root, "num abs");
     big.style.cssText += "font-size:250px;color:#fff;text-shadow:0 20px 80px rgba(0,0,0,.8)";
-    const lines = kinetic(root, d.lines, local.words, 1010, { max: 110, hit: false });
     const cue = local.cue("count", 0.3);
+    // The two lines under the number come one word after another, after the count starts.
+    const steps = d.lines.flat().map((_, i) => ({ start: cue + 0.25 + i * 0.13, end: cue + 0.4 + i * 0.13 }));
+    const lines = kinetic(root, d.lines, steps, 1010, { max: 110, hit: false });
     return (t, dur) => {
       for (const { dot, x, y, at, lost, wob } of dots) {
         const p = prog(t, at * 0.9, 0.25);
@@ -442,27 +445,30 @@
     const d = scene.data;
     const items = d.items.map((item, i) => {
       const glow = el(root, "glow");
-      glow.style.cssText += "width:620px;height:620px;background:rgba(255,255,255,.16)";
+      glow.style.cssText += "width:640px;height:640px;background:rgba(255,255,255,.2)";
       const face = hero(root, item.key, 1150, i % 2 === 1);
-      const name = el(root, "plate white abs", esc(item.label));
-      name.style.fontSize = "92px";
-      const cross = el(root, "cross");
-      cross.style.width = "820px";
       const word = local.words[item.word] || { start: 0.2 + i * 0.6 };
-      return { glow, face, name, cross, at: word.start, x: i === 0 ? 330 : 650, y: i === 0 ? 560 : 1040 };
+      return { item, glow, face, at: word.start, x: i === 0 ? 330 : 650, y: i === 0 ? 560 : 1040 };
     });
+    // Names and crosses over both heroes, whichever came first.
+    for (const item of items) {
+      item.name = el(root, "plate white abs", esc(item.item.label));
+      item.name.style.fontSize = "92px";
+      item.cross = el(root, "cross");
+      item.cross.style.width = "820px";
+    }
     return (t, dur) => {
       for (const [i, item] of items.entries()) {
         const leave = prog(t, dur - 0.14, 0.14);
         const side = i === 0 ? -1 : 1;
-        const off = prog(t, item.at + 0.22, 0.12);
+        const struck = item.at + 0.34;
+        const off = prog(t, struck, 0.12);
         const p = enter(item.face, t, item.at - 0.1, { x: item.x + side * 240 * in3(leave), y: item.y, a: 1 - leave }, { dx: side * 560, s: 1.2, blur: 36, ease: out5 }, 0.3);
-        item.face.style.filter += ` grayscale(${off.toFixed(2)}) brightness(${lerp(1.1, 0.5, off).toFixed(2)})`;
+        item.face.style.filter += ` grayscale(${(0.85 * off).toFixed(2)}) brightness(${lerp(1.1, 0.62, off).toFixed(2)})`;
         T(item.glow, { x: item.x, y: item.y, a: p * (1 - off) * (1 - leave) });
-        enter(item.name, t, item.at, { x: item.x - side * 40, y: item.y + 250, r: -4, a: 1 - leave }, { s: 2, blur: 20, ease: out5 }, 0.2);
-        item.name.style.filter += ` brightness(${lerp(1, 0.6, off).toFixed(2)})`;
-        T(item.cross, { x: item.x - 400, y: item.y + 150, c: false, r: side * -22, sx: out5(prog(t, item.at + 0.2, 0.14)), a: 1 - leave });
-        hit(t, item.at + 0.24, 20, 30 + i);
+        enter(item.name, t, item.at, { x: item.x - side * 60, y: item.y + 270, r: -4, a: 1 - leave }, { s: 2, blur: 20, ease: out5 }, 0.2);
+        T(item.cross, { x: item.x - 400, y: item.y + 150, c: false, r: side * -22, sx: out5(prog(t, struck - 0.02, 0.14)), a: 1 - leave });
+        hit(t, struck + 0.02, 20, 30 + i);
       }
     };
   };
