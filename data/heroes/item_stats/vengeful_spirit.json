@@ -4,7 +4,7 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.40",
- "generated": "2026-11-07",
+ "generated": "2026-11-11",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 600,
  "win": 50.5,
@@ -593,20 +593,20 @@
      "win_without": 45.5
     },
     {
-     "item": "ancient_janggo",
-     "share": 0.373,
-     "elsewhere": 0.367,
-     "lift": 1.02,
-     "win_with": 50.8,
-     "win_without": 50.5
-    },
-    {
      "item": "magic_wand",
      "share": 0.589,
      "elsewhere": 0.577,
      "lift": 1.02,
      "win_with": 50.5,
      "win_without": 50.8
+    },
+    {
+     "item": "ancient_janggo",
+     "share": 0.373,
+     "elsewhere": 0.367,
+     "lift": 1.02,
+     "win_with": 50.8,
+     "win_without": 50.5
     },
     {
      "item": "tranquil_boots",
@@ -773,20 +773,20 @@
      "win_without": 52.7
     },
     {
-     "item": "magic_wand",
-     "share": 0.624,
-     "elsewhere": 0.56,
-     "lift": 1.12,
-     "win_with": 59.3,
-     "win_without": 43.7
-    },
-    {
      "item": "aghanims_shard",
      "share": 0.243,
      "elsewhere": 0.217,
      "lift": 1.12,
      "win_with": 52.2,
      "win_without": 53.8
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.624,
+     "elsewhere": 0.56,
+     "lift": 1.12,
+     "win_with": 59.3,
+     "win_without": 43.7
     },
     {
      "item": "great_famango",
@@ -931,12 +931,12 @@
      "win_without": 62.5
     },
     {
-     "item": "great_famango",
-     "share": 0.119,
-     "elsewhere": 0.131,
+     "item": "headdress",
+     "share": 0.167,
+     "elsewhere": 0.183,
      "lift": 0.91,
-     "win_with": 80.0,
-     "win_without": 54.1
+     "win_with": 85.7,
+     "win_without": 51.4
     }
    ]
   },
@@ -1111,20 +1111,20 @@
      "win_without": 54.3
     },
     {
-     "item": "ogre_axe",
-     "share": 0.204,
-     "elsewhere": 0.174,
-     "lift": 1.17,
-     "win_with": 70.0,
-     "win_without": 53.8
-    },
-    {
      "item": "ring_of_basilius",
      "share": 0.633,
      "elsewhere": 0.541,
      "lift": 1.17,
      "win_with": 64.5,
      "win_without": 44.4
+    },
+    {
+     "item": "ogre_axe",
+     "share": 0.204,
+     "elsewhere": 0.174,
+     "lift": 1.17,
+     "win_with": 70.0,
+     "win_without": 53.8
     },
     {
      "item": "solar_crest",
@@ -1377,20 +1377,20 @@
      "win_without": 50.0
     },
     {
-     "item": "aether_lens",
-     "share": 0.167,
-     "elsewhere": 0.095,
-     "lift": 1.75,
-     "win_with": 75.0,
-     "win_without": 60.0
-    },
-    {
      "item": "pavise",
      "share": 0.625,
      "elsewhere": 0.358,
      "lift": 1.75,
      "win_with": 66.7,
      "win_without": 55.6
+    },
+    {
+     "item": "aether_lens",
+     "share": 0.167,
+     "elsewhere": 0.095,
+     "lift": 1.75,
+     "win_with": 75.0,
+     "win_without": 60.0
     },
     {
      "item": "aghanims_shard",

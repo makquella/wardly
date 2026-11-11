@@ -4,12 +4,12 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 323,
+  "lanes": 321,
   "baseline": {
-    "won": 64,
-    "even": 197,
+    "won": 63,
+    "even": 196,
     "lost": 62
   },
   "opponents": [
@@ -43,11 +43,11 @@
     {
       "hero": "Tidehunter",
       "hero_id": 29,
-      "lanes": 25,
-      "won": 7,
+      "lanes": 24,
+      "won": 6,
       "even": 17,
       "lost": 1,
-      "gold_diff": 393
+      "gold_diff": 354
     },
     {
       "hero": "Axe",
@@ -59,15 +59,6 @@
       "gold_diff": -310
     },
     {
-      "hero": "Snapfire",
-      "hero_id": 128,
-      "lanes": 20,
-      "won": 1,
-      "even": 15,
-      "lost": 4,
-      "gold_diff": -127
-    },
-    {
       "hero": "Lion",
       "hero_id": 26,
       "lanes": 19,
@@ -77,13 +68,13 @@
       "gold_diff": -525
     },
     {
-      "hero": "Spirit Breaker",
-      "hero_id": 71,
-      "lanes": 18,
-      "won": 5,
-      "even": 10,
-      "lost": 3,
-      "gold_diff": -7
+      "hero": "Snapfire",
+      "hero_id": 128,
+      "lanes": 19,
+      "won": 1,
+      "even": 14,
+      "lost": 4,
+      "gold_diff": -147
     },
     {
       "hero": "Dawnbreaker",
@@ -93,6 +84,15 @@
       "even": 7,
       "lost": 7,
       "gold_diff": -285
+    },
+    {
+      "hero": "Spirit Breaker",
+      "hero_id": 71,
+      "lanes": 17,
+      "won": 5,
+      "even": 9,
+      "lost": 3,
+      "gold_diff": -21
     },
     {
       "hero": "Beastmaster",

@@ -4,12 +4,12 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 1293,
+  "lanes": 1303,
   "baseline": {
-    "won": 477,
-    "even": 691,
+    "won": 484,
+    "even": 694,
     "lost": 125
   },
   "opponents": [
@@ -29,79 +29,79 @@
       "won": 57,
       "even": 55,
       "lost": 0,
-      "gold_diff": 793
+      "gold_diff": 799
     },
     {
       "hero": "Hoodwink",
       "hero_id": 123,
       "lanes": 107,
-      "won": 29,
-      "even": 66,
+      "won": 30,
+      "even": 65,
       "lost": 12,
-      "gold_diff": 317
+      "gold_diff": 322
     },
     {
       "hero": "Axe",
       "hero_id": 2,
-      "lanes": 89,
+      "lanes": 88,
       "won": 12,
-      "even": 56,
+      "even": 55,
       "lost": 21,
-      "gold_diff": -87
+      "gold_diff": -88
     },
     {
       "hero": "Tidehunter",
       "hero_id": 29,
-      "lanes": 86,
-      "won": 30,
+      "lanes": 87,
+      "won": 31,
       "even": 54,
       "lost": 2,
-      "gold_diff": 511
+      "gold_diff": 520
     },
     {
       "hero": "Largo",
       "hero_id": 155,
-      "lanes": 80,
-      "won": 41,
+      "lanes": 84,
+      "won": 44,
       "even": 33,
-      "lost": 6,
-      "gold_diff": 658
+      "lost": 7,
+      "gold_diff": 656
     },
     {
       "hero": "Rubick",
       "hero_id": 86,
-      "lanes": 77,
-      "won": 25,
+      "lanes": 78,
+      "won": 26,
       "even": 38,
       "lost": 14,
-      "gold_diff": 284
+      "gold_diff": 300
     },
     {
       "hero": "Dark Willow",
       "hero_id": 119,
-      "lanes": 68,
-      "won": 20,
-      "even": 40,
+      "lanes": 70,
+      "won": 21,
+      "even": 41,
       "lost": 8,
-      "gold_diff": 306
-    },
-    {
-      "hero": "Underlord",
-      "hero_id": 108,
-      "lanes": 63,
-      "won": 23,
-      "even": 36,
-      "lost": 4,
-      "gold_diff": 552
+      "gold_diff": 301
     },
     {
       "hero": "Timbersaw",
       "hero_id": 98,
-      "lanes": 61,
-      "won": 15,
+      "lanes": 62,
+      "won": 16,
       "even": 43,
       "lost": 3,
-      "gold_diff": 359
+      "gold_diff": 375
+    },
+    {
+      "hero": "Underlord",
+      "hero_id": 108,
+      "lanes": 62,
+      "won": 23,
+      "even": 35,
+      "lost": 4,
+      "gold_diff": 562
     },
     {
       "hero": "Lion",
@@ -133,56 +133,56 @@
     {
       "hero": "Doom",
       "hero_id": 69,
-      "lanes": 48,
-      "won": 15,
-      "even": 27,
+      "lanes": 52,
+      "won": 18,
+      "even": 28,
       "lost": 6,
-      "gold_diff": 270
+      "gold_diff": 326
     },
     {
       "hero": "Windranger",
       "hero_id": 21,
-      "lanes": 48,
-      "won": 11,
+      "lanes": 52,
+      "won": 14,
       "even": 32,
-      "lost": 5,
-      "gold_diff": 210
+      "lost": 6,
+      "gold_diff": 255
     },
     {
       "hero": "Bristleback",
       "hero_id": 99,
-      "lanes": 47,
+      "lanes": 46,
       "won": 6,
-      "even": 33,
+      "even": 32,
       "lost": 8,
-      "gold_diff": -58
+      "gold_diff": -48
     },
     {
       "hero": "Beastmaster",
       "hero_id": 38,
-      "lanes": 45,
+      "lanes": 44,
       "won": 14,
       "even": 22,
-      "lost": 9,
-      "gold_diff": 455
+      "lost": 8,
+      "gold_diff": 504
     },
     {
       "hero": "Brewmaster",
       "hero_id": 78,
-      "lanes": 43,
-      "won": 17,
+      "lanes": 44,
+      "won": 18,
       "even": 22,
       "lost": 4,
-      "gold_diff": 472
+      "gold_diff": 492
     },
     {
-      "hero": "Primal Beast",
-      "hero_id": 137,
+      "hero": "Snapfire",
+      "hero_id": 128,
       "lanes": 41,
-      "won": 21,
-      "even": 19,
-      "lost": 1,
-      "gold_diff": 810
+      "won": 12,
+      "even": 27,
+      "lost": 2,
+      "gold_diff": 373
     },
     {
       "hero": "Dawnbreaker",
@@ -194,22 +194,22 @@
       "gold_diff": 533
     },
     {
-      "hero": "Snapfire",
-      "hero_id": 128,
+      "hero": "Primal Beast",
+      "hero_id": 137,
       "lanes": 40,
-      "won": 11,
-      "even": 27,
-      "lost": 2,
-      "gold_diff": 353
+      "won": 20,
+      "even": 19,
+      "lost": 1,
+      "gold_diff": 786
     },
     {
       "hero": "Shadow Demon",
       "hero_id": 79,
-      "lanes": 38,
-      "won": 16,
-      "even": 19,
+      "lanes": 40,
+      "won": 17,
+      "even": 20,
       "lost": 3,
-      "gold_diff": 580
+      "gold_diff": 581
     },
     {
       "hero": "Shadow Shaman",
@@ -221,22 +221,22 @@
       "gold_diff": 538
     },
     {
-      "hero": "Pangolier",
-      "hero_id": 120,
-      "lanes": 33,
-      "won": 8,
-      "even": 25,
-      "lost": 0,
-      "gold_diff": 428
-    },
-    {
       "hero": "Clockwerk",
       "hero_id": 51,
-      "lanes": 31,
+      "lanes": 32,
       "won": 9,
-      "even": 19,
+      "even": 20,
       "lost": 3,
-      "gold_diff": 306
+      "gold_diff": 279
+    },
+    {
+      "hero": "Pangolier",
+      "hero_id": 120,
+      "lanes": 32,
+      "won": 7,
+      "even": 25,
+      "lost": 0,
+      "gold_diff": 412
     },
     {
       "hero": "Phoenix",
@@ -284,6 +284,15 @@
       "gold_diff": 516
     },
     {
+      "hero": "Enigma",
+      "hero_id": 33,
+      "lanes": 28,
+      "won": 8,
+      "even": 19,
+      "lost": 1,
+      "gold_diff": 290
+    },
+    {
       "hero": "Tusk",
       "hero_id": 100,
       "lanes": 27,
@@ -293,13 +302,13 @@
       "gold_diff": 567
     },
     {
-      "hero": "Enigma",
-      "hero_id": 33,
+      "hero": "Nyx Assassin",
+      "hero_id": 88,
       "lanes": 26,
-      "won": 8,
-      "even": 17,
+      "won": 10,
+      "even": 15,
       "lost": 1,
-      "gold_diff": 286
+      "gold_diff": 529
     },
     {
       "hero": "Keeper of the Light",
@@ -309,15 +318,6 @@
       "even": 15,
       "lost": 5,
       "gold_diff": 14
-    },
-    {
-      "hero": "Nyx Assassin",
-      "hero_id": 88,
-      "lanes": 24,
-      "won": 9,
-      "even": 14,
-      "lost": 1,
-      "gold_diff": 523
     },
     {
       "hero": "Pudge",
@@ -347,6 +347,15 @@
       "gold_diff": 478
     },
     {
+      "hero": "Necrophos",
+      "hero_id": 36,
+      "lanes": 17,
+      "won": 1,
+      "even": 9,
+      "lost": 7,
+      "gold_diff": -470
+    },
+    {
       "hero": "Razor",
       "hero_id": 15,
       "lanes": 17,
@@ -374,15 +383,6 @@
       "gold_diff": 489
     },
     {
-      "hero": "Necrophos",
-      "hero_id": 36,
-      "lanes": 16,
-      "won": 1,
-      "even": 8,
-      "lost": 7,
-      "gold_diff": -545
-    },
-    {
       "hero": "Spirit Breaker",
       "hero_id": 71,
       "lanes": 16,
@@ -392,13 +392,13 @@
       "gold_diff": 541
     },
     {
-      "hero": "Grimstroke",
-      "hero_id": 121,
+      "hero": "Dragon Knight",
+      "hero_id": 49,
       "lanes": 15,
-      "won": 5,
-      "even": 8,
+      "won": 4,
+      "even": 9,
       "lost": 2,
-      "gold_diff": 237
+      "gold_diff": 345
     },
     {
       "hero": "Lycan",

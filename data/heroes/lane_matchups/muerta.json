@@ -4,13 +4,13 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 1010,
+  "lanes": 1005,
   "baseline": {
     "won": 341,
-    "even": 545,
-    "lost": 124
+    "even": 541,
+    "lost": 123
   },
   "opponents": [
     {
@@ -25,20 +25,20 @@
     {
       "hero": "Tidehunter",
       "hero_id": 29,
-      "lanes": 97,
+      "lanes": 96,
       "won": 40,
-      "even": 47,
+      "even": 46,
       "lost": 10,
-      "gold_diff": 581
+      "gold_diff": 579
     },
     {
       "hero": "Hoodwink",
       "hero_id": 123,
-      "lanes": 78,
+      "lanes": 77,
       "won": 17,
-      "even": 48,
+      "even": 47,
       "lost": 13,
-      "gold_diff": 98
+      "gold_diff": 93
     },
     {
       "hero": "Underlord",
@@ -59,15 +59,6 @@
       "gold_diff": 420
     },
     {
-      "hero": "Bristleback",
-      "hero_id": 99,
-      "lanes": 59,
-      "won": 18,
-      "even": 32,
-      "lost": 9,
-      "gold_diff": 224
-    },
-    {
       "hero": "Mars",
       "hero_id": 129,
       "lanes": 58,
@@ -75,6 +66,15 @@
       "even": 29,
       "lost": 2,
       "gold_diff": 632
+    },
+    {
+      "hero": "Bristleback",
+      "hero_id": 99,
+      "lanes": 57,
+      "won": 18,
+      "even": 31,
+      "lost": 8,
+      "gold_diff": 258
     },
     {
       "hero": "Axe",
@@ -88,11 +88,11 @@
     {
       "hero": "Centaur Warrunner",
       "hero_id": 96,
-      "lanes": 48,
+      "lanes": 47,
       "won": 19,
-      "even": 27,
+      "even": 26,
       "lost": 2,
-      "gold_diff": 628
+      "gold_diff": 632
     },
     {
       "hero": "Pangolier",
@@ -338,15 +338,6 @@
       "gold_diff": 276
     },
     {
-      "hero": "Io",
-      "hero_id": 91,
-      "lanes": 16,
-      "won": 2,
-      "even": 13,
-      "lost": 1,
-      "gold_diff": 74
-    },
-    {
       "hero": "Nyx Assassin",
       "hero_id": 88,
       "lanes": 16,
@@ -356,13 +347,13 @@
       "gold_diff": -47
     },
     {
-      "hero": "Pudge",
-      "hero_id": 14,
-      "lanes": 16,
-      "won": 4,
-      "even": 7,
-      "lost": 5,
-      "gold_diff": -66
+      "hero": "Io",
+      "hero_id": 91,
+      "lanes": 15,
+      "won": 2,
+      "even": 12,
+      "lost": 1,
+      "gold_diff": 59
     }
   ]
 }

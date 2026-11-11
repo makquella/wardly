@@ -4,13 +4,13 @@
   "position": "mid",
   "lane_role": 2,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 314,
+  "lanes": 308,
   "baseline": {
-    "won": 61,
-    "even": 218,
-    "lost": 35
+    "won": 59,
+    "even": 215,
+    "lost": 34
   },
   "opponents": [
     {
@@ -25,11 +25,11 @@
     {
       "hero": "Sniper",
       "hero_id": 35,
-      "lanes": 27,
+      "lanes": 26,
       "won": 3,
-      "even": 17,
+      "even": 16,
       "lost": 7,
-      "gold_diff": -293
+      "gold_diff": -308
     },
     {
       "hero": "Lina",

@@ -4,7 +4,7 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.41",
- "generated": "2026-11-07",
+ "generated": "2026-11-11",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 602,
  "win": 48.2,
@@ -695,20 +695,20 @@
      "win_without": 100.0
     },
     {
-     "item": "pavise",
-     "share": 0.235,
-     "elsewhere": 0.23,
-     "lift": 1.02,
-     "win_with": 58.3,
-     "win_without": 47.4
-    },
-    {
      "item": "ward_dispenser",
      "share": 0.922,
      "elsewhere": 0.904,
      "lift": 1.02,
      "win_with": 51.1,
      "win_without": 37.5
+    },
+    {
+     "item": "pavise",
+     "share": 0.235,
+     "elsewhere": 0.23,
+     "lift": 1.02,
+     "win_with": 58.3,
+     "win_without": 47.4
     }
    ]
   },
@@ -859,6 +859,14 @@
      "win_without": 33.3
     },
     {
+     "item": "arcane_boots",
+     "share": 0.92,
+     "elsewhere": 0.944,
+     "lift": 0.97,
+     "win_with": 54.3,
+     "win_without": 75.0
+    },
+    {
      "item": "soul_ring",
      "share": 0.1,
      "elsewhere": 0.103,
@@ -873,14 +881,6 @@
      "lift": 0.97,
      "win_with": 60.0,
      "win_without": 55.0
-    },
-    {
-     "item": "arcane_boots",
-     "share": 0.92,
-     "elsewhere": 0.944,
-     "lift": 0.97,
-     "win_with": 54.3,
-     "win_without": 75.0
     },
     {
      "item": "pavise",

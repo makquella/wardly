@@ -4,13 +4,13 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 288,
+  "lanes": 285,
   "baseline": {
     "won": 47,
-    "even": 170,
-    "lost": 71
+    "even": 166,
+    "lost": 72
   },
   "opponents": [
     {
@@ -45,18 +45,9 @@
       "hero_id": 96,
       "lanes": 21,
       "won": 4,
-      "even": 12,
-      "lost": 5,
-      "gold_diff": -96
-    },
-    {
-      "hero": "Mars",
-      "hero_id": 129,
-      "lanes": 21,
-      "won": 7,
-      "even": 12,
-      "lost": 2,
-      "gold_diff": 202
+      "even": 11,
+      "lost": 6,
+      "gold_diff": -203
     },
     {
       "hero": "Timbersaw",
@@ -66,6 +57,15 @@
       "even": 14,
       "lost": 5,
       "gold_diff": -209
+    },
+    {
+      "hero": "Mars",
+      "hero_id": 129,
+      "lanes": 20,
+      "won": 7,
+      "even": 11,
+      "lost": 2,
+      "gold_diff": 190
     },
     {
       "hero": "Night Stalker",
@@ -97,11 +97,11 @@
     {
       "hero": "Hoodwink",
       "hero_id": 123,
-      "lanes": 16,
+      "lanes": 15,
       "won": 1,
-      "even": 11,
-      "lost": 4,
-      "gold_diff": -239
+      "even": 9,
+      "lost": 5,
+      "gold_diff": -406
     }
   ]
 }
