@@ -4,6 +4,8 @@ contextBridge.exposeInMainWorld("overlayApi", {
   getConfig: () => ipcRenderer.invoke("overlay:get-config"),
   // The main process owns the backend port, so the renderer never builds URLs itself.
   fetchRecommendation: () => ipcRenderer.invoke("overlay:fetch-recommendation"),
+  // What the system voice did (voice.js onEvent): a line in the launcher log.
+  voiceEvent: (event) => ipcRenderer.invoke("overlay:voice-event", event),
   onConfigUpdated: (callback) => {
     ipcRenderer.on("overlay-config-updated", (_event, config) => callback(config));
   },

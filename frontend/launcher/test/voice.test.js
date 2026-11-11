@@ -1,7 +1,15 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
 
-const { createSpeaker, pickVoice, speechChoice, speechText, wantsSpeech } = require("../overlay/voice");
+const {
+  START_TIMEOUT_MS,
+  createSpeaker,
+  pickVoice,
+  speechChoice,
+  speechText,
+  voiceLogLine,
+  wantsSpeech
+} = require("../overlay/voice");
 
 const VOICES = [
   { name: "Microsoft David", lang: "en-US", localService: true },
@@ -32,8 +40,34 @@ class Utterance {
 }
 
 function speaker(synth, clock) {
-  return createSpeaker({ synth, Utterance, now: () => clock.t });
+  return createSpeaker({ synth, Utterance, now: () => clock.t, setTimer: () => 0, clearTimer: () => {} });
 }
+
+// A speaker whose events and start watchdog the test drives.
+function watchedSpeaker(synth) {
+  const events = [];
+  const timers = new Map();
+  let next = 1;
+  const voice = createSpeaker({
+    synth,
+    Utterance,
+    onEvent: (event) => events.push(event),
+    setTimer: (fn, ms) => {
+      timers.set(next, { fn, ms });
+      return next++;
+    },
+    clearTimer: (id) => timers.delete(id)
+  });
+  const fire = () => {
+    for (const [id, timer] of [...timers]) {
+      timers.delete(id);
+      timer.fn();
+    }
+  };
+  return { voice, events, timers, fire };
+}
+
+const URGENT = { adviceMode: "urgent", mode: "urgent", locale: "en" };
 
 test("modes decide which advice is spoken", () => {
   assert.equal(wantsSpeech("off", "urgent"), false);
@@ -152,4 +186,65 @@ test("a tip skipped while busy is never spoken by itself later", () => {
   clock.t += 10_000;
   assert.equal(synth.spoken.length, 0);
   assert.equal(voice.say(tip), "spoken");
+});
+
+test("the system voice reports each change once: speaking, failures, a stuck queue", () => {
+  const synth = fakeSynth();
+  const { voice, events, timers, fire } = watchedSpeaker(synth);
+
+  assert.equal(voice.say({ key: "a", text: "Back off.", ...URGENT }), "spoken");
+  assert.equal([...timers.values()][0].ms, START_TIMEOUT_MS);
+  synth.spoken[0].onstart();
+  assert.equal(timers.size, 0, "a started utterance stops its watchdog");
+  voice.say({ key: "b", text: "Use Glimmer Cape.", ...URGENT });
+  synth.spoken[1].onstart();
+  assert.deepEqual(events, [{ kind: "speaking", detail: "Microsoft David (en-US)" }]);
+
+  // An urgent card cutting the previous one is our own interruption.
+  voice.say({ key: "c", text: "Reset HP.", ...URGENT });
+  synth.spoken[1].onerror({ error: "interrupted" });
+  synth.spoken[2].onerror({ error: "audio-hardware" });
+  assert.deepEqual(events.at(-1), { kind: "error", detail: "audio-hardware" });
+
+  // Spoken into a dead queue: nothing starts, the queue is reset.
+  const cancels = synth.cancels;
+  voice.say({ key: "d", text: "Buy Black King Bar.", ...URGENT });
+  fire();
+  assert.deepEqual(events.at(-1), { kind: "not_started", detail: "Microsoft David (en-US)" });
+  assert.equal(synth.cancels, cancels + 2, "cut before speaking, then reset by the watchdog");
+  assert.equal(events.length, 3);
+});
+
+test("no voice is reported with the language and the count, a paused queue is resumed", () => {
+  const synth = { ...fakeSynth(), getVoices: () => [], paused: false };
+  const { voice, events } = watchedSpeaker(synth);
+  assert.equal(voice.say({ key: "a", text: "Back off.", ...URGENT }), "no_voice");
+  assert.equal(voice.say({ key: "b", text: "Back off.", ...URGENT }), "no_voice");
+  assert.deepEqual(events, [{ kind: "no_voice", detail: "en, 0 system voices" }]);
+
+  const paused = fakeSynth();
+  let resumed = 0;
+  paused.paused = true;
+  paused.resume = () => {
+    resumed += 1;
+  };
+  watchedSpeaker(paused).voice.say({ key: "a", text: "Back off.", ...URGENT });
+  assert.equal(resumed, 1);
+});
+
+test("voice log lines take only known kinds and a plain detail", () => {
+  assert.equal(
+    voiceLogLine({ kind: "speaking", detail: "Microsoft Zira (en-US)" }),
+    "Voice: speaking with Microsoft Zira (en-US)."
+  );
+  assert.equal(
+    voiceLogLine({ kind: "not_started", detail: "Microsoft Zira (en-US)" }),
+    "Voice: the system speech did not start within 5 s (Microsoft Zira (en-US)); its queue was reset."
+  );
+  assert.equal(voiceLogLine({ kind: "error", detail: "a\nfake [launcher] line<script>" }), "Voice: the system speech failed (afake launcher linescript).");
+  assert.equal(voiceLogLine({ kind: "error", detail: "" }), "Voice: the system speech failed (?).");
+  assert.equal(voiceLogLine({ kind: "toString" }), null);
+  assert.equal(voiceLogLine({ kind: "rm" }), null);
+  assert.equal(voiceLogLine(null), null);
+  assert.equal(voiceLogLine("speaking"), null);
 });

@@ -100,8 +100,17 @@ let mutedUntil = 0;
 let lastAdviceKey = "";
 let lastVisibleAdvice = null;
 let lastSpokenKey = "";
+// Which card a poll shows and how long a held one stays (card-hold.js).
+const { adviceModeOf, cardKeys } = window.OverlayCardHold;
+const cardHold = window.OverlayCardHold.createCardHold({ holdMs: (mode, data) => holdMs(mode, data) });
 const speaker = window.OverlayVoice && window.speechSynthesis
-  ? window.OverlayVoice.createSpeaker({ synth: window.speechSynthesis, Utterance: window.SpeechSynthesisUtterance })
+  ? window.OverlayVoice.createSpeaker({
+      synth: window.speechSynthesis,
+      Utterance: window.SpeechSynthesisUtterance,
+      // What the system voice did goes to the launcher log, so a problem
+      // report says why a player hears nothing.
+      onEvent: (event) => window.overlayApi.voiceEvent?.(event)?.catch?.(() => {})
+    })
   : null;
 
 init();
@@ -123,6 +132,8 @@ async function init() {
       return;
     }
     const data = lastVisibleAdvice;
+    // Asked for again: the card is back for its auto-hide time.
+    cardHold.reopen();
     renderAdvice(data, { refreshTimer: false });
     scheduleAutoHide(data.advice_mode || "coaching", { ...data, is_pinned: false });
     speaker?.say({
@@ -208,15 +219,21 @@ function renderOverlay(data) {
     showPostGame(data);
     return;
   }
-  // Dead, waiting to respawn: how it happened and what to do now.
+  // Dead, waiting to respawn: how it happened and what to do now. The card
+  // from before the death is over (it must not come back after the respawn).
   if (data.death_screen && Array.isArray(data.death_screen.lines) && data.death_screen.lines.length) {
+    expireHeldAdvice();
     showDeathScreen(data);
     return;
   }
   currentHint = data.map_hint && data.map_hint.title ? data.map_hint : null;
   speakHint(currentHint);
-  if (data.recommendation && (data.status === "active_advice" || data.status === "cooldown")) {
-    renderAdvice(data, { refreshTimer: data.status !== "active_advice" });
+  const shown = cardHold.pick(data, { last: lastVisibleAdvice, hint: currentHint });
+  if (shown) {
+    if (shown.fresh) {
+      lastAdviceKey = "";
+    }
+    renderAdvice(shown.card, { refreshTimer: shown.refreshTimer });
     return;
   }
 
@@ -268,10 +285,6 @@ function renderOverlay(data) {
   }
 
   if (data.status === "cooldown") {
-    if (lastVisibleAdvice) {
-      renderAdvice(lastVisibleAdvice, { refreshTimer: false });
-      return;
-    }
     showStatus(data.message || statusMessage(data), data);
     return;
   }
@@ -361,26 +374,21 @@ function markCard(key) {
   shell.classList.add("enter");
 }
 
+// The card on screen is over (a death): not shown again, its speech stops.
+function expireHeldAdvice() {
+  if (!lastVisibleAdvice?.recommendation) {
+    return;
+  }
+  cardHold.expire(lastVisibleAdvice);
+  speaker?.cancel(lastSpokenKey);
+  lastVisibleAdvice = null;
+  lastSpokenKey = "";
+}
+
 function renderAdvice(data, options = { refreshTimer: true }) {
   const recommendation = data.recommendation;
-  const adviceMode = data.advice_mode || (recommendation.priority === "high" ? "urgent" : "coaching");
-  const key = [
-    data.decision_point,
-    recommendation.action,
-    recommendation.reason,
-    recommendation.priority,
-    data.match_death_count || 0,
-    data.last_death_minute || ""
-  ].join("|");
-  // Only the action is spoken: a held card whose quoted numbers were
-  // refreshed (gold, Wand charges) is the same card for the voice.
-  const speechKey = [
-    data.decision_point,
-    recommendation.action,
-    recommendation.priority,
-    data.match_death_count || 0,
-    data.last_death_minute || ""
-  ].join("|");
+  const adviceMode = adviceModeOf(data);
+  const { key, speechKey } = cardKeys(data);
 
   shell.className = [
     "overlay-shell",
@@ -649,21 +657,26 @@ function reveal() {
   shell.classList.remove("hidden");
 }
 
-function scheduleAutoHide(adviceMode, data = {}) {
-  clearTimeout(hideTimer);
-  if (data.is_pinned) {
-    return;
-  }
-
+// How long a card stays after the backend's window: the auto-hide time, or
+// what is left of its active window when that is longer.
+function holdMs(adviceMode, data = {}) {
   const activeUntil = Date.parse(data.active_advice_until || "");
   const activeDuration = Number.isFinite(activeUntil) ? Math.max(0, activeUntil - Date.now()) : 0;
   const timeout = adviceMode === "urgent"
     ? Number(config.urgentAutoHideMs) || 12000
     : Number(config.autoHideMs) || 8000;
-  const visibleFor = Math.max(timeout, activeDuration);
+  return Math.max(timeout, activeDuration);
+}
+
+function scheduleAutoHide(adviceMode, data = {}) {
+  clearTimeout(hideTimer);
+  if (data.is_pinned) {
+    return;
+  }
   hideTimer = setTimeout(() => {
+    cardHold.expire(data);
     showStatus(tr("listening"));
-  }, visibleFor);
+  }, holdMs(adviceMode, data));
 }
 
 function statusMessage(data) {
