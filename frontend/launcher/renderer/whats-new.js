@@ -9,6 +9,10 @@
 
   const TEXT = {
     en: {
+      "0.66.1": [
+        "An old card no longer sits on the screen: once its time is up it goes and does not come back on its own, and the card from before a death does not return after the respawn (a «Reset HP» card used to stay for up to a minute after HP was back). A calm card that is already over makes way for a map tip, so pull timings and item tips are shown for their full time instead of 2 seconds at the end.",
+        "Voice: when the system voice says nothing (no voice installed, a speech error, a speech queue that never starts), the app writes why to its log, so a problem report shows it, and resets a stuck queue for the next card."
+      ],
       "0.66.0": [
         "Lane matchups from high-rank games for all 39 cores: how the lane usually goes against each frequent opponent (league games of the last year, gold at 10:00, refreshed weekly). With no reviewed lanes of your own against the hero in your lane, the «Hard lane» / «Your lane» card now leans on this data, and a hard lane makes the skill tip name your escape ability earlier. The review's «Lane» card says when a lane is usually hard or comfortable for your hero."
       ],
@@ -609,6 +613,10 @@
       ]
     },
     uk: {
+      "0.66.1": [
+        "Стара картка більше не висить на екрані: коли її час минув, вона зникає й сама не повертається, а картка з-перед смерті не з'являється знову після відродження (картка «Відновіть HP» могла лишатися до хвилини після того, як HP уже відновилося). Спокійна картка, час якої минув, поступається підказці на мапі, тож таймінги пулу й підказки про предмети показуються весь свій час, а не 2 секунди наприкінці.",
+        "Голос: коли системний голос мовчить (не встановлено голос, помилка мовлення, черга мовлення, що не стартує), застосунок записує причину в журнал — її видно у звіті про проблему — і скидає завислу чергу перед наступною карткою."
+      ],
       "0.66.0": [
         "Матчапи на лінії з ігор сильних гравців для всіх 39 корів: як зазвичай іде лінія проти кожного частого суперника (лігові ігри за рік, золото на 10:00, оновлення щотижня). Коли ваших розборів проти героя на вашій лінії ще немає, картка «Важка лінія» / «Зручна лінія» спирається на ці дані, а важка лінія змушує підказку прокачки раніше назвати рятівну здібність. Картка «Лінія» в розборі каже, коли лінія зазвичай важка чи зручна для вашого героя."
       ],

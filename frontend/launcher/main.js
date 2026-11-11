@@ -44,6 +44,9 @@ const {
 } = require("./problem-report");
 const { parseConfig, pruneSent, rememberSent, sendRecording, uploadOffered } = require("./match-upload");
 const { DOTA_STATUS, dotaStatus, overlayVisibility } = require("./overlay-visibility");
+const OverlayVoice = require("./overlay/voice");
+// Voice lines in the launcher log per session (overlay:voice-event).
+const VOICE_LOG_LIMIT = 30;
 const { createSettingsStore } = require("./settings");
 const { loadLocalApiAuth, controlHeaders, renderGsiConfig } = require("./local-api");
 const { trustedHandlers, protectWindow } = require("./renderer-security");
@@ -3943,6 +3946,17 @@ function registerIpc() {
     return publicStatus();
   });
   handleOverlay("overlay:fetch-recommendation", () => fetchOverlayRecommendation());
+  // What the system voice did (overlay/voice.js): each change once, a few per
+  // session at most, so a report says why a player hears nothing.
+  let voiceLines = 0;
+  handleOverlay("overlay:voice-event", (_event, voiceEvent) => {
+    const line = OverlayVoice.voiceLogLine(voiceEvent);
+    if (line && voiceLines < VOICE_LOG_LIMIT) {
+      voiceLines += 1;
+      appendLog("voice", line, { force: true });
+    }
+    return Boolean(line);
+  });
 }
 
 // ---------------------------------------------------------------------------
