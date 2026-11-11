@@ -4,7 +4,7 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.41",
- "generated": "2026-11-07",
+ "generated": "2026-11-11",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 453,
  "win": 46.1,
@@ -772,20 +772,20 @@
      "win_without": 40.9
     },
     {
-     "item": "ghost",
-     "share": 0.137,
-     "elsewhere": 0.134,
-     "lift": 1.02,
-     "win_with": 40.9,
-     "win_without": 42.4
-    },
-    {
      "item": "ward_dispenser",
      "share": 0.994,
      "elsewhere": 0.976,
      "lift": 1.02,
      "win_with": 41.9,
      "win_without": 100.0
+    },
+    {
+     "item": "ghost",
+     "share": 0.137,
+     "elsewhere": 0.134,
+     "lift": 1.02,
+     "win_with": 40.9,
+     "win_without": 42.4
     },
     {
      "item": "magic_wand",
@@ -1046,20 +1046,20 @@
      "win_without": 50.0
     },
     {
-     "item": "headdress",
-     "share": 0.189,
-     "elsewhere": 0.175,
-     "lift": 1.08,
-     "win_with": 60.0,
-     "win_without": 51.2
-    },
-    {
      "item": "ring_of_basilius",
      "share": 1.0,
      "elsewhere": 0.925,
      "lift": 1.08,
      "win_with": 52.8,
      "win_without": null
+    },
+    {
+     "item": "headdress",
+     "share": 0.189,
+     "elsewhere": 0.175,
+     "lift": 1.08,
+     "win_with": 60.0,
+     "win_without": 51.2
     },
     {
      "item": "arcane_boots",
@@ -1148,20 +1148,20 @@
      "win_without": 46.4
     },
     {
-     "item": "headdress",
-     "share": 0.183,
-     "elsewhere": 0.167,
-     "lift": 1.1,
-     "win_with": 60.0,
-     "win_without": 45.7
-    },
-    {
      "item": "glimmer_cape",
      "share": 0.557,
      "elsewhere": 0.506,
      "lift": 1.1,
      "win_with": 53.3,
      "win_without": 42.1
+    },
+    {
+     "item": "headdress",
+     "share": 0.183,
+     "elsewhere": 0.167,
+     "lift": 1.1,
+     "win_with": 60.0,
+     "win_without": 45.7
     },
     {
      "item": "ward_dispenser",
@@ -1290,19 +1290,19 @@
      "win_without": 50.0
     },
     {
-     "item": "magic_wand",
-     "share": 0.857,
-     "elsewhere": 0.844,
-     "lift": 1.02,
-     "win_with": 41.7,
-     "win_without": 50.0
-    },
-    {
      "item": "arcane_boots",
      "share": 0.952,
      "elsewhere": 0.929,
      "lift": 1.02,
      "win_with": 42.5,
+     "win_without": 50.0
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.857,
+     "elsewhere": 0.844,
+     "lift": 1.02,
+     "win_with": 41.7,
      "win_without": 50.0
     },
     {
@@ -1392,20 +1392,20 @@
      "win_without": 66.7
     },
     {
-     "item": "magic_wand",
-     "share": 0.909,
-     "elsewhere": 0.844,
-     "lift": 1.08,
-     "win_with": 50.0,
-     "win_without": 100.0
-    },
-    {
      "item": "arcane_boots",
      "share": 1.0,
      "elsewhere": 0.93,
      "lift": 1.08,
      "win_with": 54.5,
      "win_without": null
+    },
+    {
+     "item": "magic_wand",
+     "share": 0.909,
+     "elsewhere": 0.844,
+     "lift": 1.08,
+     "win_with": 50.0,
+     "win_without": 100.0
     },
     {
      "item": "ring_of_basilius",

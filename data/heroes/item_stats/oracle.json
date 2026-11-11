@@ -4,7 +4,7 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.40",
- "generated": "2026-11-07",
+ "generated": "2026-11-11",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 329,
  "win": 50.5,
@@ -213,20 +213,20 @@
      "win_without": 36.8
     },
     {
-     "item": "staff_of_wizardry",
-     "share": 0.185,
-     "elsewhere": 0.172,
-     "lift": 1.08,
-     "win_with": 40.0,
-     "win_without": 36.4
-    },
-    {
      "item": "guardian_greaves",
      "share": 0.111,
      "elsewhere": 0.103,
      "lift": 1.08,
      "win_with": 66.7,
      "win_without": 33.3
+    },
+    {
+     "item": "staff_of_wizardry",
+     "share": 0.185,
+     "elsewhere": 0.172,
+     "lift": 1.08,
+     "win_with": 40.0,
+     "win_without": 36.4
     },
     {
      "item": "magic_wand",
@@ -315,7 +315,7 @@
      "win_without": 40.0
     },
     {
-     "item": "aeon_disk",
+     "item": "guardian_greaves",
      "share": 0.143,
      "elsewhere": 0.102,
      "lift": 1.39,
@@ -323,7 +323,7 @@
      "win_without": 50.0
     },
     {
-     "item": "guardian_greaves",
+     "item": "aeon_disk",
      "share": 0.143,
      "elsewhere": 0.102,
      "lift": 1.39,
@@ -535,20 +535,20 @@
      "win_without": 50.0
     },
     {
-     "item": "guardian_greaves",
-     "share": 0.102,
-     "elsewhere": 0.104,
-     "lift": 0.99,
-     "win_with": 77.8,
-     "win_without": 49.4
-    },
-    {
      "item": "ring_of_basilius",
      "share": 0.898,
      "elsewhere": 0.909,
      "lift": 0.99,
      "win_with": 53.2,
      "win_without": 44.4
+    },
+    {
+     "item": "guardian_greaves",
+     "share": 0.102,
+     "elsewhere": 0.104,
+     "lift": 0.99,
+     "win_with": 77.8,
+     "win_without": 49.4
     },
     {
      "item": "arcane_boots",
@@ -567,12 +567,12 @@
      "win_without": 53.7
     },
     {
-     "item": "staff_of_wizardry",
-     "share": 0.159,
-     "elsewhere": 0.178,
+     "item": "headdress",
+     "share": 0.136,
+     "elsewhere": 0.154,
      "lift": 0.89,
-     "win_with": 57.1,
-     "win_without": 51.4
+     "win_with": 75.0,
+     "win_without": 48.7
     },
     {
      "item": "blink",
@@ -583,12 +583,12 @@
      "win_without": 38.6
     },
     {
-     "item": "headdress",
-     "share": 0.136,
-     "elsewhere": 0.154,
+     "item": "mekansm",
+     "share": 0.125,
+     "elsewhere": 0.141,
      "lift": 0.89,
-     "win_with": 75.0,
-     "win_without": 48.7
+     "win_with": 81.8,
+     "win_without": 48.1
     }
    ]
   },
@@ -597,7 +597,7 @@
    "win": 47.5,
    "items": [
     {
-     "item": "solar_crest",
+     "item": "pavise",
      "share": 0.1,
      "elsewhere": 0.021,
      "lift": 4.82,
@@ -605,7 +605,7 @@
      "win_without": 50.0
     },
     {
-     "item": "pavise",
+     "item": "solar_crest",
      "share": 0.1,
      "elsewhere": 0.021,
      "lift": 4.82,
@@ -825,20 +825,20 @@
      "win_without": 27.3
     },
     {
-     "item": "guardian_greaves",
-     "share": 0.111,
-     "elsewhere": 0.103,
-     "lift": 1.08,
-     "win_with": 33.3,
-     "win_without": 37.5
-    },
-    {
      "item": "arcane_boots",
      "share": 0.963,
      "elsewhere": 0.894,
      "lift": 1.08,
      "win_with": 34.6,
      "win_without": 100.0
+    },
+    {
+     "item": "guardian_greaves",
+     "share": 0.111,
+     "elsewhere": 0.103,
+     "lift": 1.08,
+     "win_with": 33.3,
+     "win_without": 37.5
     },
     {
      "item": "ring_of_basilius",
@@ -1029,20 +1029,20 @@
      "win_without": 61.1
     },
     {
-     "item": "aether_lens",
-     "share": 0.435,
-     "elsewhere": 0.353,
-     "lift": 1.23,
-     "win_with": 80.0,
-     "win_without": 46.2
-    },
-    {
      "item": "glimmer_cape",
      "share": 0.304,
      "elsewhere": 0.248,
      "lift": 1.23,
      "win_with": 57.1,
      "win_without": 62.5
+    },
+    {
+     "item": "aether_lens",
+     "share": 0.435,
+     "elsewhere": 0.353,
+     "lift": 1.23,
+     "win_with": 80.0,
+     "win_without": 46.2
     },
     {
      "item": "magic_wand",

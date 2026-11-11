@@ -4,23 +4,23 @@
   "position": "mid",
   "lane_role": 2,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 2118,
+  "lanes": 2089,
   "baseline": {
-    "won": 680,
-    "even": 1193,
+    "won": 667,
+    "even": 1177,
     "lost": 245
   },
   "opponents": [
     {
       "hero": "Lina",
       "hero_id": 25,
-      "lanes": 194,
-      "won": 32,
-      "even": 127,
+      "lanes": 191,
+      "won": 30,
+      "even": 126,
       "lost": 35,
-      "gold_diff": 54
+      "gold_diff": 45
     },
     {
       "hero": "Invoker",
@@ -34,47 +34,47 @@
     {
       "hero": "Queen of Pain",
       "hero_id": 39,
-      "lanes": 174,
-      "won": 62,
-      "even": 88,
+      "lanes": 169,
+      "won": 60,
+      "even": 85,
       "lost": 24,
-      "gold_diff": 412
+      "gold_diff": 405
     },
     {
       "hero": "Sniper",
       "hero_id": 35,
-      "lanes": 164,
+      "lanes": 163,
       "won": 36,
-      "even": 93,
+      "even": 92,
       "lost": 35,
-      "gold_diff": -2
+      "gold_diff": -6
     },
     {
       "hero": "Ember Spirit",
       "hero_id": 106,
-      "lanes": 118,
-      "won": 72,
-      "even": 44,
+      "lanes": 114,
+      "won": 70,
+      "even": 42,
       "lost": 2,
-      "gold_diff": 990
+      "gold_diff": 995
     },
     {
       "hero": "Storm Spirit",
       "hero_id": 17,
-      "lanes": 111,
-      "won": 36,
+      "lanes": 110,
+      "won": 35,
       "even": 67,
       "lost": 8,
-      "gold_diff": 350
+      "gold_diff": 342
     },
     {
       "hero": "Dragon Knight",
       "hero_id": 49,
-      "lanes": 76,
-      "won": 18,
-      "even": 52,
+      "lanes": 74,
+      "won": 17,
+      "even": 51,
       "lost": 6,
-      "gold_diff": 295
+      "gold_diff": 284
     },
     {
       "hero": "Rubick",
@@ -106,8 +106,8 @@
     {
       "hero": "Puck",
       "hero_id": 13,
-      "lanes": 58,
-      "won": 27,
+      "lanes": 57,
+      "won": 26,
       "even": 30,
       "lost": 1,
       "gold_diff": 796
@@ -167,31 +167,31 @@
       "gold_diff": 624
     },
     {
-      "hero": "Pangolier",
-      "hero_id": 120,
-      "lanes": 35,
-      "won": 18,
-      "even": 17,
-      "lost": 0,
-      "gold_diff": 944
-    },
-    {
       "hero": "Necrophos",
       "hero_id": 36,
-      "lanes": 34,
+      "lanes": 33,
       "won": 5,
-      "even": 27,
+      "even": 26,
       "lost": 2,
-      "gold_diff": 232
+      "gold_diff": 235
     },
     {
       "hero": "Kez",
       "hero_id": 145,
-      "lanes": 33,
-      "won": 10,
+      "lanes": 32,
+      "won": 9,
       "even": 13,
       "lost": 10,
-      "gold_diff": -17
+      "gold_diff": -44
+    },
+    {
+      "hero": "Pangolier",
+      "hero_id": 120,
+      "lanes": 32,
+      "won": 17,
+      "even": 15,
+      "lost": 0,
+      "gold_diff": 941
     },
     {
       "hero": "Tinker",
@@ -248,15 +248,6 @@
       "gold_diff": 400
     },
     {
-      "hero": "Nature's Prophet",
-      "hero_id": 53,
-      "lanes": 24,
-      "won": 9,
-      "even": 14,
-      "lost": 1,
-      "gold_diff": 718
-    },
-    {
       "hero": "Beastmaster",
       "hero_id": 38,
       "lanes": 23,
@@ -264,6 +255,15 @@
       "even": 18,
       "lost": 1,
       "gold_diff": 319
+    },
+    {
+      "hero": "Nature's Prophet",
+      "hero_id": 53,
+      "lanes": 23,
+      "won": 9,
+      "even": 13,
+      "lost": 1,
+      "gold_diff": 741
     },
     {
       "hero": "Earth Spirit",
@@ -277,20 +277,11 @@
     {
       "hero": "Batrider",
       "hero_id": 65,
-      "lanes": 21,
+      "lanes": 20,
       "won": 11,
-      "even": 7,
+      "even": 6,
       "lost": 3,
-      "gold_diff": 919
-    },
-    {
-      "hero": "Death Prophet",
-      "hero_id": 43,
-      "lanes": 18,
-      "won": 5,
-      "even": 12,
-      "lost": 1,
-      "gold_diff": 216
+      "gold_diff": 983
     },
     {
       "hero": "Muerta",
@@ -300,6 +291,15 @@
       "even": 12,
       "lost": 2,
       "gold_diff": 259
+    },
+    {
+      "hero": "Death Prophet",
+      "hero_id": 43,
+      "lanes": 17,
+      "won": 4,
+      "even": 12,
+      "lost": 1,
+      "gold_diff": 127
     },
     {
       "hero": "Magnus",

@@ -4,13 +4,13 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 589,
+  "lanes": 585,
   "baseline": {
-    "won": 115,
-    "even": 324,
-    "lost": 150
+    "won": 114,
+    "even": 323,
+    "lost": 148
   },
   "opponents": [
     {
@@ -34,11 +34,11 @@
     {
       "hero": "Skywrath Mage",
       "hero_id": 101,
-      "lanes": 50,
+      "lanes": 48,
       "won": 6,
-      "even": 32,
-      "lost": 12,
-      "gold_diff": -213
+      "even": 31,
+      "lost": 11,
+      "gold_diff": -173
     },
     {
       "hero": "Tidehunter",
@@ -52,11 +52,11 @@
     {
       "hero": "Axe",
       "hero_id": 2,
-      "lanes": 32,
+      "lanes": 31,
       "won": 6,
       "even": 17,
-      "lost": 9,
-      "gold_diff": -34
+      "lost": 8,
+      "gold_diff": -1
     },
     {
       "hero": "Pudge",
@@ -97,11 +97,11 @@
     {
       "hero": "Centaur Warrunner",
       "hero_id": 96,
-      "lanes": 26,
-      "won": 10,
+      "lanes": 25,
+      "won": 9,
       "even": 12,
       "lost": 4,
-      "gold_diff": 412
+      "gold_diff": 354
     },
     {
       "hero": "Lion",
@@ -111,15 +111,6 @@
       "even": 7,
       "lost": 12,
       "gold_diff": -116
-    },
-    {
-      "hero": "Shadow Demon",
-      "hero_id": 79,
-      "lanes": 25,
-      "won": 7,
-      "even": 14,
-      "lost": 4,
-      "gold_diff": 133
     },
     {
       "hero": "Underlord",
@@ -149,13 +140,22 @@
       "gold_diff": -413
     },
     {
+      "hero": "Shadow Demon",
+      "hero_id": 79,
+      "lanes": 24,
+      "won": 7,
+      "even": 14,
+      "lost": 3,
+      "gold_diff": 184
+    },
+    {
       "hero": "Windranger",
       "hero_id": 21,
-      "lanes": 24,
-      "won": 5,
+      "lanes": 23,
+      "won": 4,
       "even": 14,
       "lost": 5,
-      "gold_diff": -127
+      "gold_diff": -214
     },
     {
       "hero": "Snapfire",

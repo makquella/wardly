@@ -4,122 +4,122 @@
   "position": "offlane",
   "lane_role": 3,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 2926,
+  "lanes": 2859,
   "baseline": {
-    "won": 259,
-    "even": 1625,
-    "lost": 1042
+    "won": 249,
+    "even": 1585,
+    "lost": 1025
   },
   "opponents": [
     {
       "hero": "Jakiro",
       "hero_id": 64,
-      "lanes": 244,
-      "won": 11,
-      "even": 113,
-      "lost": 120,
-      "gold_diff": -746
+      "lanes": 239,
+      "won": 10,
+      "even": 111,
+      "lost": 118,
+      "gold_diff": -760
     },
     {
       "hero": "Disruptor",
       "hero_id": 87,
-      "lanes": 228,
-      "won": 15,
-      "even": 136,
-      "lost": 77,
-      "gold_diff": -484
-    },
-    {
-      "hero": "Juggernaut",
-      "hero_id": 8,
-      "lanes": 191,
-      "won": 22,
-      "even": 95,
-      "lost": 74,
-      "gold_diff": -476
+      "lanes": 217,
+      "won": 14,
+      "even": 127,
+      "lost": 76,
+      "gold_diff": -498
     },
     {
       "hero": "Warlock",
       "hero_id": 37,
-      "lanes": 189,
+      "lanes": 187,
       "won": 14,
-      "even": 120,
-      "lost": 55,
-      "gold_diff": -409
+      "even": 119,
+      "lost": 54,
+      "gold_diff": -410
     },
     {
-      "hero": "Ogre Magi",
-      "hero_id": 84,
-      "lanes": 174,
+      "hero": "Juggernaut",
+      "hero_id": 8,
+      "lanes": 186,
       "won": 21,
-      "even": 88,
-      "lost": 65,
-      "gold_diff": -418
+      "even": 93,
+      "lost": 72,
+      "gold_diff": -477
     },
     {
       "hero": "Shadow Fiend",
       "hero_id": 11,
-      "lanes": 173,
+      "lanes": 172,
       "won": 8,
       "even": 70,
-      "lost": 95,
-      "gold_diff": -806
+      "lost": 94,
+      "gold_diff": -799
+    },
+    {
+      "hero": "Ogre Magi",
+      "hero_id": 84,
+      "lanes": 171,
+      "won": 21,
+      "even": 87,
+      "lost": 63,
+      "gold_diff": -413
     },
     {
       "hero": "Templar Assassin",
       "hero_id": 46,
-      "lanes": 170,
+      "lanes": 168,
       "won": 13,
-      "even": 103,
+      "even": 101,
       "lost": 54,
-      "gold_diff": -467
+      "gold_diff": -473
     },
     {
       "hero": "Ursa",
       "hero_id": 70,
-      "lanes": 152,
-      "won": 16,
-      "even": 93,
-      "lost": 43,
-      "gold_diff": -347
+      "lanes": 146,
+      "won": 14,
+      "even": 90,
+      "lost": 42,
+      "gold_diff": -370
     },
     {
       "hero": "Luna",
       "hero_id": 48,
-      "lanes": 137,
-      "won": 8,
-      "even": 94,
+      "lanes": 135,
+      "won": 7,
+      "even": 93,
       "lost": 35,
-      "gold_diff": -382
+      "gold_diff": -397
     },
     {
       "hero": "Gyrocopter",
       "hero_id": 72,
-      "lanes": 129,
+      "lanes": 122,
       "won": 5,
-      "even": 70,
-      "lost": 54,
-      "gold_diff": -617
+      "even": 65,
+      "lost": 52,
+      "gold_diff": -639
     },
     {
       "hero": "Dragon Knight",
       "hero_id": 49,
-      "lanes": 120,
+      "lanes": 119,
       "won": 7,
-      "even": 64,
+      "even": 63,
       "lost": 49,
-      "gold_diff": -608
+      "gold_diff": -610
     },
     {
       "hero": "Tusk",
       "hero_id": 100,
-      "lanes": 115,
+      "lanes": 113,
       "won": 7,
       "even": 58,
-      "lost": 50,
-      "gold_diff": -559
+      "lost": 48,
+      "gold_diff": -551
     },
     {
       "hero": "Kez",
@@ -128,7 +128,7 @@
       "won": 0,
       "even": 55,
       "lost": 57,
-      "gold_diff": -793
+      "gold_diff": -799
     },
     {
       "hero": "Lich",
@@ -142,20 +142,20 @@
     {
       "hero": "Lifestealer",
       "hero_id": 54,
-      "lanes": 109,
+      "lanes": 108,
       "won": 12,
       "even": 70,
-      "lost": 27,
-      "gold_diff": -318
+      "lost": 26,
+      "gold_diff": -313
     },
     {
       "hero": "Morphling",
       "hero_id": 10,
-      "lanes": 108,
+      "lanes": 101,
       "won": 18,
-      "even": 69,
+      "even": 62,
       "lost": 21,
-      "gold_diff": -86
+      "gold_diff": -96
     },
     {
       "hero": "Crystal Maiden",
@@ -194,76 +194,67 @@
       "gold_diff": -870
     },
     {
-      "hero": "Abaddon",
-      "hero_id": 102,
-      "lanes": 79,
-      "won": 6,
-      "even": 46,
-      "lost": 27,
-      "gold_diff": -335
-    },
-    {
       "hero": "Snapfire",
       "hero_id": 128,
-      "lanes": 77,
+      "lanes": 76,
       "won": 10,
-      "even": 44,
+      "even": 43,
       "lost": 23,
-      "gold_diff": -331
+      "gold_diff": -341
     },
     {
-      "hero": "Terrorblade",
-      "hero_id": 109,
-      "lanes": 73,
+      "hero": "Abaddon",
+      "hero_id": 102,
+      "lanes": 74,
       "won": 6,
-      "even": 44,
-      "lost": 23,
-      "gold_diff": -406
+      "even": 43,
+      "lost": 25,
+      "gold_diff": -298
     },
     {
       "hero": "Ringmaster",
       "hero_id": 131,
-      "lanes": 72,
+      "lanes": 71,
       "won": 7,
-      "even": 39,
+      "even": 38,
       "lost": 26,
-      "gold_diff": -440
+      "gold_diff": -444
+    },
+    {
+      "hero": "Terrorblade",
+      "hero_id": 109,
+      "lanes": 71,
+      "won": 6,
+      "even": 42,
+      "lost": 23,
+      "gold_diff": -403
     },
     {
       "hero": "Sven",
       "hero_id": 18,
-      "lanes": 70,
-      "won": 14,
-      "even": 42,
+      "lanes": 68,
+      "won": 13,
+      "even": 41,
       "lost": 14,
-      "gold_diff": -70
+      "gold_diff": -91
     },
     {
       "hero": "Shadow Demon",
       "hero_id": 79,
-      "lanes": 69,
+      "lanes": 67,
       "won": 5,
-      "even": 44,
-      "lost": 20,
-      "gold_diff": -287
+      "even": 43,
+      "lost": 19,
+      "gold_diff": -277
     },
     {
       "hero": "Faceless Void",
       "hero_id": 41,
-      "lanes": 62,
-      "won": 12,
+      "lanes": 61,
+      "won": 11,
       "even": 43,
       "lost": 7,
-      "gold_diff": 108
-    },
-    {
-      "hero": "Phantom Lancer",
-      "hero_id": 12,
-      "lanes": 62,
-      "won": 6,
-      "even": 38,
-      "lost": 18,
-      "gold_diff": -233
+      "gold_diff": 95
     },
     {
       "hero": "Shadow Shaman",
@@ -284,13 +275,13 @@
       "gold_diff": -511
     },
     {
-      "hero": "Razor",
-      "hero_id": 15,
+      "hero": "Phantom Lancer",
+      "hero_id": 12,
       "lanes": 60,
-      "won": 3,
-      "even": 33,
-      "lost": 24,
-      "gold_diff": -619
+      "won": 5,
+      "even": 38,
+      "lost": 17,
+      "gold_diff": -241
     },
     {
       "hero": "Muerta",
@@ -302,22 +293,13 @@
       "gold_diff": -662
     },
     {
-      "hero": "Ancient Apparition",
-      "hero_id": 68,
-      "lanes": 57,
-      "won": 4,
-      "even": 35,
-      "lost": 18,
-      "gold_diff": -531
-    },
-    {
-      "hero": "Medusa",
-      "hero_id": 94,
-      "lanes": 57,
-      "won": 6,
-      "even": 30,
-      "lost": 21,
-      "gold_diff": -381
+      "hero": "Razor",
+      "hero_id": 15,
+      "lanes": 58,
+      "won": 2,
+      "even": 32,
+      "lost": 24,
+      "gold_diff": -657
     },
     {
       "hero": "Phantom Assassin",
@@ -338,13 +320,13 @@
       "gold_diff": -426
     },
     {
-      "hero": "Silencer",
-      "hero_id": 75,
-      "lanes": 56,
-      "won": 4,
-      "even": 29,
-      "lost": 23,
-      "gold_diff": -568
+      "hero": "Medusa",
+      "hero_id": 94,
+      "lanes": 54,
+      "won": 6,
+      "even": 27,
+      "lost": 21,
+      "gold_diff": -402
     },
     {
       "hero": "Monkey King",
@@ -356,31 +338,40 @@
       "gold_diff": -370
     },
     {
+      "hero": "Silencer",
+      "hero_id": 75,
+      "lanes": 54,
+      "won": 4,
+      "even": 27,
+      "lost": 23,
+      "gold_diff": -583
+    },
+    {
       "hero": "Witch Doctor",
       "hero_id": 30,
       "lanes": 54,
       "won": 7,
-      "even": 33,
-      "lost": 14,
-      "gold_diff": -255
+      "even": 32,
+      "lost": 15,
+      "gold_diff": -269
     },
     {
-      "hero": "Dazzle",
-      "hero_id": 50,
+      "hero": "Ancient Apparition",
+      "hero_id": 68,
       "lanes": 53,
-      "won": 2,
-      "even": 27,
-      "lost": 24,
-      "gold_diff": -591
+      "won": 3,
+      "even": 33,
+      "lost": 17,
+      "gold_diff": -557
     },
     {
       "hero": "Drow Ranger",
       "hero_id": 6,
-      "lanes": 53,
-      "won": 12,
+      "lanes": 52,
+      "won": 11,
       "even": 15,
       "lost": 26,
-      "gold_diff": -468
+      "gold_diff": -546
     },
     {
       "hero": "Slark",
@@ -390,6 +381,15 @@
       "even": 29,
       "lost": 12,
       "gold_diff": -127
+    },
+    {
+      "hero": "Dazzle",
+      "hero_id": 50,
+      "lanes": 50,
+      "won": 2,
+      "even": 26,
+      "lost": 22,
+      "gold_diff": -557
     },
     {
       "hero": "Lion",
@@ -410,15 +410,6 @@
       "gold_diff": -376
     },
     {
-      "hero": "Troll Warlord",
-      "hero_id": 95,
-      "lanes": 48,
-      "won": 7,
-      "even": 30,
-      "lost": 11,
-      "gold_diff": -139
-    },
-    {
       "hero": "Undying",
       "hero_id": 85,
       "lanes": 48,
@@ -437,49 +428,49 @@
       "gold_diff": -366
     },
     {
-      "hero": "Vengeful Spirit",
-      "hero_id": 20,
-      "lanes": 44,
-      "won": 4,
-      "even": 24,
-      "lost": 16,
-      "gold_diff": -409
+      "hero": "Troll Warlord",
+      "hero_id": 95,
+      "lanes": 46,
+      "won": 7,
+      "even": 28,
+      "lost": 11,
+      "gold_diff": -164
     },
     {
-      "hero": "Pugna",
-      "hero_id": 45,
-      "lanes": 43,
+      "hero": "Vengeful Spirit",
+      "hero_id": 20,
+      "lanes": 41,
       "won": 3,
-      "even": 27,
-      "lost": 13,
-      "gold_diff": -384
+      "even": 22,
+      "lost": 16,
+      "gold_diff": -466
     },
     {
       "hero": "Anti-Mage",
       "hero_id": 1,
-      "lanes": 42,
-      "won": 3,
-      "even": 24,
-      "lost": 15,
-      "gold_diff": -614
+      "lanes": 39,
+      "won": 2,
+      "even": 23,
+      "lost": 14,
+      "gold_diff": -662
     },
     {
       "hero": "Venomancer",
       "hero_id": 40,
-      "lanes": 39,
+      "lanes": 38,
       "won": 3,
       "even": 21,
-      "lost": 15,
-      "gold_diff": -602
+      "lost": 14,
+      "gold_diff": -595
     },
     {
       "hero": "Alchemist",
       "hero_id": 73,
-      "lanes": 38,
+      "lanes": 37,
       "won": 1,
       "even": 10,
-      "lost": 27,
-      "gold_diff": -1252
+      "lost": 26,
+      "gold_diff": -1263
     },
     {
       "hero": "Beastmaster",
@@ -500,40 +491,31 @@
       "gold_diff": -35
     },
     {
+      "hero": "Pugna",
+      "hero_id": 45,
+      "lanes": 37,
+      "won": 2,
+      "even": 23,
+      "lost": 12,
+      "gold_diff": -404
+    },
+    {
       "hero": "Bane",
       "hero_id": 3,
-      "lanes": 36,
+      "lanes": 34,
       "won": 4,
-      "even": 16,
+      "even": 14,
       "lost": 16,
-      "gold_diff": -672
+      "gold_diff": -725
     },
     {
       "hero": "Marci",
       "hero_id": 136,
-      "lanes": 36,
+      "lanes": 34,
       "won": 2,
-      "even": 22,
-      "lost": 12,
-      "gold_diff": -546
-    },
-    {
-      "hero": "Chen",
-      "hero_id": 66,
-      "lanes": 34,
-      "won": 3,
-      "even": 15,
-      "lost": 16,
-      "gold_diff": -692
-    },
-    {
-      "hero": "Nature's Prophet",
-      "hero_id": 53,
-      "lanes": 34,
-      "won": 6,
-      "even": 22,
-      "lost": 6,
-      "gold_diff": -108
+      "even": 21,
+      "lost": 11,
+      "gold_diff": -510
     },
     {
       "hero": "Spirit Breaker",
@@ -545,40 +527,49 @@
       "gold_diff": -96
     },
     {
+      "hero": "Chen",
+      "hero_id": 66,
+      "lanes": 32,
+      "won": 2,
+      "even": 15,
+      "lost": 15,
+      "gold_diff": -712
+    },
+    {
+      "hero": "Nature's Prophet",
+      "hero_id": 53,
+      "lanes": 32,
+      "won": 5,
+      "even": 21,
+      "lost": 6,
+      "gold_diff": -159
+    },
+    {
       "hero": "Grimstroke",
       "hero_id": 121,
-      "lanes": 30,
-      "won": 6,
+      "lanes": 29,
+      "won": 5,
       "even": 16,
       "lost": 8,
-      "gold_diff": -305
+      "gold_diff": -344
     },
     {
       "hero": "Oracle",
       "hero_id": 111,
-      "lanes": 30,
+      "lanes": 29,
       "won": 5,
-      "even": 23,
+      "even": 22,
       "lost": 2,
-      "gold_diff": 58
+      "gold_diff": 49
     },
     {
       "hero": "Naga Siren",
       "hero_id": 89,
-      "lanes": 29,
+      "lanes": 27,
       "won": 2,
-      "even": 22,
+      "even": 20,
       "lost": 5,
-      "gold_diff": -178
-    },
-    {
-      "hero": "Enchantress",
-      "hero_id": 58,
-      "lanes": 26,
-      "won": 1,
-      "even": 11,
-      "lost": 14,
-      "gold_diff": -940
+      "gold_diff": -230
     },
     {
       "hero": "Largo",
@@ -588,6 +579,15 @@
       "even": 13,
       "lost": 8,
       "gold_diff": -230
+    },
+    {
+      "hero": "Enchantress",
+      "hero_id": 58,
+      "lanes": 25,
+      "won": 1,
+      "even": 11,
+      "lost": 13,
+      "gold_diff": -942
     },
     {
       "hero": "Rubick",
@@ -610,20 +610,11 @@
     {
       "hero": "Winter Wyvern",
       "hero_id": 112,
-      "lanes": 22,
-      "won": 1,
-      "even": 16,
-      "lost": 5,
-      "gold_diff": -337
-    },
-    {
-      "hero": "Spectre",
-      "hero_id": 67,
       "lanes": 21,
-      "won": 2,
-      "even": 12,
-      "lost": 7,
-      "gold_diff": -202
+      "won": 1,
+      "even": 15,
+      "lost": 5,
+      "gold_diff": -351
     },
     {
       "hero": "Io",
@@ -635,6 +626,15 @@
       "gold_diff": -665
     },
     {
+      "hero": "Spectre",
+      "hero_id": 67,
+      "lanes": 20,
+      "won": 2,
+      "even": 11,
+      "lost": 7,
+      "gold_diff": -190
+    },
+    {
       "hero": "Queen of Pain",
       "hero_id": 39,
       "lanes": 19,
@@ -642,15 +642,6 @@
       "even": 8,
       "lost": 8,
       "gold_diff": -313
-    },
-    {
-      "hero": "Hoodwink",
-      "hero_id": 123,
-      "lanes": 18,
-      "won": 2,
-      "even": 11,
-      "lost": 5,
-      "gold_diff": -182
     },
     {
       "hero": "Skywrath Mage",
@@ -671,6 +662,15 @@
       "gold_diff": -438
     },
     {
+      "hero": "Hoodwink",
+      "hero_id": 123,
+      "lanes": 17,
+      "won": 1,
+      "even": 10,
+      "lost": 6,
+      "gold_diff": -536
+    },
+    {
       "hero": "Sniper",
       "hero_id": 35,
       "lanes": 16,
@@ -678,15 +678,6 @@
       "even": 9,
       "lost": 6,
       "gold_diff": -182
-    },
-    {
-      "hero": "Batrider",
-      "hero_id": 65,
-      "lanes": 15,
-      "won": 0,
-      "even": 7,
-      "lost": 8,
-      "gold_diff": -878
     },
     {
       "hero": "Broodmother",

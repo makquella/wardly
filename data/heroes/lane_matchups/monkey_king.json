@@ -4,23 +4,23 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 757,
+  "lanes": 751,
   "baseline": {
-    "won": 232,
-    "even": 399,
-    "lost": 126
+    "won": 231,
+    "even": 397,
+    "lost": 123
   },
   "opponents": [
     {
       "hero": "Rubick",
       "hero_id": 86,
-      "lanes": 78,
+      "lanes": 77,
       "won": 23,
-      "even": 44,
+      "even": 43,
       "lost": 11,
-      "gold_diff": 346
+      "gold_diff": 354
     },
     {
       "hero": "Hoodwink",
@@ -43,11 +43,11 @@
     {
       "hero": "Bristleback",
       "hero_id": 99,
-      "lanes": 55,
+      "lanes": 54,
       "won": 13,
       "even": 29,
-      "lost": 13,
-      "gold_diff": 123
+      "lost": 12,
+      "gold_diff": 140
     },
     {
       "hero": "Mars",
@@ -70,11 +70,11 @@
     {
       "hero": "Axe",
       "hero_id": 2,
-      "lanes": 47,
-      "won": 12,
+      "lanes": 45,
+      "won": 11,
       "even": 25,
-      "lost": 10,
-      "gold_diff": -15
+      "lost": 9,
+      "gold_diff": -8
     },
     {
       "hero": "Lion",
@@ -115,11 +115,11 @@
     {
       "hero": "Dawnbreaker",
       "hero_id": 135,
-      "lanes": 34,
+      "lanes": 33,
       "won": 6,
-      "even": 25,
+      "even": 24,
       "lost": 3,
-      "gold_diff": 203
+      "gold_diff": 217
     },
     {
       "hero": "Centaur Warrunner",
@@ -133,11 +133,11 @@
     {
       "hero": "Doom",
       "hero_id": 69,
-      "lanes": 30,
+      "lanes": 29,
       "won": 4,
       "even": 13,
-      "lost": 13,
-      "gold_diff": -440
+      "lost": 12,
+      "gold_diff": -406
     },
     {
       "hero": "Windranger",
@@ -221,15 +221,6 @@
       "gold_diff": 23
     },
     {
-      "hero": "Phoenix",
-      "hero_id": 110,
-      "lanes": 20,
-      "won": 3,
-      "even": 8,
-      "lost": 9,
-      "gold_diff": -336
-    },
-    {
       "hero": "Ringmaster",
       "hero_id": 131,
       "lanes": 20,
@@ -246,6 +237,15 @@
       "even": 10,
       "lost": 3,
       "gold_diff": 244
+    },
+    {
+      "hero": "Phoenix",
+      "hero_id": 110,
+      "lanes": 19,
+      "won": 3,
+      "even": 7,
+      "lost": 9,
+      "gold_diff": -374
     },
     {
       "hero": "Skywrath Mage",

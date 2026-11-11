@@ -4,13 +4,13 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-11",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 397,
+  "lanes": 386,
   "baseline": {
-    "won": 81,
-    "even": 179,
-    "lost": 137
+    "won": 80,
+    "even": 175,
+    "lost": 131
   },
   "opponents": [
     {
@@ -25,38 +25,38 @@
     {
       "hero": "Lycan",
       "hero_id": 77,
-      "lanes": 29,
+      "lanes": 28,
       "won": 17,
-      "even": 10,
+      "even": 9,
       "lost": 2,
-      "gold_diff": 854
+      "gold_diff": 843
     },
     {
       "hero": "Mars",
       "hero_id": 129,
-      "lanes": 29,
+      "lanes": 27,
       "won": 4,
-      "even": 14,
+      "even": 12,
       "lost": 11,
-      "gold_diff": -591
+      "gold_diff": -596
     },
     {
       "hero": "Slardar",
       "hero_id": 28,
-      "lanes": 27,
+      "lanes": 26,
       "won": 7,
       "even": 15,
-      "lost": 5,
-      "gold_diff": 119
+      "lost": 4,
+      "gold_diff": 213
     },
     {
       "hero": "Snapfire",
       "hero_id": 128,
-      "lanes": 27,
+      "lanes": 26,
       "won": 6,
       "even": 8,
-      "lost": 13,
-      "gold_diff": -746
+      "lost": 12,
+      "gold_diff": -685
     },
     {
       "hero": "Shadow Demon",
@@ -70,38 +70,38 @@
     {
       "hero": "Centaur Warrunner",
       "hero_id": 96,
-      "lanes": 21,
-      "won": 2,
+      "lanes": 20,
+      "won": 1,
       "even": 7,
       "lost": 12,
-      "gold_diff": -967
+      "gold_diff": -1113
     },
     {
       "hero": "Rubick",
       "hero_id": 86,
-      "lanes": 21,
+      "lanes": 20,
       "won": 5,
       "even": 12,
-      "lost": 4,
-      "gold_diff": 54
+      "lost": 3,
+      "gold_diff": 135
     },
     {
       "hero": "Skywrath Mage",
       "hero_id": 101,
-      "lanes": 21,
+      "lanes": 20,
       "won": 4,
-      "even": 9,
+      "even": 8,
       "lost": 8,
-      "gold_diff": -625
+      "gold_diff": -618
     },
     {
       "hero": "Tusk",
       "hero_id": 100,
-      "lanes": 21,
+      "lanes": 20,
       "won": 2,
-      "even": 13,
+      "even": 12,
       "lost": 6,
-      "gold_diff": -568
+      "gold_diff": -629
     },
     {
       "hero": "Hoodwink",
@@ -142,11 +142,11 @@
     {
       "hero": "Spirit Breaker",
       "hero_id": 71,
-      "lanes": 16,
+      "lanes": 15,
       "won": 2,
-      "even": 8,
+      "even": 7,
       "lost": 6,
-      "gold_diff": -507
+      "gold_diff": -493
     }
   ]
 }

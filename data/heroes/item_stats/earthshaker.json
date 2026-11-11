@@ -4,7 +4,7 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.40",
- "generated": "2026-11-07",
+ "generated": "2026-11-11",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 51,
  "win": 37.3,
@@ -317,7 +317,7 @@
      "win_without": 60.0
     },
     {
-     "item": "pavise",
+     "item": "travel_boots",
      "share": 0.167,
      "elsewhere": 0.0,
      "lift": null,
@@ -325,7 +325,7 @@
      "win_without": 40.0
     },
     {
-     "item": "travel_boots",
+     "item": "pavise",
      "share": 0.167,
      "elsewhere": 0.0,
      "lift": null,
@@ -357,14 +357,6 @@
      "win_without": 40.0
     },
     {
-     "item": "greater_famango",
-     "share": 0.167,
-     "elsewhere": 0.022,
-     "lift": 7.5,
-     "win_with": 100.0,
-     "win_without": 40.0
-    },
-    {
      "item": "refresher",
      "share": 0.167,
      "elsewhere": 0.022,
@@ -374,6 +366,14 @@
     },
     {
      "item": "pers",
+     "share": 0.167,
+     "elsewhere": 0.022,
+     "lift": 7.5,
+     "win_with": 100.0,
+     "win_without": 40.0
+    },
+    {
+     "item": "greater_famango",
      "share": 0.167,
      "elsewhere": 0.022,
      "lift": 7.5,
@@ -397,12 +397,12 @@
      "win_without": 40.0
     },
     {
-     "item": "tranquil_boots",
-     "share": 0.167,
-     "elsewhere": 0.067,
+     "item": "cyclone",
+     "share": 0.333,
+     "elsewhere": 0.133,
      "lift": 2.5,
-     "win_with": 100.0,
-     "win_without": 40.0
+     "win_with": 50.0,
+     "win_without": 50.0
     }
    ]
   },
@@ -607,15 +607,7 @@
    "win": 41.2,
    "items": [
     {
-     "item": "soul_booster",
-     "share": 0.118,
-     "elsewhere": 0.0,
-     "lift": null,
-     "win_with": 50.0,
-     "win_without": 40.0
-    },
-    {
-     "item": "black_king_bar",
+     "item": "ogre_axe",
      "share": 0.118,
      "elsewhere": 0.0,
      "lift": null,
@@ -631,7 +623,15 @@
      "win_without": 40.0
     },
     {
-     "item": "ogre_axe",
+     "item": "black_king_bar",
+     "share": 0.118,
+     "elsewhere": 0.0,
+     "lift": null,
+     "win_with": 50.0,
+     "win_without": 40.0
+    },
+    {
+     "item": "soul_booster",
      "share": 0.118,
      "elsewhere": 0.0,
      "lift": null,
@@ -725,12 +725,12 @@
      "win_without": 12.5
     },
     {
-     "item": "phase_boots",
-     "share": 0.111,
-     "elsewhere": 0.024,
+     "item": "ghost",
+     "share": 0.222,
+     "elsewhere": 0.048,
      "lift": 4.67,
-     "win_with": 0.0,
-     "win_without": 25.0
+     "win_with": 50.0,
+     "win_without": 14.3
     },
     {
      "item": "wind_waker",
@@ -741,15 +741,15 @@
      "win_without": 25.0
     },
     {
-     "item": "ghost",
-     "share": 0.222,
-     "elsewhere": 0.048,
+     "item": "mystic_staff",
+     "share": 0.111,
+     "elsewhere": 0.024,
      "lift": 4.67,
-     "win_with": 50.0,
-     "win_without": 14.3
+     "win_with": 0.0,
+     "win_without": 25.0
     },
     {
-     "item": "mystic_staff",
+     "item": "phase_boots",
      "share": 0.111,
      "elsewhere": 0.024,
      "lift": 4.67,
@@ -773,20 +773,20 @@
      "win_without": 12.5
     },
     {
-     "item": "tranquil_boots",
-     "share": 0.111,
-     "elsewhere": 0.071,
-     "lift": 1.56,
-     "win_with": 0.0,
-     "win_without": 25.0
-    },
-    {
      "item": "cyclone",
      "share": 0.222,
      "elsewhere": 0.143,
      "lift": 1.56,
      "win_with": 50.0,
      "win_without": 14.3
+    },
+    {
+     "item": "tranquil_boots",
+     "share": 0.111,
+     "elsewhere": 0.071,
+     "lift": 1.56,
+     "win_with": 0.0,
+     "win_without": 25.0
     },
     {
      "item": "aghanims_shard",
@@ -811,6 +811,14 @@
    "win": 50.0,
    "items": [
     {
+     "item": "guardian_greaves",
+     "share": 0.5,
+     "elsewhere": 0.0,
+     "lift": null,
+     "win_with": 100.0,
+     "win_without": 0.0
+    },
+    {
      "item": "headdress",
      "share": 0.5,
      "elsewhere": 0.0,
@@ -827,23 +835,7 @@
      "win_without": 0.0
     },
     {
-     "item": "guardian_greaves",
-     "share": 0.5,
-     "elsewhere": 0.0,
-     "lift": null,
-     "win_with": 100.0,
-     "win_without": 0.0
-    },
-    {
-     "item": "greater_famango",
-     "share": 0.5,
-     "elsewhere": 0.02,
-     "lift": 24.5,
-     "win_with": 100.0,
-     "win_without": 0.0
-    },
-    {
-     "item": "black_king_bar",
+     "item": "ogre_axe",
      "share": 0.5,
      "elsewhere": 0.02,
      "lift": 24.5,
@@ -859,7 +851,15 @@
      "win_without": 0.0
     },
     {
-     "item": "ogre_axe",
+     "item": "black_king_bar",
+     "share": 0.5,
+     "elsewhere": 0.02,
+     "lift": 24.5,
+     "win_with": 100.0,
+     "win_without": 0.0
+    },
+    {
+     "item": "greater_famango",
      "share": 0.5,
      "elsewhere": 0.02,
      "lift": 24.5,
@@ -999,7 +999,7 @@
      "win_without": 36.8
     },
     {
-     "item": "yasha",
+     "item": "blade_of_alacrity",
      "share": 0.182,
      "elsewhere": 0.069,
      "lift": 2.64,
@@ -1007,7 +1007,7 @@
      "win_without": 33.3
     },
     {
-     "item": "blade_of_alacrity",
+     "item": "yasha",
      "share": 0.182,
      "elsewhere": 0.069,
      "lift": 2.64,
@@ -1055,12 +1055,12 @@
      "win_without": 50.0
     },
     {
-     "item": "arcane_boots",
-     "share": 0.591,
-     "elsewhere": 0.69,
+     "item": "ward_dispenser",
+     "share": 0.773,
+     "elsewhere": 0.897,
      "lift": 0.86,
-     "win_with": 38.5,
-     "win_without": 33.3
+     "win_with": 35.3,
+     "win_without": 40.0
     }
    ]
   },
@@ -1068,6 +1068,22 @@
    "games": 2,
    "win": 0.0,
    "items": [
+    {
+     "item": "ogre_axe",
+     "share": 0.5,
+     "elsewhere": 0.02,
+     "lift": 24.5,
+     "win_with": 0.0,
+     "win_without": 0.0
+    },
+    {
+     "item": "mithril_hammer",
+     "share": 0.5,
+     "elsewhere": 0.02,
+     "lift": 24.5,
+     "win_with": 0.0,
+     "win_without": 0.0
+    },
     {
      "item": "black_king_bar",
      "share": 0.5,
@@ -1085,18 +1101,10 @@
      "win_without": 0.0
     },
     {
-     "item": "mithril_hammer",
+     "item": "vitality_booster",
      "share": 0.5,
-     "elsewhere": 0.02,
-     "lift": 24.5,
-     "win_with": 0.0,
-     "win_without": 0.0
-    },
-    {
-     "item": "ogre_axe",
-     "share": 0.5,
-     "elsewhere": 0.02,
-     "lift": 24.5,
+     "elsewhere": 0.041,
+     "lift": 12.25,
      "win_with": 0.0,
      "win_without": 0.0
     },
@@ -1110,14 +1118,6 @@
     },
     {
      "item": "soul_ring",
-     "share": 0.5,
-     "elsewhere": 0.041,
-     "lift": 12.25,
-     "win_with": 0.0,
-     "win_without": 0.0
-    },
-    {
-     "item": "vitality_booster",
      "share": 0.5,
      "elsewhere": 0.041,
      "lift": 12.25,
