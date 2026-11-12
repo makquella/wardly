@@ -9,6 +9,12 @@
 
   const TEXT = {
     en: {
+      "0.67.0": [
+        "Runes and map events in their own colours: bounty gold, power purple, water blue, wisdom shrine green, lotus pink, Tormentor steel. The timer strip shows a coloured dot before each name, and an event card has a stripe of the same colour, so the timers no longer blend together.",
+        "A small map on rune cards: the spot nearest to you and where you are. The other spot shows dimmer, because a power rune appears on one of the two river spots. Shrines, lotuses and Tormentor get the same map. You can turn the map off in Settings → Advice card → «Small map on cards».",
+        "Profiles for two people on one computer: when another Steam account starts Dota, «Add profile» saves it. From then on Wardly switches between you by itself, by the Steam account in the game: history, plan, goals and advice feedback belong to whoever plays. History → profile chips switch by hand or forget a profile; its history stays.",
+        "A problem report now holds up to 2000 characters, with a counter under the field, and the field is titled «What happened, or an idea?». All of this release comes from your reports and ideas: thank you!"
+      ],
       "0.66.1": [
         "These fixes come from the first problem report a player sent from the app: thank you! Something off in a match? Settings → Help → «Report a problem», a few words are enough.",
         "An old card no longer sits on the screen: once its time is up it goes and does not come back on its own, and the card from before a death does not return after the respawn (a «Reset HP» card used to stay for up to a minute after HP was back). A calm card that is already over makes way for a map tip, so pull timings and item tips are shown for their full time instead of 2 seconds at the end.",
@@ -614,6 +620,12 @@
       ]
     },
     uk: {
+      "0.67.0": [
+        "Руни й події на мапі мають свої кольори: багатство — золотий, сила — фіолетовий, вода — синій, святилище мудрості — зелений, лотос — рожевий, Торментор — сталевий. У смузі таймерів перед назвою стоїть кольорова крапка, а картка події має смужку того ж кольору, тож таймери більше не зливаються.",
+        "Мала мапа на картках рун: найближча до вас точка й ваша позиція. Друга точка — тьмяніша, бо руна сили з'являється на одній із двох точок у річці. Святилища, лотоси й Торментор теж отримали мапу. Вимкнути її можна в «Налаштування → Картка з підказками → Мала мапа на картках».",
+        "Профілі для двох людей на одному комп'ютері: коли Доту запускає інший акаунт Steam, кнопка «Додати профіль» зберігає його. Далі Wardly сам перемикається між вами за акаунтом у грі: історія, план, цілі й відмітки на порадах — того, хто грає. В «Історії» профілі можна перемкнути вручну або забути; історія лишиться.",
+        "У звіт про проблему тепер уміщується до 2000 символів, під полем є лічильник, а поле називається «Що сталося або ідея?». Увесь цей реліз — з ваших звітів та ідей: дякуємо!"
+      ],
       "0.66.1": [
         "Ці виправлення — з першого звіту гравця, надісланого із застосунку: дякуємо! Щось не так у матчі? «Налаштування → Допомога → Повідомити про проблему», вистачить кількох слів.",
         "Стара картка більше не висить на екрані: коли її час минув, вона зникає й сама не повертається, а картка з-перед смерті не з'являється знову після відродження (картка «Відновіть HP» могла лишатися до хвилини після того, як HP уже відновилося). Спокійна картка, час якої минув, поступається підказці на мапі, тож таймінги пулу й підказки про предмети показуються весь свій час, а не 2 секунди наприкінці.",

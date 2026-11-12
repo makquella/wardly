@@ -1951,6 +1951,9 @@ const PLAYER_OPS = {
   link: (args) => ["POST", "/player/link", { steam: String(args.steam || "").slice(0, 200) }],
   linkDetected: () => ["POST", "/player/link-detected"],
   unlink: () => ["DELETE", "/player"],
+  // Saved profiles (two people on one computer): switch by hand, or forget one.
+  switchProfile: (args) => ["POST", "/player/profiles/switch", { account_id: accountIdArg(args) }],
+  removeProfile: (args) => ["POST", "/player/profiles/remove", { account_id: accountIdArg(args) }],
   sync: () => ["POST", "/player/sync"],
   matches: (args) => [
     "GET",
@@ -2105,6 +2108,15 @@ function askBody(args) {
     body.request_id = String(args.requestId);
   }
   return body;
+}
+
+// A Steam account id (32-bit) of a saved profile.
+function accountIdArg(args) {
+  const id = Number(args.accountId);
+  if (!Number.isSafeInteger(id) || id <= 0 || id > 0xffffffff) {
+    throw new Error("Invalid account id.");
+  }
+  return id;
 }
 
 function matchIdArg(args) {

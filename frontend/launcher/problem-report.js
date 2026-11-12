@@ -99,7 +99,7 @@ function buildReport(parts, date = new Date()) {
 
 const API_URL = "https://api.luhovyimvp.dev";
 const PRIVACY_URL = "https://luhovyimvp.dev/privacy.html";
-const NOTE_MAX = 1000;
+const NOTE_MAX = 2000;
 const OUTBOX_MAX = 10;
 
 function apiUrl(env = process.env) {

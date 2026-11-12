@@ -92,7 +92,8 @@ let config = {
   voice: "off",
   voiceVolume: 1,
   timers: true,
-  compact: false
+  compact: false,
+  map: true
 };
 let pollTimer = null;
 let hideTimer = null;
@@ -545,9 +546,17 @@ function showSample(data) {
 }
 
 // While no advice is on the card, the map hint takes it (not while waiting for data).
+// The event a timer card is about («power_rune@360» → power_rune): its colour
+// on the card's stripe and on the map, the same as its chip in the strip.
+function timerEvent(hint) {
+  const id = hint?.kind === "timer" ? String(hint.id || "").split("@")[0] : "";
+  return /^[a-z_]+$/.test(id) ? id : "";
+}
+
 function showHint(hint, data) {
   clearTimeout(hideTimer);
-  shell.className = "overlay-shell hint coaching";
+  const event = timerEvent(hint);
+  shell.className = `overlay-shell hint coaching${event ? ` event-${event}` : ""}`;
   labelEl.textContent = hint.label || tr("map");
   priorityEl.textContent = Number.isFinite(hint.in_seconds) ? tr("hintIn", Math.max(0, hint.in_seconds)) : "";
   actionEl.textContent = hint.title;
@@ -572,8 +581,10 @@ function showHint(hint, data) {
 // The small map at the card's right: the place it names and the player's dot.
 // The map art loads on the first card that needs it; without it the square
 // stays dark and the dots still show the direction.
+// The «small map on cards» switch (config.map) hides it on every card.
 function renderMarker(marker) {
-  const layout = window.OverlayMapMarker && mapEl ? window.OverlayMapMarker.markerLayout(marker) : null;
+  const layout =
+    window.OverlayMapMarker && mapEl && config.map !== false ? window.OverlayMapMarker.markerLayout(marker) : null;
   shell.classList.toggle("with-map", Boolean(layout));
   if (!mapEl) return;
   mapEl.classList.toggle("hidden", !layout);
@@ -585,6 +596,14 @@ function renderMarker(marker) {
   mapTargetEl.className = `mk mk-target mk-${layout.kind}`;
   mapTargetEl.style.left = layout.target.left;
   mapTargetEl.style.top = layout.target.top;
+  for (const old of mapEl.querySelectorAll(".mk-other")) old.remove();
+  for (const spot of layout.others) {
+    const dot = document.createElement("i");
+    dot.className = `mk mk-other mk-${layout.kind}`;
+    dot.style.left = spot.left;
+    dot.style.top = spot.top;
+    mapTargetEl.before(dot);
+  }
   mapPlayerEl.classList.toggle("hidden", !layout.player);
   if (layout.player) {
     mapPlayerEl.style.left = layout.player.left;

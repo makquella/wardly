@@ -972,6 +972,35 @@ def _with_marker(tip: dict[str, Any], x: Any, y: Any, kind: str) -> dict[str, An
     return tip
 
 
+# GSI reports world coordinates (centre 0); map_point takes the replay's (centre MAP_CENTER).
+MAP_CENTER = 16384
+
+
+def with_spot_marker(hint: dict[str, Any], x: Any, y: Any) -> dict[str, Any]:
+    """A timer card (a rune, a shrine, a lotus, Tormentor) points at its spot
+    nearest to the player (map_timers.json `spots`, world coordinates; x, y the
+    player's, replay units) and shows the event's other spots dimmer: a power
+    rune is on one of the two river spots. A card that already has a place, or
+    an event with no spots, stays as it is."""
+    if hint.get("kind") != "timer" or "marker" in hint:
+        return hint
+    event_id = str(hint.get("id") or "").split("@", 1)[0]
+    event = next((row for row in timers().get("events") or [] if row.get("id") == event_id), None)
+    spots = [
+        (row[0] + MAP_CENTER, row[1] + MAP_CENTER)
+        for row in (event or {}).get("spots") or []
+        if isinstance(row, list) and len(row) == 2
+    ]
+    if not spots:
+        return hint
+    if isinstance(x, (int, float)) and isinstance(y, (int, float)) and not isinstance(x, bool):
+        spots.sort(key=lambda spot: math.hypot(spot[0] - x, spot[1] - y))
+    points = [point for spot in spots if (point := map_point(*spot)) is not None]
+    if not points:
+        return hint
+    return {**hint, "marker": {"target": points[0], "others": points[1:], "kind": event_id}}
+
+
 def _lane_words(lane: Any, lang: str) -> str:
     from app.analysis_texts import PLACE_ZONES
 

@@ -547,3 +547,66 @@ def test_roshan_and_the_aegis_lead_the_strip():
     # Inside the window: «Roshan?» until it closes; after that, nothing.
     assert [row["kind"] for row in roshan.strip(29 * 60, "en")] == ["roshan_maybe"]
     assert roshan.strip(32 * 60, "en") == []
+
+
+def test_a_rune_card_points_at_the_spot_nearest_to_the_player():
+    from app.live_hints import _with_player_dot
+    from app.map_hints import MAP_CENTER, map_point, next_timer
+
+    rune = next_timer(355, "mid", "en")
+    assert rune is not None and rune["id"] == "power_rune@360" and "marker" not in rune
+    top, bottom = (-1640 + MAP_CENTER, 1112 + MAP_CENTER), (1180 + MAP_CENTER, -1216 + MAP_CENTER)
+    near_bottom = {"xpos": bottom[0] + 400, "ypos": bottom[1] - 300}
+    shown = _with_player_dot(rune, near_bottom)
+    assert shown["marker"] == {
+        "target": map_point(*bottom),
+        "others": [map_point(*top)],  # a power rune is on one of the two
+        "kind": "power_rune",
+        "player": map_point(near_bottom["xpos"], near_bottom["ypos"]),
+    }
+    assert _with_player_dot(rune, {"xpos": top[0], "ypos": top[1]})["marker"][
+        "target"
+    ] == map_point(*top)
+    assert "marker" not in rune  # the card itself is not changed
+
+    # No position (dead, a replay without one): the spots still show, no player dot.
+    blind = _with_player_dot(rune, {})["marker"]
+    assert blind["player"] is None and len([blind["target"], *blind["others"]]) == 2
+
+
+def test_every_timer_with_a_place_has_its_spots_on_the_map():
+    from app.map_hints import MAP_CENTER, map_point, timers
+
+    events = {event["id"]: event for event in timers()["events"]}
+    for event_id in (
+        "water_rune",
+        "power_rune",
+        "bounty_rune",
+        "wisdom_shrine",
+        "lotus",
+        "tormentor",
+    ):
+        spots = events[event_id]["spots"]
+        assert len(spots) == 2, event_id
+        assert all(map_point(x + MAP_CENTER, y + MAP_CENTER) for x, y in spots), event_id
+    # Neutral items have no place: their card stays without a map.
+    assert "spots" not in events["neutral_tier_2"]
+
+
+def test_a_card_with_its_own_place_keeps_it():
+    from app.map_hints import with_spot_marker
+
+    farm = {
+        "kind": "timer",
+        "id": "power_rune@360",
+        "marker": {"target": [0.1, 0.1], "kind": "farm"},
+    }
+    assert with_spot_marker(farm, 1, 1) is farm
+    assert with_spot_marker({"kind": "timer", "id": "neutral_tier_2@900"}, 1, 1) == {
+        "kind": "timer",
+        "id": "neutral_tier_2@900",
+    }
+    assert with_spot_marker({"kind": "tip", "id": "power_rune@360"}, 1, 1) == {
+        "kind": "tip",
+        "id": "power_rune@360",
+    }
