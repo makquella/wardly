@@ -558,8 +558,9 @@
                 <button id="report-open" class="btn" type="button" aria-expanded="false" aria-controls="report-panel"><i data-icon="send"></i><span data-i18n="reportSend">Report</span></button>
               </div>
               <div class="report-panel" id="report-panel" hidden>
-                <label class="report-label" for="report-note" data-i18n="reportNoteLabel">What happened? (optional)</label>
-                <textarea id="report-note" class="input report-note" rows="3" maxlength="1000" data-i18n-placeholder="reportNotePlaceholder" placeholder="For example: no advice shows in a match"></textarea>
+                <label class="report-label" for="report-note" data-i18n="reportNoteLabel">What happened, or an idea? (optional)</label>
+                <textarea id="report-note" class="input report-note" rows="4" maxlength="2000" data-i18n-placeholder="reportNotePlaceholder" placeholder="For example: no advice shows in a match"></textarea>
+                <span class="report-count" id="report-count" aria-live="polite">0 / 2000</span>
                 <details class="report-preview" id="report-preview">
                   <summary data-i18n="reportPreview">What will be sent</summary>
                   <pre id="report-preview-text" class="report-preview-text" tabindex="0"></pre>

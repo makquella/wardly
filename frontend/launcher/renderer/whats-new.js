@@ -9,6 +9,9 @@
 
   const TEXT = {
     en: {
+      "0.66.2": [
+        "A problem report now holds up to 2000 characters, with a character counter under the field: describe a problem in detail or send an idea. The field is now titled «What happened, or an idea?»."
+      ],
       "0.66.1": [
         "These fixes come from the first problem report a player sent from the app: thank you! Something off in a match? Settings → Help → «Report a problem», a few words are enough.",
         "An old card no longer sits on the screen: once its time is up it goes and does not come back on its own, and the card from before a death does not return after the respawn (a «Reset HP» card used to stay for up to a minute after HP was back). A calm card that is already over makes way for a map tip, so pull timings and item tips are shown for their full time instead of 2 seconds at the end.",
@@ -614,6 +617,9 @@
       ]
     },
     uk: {
+      "0.66.2": [
+        "У звіт про проблему тепер уміщується до 2000 символів, під полем є лічильник символів: опишіть проблему докладно або надішліть ідею. Поле тепер називається «Що сталося або ідея?»."
+      ],
       "0.66.1": [
         "Ці виправлення — з першого звіту гравця, надісланого із застосунку: дякуємо! Щось не так у матчі? «Налаштування → Допомога → Повідомити про проблему», вистачить кількох слів.",
         "Стара картка більше не висить на екрані: коли її час минув, вона зникає й сама не повертається, а картка з-перед смерті не з'являється знову після відродження (картка «Відновіть HP» могла лишатися до хвилини після того, як HP уже відновилося). Спокійна картка, час якої минув, поступається підказці на мапі, тож таймінги пулу й підказки про предмети показуються весь свій час, а не 2 секунди наприкінці.",

@@ -555,6 +555,14 @@ label.setting {
   resize: vertical;
 }
 
+.report-count {
+  justify-self: end;
+  margin-top: calc(-1 * var(--sp-1));
+  color: var(--text-3);
+  font-size: var(--fs-12);
+  font-variant-numeric: tabular-nums;
+}
+
 /* «Ще налаштування» at the end of Settings: rarely needed rows, folded. */
 .settings-more {
   margin-top: var(--sp-3);

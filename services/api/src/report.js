@@ -15,7 +15,7 @@ const KEY_FIELD = /("api_?key"\s*:\s*")[^"]*"/gi;
 
 export const LIMITS = {
   textChars: 1_500_000, // the report file (logs, diagnostics)
-  noteChars: 1000, // what the player wrote about the problem
+  noteChars: 2000, // what the player wrote: a problem or an idea
   bodyBytes: 2 * 1024 * 1024,
   rowBytes: 1_900_000 // gzipped report kept in D1 (max 2 MB per value)
 };
@@ -94,13 +94,23 @@ export function summarize(report) {
   return line ? line.trim().slice(0, 200) : "";
 }
 
+// Telegram allows 1024 characters in a document caption.
+const CAPTION_MAX = 1024;
+const CAPTION_CUT = "… (далі у файлі)";
+
+/** The message with the report file: the player's whole note when it fits. */
 export function telegramCaption(id, report) {
-  const lines = [`Звіт ${id}`, [report.version, report.os, report.lang].filter(Boolean).join(" · ")];
-  const summary = summarize(report);
-  if (summary) {
-    lines.push(report.note ? `Гравець: ${summary}` : `Помилка: ${summary}`);
+  const head = [`Звіт ${id}`, [report.version, report.os, report.lang].filter(Boolean).join(" · ")]
+    .filter(Boolean)
+    .join("\n");
+  if (report.note) {
+    const label = `${head}\nГравець: `;
+    const note = report.note.trim();
+    const room = CAPTION_MAX - label.length;
+    return label + (note.length <= room ? note : note.slice(0, room - CAPTION_CUT.length).trimEnd() + CAPTION_CUT);
   }
-  return lines.filter(Boolean).join("\n").slice(0, 1000);
+  const summary = summarize(report);
+  return (summary ? `${head}\nПомилка: ${summary}` : head).slice(0, CAPTION_MAX);
 }
 
 export function hourWindow(now) {
