@@ -7,9 +7,7 @@ name: API
 #
 # Repository settings: secret CLOUDFLARE_API_TOKEN (Workers edit, D1 edit,
 # Workers R2 Storage edit), variable (or secret) CLOUDFLARE_ACCOUNT_ID; optional
-# secrets TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, API_ADMIN_TOKEN; for the promo
-# engine (docs/MARKETING_ENGINE.md) YOUTUBE_CLIENT_ID/_SECRET, INSTAGRAM_APP_ID/_SECRET,
-# TIKTOK_CLIENT_KEY/_SECRET and, optionally, METRICOOL_TOKEN, METRICOOL_USER_ID, METRICOOL_BLOG_ID.
+# secrets TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, API_ADMIN_TOKEN.
 on:
   pull_request:
     paths: ["services/api/**", ".github/workflows/api.yml"]
@@ -141,40 +139,14 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID || vars.TELEGRAM_CHAT_ID }}
           ADMIN_TOKEN: ${{ secrets.API_ADMIN_TOKEN }}
-          METRICOOL_TOKEN: ${{ secrets.METRICOOL_TOKEN }}
-          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID || vars.METRICOOL_USER_ID }}
-          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID || vars.METRICOOL_BLOG_ID }}
-          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
-          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
-          INSTAGRAM_APP_ID: ${{ secrets.INSTAGRAM_APP_ID }}
-          INSTAGRAM_APP_SECRET: ${{ secrets.INSTAGRAM_APP_SECRET }}
-          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
-          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
         run: |
           node -e '
-            const names = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "ADMIN_TOKEN", "METRICOOL_TOKEN", "METRICOOL_USER_ID", "METRICOOL_BLOG_ID",
-              "YOUTUBE_CLIENT_ID", "YOUTUBE_CLIENT_SECRET", "INSTAGRAM_APP_ID", "INSTAGRAM_APP_SECRET", "TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"];
+            const names = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "ADMIN_TOKEN"];
             const set = Object.fromEntries(names.filter((n) => process.env[n]).map((n) => [n, process.env[n]]));
             require("fs").writeFileSync("secrets.json", JSON.stringify(set));
             console.log("secrets:", Object.keys(set).join(", ") || "none");'
           if [ "$(cat secrets.json)" != "{}" ]; then npx wrangler secret bulk secrets.json; fi
           rm -f secrets.json
-
-      - name: Telegram webhook (promo approval buttons)
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        run: |
-          # The bot's button presses go to the Worker (src/promo.js), signed with a
-          # secret derived from the bot token. Nothing to do without the token.
-          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then echo "no bot token: skipped"; exit 0; fi
-          origin="https://api.luhovyimvp.dev"
-          curl -fsS "$origin/health" >/dev/null || origin=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
-          if [ -z "$origin" ]; then echo "::warning::no Worker URL for the webhook"; exit 0; fi
-          secret=$(node -e 'const c=require("crypto");process.stdout.write(c.createHash("sha256").update("wardly-promo-webhook:"+process.env.TELEGRAM_BOT_TOKEN).digest("hex").slice(0,48))')
-          node -e '
-            const body = { url: process.argv[1] + "/v1/telegram/webhook", secret_token: process.argv[2], allowed_updates: ["callback_query", "message"] };
-            fetch("https://api.telegram.org/bot" + process.env.TELEGRAM_BOT_TOKEN + "/setWebhook", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
-              .then((r) => r.json()).then((d) => { console.log("setWebhook:", d.ok ? "ok" : d.description); if (!d.ok) process.exit(1); });' "$origin" "$secret"
 
       - name: Check
         run: |

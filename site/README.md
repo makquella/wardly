@@ -13,10 +13,6 @@
   (`POST api.luhovyimvp.dev/v1/hit`), кнопки «Завантажити» йдуть через
   `api.luhovyimvp.dev/d/<джерело>` — лічильник і одразу інсталятор останньої версії.
   Підсумки — на `api.luhovyimvp.dev/admin` («Звідки приходять»). Cookie немає.
-- Короткі адреси для відео: `luhovyimvp.dev/yt`, `/tt`, `/ig` (генерує
-  `build_site.py`, `SHORT_ADDRESSES`) відкривають головну з джерелом `video-yt`,
-  `video-tt`, `video-ig`. Посилання в описі Shorts, TikTok і Reels не клікаються,
-  тож глядач набирає адресу з фінального кадру — так його видно в лічильнику.
 - Згенеровані сторінки — `python scripts/build_site.py` (потрібні залежності
   бекенда, CI перевіряє `--check`): списки героїв у `heroes.html`, сторінка для
   кожного героя з повними підказками (`heroes/<slug>.html` і

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import worker, { cleanup, config, versionAtLeast } from "../src/index.js";
-import { RATE_PER_HOUR, redact, reportId, summarize, validateReport } from "../src/report.js";
+import { RATE_PER_HOUR, redact, reportId, summarize, telegramCaption, validateReport } from "../src/report.js";
 import { siteHome } from "../src/share.js";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
@@ -94,7 +94,7 @@ function fakeEnv(vars = {}, { r2 = true } = {}) {
             const limit = Number(sql.match(/LIMIT (\d+)/)[1]);
             return { results: reports.filter((r) => r.created_at < args[0]).slice(0, limit) };
           }
-          if (sql.startsWith("SELECT install_hash, day")) {
+          if (sql.startsWith("SELECT install_hash, day, version, body FROM daily_stats WHERE day >=")) {
             return { results: [...daily.values()].filter((r) => r.day >= args[0]) };
           }
           if (sql.startsWith("SELECT id, created_at")) {
@@ -236,10 +236,26 @@ test("uploads are checked before anything is stored", () => {
   assert.equal(validateReport({ install_id: REPORT.install_id, text: "a".repeat(1_500_001) }).status, 413);
   const ok = validateReport({ ...REPORT, extra: "dropped", note: "n".repeat(5000) });
   assert.equal(ok.ok, true);
-  assert.equal(ok.report.note.length, 1000);
+  assert.equal(ok.report.note.length, 2000);
   assert.ok(!("extra" in ok.report));
   assert.match(reportId(new Uint8Array([0, 1, 2, 3, 4, 31])), /^R-[2-9A-HJ-NP-Z]{6}$/);
   assert.equal(summarize({ note: "", text: "===== x =====\nok\nERROR sync failed: timeout\n" }), "ERROR sync failed: timeout");
+});
+
+test("the Telegram message carries the player's whole note while it fits", () => {
+  const meta = { version: "0.66.2", os: "win32 10.0 x64", lang: "en", text: "x" };
+  const idea = "1. Colour the rune timers.\n2. Show the rune spot on a small map.";
+  assert.equal(telegramCaption("R-AAAAAA", { ...meta, note: idea }), `Звіт R-AAAAAA\n0.66.2 · win32 10.0 x64 · en\nГравець: ${idea}`);
+
+  // A long note: as much as Telegram takes, then a pointer to the file.
+  const long = telegramCaption("R-AAAAAA", { ...meta, note: "word ".repeat(400) });
+  assert.ok(long.length <= 1024, String(long.length));
+  assert.ok(long.endsWith("… (далі у файлі)"));
+
+  assert.equal(
+    telegramCaption("R-AAAAAA", { ...meta, note: "", text: "ok\nERROR sync failed\n" }),
+    "Звіт R-AAAAAA\n0.66.2 · win32 10.0 x64 · en\nПомилка: ERROR sync failed"
+  );
 });
 
 test("a report is stored, indexed and answered with its number", async () => {

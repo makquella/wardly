@@ -43,7 +43,7 @@ import news_release  # noqa: E402
 # One version for styles.css, app.js and i18n-en.js on every page, hand-written
 # (index.html, heroes.html) and generated alike. Separate counters let one page
 # reuse a URL that browsers had already cached with older files.
-ASSET_VERSION = "29"
+ASSET_VERSION = "28"
 POSITIONS = ("carry", "mid", "offlane", "support")
 POSITION_NAMES = {
     "uk": {"carry": "Керрі", "mid": "Мід", "offlane": "Хардлайн", "support": "Саппорт"},
@@ -992,41 +992,6 @@ def beta_pages(all_heroes: list[dict]) -> dict[Path, str]:
     return files
 
 
-# --- short addresses for videos ------------------------------------------------------
-
-# A video's end card shows an address the viewer types by hand: links in the
-# description of a Short, a TikTok or a Reel cannot be clicked, so a ?ref= there
-# counts nobody. luhovyimvp.dev/yt (tt, ig) opens the home page with its own
-# source, which site/app.js counts as a visit and passes to the download button.
-SHORT_ADDRESSES = {"yt": "video-yt", "tt": "video-tt", "ig": "video-ig"}
-
-
-def short_pages() -> dict[Path, str]:
-    """site/<name>/index.html: not indexed, so the browser's language may pick the page."""
-    files: dict[Path, str] = {}
-    for name, source in SHORT_ADDRESSES.items():
-        target = f"/?ref={source}"
-        script = (
-            "var l=(navigator.languages||[navigator.language||'uk']).join(',').toLowerCase();"
-            f"location.replace((/(^|,)(uk|ru|be|kk)/.test(l)?'/':'/en/')+'?ref={source}');"
-        )
-        files[SITE / name / "index.html"] = (
-            "<!doctype html>\n"
-            '<html lang="uk">\n'
-            "<head>\n"
-            '<meta charset="utf-8" />\n'
-            "<title>Wardly</title>\n"
-            '<meta name="robots" content="noindex" />\n'
-            f'<link rel="canonical" href="{BASE}/" />\n'
-            f"<script>{script}</script>\n"
-            f'<noscript><meta http-equiv="refresh" content="0; url={target}" /></noscript>\n'
-            "</head>\n"
-            f'<body><a href="{target}">Wardly</a></body>\n'
-            "</html>\n"
-        )
-    return files
-
-
 # --- sitemap -----------------------------------------------------------------------
 
 
@@ -1107,7 +1072,6 @@ def build() -> dict[Path, str]:
         files[SITE / "en" / "heroes" / f"{hero['slug']}.html"] = hero_page(hero, all_heroes, "en")
     files.update(news_pages(all_heroes))
     files.update(beta_pages(all_heroes))
-    files.update(short_pages())
     files[SITE / "sitemap.xml"] = sitemap(all_heroes)
     return files
 

@@ -5,7 +5,8 @@ One file, PLAYER_DATA_DIR/coach.sqlite3 (under %APPDATA%\\DotaAICoach in the
 installed app). It keeps:
 
 - players: accounts seen by the app (linked by hand or detected from GSI);
-- meta: which account is the primary one ("my account");
+- meta: which account is the primary one ("my account") and the profiles
+  (the accounts of everyone playing on this computer, switched by GSI);
 - matches: one row per (account, match) with summary columns for the match
   table, plus JSON blobs: the trimmed OpenDota match, the GSI timeline the
   app recorded live, and the last post-match analysis.
@@ -30,6 +31,8 @@ from app.diagnostics import record_error
 from app.storage_json import cache_value_valid, load_json
 
 SCHEMA_VERSION = 1
+# Accounts kept as profiles (people playing on this computer; meta "profiles").
+MAX_PROFILES = 4
 
 # Summary columns shown in the match table (all optional).
 MATCH_COLUMNS = (
@@ -212,6 +215,45 @@ class PlayerStore:
             self._set_meta("primary_account_id", None)
             self._set_meta("primary_source", None)
             self._conn.commit()
+
+    # --- profiles: the accounts of everyone playing on this computer ----------
+
+    def profiles(self) -> list[int]:
+        """The saved accounts, in the order they were added; the primary one is
+        always among them (a database from before profiles has only it)."""
+        with self._lock:
+            ids = self._profile_ids()
+            primary = self._get_meta("primary_account_id")
+        if primary and int(primary) not in ids:
+            ids.append(int(primary))
+        return ids
+
+    def add_profile(self, account_id: int) -> None:
+        with self._lock:
+            ids = self._profile_ids()
+            primary = self._get_meta("primary_account_id")
+            if primary and int(primary) not in ids:
+                ids.append(int(primary))  # kept when a second one is added
+            if int(account_id) not in ids:
+                ids.append(int(account_id))
+            self._set_meta("profiles", json.dumps(ids[-MAX_PROFILES:]))
+            self._conn.commit()
+
+    def remove_profile(self, account_id: int) -> None:
+        """Forgets the profile, not its history: linked again, it is all there."""
+        with self._lock:
+            ids = [value for value in self._profile_ids() if value != int(account_id)]
+            self._set_meta("profiles", json.dumps(ids))
+            self._conn.commit()
+
+    def _profile_ids(self) -> list[int]:
+        try:
+            values = json.loads(self._get_meta("profiles") or "[]")
+        except ValueError:
+            return []
+        if not isinstance(values, list):
+            return []
+        return [int(v) for v in values if isinstance(v, int) and not isinstance(v, bool) and v > 0]
 
     def get_meta(self, key: str) -> str | None:
         with self._lock:

@@ -375,6 +375,68 @@ def test_other_account_in_gsi_is_offered_not_switched(client, tmp_path):
     assert client.post("/player/link-detected").json()["account_id"] == ME
 
 
+def _playing_as(payload, account_id):
+    """The same GSI payload with another account at the keyboard."""
+    import copy
+
+    payload = copy.deepcopy(payload)
+    payload["player"] = {
+        **payload.get("player", {}),
+        "steamid": str(76561197960265728 + account_id),
+    }
+    payload["player"].pop("accountid", None)
+    return payload
+
+
+def test_two_people_on_one_computer_switch_by_who_plays(client, tmp_path):
+    service = _service(tmp_path, None)
+    client.post("/player/link", json={"steam": "12345"})
+    payload = gsi_match_stream()[50]
+    client.post("/gsi", json=payload)
+    # The second person is offered once, then kept as a profile.
+    assert client.post("/player/link-detected").json()["account_id"] == ME
+    status = client.get("/player").json()
+    assert [(p["account_id"], p["current"]) for p in status["profiles"]] == [
+        (ME, True),
+        (12345, False),
+    ]
+
+    # The first one starts Dota again: the app is theirs without a click.
+    client.post("/gsi", json=_playing_as(payload, 12345))
+    status = client.get("/player").json()
+    assert status["account_id"] == 12345 and status["source"] == "profile"
+    assert status["detected"] is None
+    client.post("/gsi", json=payload)
+    assert client.get("/player").json()["account_id"] == ME
+
+    # By hand too; a forgotten profile is offered again, not switched to.
+    assert (
+        client.post("/player/profiles/switch", json={"account_id": 12345}).json()["account_id"]
+        == 12345
+    )
+    assert client.post("/player/profiles/switch", json={"account_id": 999}).status_code == 404
+    left = client.post("/player/profiles/remove", json={"account_id": ME}).json()
+    assert [p["account_id"] for p in left["profiles"]] == [12345]
+    client.post("/gsi", json=_playing_as(payload, 777))
+    client.post("/gsi", json=payload)
+    status = client.get("/player").json()
+    assert status["account_id"] == 12345 and status["detected"]["account_id"] == ME
+    assert service.store.get_player(ME) is not None  # forgetting keeps the account's data
+
+
+def test_change_forgets_the_profile_and_an_old_database_has_its_one_profile(client, tmp_path):
+    service = _service(tmp_path, None)
+    client.post("/player/link", json={"steam": "12345"})
+    service.store._set_meta("profiles", None)  # a database from before profiles
+    assert service.store.profiles() == [12345]
+    client.post("/player/link", json={"steam": str(ME)})
+    assert service.store.profiles() == [12345, ME]
+    client.delete("/player")
+    assert service.store.profiles() == [12345]
+    service.store._set_meta("profiles", "not json")
+    assert service.store.profiles() == []
+
+
 def test_last_review_belongs_to_the_linked_account(client, tmp_path):
     service = _service(tmp_path, None)
     client.post("/player/link", json={"steam": "12345"})

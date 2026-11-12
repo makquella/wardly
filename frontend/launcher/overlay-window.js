@@ -33,9 +33,11 @@ const OVERLAY_DEFAULTS = {
   voice: "off",
   voiceVolume: 1,
   size: "normal",
-  // The strip of the next events under the card, and a card with the action only.
+  // The strip of the next events under the card, a card with the action only,
+  // and the small map on cards (the farm target, the nearest rune spot).
   timers: true,
-  compact: false
+  compact: false,
+  map: true
 };
 const VOICE_MODES = ["off", "urgent", "all"];
 
@@ -359,10 +361,11 @@ function createOverlayController({
     onChange();
   }
 
-  // What the card shows: the timer strip, and the compact card (the action only).
+  // What the card shows: the timer strip, the compact card (the action only)
+  // and the small map.
   function setDisplay(patch) {
     const next = {};
-    for (const key of ["timers", "compact"]) {
+    for (const key of ["timers", "compact", "map"]) {
       if (typeof patch?.[key] === "boolean") {
         next[key] = patch[key];
       }
@@ -374,7 +377,7 @@ function createOverlayController({
 
   function display() {
     const current = config();
-    return { timers: current.timers !== false, compact: current.compact === true };
+    return { timers: current.timers !== false, compact: current.compact === true, map: current.map !== false };
   }
 
   function voice() {

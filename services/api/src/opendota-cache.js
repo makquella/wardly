@@ -128,7 +128,7 @@ export function checkBody(status, bytes, expect) {
 }
 
 // Statements. Everything a run needs is read in one batch and written in one
-// batch: the free plan allows 50 subrequests per invocation and promo shares it.
+// batch: the free plan allows 50 subrequests per invocation.
 const SEED_SQL = "INSERT OR IGNORE INTO opendota_cache (key, path) SELECT json_extract(value, '$[0]'), json_extract(value, '$[1]') FROM json_each(?1)";
 const DUE_SQL =
   "SELECT key, path FROM opendota_cache WHERE fetched_at < ?1 " +

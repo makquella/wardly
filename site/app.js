@@ -213,30 +213,11 @@
     return found;
   }
 
-  // The developer's own browsers stay out of the numbers: luhovyimvp.dev/?count=off
-  // once per browser (?count=on brings it back). Remembered on this device only.
-  function uncounted() {
-    const NO_COUNT = "wardly.nocount";
-    try {
-      const wish = new URLSearchParams(location.search).get("count");
-      if (wish === "off") {
-        localStorage.setItem(NO_COUNT, "1");
-      } else if (wish === "on") {
-        localStorage.removeItem(NO_COUNT);
-      }
-      return localStorage.getItem(NO_COUNT) === "1";
-    } catch {
-      return false;
-    }
-  }
-
   const source = trafficSource();
-  // A driven browser (tests, screenshots, crawlers that say so) is not a visitor.
-  const COUNTED = !uncounted() && !navigator.webdriver;
-  const DOWNLOAD = `${API}/d/${encodeURIComponent(source)}${COUNTED ? "" : "?count=off"}`;
+  const DOWNLOAD = `${API}/d/${encodeURIComponent(source)}`;
 
   function countVisit() {
-    if (!COUNTED || session("wardly.hit") || !navigator.sendBeacon || !/^https?:$/.test(location.protocol) || location.hostname === "localhost") {
+    if (session("wardly.hit") || !navigator.sendBeacon || !/^https?:$/.test(location.protocol) || location.hostname === "localhost") {
       return;
     }
     session("wardly.hit", "1");
@@ -255,9 +236,7 @@
     const buttons = document.querySelectorAll(".js-download");
     buttons.forEach((a) => (a.href = DOWNLOAD));
     // Linux packages: the same counted redirect, asking for a package.
-    document.querySelectorAll("[data-os]").forEach(
-      (a) => (a.href = `${DOWNLOAD}${DOWNLOAD.includes("?") ? "&" : "?"}os=${encodeURIComponent(a.dataset.os)}`)
-    );
+    document.querySelectorAll("[data-os]").forEach((a) => (a.href = `${DOWNLOAD}?os=${encodeURIComponent(a.dataset.os)}`));
     if (!release) {
       return;
     }

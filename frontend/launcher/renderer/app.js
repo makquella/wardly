@@ -33,6 +33,7 @@ const els = {
   positionHint: $("#position-hint"),
   sizeButtons: [...document.querySelectorAll("#size-group [data-size]")],
   overlayTimers: $("#overlay-timers"),
+  overlayMap: $("#overlay-map"),
   skillArrows: $("#skill-arrows"),
   skillArrowsCalibrate: $("#skill-arrows-calibrate"),
   skillArrowsHint: $("#skill-arrows-hint"),
@@ -110,6 +111,7 @@ const els = {
   reportOpen: $("#report-open"),
   reportPanel: $("#report-panel"),
   reportNote: $("#report-note"),
+  reportCount: $("#report-count"),
   shareStats: $("#share-stats"),
   settingsMore: $("#settings-more"),
   matchRecords: $("#match-records"),
@@ -380,7 +382,11 @@ async function init() {
       run(async () => renderStatus(await window.launcherApi.setOverlaySize(button.dataset.size)))
     );
   }
-  for (const [input, key] of [[els.overlayTimers, "timers"], [els.overlayCompact, "compact"]]) {
+  for (const [input, key] of [
+    [els.overlayTimers, "timers"],
+    [els.overlayCompact, "compact"],
+    [els.overlayMap, "map"]
+  ]) {
     input.addEventListener("change", () =>
       run(async () => renderStatus(await window.launcherApi.setOverlayDisplay({ [key]: input.checked })))
     );
@@ -607,6 +613,7 @@ async function init() {
         });
     }
   });
+  els.reportNote.addEventListener("input", countReportNote);
   els.reportPrivacy.addEventListener("click", () => run(() => window.launcherApi.openPrivacy()));
   els.reportSend.addEventListener("click", () =>
     run(async () => {
@@ -620,6 +627,7 @@ async function init() {
           reportSticky = true;
           toggleReportPanel(false);
           els.reportNote.value = "";
+          countReportNote();
         } else if (result?.queued) {
           setReportHint(tr("reportQueued"));
           reportSticky = true;
@@ -1143,6 +1151,11 @@ function renderReport(status) {
     parts.push(tr("reportLast", report.last.id));
   }
   setReportHint(parts.join(". "));
+}
+
+// Characters left in the note: a long idea is not cut off without notice.
+function countReportNote() {
+  els.reportCount.textContent = `${els.reportNote.value.length} / ${els.reportNote.maxLength}`;
 }
 
 function toggleReportPanel(open) {
@@ -1686,11 +1699,13 @@ function renderOverlaySettings(status) {
     button.disabled = !enabled;
   }
 
-  const display = status.overlayDisplay || { timers: true, compact: false };
+  const display = status.overlayDisplay || { timers: true, compact: false, map: true };
   els.overlayTimers.checked = display.timers !== false;
   els.overlayCompact.checked = display.compact === true;
+  els.overlayMap.checked = display.map !== false;
   els.overlayTimers.disabled = !enabled;
   els.overlayCompact.disabled = !enabled;
+  els.overlayMap.disabled = !enabled;
 
   // Skill arrows: on until switched off, drawn once the frame is laid.
   const arrows = status.skillArrows || { enabled: true, manual: false };

@@ -16,8 +16,6 @@ export const STATS_RATE_PER_HOUR = { install: 6, address: 60 };
 export const STATS_MAX_BYTES = 16 * 1024;
 export const STATS_MAX_KINDS = 60;
 export const STATS_ADMIN_MAX_DAYS = 90;
-// Coming back is measured over this many days, whatever period the summary shows.
-export const STATS_RETURN_WINDOW_DAYS = 90;
 
 const DAY_MS = 24 * 3_600_000;
 const KIND = /^[A-Z][A-Z0-9_]{1,47}$/;
@@ -158,14 +156,12 @@ export function aggregateStats(rows) {
     setup: {},
     setup_known: {},
     ages: {},
-    // Per day, oldest first: devices that sent it (`fresh` of them for the first
-    // time in the period), matches, advice shown, warnings before a death.
+    // Per day, oldest first: devices that sent it, matches, advice shown, warnings before a death.
     by_day: []
   };
   const devices = new Set();
   const days = new Map();
   const newest = new Map();
-  const firstDay = new Map();
   let launchDays = 0;
   let cleanDays = 0;
   for (const stored of rows) {
@@ -205,11 +201,7 @@ export function aggregateStats(rows) {
     if (!seen || seen.day < stored.day) {
       newest.set(stored.install_hash, { day: stored.day, setup: body.setup || {}, age: body.age });
     }
-    const first = firstDay.get(stored.install_hash);
-    if (!first || stored.day < first) {
-      firstDay.set(stored.install_hash, stored.day);
-    }
-    const day = days.get(stored.day) || { day: stored.day, devices: 0, fresh: 0, matches: 0, advice: 0, ignored: 0 };
+    const day = days.get(stored.day) || { day: stored.day, devices: 0, matches: 0, advice: 0, ignored: 0 };
     day.devices += 1;
     day.matches += body.matches || 0;
     day.advice += Object.values(body.advice || {}).reduce((a, b) => a + b, 0);
@@ -231,65 +223,12 @@ export function aggregateStats(rows) {
     }
     tally(result.ages, age);
   }
-  // `fresh`: devices whose first row of the period is that day; the rest came back.
-  for (const day of firstDay.values()) {
-    days.get(day).fresh += 1;
-  }
   result.by_day = [...days.values()].sort((a, b) => (a.day < b.day ? -1 : 1));
   // Per decision point: how often a shown urgent warning was followed by a death.
   result.ignored_share = Object.fromEntries(
     Object.entries(result.ignored).map(([kind, n]) => [kind, result.advice[kind] ? Math.round((100 * n) / result.advice[kind]) : null])
   );
   return result;
-}
-
-function dayNumber(day) {
-  return Math.round(Date.parse(`${day}T00:00:00Z`) / 86_400_000);
-}
-
-/**
- * Who comes back, from { install_hash, day } rows (a device sends a row for each
- * day it ran). `last` is the newest finished day, "YYYY-MM-DD".
- *  - active7: devices with a row in the 7 days ending on `last`;
- *  - returned: devices with rows on two or more days;
- *  - d7, d30: of the devices first seen at least 7 (30) days before `last`
- *    (`known`), how many have a row 7 (30) or more days after their first (`kept`).
- */
-export function deviceRetention(rows, last) {
-  const byDevice = new Map();
-  for (const row of rows) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(row.day))) {
-      continue;
-    }
-    const days = byDevice.get(row.install_hash) || new Set();
-    days.add(dayNumber(row.day));
-    byDevice.set(row.install_hash, days);
-  }
-  const result = { devices: byDevice.size, active7: 0, returned: 0, d7: { known: 0, kept: 0 }, d30: { known: 0, kept: 0 } };
-  const end = dayNumber(last);
-  for (const set of byDevice.values()) {
-    const days = [...set].sort((a, b) => a - b);
-    const first = days[0];
-    const newest = days[days.length - 1];
-    result.returned += days.length > 1 ? 1 : 0;
-    result.active7 += end - newest < 7 && newest <= end ? 1 : 0;
-    for (const [key, span] of [["d7", 7], ["d30", 30]]) {
-      if (end - first >= span) {
-        result[key].known += 1;
-        result[key].kept += newest - first >= span ? 1 : 0;
-      }
-    }
-  }
-  return result;
-}
-
-function retentionLine(summary) {
-  const r = summary.retention;
-  if (!r || !r.devices) {
-    return "Coming back: —";
-  }
-  const kept = (part) => (part.known ? `${part.kept}/${part.known}` : "—");
-  return `Coming back (${STATS_RETURN_WINDOW_DAYS} days, ${r.devices} devices): active in the last 7 days ${r.active7}, on 2+ days ${r.returned}, after 7 days ${kept(r.d7)}, after 30 days ${kept(r.d30)}`;
 }
 
 function launchesLine(summary) {
@@ -328,7 +267,6 @@ export function weeklyStatsText(summary) {
   return [
     "Wardly: stats of the last 7 days",
     `Devices: ${summary.devices}, days sent: ${summary.rows}`,
-    retentionLine(summary),
     `Matches analysed: ${summary.matches} (with live advice: ${summary.with_advice})`,
     `Advice shown: ${top(summary.advice, 8)}`,
     `Warnings before a death: ${top(summary.ignored, 5)}`,

@@ -26,13 +26,7 @@
 //   POST   /v1/profiles             -> the cards of up to 50 friend codes { ids } -> { profiles: {id: card} }
 //   DELETE /v1/profile/<id>         -> hides the card (same token)
 //   GET    /p/<id>                  -> the card as a page to send to a chat
-//   POST   /v1/admin/promo, PUT /v1/admin/promo/<id>/<file>, GET /v1/admin/promo
-//                                   -> promo packages for approval (src/promo.js, docs/MARKETING_ENGINE.md)
-//   GET    /m/<media key>/<file>    -> a promo video or cover (public while not rejected or expired)
-//   POST   /v1/telegram/webhook     -> the bot's approve / reject buttons (secret header, TELEGRAM_CHAT_ID only)
-//   GET    /oauth/<network>/callback -> connects YouTube, Instagram or TikTok after the bot's /connect
-//   cron */5                        -> the promo delivery queue (uploads, polling, reports) and, as a separate task, the
-//                                      OpenDota cache refresh (src/opendota-cache.js, up to 8 entries per run)
+//   cron */5                        -> the OpenDota cache refresh (src/opendota-cache.js, up to 8 entries per run)
 //   GET    /v1/opendota/<path>      -> public OpenDota reference data from R2 (heroStats, constants/items, heroes/<id>/itemPopularity,
 //                                      heroes/<id>/matchups, scenarios/itemTimings?hero_id=<id>; nothing else; GET/HEAD; 503 without R2)
 //   GET    /admin, /admin/app.js    -> the statistics page (src/admin-page.js; asks for the token, holds no data;
@@ -100,9 +94,7 @@ import {
   STATS_MAX_BYTES,
   STATS_RATE_PER_HOUR,
   STATS_RETENTION_DAYS,
-  STATS_RETURN_WINDOW_DAYS,
   aggregateStats,
-  deviceRetention,
   isoDay,
   validateStats,
   weeklyStatsText
@@ -112,13 +104,12 @@ import {
   CHANNEL_RATE_PER_HOUR,
   CHANNEL_RETENTION_DAYS,
   aggregateChannels,
-  automated,
   channelSource,
-  clickedDownload,
   latestInstaller
 } from "./channels.js";
 import { refreshOpenDotaCache, serveOpenDota } from "./opendota-cache.js";
-import { PROMO_CRON, oauthCallback, promoList, promoMaintenance, promoMedia, promoPublish, putPromoFile, registerPromo, telegramWebhook } from "./promo.js";
+
+const OPENDOTA_CRON = "*/5 * * * *"; // wrangler.toml [triggers]
 import {
   TRANSFER_MAX_BYTES,
   TRANSFER_MINUTES,
@@ -798,18 +789,17 @@ export async function handleHit(request, env, now = Date.now()) {
   if (!src) {
     return json({ ok: false, code: "bad_source" }, 400);
   }
-  if (!automated(request) && (await underChannelLimit(request, env, "visit", now))) {
+  if (await underChannelLimit(request, env, "visit", now)) {
     await countChannel(env, src, "visit", now);
   }
   return new Response(null, { status: 204 });
 }
 
 // Always redirects: counting is best effort and never blocks the download.
-// Only a person's GET counts (channels.js clickedDownload): a HEAD, a crawler, a
-// link preview or the developer's own browser (?count=off) gets the redirect alone.
+// Only a GET counts: a HEAD (link checkers, previews) gets the redirect alone.
 export async function handleDownload(request, src, env, now = Date.now(), fetchImpl = fetch) {
   const name = channelSource(src) || "site";
-  if (config(env).channels && request.method === "GET" && clickedDownload(request)) {
+  if (config(env).channels && request.method === "GET") {
     try {
       if (await underChannelLimit(request, env, "download", now)) {
         await countChannel(env, name, "download", now);
@@ -834,11 +824,6 @@ async function statsSummary(env, days, now, { finished = false } = {}) {
     .bind(isoDay(now - days * DAY))
     .all();
   const summary = aggregateStats(results || []);
-  // Who comes back needs more days than a weekly note covers: its own window, two columns.
-  const seen = await env.DB.prepare("SELECT install_hash, day FROM daily_stats WHERE day >= ?1")
-    .bind(isoDay(now - STATS_RETURN_WINDOW_DAYS * DAY))
-    .all();
-  summary.retention = deviceRetention(seen.results || [], isoDay(now - DAY));
   const from = isoDay(now - (finished ? days : days - 1) * DAY);
   const until = isoDay(now + (finished ? 0 : DAY));
   const channels = await env.DB.prepare(
@@ -1080,17 +1065,6 @@ export default {
       if (pageMatch && (request.method === "GET" || request.method === "HEAD")) {
         return await sharePage(request, pageMatch[1], env);
       }
-      const media = path.match(/^\/m\/([a-f0-9]{32})\/(video\.mp4|cover\.jpg)$/);
-      if (media && (request.method === "GET" || request.method === "HEAD")) {
-        return await promoMedia(request, media[1], media[2], env);
-      }
-      const oauth = path.match(/^\/oauth\/(youtube|instagram|tiktok)\/callback$/);
-      if (oauth && request.method === "GET") {
-        return await oauthCallback(request, oauth[1], env);
-      }
-      if (request.method === "POST" && path === "/v1/telegram/webhook") {
-        return await telegramWebhook(request, env);
-      }
       const device = path.match(/^\/v1\/device\/([^/]+)$/);
       if (request.method === "DELETE" && device) {
         return await deleteDevice(request, decodeURIComponent(device[1]), env);
@@ -1120,16 +1094,6 @@ export default {
         if (request.method === "GET" && path === "/v1/admin/stats") {
           return await adminStats(url, env);
         }
-        if (path === "/v1/admin/promo" && request.method === "POST") {
-          return await registerPromo(request, env);
-        }
-        if (path === "/v1/admin/promo" && request.method === "GET") {
-          return await promoList(env);
-        }
-        const promoFile = path.match(/^\/v1\/admin\/promo\/([a-f0-9]{16})\/(video\.mp4|cover\.jpg)$/);
-        if (promoFile && request.method === "PUT") {
-          return await putPromoFile(request, promoFile[1], promoFile[2], env);
-        }
         const one = path.match(/^\/v1\/admin\/report\/(R-[A-Z0-9]{6})$/);
         if (request.method === "GET" && one) {
           return await adminReport(one[1], env);
@@ -1143,15 +1107,12 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    if (event?.cron === PROMO_CRON) {
-      // Every five minutes: the promo delivery queue (src/promo.js) and the OpenDota
-      // cache (src/opendota-cache.js), each its own task so one failing leaves the other.
-      ctx.waitUntil(promoPublish(env).catch((error) => console.log(`promo publish: ${error.message}`)));
+    if (event?.cron === OPENDOTA_CRON) {
+      // Every five minutes: the shared OpenDota reference cache (src/opendota-cache.js).
       ctx.waitUntil(refreshOpenDotaCache(env).catch((error) => console.log(`opendota cache: ${error.name}`)));
       return;
     }
     ctx.waitUntil(cleanup(env).then((count) => console.log(`cleanup: ${count} old reports`)));
     ctx.waitUntil(sendWeeklyStats(env).catch((error) => console.log(`weekly stats: ${error.message}`)));
-    ctx.waitUntil(promoMaintenance(env).catch((error) => console.log(`promo: ${error.message}`)));
   }
 };

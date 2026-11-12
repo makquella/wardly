@@ -127,7 +127,3 @@ CLAUDE.local.md
 # Private local API credentials (never included in history backups).
 local-api-auth.json
 local-api-gsi.json
-
-# Promo engine: build output and the downloaded Piper voice
-promo-out/
-.voices/
