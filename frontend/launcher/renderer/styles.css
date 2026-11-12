@@ -1565,6 +1565,78 @@ span.setup-mark {
   margin-top: var(--sp-2);
 }
 
+/* Saved profiles: two people on one computer (matches.js profilesRow). */
+.profiles {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+
+.profiles-hint {
+  margin-bottom: var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-12);
+}
+
+.profile-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.profile-item {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.profile-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+  max-width: 260px;
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-1);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-13);
+  cursor: pointer;
+}
+
+.profile-chip:hover {
+  border-color: var(--border-strong);
+}
+
+.profile-chip.current {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  cursor: default;
+}
+
+.profile-chip .avatar {
+  width: 22px;
+  height: 22px;
+  font-size: var(--fs-12);
+}
+
+.profile-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-games {
+  flex: none;
+  color: var(--text-2);
+  font-size: var(--fs-12);
+}
+
 .avatar {
   flex: none;
   width: 36px;

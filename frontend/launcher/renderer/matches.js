@@ -474,9 +474,15 @@
   }
 
   async function linkDetected() {
+    return changeAccount("linkDetected");
+  }
+
+  // Another account is now the current one (the one playing, or a saved
+  // profile picked by hand): every view's pending answer is for the old one.
+  async function changeAccount(op, args) {
     playerStatusRequests.cancel();
     invalidateProfile();
-    const result = await call("linkDetected");
+    const result = await call(op, args);
     if (result.ok) {
       playerStatusRequests.cancel();
       matchListRequests.cancel();
@@ -487,6 +493,61 @@
       state.matchesLoaded = false;
       await afterLink();
     }
+    return result;
+  }
+
+  // Saved profiles (two people on one computer): Wardly switches to the one
+  // that starts Dota; here they can be switched by hand or forgotten.
+  function profilesRow(player) {
+    const profiles = Array.isArray(player.profiles) ? player.profiles : [];
+    if (profiles.length < 2) {
+      return null;
+    }
+    const chips = profiles.map((profile) => {
+      const name = profile.persona_name || t("friendId", profile.account_id);
+      const picture = profile.avatar_url
+        ? h("img", { class: "avatar", src: profile.avatar_url, alt: "", referrerpolicy: "no-referrer", onerror: (e) => e.target.replaceWith(avatarFallback(name)) })
+        : avatarFallback(name);
+      const pick = h(
+        "button",
+        {
+          class: `profile-chip${profile.current ? " current" : ""}`,
+          type: "button",
+          "aria-pressed": String(Boolean(profile.current)),
+          title: profile.current ? t("profileCurrent") : t("profileSwitch", name),
+          onclick: profile.current ? null : () => changeAccount("switchProfile", { accountId: profile.account_id })
+        },
+        picture,
+        h("span", { class: "profile-name", text: name }),
+        h("span", { class: "profile-games", text: t("profileGames", profile.matches || 0) })
+      );
+      const forget = profile.current
+        ? null
+        : h(
+            "button",
+            {
+              class: "btn btn-ghost btn-icon btn-sm profile-forget",
+              type: "button",
+              title: t("profileForget", name),
+              "aria-label": t("profileForget", name),
+              onclick: async () => {
+                const result = await call("removeProfile", { accountId: profile.account_id });
+                if (result.ok) {
+                  state.player = result.data;
+                  renderMatches();
+                }
+              }
+            },
+            icon("x")
+          );
+      return h("li", { class: "profile-item" }, pick, forget);
+    });
+    return h(
+      "div",
+      { class: "profiles" },
+      h("p", { class: "profiles-hint", text: t("profilesHint") }),
+      h("ul", { class: "profile-list" }, chips)
+    );
   }
 
   async function afterLink() {
@@ -574,6 +635,7 @@
         ),
         h("div", { class: "player-actions" }, refreshButton, change)
       ),
+      profilesRow(player),
       detected
         ? h(
             "div",

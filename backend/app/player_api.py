@@ -151,6 +151,31 @@ def refresh_quieter_advice() -> None:
     ADVICE_SCHEDULER.set_quieter(PLAYER_SERVICE.advice_feedback_summary().get("quieter") or [])
 
 
+# Another person's profile started Dota: their feedback on live advice.
+PLAYER_SERVICE.on_account_change = refresh_quieter_advice
+
+
+class ProfileRequest(BaseModel):
+    account_id: int = Field(gt=0)
+
+
+@router.post("/profiles/switch", summary="Switch to another saved profile")
+def switch_profile(request: ProfileRequest):
+    try:
+        result = PLAYER_SERVICE.switch_profile(request.account_id)
+    except KeyError:
+        return JSONResponse(status_code=404, content={"status": "error", "code": "no_profile"})
+    refresh_quieter_advice()
+    return result
+
+
+@router.post("/profiles/remove", summary="Forget a saved profile (its history stays)")
+def remove_profile(request: ProfileRequest):
+    result = PLAYER_SERVICE.remove_profile(request.account_id)
+    refresh_quieter_advice()
+    return result
+
+
 @router.post("/sync", summary="Pull profile and recent matches from OpenDota")
 def sync_player():
     return {"sync": PLAYER_SERVICE.request_sync(), "opendota": PLAYER_SERVICE.client is not None}

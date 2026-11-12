@@ -146,10 +146,12 @@ def render_live_hints(
 
 
 def _with_player_dot(hint: dict[str, Any], extra: Mapping[str, Any]) -> dict[str, Any]:
-    """A card with a place on the small map (map_hints._with_marker) also shows
-    where the player is now."""
-    from app.map_hints import map_point
+    """A card with a place on the small map (map_hints._with_marker; a timer
+    card gets its nearest spot, map_hints.with_spot_marker) also shows where
+    the player is now."""
+    from app.map_hints import map_point, with_spot_marker
 
+    hint = with_spot_marker(hint, extra.get("xpos"), extra.get("ypos"))
     marker = hint.get("marker")
     if not isinstance(marker, dict):
         return hint

@@ -8,6 +8,17 @@
   box-sizing: border-box;
 }
 
+/* Each event with a place keeps one colour, as Dota draws it: on its timer
+   chip, on its card's stripe and on the small map. */
+:root {
+  --ev-bounty_rune: #f5c04a;
+  --ev-power_rune: #b58cff;
+  --ev-water_rune: #4fb3ff;
+  --ev-wisdom_shrine: #63d4a6;
+  --ev-lotus: #f28fc3;
+  --ev-tormentor: #9fb4cc;
+}
+
 html,
 body {
   width: 100%;
@@ -63,6 +74,31 @@ body {
 .overlay-shell.hint,
 .overlay-shell.plan:not(.death-screen):not(.post-game) {
   --stripe: var(--cream);
+}
+
+/* A timer card in its event's colour (overlay/app.js timerEvent). */
+.overlay-shell.hint.event-bounty_rune {
+  --stripe: var(--ev-bounty_rune);
+}
+
+.overlay-shell.hint.event-power_rune {
+  --stripe: var(--ev-power_rune);
+}
+
+.overlay-shell.hint.event-water_rune {
+  --stripe: var(--ev-water_rune);
+}
+
+.overlay-shell.hint.event-wisdom_shrine {
+  --stripe: var(--ev-wisdom_shrine);
+}
+
+.overlay-shell.hint.event-lotus {
+  --stripe: var(--ev-lotus);
+}
+
+.overlay-shell.hint.event-tormentor {
+  --stripe: var(--ev-tormentor);
 }
 
 .overlay-shell.hidden {
@@ -125,6 +161,54 @@ body.compact .status-row {
   color: var(--text-2);
   font-size: var(--fs-12);
   white-space: nowrap;
+}
+
+/* An event's colour as a dot before its name (runes all read the same otherwise). */
+.timer-bounty_rune {
+  --ev: var(--ev-bounty_rune);
+}
+
+.timer-power_rune {
+  --ev: var(--ev-power_rune);
+}
+
+.timer-water_rune {
+  --ev: var(--ev-water_rune);
+}
+
+.timer-wisdom_shrine {
+  --ev: var(--ev-wisdom_shrine);
+}
+
+.timer-lotus {
+  --ev: var(--ev-lotus);
+}
+
+.timer-tormentor {
+  --ev: var(--ev-tormentor);
+}
+
+.timer-bounty_rune::before,
+.timer-power_rune::before,
+.timer-water_rune::before,
+.timer-wisdom_shrine::before,
+.timer-lotus::before,
+.timer-tormentor::before {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ev);
+}
+
+.timer-bounty_rune > span:first-of-type,
+.timer-power_rune > span:first-of-type,
+.timer-water_rune > span:first-of-type,
+.timer-wisdom_shrine > span:first-of-type,
+.timer-lotus > span:first-of-type,
+.timer-tormentor > span:first-of-type {
+  color: var(--ev);
 }
 
 .timer-time {
@@ -517,6 +601,38 @@ body:not(.locked) .overlay-shell {
 
 .hint-map .mk-target.mk-danger {
   background: var(--error);
+}
+
+.hint-map .mk-bounty_rune {
+  background: var(--ev-bounty_rune);
+}
+
+.hint-map .mk-power_rune {
+  background: var(--ev-power_rune);
+}
+
+.hint-map .mk-water_rune {
+  background: var(--ev-water_rune);
+}
+
+.hint-map .mk-wisdom_shrine {
+  background: var(--ev-wisdom_shrine);
+}
+
+.hint-map .mk-lotus {
+  background: var(--ev-lotus);
+}
+
+.hint-map .mk-tormentor {
+  background: var(--ev-tormentor);
+}
+
+/* The event's other spots: the same colour, smaller and dimmer than the nearest. */
+.hint-map .mk-other {
+  width: 6px;
+  height: 6px;
+  border: 1px solid rgb(0 0 0 / 70%);
+  opacity: 0.55;
 }
 
 .hint-map .mk-player {

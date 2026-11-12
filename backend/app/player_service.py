@@ -6,8 +6,10 @@ and the analyses:
 
 - Account: the Steam account playing is read from GSI (player.steamid) and
   linked automatically the first time; it can also be linked by hand (Steam
-  ID, Friend ID or profile link). A different account seen in GSI later is
-  offered as "detected", never switched silently.
+  ID, Friend ID or profile link). Every linked account is kept as a profile
+  (two people on one computer): when GSI shows another saved profile, the
+  app switches to it. An account that is not a profile is offered as
+  "detected", never switched to silently.
 - History: a background sync pulls the profile and the last matches from
   OpenDota and reviews the most recent ones.
 - After a live match: the GSI timeline is stored and reviewed at once
@@ -359,6 +361,9 @@ class PlayerService:
         # A week of match recordings lives next to the store (off unless switched on).
         MATCH_RECORDS.configure(self.data_dir)
         self._detected: dict[str, Any] | None = None
+        # Called after GSI switched to another saved profile (player_api wires
+        # the live advice's per-player feedback to it).
+        self.on_account_change: Callable[[], None] | None = None
         # Friend fetches that failed (code), by friend account id; cleared on retry.
         self._friend_errors: dict[int, str] = {}
         # Matches asked for by number (add_match): pending, ready or an error code.
@@ -431,9 +436,17 @@ class PlayerService:
             return
         self._detected = {"account_id": account_id, "steam_id64": steam64, "persona_name": name}
         self.store.upsert_player(account_id, source="gsi", steam_id64=steam64, persona_name=name)
-        if self.store.primary_account_id() is None:
+        primary = self.store.primary_account_id()
+        if primary is None:
+            self.store.add_profile(account_id)
             self.store.set_primary(account_id, source="gsi")
             self.request_sync()
+        elif account_id != primary and account_id in self.store.profiles():
+            # Another person's saved profile started Dota: their history, plan and goals.
+            self.store.set_primary(account_id, source="profile")
+            self.request_sync()
+            if self.on_account_change is not None:
+                self.on_account_change()
 
     def note_live_advice(
         self, clock: Any, decision_point: str, action: str, reason: str, mode: str
@@ -1051,6 +1064,7 @@ class PlayerService:
             "source": self.store.primary_source(),
             "player": _public_player(player, primary),
             "detected": detected if detected and detected["account_id"] != primary else None,
+            "profiles": self._profiles(primary),
             "opendota": self.client is not None,
             "sync": dict(self._sync),
             "matches": self.store.count_matches(primary) if primary else 0,
@@ -1109,13 +1123,53 @@ class PlayerService:
         self.store.upsert_player(
             account_id, source="manual", steam_id64=str(steam64_from_account_id(account_id))
         )
+        # Before the switch: a database from before profiles keeps its account too.
+        self.store.add_profile(account_id)
         self.store.set_primary(account_id, source="manual")
         self.request_sync()
         return self.status()
 
     def unlink(self) -> dict[str, Any]:
+        """«Change»: this account is no longer a profile (its history stays)."""
+        primary = self.store.primary_account_id()
+        if primary is not None:
+            self.store.remove_profile(primary)
         self.store.clear_primary()
         return self.status()
+
+    def switch_profile(self, account_id: int) -> dict[str, Any]:
+        """By hand, to another saved profile; KeyError for an account that is not one."""
+        if account_id not in self.store.profiles():
+            raise KeyError(account_id)
+        if account_id != self.store.primary_account_id():
+            self.store.set_primary(account_id, source="profile")
+            self.request_sync()
+        return self.status()
+
+    def remove_profile(self, account_id: int) -> dict[str, Any]:
+        """Forgets another saved profile (its history stays); the current one is «Change»."""
+        if account_id == self.store.primary_account_id():
+            return self.unlink()
+        self.store.remove_profile(account_id)
+        return self.status()
+
+    def _profiles(self, primary: int | None) -> list[dict[str, Any]]:
+        """The saved profiles for the panel: name, picture and matches, current first."""
+        ids = self.store.profiles()
+        ids.sort(key=lambda value: value != primary)
+        rows = []
+        for account_id in ids:
+            player = _public_player(self.store.get_player(account_id), account_id) or {}
+            rows.append(
+                {
+                    "account_id": account_id,
+                    "persona_name": player.get("persona_name"),
+                    "avatar_url": player.get("avatar_url"),
+                    "current": account_id == primary,
+                    "matches": self.store.count_matches(account_id),
+                }
+            )
+        return rows
 
     # --- history --------------------------------------------------------------
 

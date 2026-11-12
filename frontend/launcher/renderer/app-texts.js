@@ -117,6 +117,8 @@
           off: "Off. The card still names the ability to level."
         },
         overlayTimersHint: "Always under the card: how long until the next runes, stacks, Roshan and Aegis for your role",
+        overlayMap: "Small map on cards",
+        overlayMapHint: "The nearest rune, shrine or camp and your own dot, at the card's right",
         overlayCompact: "Short advice",
         overlayCompactHint: "Only what to do, without the reason: less to read during a fight",
         hotkeysTitle: "Hotkeys",
@@ -710,6 +712,8 @@
           off: "Вимкнено. Картка все одно називає здібність."
         },
         overlayTimersHint: "Завжди під карткою: скільки лишилося до найближчих рун, стаків, Рошана й Аегіса для вашої ролі",
+        overlayMap: "Мала мапа на картках",
+        overlayMapHint: "Найближча руна, святилище чи табір і ваша позиція, праворуч на картці",
         overlayCompact: "Короткі підказки",
         overlayCompactHint: "Лише що робити, без пояснення: менше читати під час бійки",
         hotkeysTitle: "Гарячі клавіші",

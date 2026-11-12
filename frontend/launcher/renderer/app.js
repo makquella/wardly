@@ -33,6 +33,7 @@ const els = {
   positionHint: $("#position-hint"),
   sizeButtons: [...document.querySelectorAll("#size-group [data-size]")],
   overlayTimers: $("#overlay-timers"),
+  overlayMap: $("#overlay-map"),
   skillArrows: $("#skill-arrows"),
   skillArrowsCalibrate: $("#skill-arrows-calibrate"),
   skillArrowsHint: $("#skill-arrows-hint"),
@@ -381,7 +382,11 @@ async function init() {
       run(async () => renderStatus(await window.launcherApi.setOverlaySize(button.dataset.size)))
     );
   }
-  for (const [input, key] of [[els.overlayTimers, "timers"], [els.overlayCompact, "compact"]]) {
+  for (const [input, key] of [
+    [els.overlayTimers, "timers"],
+    [els.overlayCompact, "compact"],
+    [els.overlayMap, "map"]
+  ]) {
     input.addEventListener("change", () =>
       run(async () => renderStatus(await window.launcherApi.setOverlayDisplay({ [key]: input.checked })))
     );
@@ -1694,11 +1699,13 @@ function renderOverlaySettings(status) {
     button.disabled = !enabled;
   }
 
-  const display = status.overlayDisplay || { timers: true, compact: false };
+  const display = status.overlayDisplay || { timers: true, compact: false, map: true };
   els.overlayTimers.checked = display.timers !== false;
   els.overlayCompact.checked = display.compact === true;
+  els.overlayMap.checked = display.map !== false;
   els.overlayTimers.disabled = !enabled;
   els.overlayCompact.disabled = !enabled;
+  els.overlayMap.disabled = !enabled;
 
   // Skill arrows: on until switched off, drawn once the frame is laid.
   const arrows = status.skillArrows || { enabled: true, manual: false };
