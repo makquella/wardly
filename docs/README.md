@@ -57,7 +57,6 @@ Start with [Architecture](ARCHITECTURE.md), then the area you are changing. [Tes
 |---|---|
 | [Local API security](LOCAL_API_SECURITY.md) | Tokens, Origin/Host checks and limits of the local API |
 | [Data plan](DATA_PLAN.md) | What goes to the cloud, only with consent, and how it is deleted |
-| [Marketing engine](MARKETING_ENGINE.md) | Promo videos from the project's data, approved in Telegram, published through Metricool |
 
 ## Build and release
 
