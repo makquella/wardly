@@ -206,19 +206,6 @@ jobs:
           VT_API_KEY: ${{ secrets.VT_API_KEY }}
         run: ./scripts/virustotal-release.ps1 -Tag $env:TAG -Installer "frontend/launcher/dist/Wardly-Setup-$($env:TAG.Substring(1)).exe"
 
-      - name: Post the release to the Telegram channel
-        # To https://t.me/wardlydota (variable TELEGRAM_CHANNEL overrides it; secret
-        # TELEGRAM_BOT_TOKEN, the bot an admin of the channel): the release's own
-        # post from data/news/telegram/<version>.json (scripts/news_telegram.py) as a
-        # picture card (drawn with the runner's Chrome) and its caption; the caption
-        # as a text post when the card cannot be drawn. A fix without a post is not
-        # posted. Never fails the release.
-        continue-on-error: true
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL: ${{ vars.TELEGRAM_CHANNEL || '@wardlydota' }}
-        run: python scripts/build_news.py telegram-release $env:TAG.Substring(1) --send
-
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4

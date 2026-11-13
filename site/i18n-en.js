@@ -11,7 +11,6 @@ window.WARDLY_EN = {
   "navReview": "Review",
   "navProfile": "Profile",
   "navHeroes": "Heroes",
-  "navNews": "News",
   "navFaq": "FAQ",
   "langLabel": "Language",
   "navDownload": "Download",

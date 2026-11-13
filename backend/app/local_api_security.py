@@ -90,9 +90,7 @@ class LocalApiSecurity:
         control = scheme.lower() == b"bearer" and hmac.compare_digest(
             credential, self.auth.control.encode("ascii")
         )
-        public = (
-            method in {"GET", "HEAD"} and (path in PUBLIC_PATHS or path.startswith("/debug/"))
-        ) or method == "OPTIONS"
+        public = (method in {"GET", "HEAD"} and path in PUBLIC_PATHS) or method == "OPTIONS"
         gsi = path == "/gsi" and method == "POST"
         if not public and not gsi and not control:
             await self._reject(scope, receive, send, 401, "unauthorized")

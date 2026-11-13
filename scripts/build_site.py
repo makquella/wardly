@@ -35,10 +35,6 @@ from app.hero_profiles import POSITION_PACE  # noqa: E402
 from app.live_tools import USABLE_SAFETY  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "scripts"))
-import beta_page  # noqa: E402 - scripts/beta_page.py, after the scripts path
-import news  # noqa: E402
-import news_hero  # noqa: E402
-import news_release  # noqa: E402
 
 # One version for styles.css, app.js and i18n-en.js on every page, hand-written
 # (index.html, heroes.html) and generated alike. Separate counters let one page
@@ -472,7 +468,6 @@ T = {
             ("#profile", "Профіль"),
         ],
         "heroes": "Герої",
-        "news": "Новини",
         "menu": "Меню",
         "faq": "Запитання",
         "download": "Завантажити",
@@ -539,7 +534,6 @@ T = {
             ("#profile", "Profile"),
         ],
         "heroes": "Heroes",
-        "news": "News",
         "menu": "Menu",
         "faq": "FAQ",
         "download": "Download",
@@ -627,7 +621,6 @@ def site_header(lang: str, up: str, home: str) -> str:
         <nav class="nav-links" id="site-menu" aria-label="{e(t["footer_label"])}">
 {nav}
           <a href="{home}heroes.html">{e(t["heroes"])}</a>
-          <a href="{home}news.html">{e(t["news"])}</a>
           <a href="{home}#faq">{e(t["faq"])}</a>
         </nav>
         <div class="nav-actions">
@@ -662,7 +655,6 @@ def site_footer(lang: str, up: str, home: str) -> str:
           <a href="https://github.com/makquella/wardly/releases" rel="noopener">{e(t["releases"])}</a>
           <a href="https://github.com/makquella/wardly/issues" rel="noopener">{e(t["issues"])}</a>
           <a href="{home}heroes.html">{e(t["heroes"])}</a>
-          <a href="{home}news.html">{e(t["news"])}</a>
           <a href="{up}changelog.html">{e(t["changelog"])}</a>
           <a href="{up}privacy.html">{e(t["privacy"])}</a>
           <a href="{up}terms.html">{e(t["terms"])}</a>
@@ -837,176 +829,12 @@ def hero_page(hero: dict, all_heroes: list[dict], lang: str) -> str:
 """
 
 
-# --- news pages -----------------------------------------------------------------------
-
-
-def _page(
-    lang: str, *, up: str, home: str, path: str, title: str, description: str, main: str
-) -> str:
-    """A generated page around `main`; `path` is the page's path under each
-    language's root (`news.html`, `news/<slug>.html`)."""
-    e = html.escape
-    uk_url, en_url = f"{BASE}/{path}", f"{BASE}/en/{path}"
-    url = uk_url if lang == "uk" else en_url
-    depth = path.count("/")
-    alt = (
-        f'data-alt-en="{"../" * depth}en/{path}"'
-        if lang == "uk"
-        else f'data-alt-uk="{"../" * (depth + 1)}{path}"'
-    )
-    return f"""<!doctype html>
-<html lang="{lang}" data-static="{lang}" {alt}>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{e(title)}</title>
-    <meta name="description" content="{e(description)}" />
-    <meta name="theme-color" content="#0c0d0f" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content="{e(title)}" />
-    <meta property="og:description" content="{e(description)}" />
-    <link rel="canonical" href="{url}" />
-    <link rel="alternate" hreflang="uk" href="{uk_url}" />
-    <link rel="alternate" hreflang="en" href="{en_url}" />
-    <link rel="alternate" hreflang="x-default" href="{uk_url}" />
-    <meta property="og:url" content="{url}" />
-    <meta property="og:image" content="{BASE}/assets/og.jpg?v=7" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="{up}assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="{up}styles.css?v={ASSET_VERSION}" />
-  </head>
-  <body>
-    <a class="skip" href="#main">{e(T[lang]["skip"])}</a>
-
-{site_header(lang, up, home)}
-
-{main}
-
-{site_footer(lang, up, home)}
-
-{ICONS}
-
-    <script src="{up}i18n-en.js?v={ASSET_VERSION}" defer></script>
-    <script src="{up}app.js?v={ASSET_VERSION}" defer></script>
-  </body>
-</html>
-"""
-
-
-def news_pages(all_heroes: list[dict]) -> dict[Path, str]:
-    """site/news.html, site/news/<slug>.html and their /en/ copies (scripts/news.py):
-    the meta posts, the patches, the heroes of the week (news_hero.py) and the
-    Wardly releases (news_release.py)."""
-    posts = news.load_posts()
-    patches = news.load_patches()
-    weeks = news_hero.entries(all_heroes, posts)
-    releases = news_release.load_releases()
-    by_name = {hero["name"]: hero for hero in all_heroes}
-    site = sys.modules[__name__]
-    links = {hero["name"]: hero["slug"] for hero in all_heroes}
-    images = {path.stem for path in news.HERO_IMAGES.glob("*.webp")}
-    files: dict[Path, str] = {}
-    for lang in ("uk", "en"):
-        root = SITE if lang == "uk" else SITE / "en"
-        up_list = "" if lang == "uk" else "../"
-        t = news.TEXT[lang]
-        heroes_week = []
-        for entry in weeks:
-            fact = news_hero.facts(entry["hero"], site, lang)
-            name = f"news/{news_hero.slug(entry)}.html"
-            files[root / name] = _page(
-                lang,
-                up=up_list + "../",
-                home="../",
-                path=name,
-                title=f"{news_hero.title(entry, lang)} — Wardly",
-                description=news_hero.lead(entry, fact, lang),
-                main=news_hero.post_main(entry, fact, lang, "../", up_list + "../", images),
-            )
-            heroes_week.append(
-                (entry["date"], news_hero.list_item(entry, fact, lang, up_list, images))
-            )
-        for release in releases:
-            name = f"news/{news_release.slug(release)}.html"
-            files[root / name] = _page(
-                lang,
-                up=up_list + "../",
-                home="../",
-                path=name,
-                title=f"{release[lang]['title']} — Wardly",
-                description=release[lang]["lead"],
-                main=news_release.post_main(release, lang, by_name, "../", up_list + "../", images),
-            )
-            heroes_week.append((release["date"], news_release.list_item(release, lang)))
-        files[root / "news.html"] = _page(
-            lang,
-            up=up_list,
-            home="./",
-            path="news.html",
-            title=f"{t['list_title']} — Wardly",
-            description=t["list_lead"],
-            main=news.list_main(posts, lang, "./", up_list, images, patches, heroes_week),
-        )
-        for post in posts:
-            data = news.summary(post, news.previous_of(post, posts))
-            files[root / "news" / f"{news.slug(post)}.html"] = _page(
-                lang,
-                up=up_list + "../",
-                home="../",
-                path=f"news/{news.slug(post)}.html",
-                title=f"{news.title(post, lang)} — Wardly",
-                description=news.lead(post, data, lang),
-                main=news.post_main(post, data, lang, links, "../", up_list + "../", images),
-            )
-        for patch in patches:
-            files[root / "news" / f"{news.patch_slug(patch)}.html"] = _page(
-                lang,
-                up=up_list + "../",
-                home="../",
-                path=f"news/{news.patch_slug(patch)}.html",
-                title=f"{news.patch_title(patch, lang)} — Wardly",
-                description=t["patch_lead"],
-                main=news.patch_main(patch, lang, links, "../", up_list + "../", images),
-            )
-    return files
-
-
-def beta_pages(all_heroes: list[dict]) -> dict[Path, str]:
-    """site/beta.html and site/en/beta.html: the beta test path (beta_page.py)."""
-    by_name = {hero["name"]: hero for hero in all_heroes}
-    images = {path.stem for path in news.HERO_IMAGES.glob("*.webp")}
-    files: dict[Path, str] = {}
-    for lang in ("uk", "en"):
-        root = SITE if lang == "uk" else SITE / "en"
-        up = "" if lang == "uk" else "../"
-        text = beta_page.TEXT[lang]
-        files[root / "beta.html"] = _page(
-            lang,
-            up=up,
-            home="./",
-            path="beta.html",
-            title=f"{text['title']} — Wardly",
-            description=text["description"],
-            main=beta_page.main(lang, by_name, up, images),
-        )
-    return files
-
-
 # --- sitemap -----------------------------------------------------------------------
 
 
 def sitemap(all_heroes: list[dict]) -> str:
-    pairs = [("/", "/en/"), ("/heroes.html", "/en/heroes.html"), ("/news.html", "/en/news.html")]
-    pairs.append(("/beta.html", "/en/beta.html"))
+    pairs = [("/", "/en/"), ("/heroes.html", "/en/heroes.html")]
     pairs += [(f"/heroes/{h['slug']}.html", f"/en/heroes/{h['slug']}.html") for h in all_heroes]
-    posts = news.load_posts()
-    for page in (
-        [f"/news/{news.slug(post)}.html" for post in posts]
-        + [f"/news/{news.patch_slug(patch)}.html" for patch in news.load_patches()]
-        + [f"/news/{news_hero.slug(entry)}.html" for entry in news_hero.entries(all_heroes, posts)]
-        + [f"/news/{news_release.slug(post)}.html" for post in news_release.load_releases()]
-    ):
-        pairs.append((page, f"/en{page}"))
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
@@ -1070,8 +898,6 @@ def build() -> dict[Path, str]:
     for hero in all_heroes:
         files[SITE / "heroes" / f"{hero['slug']}.html"] = hero_page(hero, all_heroes, "uk")
         files[SITE / "en" / "heroes" / f"{hero['slug']}.html"] = hero_page(hero, all_heroes, "en")
-    files.update(news_pages(all_heroes))
-    files.update(beta_pages(all_heroes))
     files[SITE / "sitemap.xml"] = sitemap(all_heroes)
     return files
 
@@ -1101,7 +927,7 @@ def main() -> int:
     args = parser.parse_args()
     check_asset_versions()
     files = build()
-    generated_dirs = [SITE / "heroes", SITE / "en" / "heroes", SITE / "news", SITE / "en" / "news"]
+    generated_dirs = [SITE / "heroes", SITE / "en" / "heroes"]
     stray = [p for d in generated_dirs if d.exists() for p in d.glob("*.html") if p not in files]
     if args.check:
         stale = [
