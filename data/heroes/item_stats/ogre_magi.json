@@ -4,7 +4,7 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.41",
- "generated": "2026-11-07",
+ "generated": "2026-11-18",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
  "games": 602,
  "win": 48.2,
@@ -851,20 +851,20 @@
      "win_without": 66.7
     },
     {
-     "item": "ward_dispenser",
-     "share": 0.88,
-     "elsewhere": 0.909,
-     "lift": 0.97,
-     "win_with": 59.1,
-     "win_without": 33.3
-    },
-    {
      "item": "soul_ring",
      "share": 0.1,
      "elsewhere": 0.103,
      "lift": 0.97,
      "win_with": 60.0,
      "win_without": 55.6
+    },
+    {
+     "item": "ward_dispenser",
+     "share": 0.88,
+     "elsewhere": 0.909,
+     "lift": 0.97,
+     "win_with": 59.1,
+     "win_without": 33.3
     },
     {
      "item": "solar_crest",

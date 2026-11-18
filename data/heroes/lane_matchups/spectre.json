@@ -4,32 +4,32 @@
   "position": "carry",
   "lane_role": 1,
   "window_days": 365,
-  "generated": "2026-11-08",
+  "generated": "2026-11-18",
   "source": "OpenDota Explorer: league games with parsed lanes, last 365 days",
-  "lanes": 288,
+  "lanes": 281,
   "baseline": {
-    "won": 47,
-    "even": 170,
-    "lost": 71
+    "won": 49,
+    "even": 162,
+    "lost": 70
   },
   "opponents": [
     {
       "hero": "Axe",
       "hero_id": 2,
-      "lanes": 30,
+      "lanes": 31,
       "won": 4,
-      "even": 21,
+      "even": 22,
       "lost": 5,
-      "gold_diff": -107
+      "gold_diff": -102
     },
     {
       "hero": "Rubick",
       "hero_id": 86,
-      "lanes": 26,
+      "lanes": 25,
       "won": 5,
-      "even": 16,
+      "even": 15,
       "lost": 5,
-      "gold_diff": 60
+      "gold_diff": 56
     },
     {
       "hero": "Lion",
@@ -45,36 +45,27 @@
       "hero_id": 96,
       "lanes": 21,
       "won": 4,
-      "even": 12,
-      "lost": 5,
-      "gold_diff": -96
-    },
-    {
-      "hero": "Mars",
-      "hero_id": 129,
-      "lanes": 21,
-      "won": 7,
-      "even": 12,
-      "lost": 2,
-      "gold_diff": 202
-    },
-    {
-      "hero": "Timbersaw",
-      "hero_id": 98,
-      "lanes": 21,
-      "won": 2,
-      "even": 14,
-      "lost": 5,
-      "gold_diff": -209
+      "even": 11,
+      "lost": 6,
+      "gold_diff": -203
     },
     {
       "hero": "Night Stalker",
       "hero_id": 60,
-      "lanes": 19,
-      "won": 1,
+      "lanes": 20,
+      "won": 2,
       "even": 12,
       "lost": 6,
-      "gold_diff": -340
+      "gold_diff": -217
+    },
+    {
+      "hero": "Timbersaw",
+      "hero_id": 98,
+      "lanes": 20,
+      "won": 2,
+      "even": 13,
+      "lost": 5,
+      "gold_diff": -213
     },
     {
       "hero": "Dark Willow",
@@ -84,6 +75,15 @@
       "even": 11,
       "lost": 5,
       "gold_diff": -247
+    },
+    {
+      "hero": "Mars",
+      "hero_id": 129,
+      "lanes": 18,
+      "won": 7,
+      "even": 9,
+      "lost": 2,
+      "gold_diff": 191
     },
     {
       "hero": "Doom",
@@ -97,11 +97,11 @@
     {
       "hero": "Hoodwink",
       "hero_id": 123,
-      "lanes": 16,
-      "won": 1,
-      "even": 11,
-      "lost": 4,
-      "gold_diff": -239
+      "lanes": 15,
+      "won": 2,
+      "even": 8,
+      "lost": 5,
+      "gold_diff": -353
     }
   ]
 }
