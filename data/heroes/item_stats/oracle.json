@@ -4,10 +4,10 @@
  "position": "support",
  "lane_role": null,
  "since_patch": "7.40",
- "generated": "2026-11-07",
+ "generated": "2026-11-18",
  "source": "OpenDota Explorer: league games with parsed gold timelines",
- "games": 329,
- "win": 50.5,
+ "games": 330,
+ "win": 50.3,
  "tempo_line": {},
  "tempo_win_target": null,
  "usual_build": [
@@ -59,7 +59,7 @@
  ],
  "tempo_build": [],
  "skills": {
-  "games": 198,
+  "games": 199,
   "orders": [
    {
     "order": [
@@ -99,8 +99,8 @@
     "order": [
      "oracle_purifying_flames"
     ],
-    "games": 8,
-    "win": 25.0
+    "games": 9,
+    "win": 22.2
    }
   ],
   "openings": [
@@ -113,6 +113,11 @@
     "name": "oracle_purifying_flames",
     "games": 3,
     "win": 33.3
+   },
+   {
+    "name": "oracle_fates_edict",
+    "games": 1,
+    "win": 0.0
    }
   ],
   "talents": {
@@ -185,104 +190,104 @@
  },
  "counters": {
   "evasion": {
-   "games": 27,
-   "win": 37.0,
+   "games": 28,
+   "win": 35.7,
    "items": [
     {
      "item": "holy_locket",
-     "share": 0.222,
+     "share": 0.214,
      "elsewhere": 0.149,
-     "lift": 1.49,
+     "lift": 1.44,
      "win_with": 50.0,
-     "win_without": 33.3
+     "win_without": 31.8
     },
     {
      "item": "greater_famango",
-     "share": 0.111,
+     "share": 0.107,
      "elsewhere": 0.086,
-     "lift": 1.29,
+     "lift": 1.24,
      "win_with": 66.7,
-     "win_without": 33.3
+     "win_without": 32.0
     },
     {
      "item": "glimmer_cape",
-     "share": 0.296,
+     "share": 0.286,
      "elsewhere": 0.248,
-     "lift": 1.19,
+     "lift": 1.15,
      "win_with": 37.5,
-     "win_without": 36.8
-    },
-    {
-     "item": "staff_of_wizardry",
-     "share": 0.185,
-     "elsewhere": 0.172,
-     "lift": 1.08,
-     "win_with": 40.0,
-     "win_without": 36.4
-    },
-    {
-     "item": "guardian_greaves",
-     "share": 0.111,
-     "elsewhere": 0.103,
-     "lift": 1.08,
-     "win_with": 66.7,
-     "win_without": 33.3
+     "win_without": 35.0
     },
     {
      "item": "magic_wand",
-     "share": 0.889,
+     "share": 0.893,
      "elsewhere": 0.831,
      "lift": 1.07,
-     "win_with": 37.5,
+     "win_with": 36.0,
      "win_without": 33.3
     },
     {
-     "item": "arcane_boots",
-     "share": 0.926,
-     "elsewhere": 0.897,
-     "lift": 1.03,
-     "win_with": 36.0,
-     "win_without": 50.0
+     "item": "guardian_greaves",
+     "share": 0.107,
+     "elsewhere": 0.103,
+     "lift": 1.04,
+     "win_with": 66.7,
+     "win_without": 32.0
+    },
+    {
+     "item": "staff_of_wizardry",
+     "share": 0.179,
+     "elsewhere": 0.172,
+     "lift": 1.04,
+     "win_with": 40.0,
+     "win_without": 34.8
     },
     {
      "item": "ward_dispenser",
      "share": 1.0,
      "elsewhere": 0.98,
      "lift": 1.02,
-     "win_with": 37.0,
+     "win_with": 35.7,
      "win_without": null
     },
     {
      "item": "ring_of_basilius",
-     "share": 0.926,
+     "share": 0.893,
      "elsewhere": 0.904,
-     "lift": 1.02,
+     "lift": 0.99,
      "win_with": 36.0,
-     "win_without": 50.0
+     "win_without": 33.3
+    },
+    {
+     "item": "arcane_boots",
+     "share": 0.893,
+     "elsewhere": 0.897,
+     "lift": 0.99,
+     "win_with": 36.0,
+     "win_without": 33.3
     },
     {
      "item": "aghanims_shard",
-     "share": 0.148,
+     "share": 0.143,
      "elsewhere": 0.159,
-     "lift": 0.93,
+     "lift": 0.9,
      "win_with": 50.0,
-     "win_without": 34.8
+     "win_without": 33.3
     },
     {
      "item": "ghost",
-     "share": 0.222,
+     "share": 0.214,
      "elsewhere": 0.258,
-     "lift": 0.86,
+     "lift": 0.83,
      "win_with": 50.0,
-     "win_without": 33.3
+     "win_without": 31.8
     },
     {
-     "item": "mekansm",
-     "share": 0.111,
-     "elsewhere": 0.139,
-     "lift": 0.8,
-     "win_with": 66.7,
-     "win_without": 33.3
+     "item": "aether_lens",
+     "share": 0.286,
+     "elsewhere": 0.368,
+     "lift": 0.78,
+     "win_with": 50.0,
+     "win_without": 30.0
     }
    ]
   },
@@ -294,7 +299,7 @@
      "item": "urn_of_shadows",
      "share": 0.143,
      "elsewhere": 0.037,
-     "lift": 3.83,
+     "lift": 3.85,
      "win_with": 100.0,
      "win_without": 50.0
     },
@@ -302,7 +307,7 @@
      "item": "holy_locket",
      "share": 0.429,
      "elsewhere": 0.149,
-     "lift": 2.87,
+     "lift": 2.88,
      "win_with": 66.7,
      "win_without": 50.0
     },
@@ -310,23 +315,23 @@
      "item": "aghanims_shard",
      "share": 0.286,
      "elsewhere": 0.155,
-     "lift": 1.84,
+     "lift": 1.85,
      "win_with": 100.0,
      "win_without": 40.0
-    },
-    {
-     "item": "aeon_disk",
-     "share": 0.143,
-     "elsewhere": 0.102,
-     "lift": 1.39,
-     "win_with": 100.0,
-     "win_without": 50.0
     },
     {
      "item": "guardian_greaves",
      "share": 0.143,
      "elsewhere": 0.102,
-     "lift": 1.39,
+     "lift": 1.4,
+     "win_with": 100.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "aeon_disk",
+     "share": 0.143,
+     "elsewhere": 0.102,
+     "lift": 1.4,
      "win_with": 100.0,
      "win_without": 50.0
     },
@@ -334,14 +339,14 @@
      "item": "vitality_booster",
      "share": 0.143,
      "elsewhere": 0.115,
-     "lift": 1.24,
+     "lift": 1.25,
      "win_with": 100.0,
      "win_without": 50.0
     },
     {
      "item": "magic_wand",
      "share": 1.0,
-     "elsewhere": 0.832,
+     "elsewhere": 0.833,
      "lift": 1.2,
      "win_with": 57.1,
      "win_without": null
@@ -349,23 +354,23 @@
     {
      "item": "ghost",
      "share": 0.286,
-     "elsewhere": 0.255,
-     "lift": 1.12,
+     "elsewhere": 0.254,
+     "lift": 1.13,
      "win_with": 100.0,
      "win_without": 40.0
     },
     {
-     "item": "ring_of_basilius",
+     "item": "arcane_boots",
      "share": 1.0,
-     "elsewhere": 0.904,
-     "lift": 1.11,
+     "elsewhere": 0.895,
+     "lift": 1.12,
      "win_with": 57.1,
      "win_without": null
     },
     {
-     "item": "arcane_boots",
+     "item": "ring_of_basilius",
      "share": 1.0,
-     "elsewhere": 0.898,
+     "elsewhere": 0.901,
      "lift": 1.11,
      "win_with": 57.1,
      "win_without": null
@@ -373,7 +378,7 @@
     {
      "item": "mekansm",
      "share": 0.143,
-     "elsewhere": 0.137,
+     "elsewhere": 0.136,
      "lift": 1.05,
      "win_with": 100.0,
      "win_without": 50.0
@@ -389,103 +394,95 @@
    ]
   },
   "illusions": {
-   "games": 30,
-   "win": 50.0,
+   "games": 31,
+   "win": 48.4,
    "items": [
     {
      "item": "force_staff",
-     "share": 0.167,
+     "share": 0.161,
      "elsewhere": 0.08,
-     "lift": 2.08,
+     "lift": 2.01,
      "win_with": 60.0,
-     "win_without": 48.0
+     "win_without": 46.2
     },
     {
      "item": "staff_of_wizardry",
-     "share": 0.267,
+     "share": 0.258,
      "elsewhere": 0.164,
-     "lift": 1.63,
+     "lift": 1.57,
      "win_with": 62.5,
-     "win_without": 45.5
+     "win_without": 43.5
     },
     {
      "item": "aether_lens",
-     "share": 0.4,
+     "share": 0.419,
      "elsewhere": 0.355,
-     "lift": 1.13,
-     "win_with": 66.7,
+     "lift": 1.18,
+     "win_with": 61.5,
      "win_without": 38.9
     },
     {
      "item": "blink",
-     "share": 0.6,
+     "share": 0.581,
      "elsewhere": 0.538,
-     "lift": 1.11,
+     "lift": 1.08,
      "win_with": 77.8,
-     "win_without": 8.3
+     "win_without": 7.7
     },
     {
      "item": "glimmer_cape",
-     "share": 0.267,
+     "share": 0.258,
      "elsewhere": 0.251,
-     "lift": 1.06,
+     "lift": 1.03,
      "win_with": 62.5,
-     "win_without": 45.5
+     "win_without": 43.5
     },
     {
      "item": "ward_dispenser",
      "share": 1.0,
      "elsewhere": 0.98,
      "lift": 1.02,
-     "win_with": 50.0,
+     "win_with": 48.4,
      "win_without": null
     },
     {
      "item": "magic_wand",
-     "share": 0.833,
+     "share": 0.839,
      "elsewhere": 0.836,
      "lift": 1.0,
-     "win_with": 52.0,
+     "win_with": 50.0,
      "win_without": 40.0
     },
     {
      "item": "ring_of_basilius",
-     "share": 0.9,
+     "share": 0.871,
      "elsewhere": 0.906,
-     "lift": 0.99,
+     "lift": 0.96,
      "win_with": 48.1,
-     "win_without": 66.7
-    },
-    {
-     "item": "arcane_boots",
-     "share": 0.833,
-     "elsewhere": 0.906,
-     "lift": 0.92,
-     "win_with": 48.0,
-     "win_without": 60.0
-    },
-    {
-     "item": "ghost",
-     "share": 0.233,
-     "elsewhere": 0.258,
-     "lift": 0.91,
-     "win_with": 71.4,
-     "win_without": 43.5
-    },
-    {
-     "item": "aghanims_shard",
-     "share": 0.133,
-     "elsewhere": 0.161,
-     "lift": 0.83,
-     "win_with": 50.0,
      "win_without": 50.0
     },
     {
-     "item": "great_famango",
-     "share": 0.1,
-     "elsewhere": 0.13,
-     "lift": 0.77,
-     "win_with": 66.7,
+     "item": "arcane_boots",
+     "share": 0.806,
+     "elsewhere": 0.906,
+     "lift": 0.89,
+     "win_with": 48.0,
+     "win_without": 50.0
+    },
+    {
+     "item": "ghost",
+     "share": 0.226,
+     "elsewhere": 0.258,
+     "lift": 0.88,
+     "win_with": 71.4,
+     "win_without": 41.7
+    },
+    {
+     "item": "aghanims_shard",
+     "share": 0.129,
+     "elsewhere": 0.161,
+     "lift": 0.8,
+     "win_with": 50.0,
      "win_without": 48.1
     }
    ]
@@ -497,8 +494,8 @@
     {
      "item": "ghost",
      "share": 0.33,
-     "elsewhere": 0.228,
-     "lift": 1.44,
+     "elsewhere": 0.227,
+     "lift": 1.45,
      "win_with": 51.7,
      "win_without": 52.5
     },
@@ -506,14 +503,14 @@
      "item": "aghanims_shard",
      "share": 0.193,
      "elsewhere": 0.145,
-     "lift": 1.33,
+     "lift": 1.34,
      "win_with": 52.9,
      "win_without": 52.1
     },
     {
      "item": "aether_lens",
      "share": 0.375,
-     "elsewhere": 0.353,
+     "elsewhere": 0.355,
      "lift": 1.06,
      "win_with": 60.6,
      "win_without": 47.3
@@ -521,7 +518,7 @@
     {
      "item": "magic_wand",
      "share": 0.841,
-     "elsewhere": 0.834,
+     "elsewhere": 0.835,
      "lift": 1.01,
      "win_with": 54.1,
      "win_without": 42.9
@@ -537,7 +534,7 @@
     {
      "item": "guardian_greaves",
      "share": 0.102,
-     "elsewhere": 0.104,
+     "elsewhere": 0.103,
      "lift": 0.99,
      "win_with": 77.8,
      "win_without": 49.4
@@ -545,7 +542,7 @@
     {
      "item": "ring_of_basilius",
      "share": 0.898,
-     "elsewhere": 0.909,
+     "elsewhere": 0.905,
      "lift": 0.99,
      "win_with": 53.2,
      "win_without": 44.4
@@ -553,7 +550,7 @@
     {
      "item": "arcane_boots",
      "share": 0.886,
-     "elsewhere": 0.905,
+     "elsewhere": 0.901,
      "lift": 0.98,
      "win_with": 53.8,
      "win_without": 40.0
@@ -561,7 +558,7 @@
     {
      "item": "glimmer_cape",
      "share": 0.239,
-     "elsewhere": 0.257,
+     "elsewhere": 0.256,
      "lift": 0.93,
      "win_with": 47.6,
      "win_without": 53.7
@@ -570,22 +567,22 @@
      "item": "staff_of_wizardry",
      "share": 0.159,
      "elsewhere": 0.178,
-     "lift": 0.89,
+     "lift": 0.9,
      "win_with": 57.1,
      "win_without": 51.4
     },
     {
      "item": "blink",
      "share": 0.5,
-     "elsewhere": 0.56,
-     "lift": 0.89,
+     "elsewhere": 0.558,
+     "lift": 0.9,
      "win_with": 65.9,
      "win_without": 38.6
     },
     {
      "item": "headdress",
      "share": 0.136,
-     "elsewhere": 0.154,
+     "elsewhere": 0.153,
      "lift": 0.89,
      "win_with": 75.0,
      "win_without": 48.7
@@ -597,18 +594,18 @@
    "win": 47.5,
    "items": [
     {
-     "item": "solar_crest",
+     "item": "pavise",
      "share": 0.1,
      "elsewhere": 0.021,
-     "lift": 4.82,
+     "lift": 4.83,
      "win_with": 25.0,
      "win_without": 50.0
     },
     {
-     "item": "pavise",
+     "item": "solar_crest",
      "share": 0.1,
      "elsewhere": 0.021,
-     "lift": 4.82,
+     "lift": 4.83,
      "win_with": 25.0,
      "win_without": 50.0
     },
@@ -616,22 +613,22 @@
      "item": "guardian_greaves",
      "share": 0.2,
      "elsewhere": 0.09,
-     "lift": 2.22,
+     "lift": 2.23,
      "win_with": 62.5,
      "win_without": 43.8
     },
     {
      "item": "greater_famango",
      "share": 0.15,
-     "elsewhere": 0.08,
-     "lift": 1.88,
+     "elsewhere": 0.079,
+     "lift": 1.89,
      "win_with": 50.0,
      "win_without": 47.1
     },
     {
      "item": "mekansm",
      "share": 0.225,
-     "elsewhere": 0.125,
+     "elsewhere": 0.124,
      "lift": 1.81,
      "win_with": 66.7,
      "win_without": 41.9
@@ -655,7 +652,7 @@
     {
      "item": "blink",
      "share": 0.65,
-     "elsewhere": 0.529,
+     "elsewhere": 0.528,
      "lift": 1.23,
      "win_with": 42.3,
      "win_without": 57.1
@@ -663,7 +660,7 @@
     {
      "item": "force_staff",
      "share": 0.1,
-     "elsewhere": 0.087,
+     "elsewhere": 0.086,
      "lift": 1.16,
      "win_with": 100.0,
      "win_without": 41.7
@@ -671,8 +668,8 @@
     {
      "item": "aghanims_shard",
      "share": 0.175,
-     "elsewhere": 0.156,
-     "lift": 1.12,
+     "elsewhere": 0.155,
+     "lift": 1.13,
      "win_with": 57.1,
      "win_without": 45.5
     },
@@ -680,15 +677,15 @@
      "item": "vitality_booster",
      "share": 0.125,
      "elsewhere": 0.114,
-     "lift": 1.09,
+     "lift": 1.1,
      "win_with": 80.0,
      "win_without": 42.9
     },
     {
      "item": "arcane_boots",
      "share": 0.925,
-     "elsewhere": 0.896,
-     "lift": 1.03,
+     "elsewhere": 0.893,
+     "lift": 1.04,
      "win_with": 45.9,
      "win_without": 66.7
     }
@@ -701,8 +698,8 @@
     {
      "item": "vitality_booster",
      "share": 0.179,
-     "elsewhere": 0.069,
-     "lift": 2.6,
+     "elsewhere": 0.068,
+     "lift": 2.61,
      "win_with": 80.0,
      "win_without": 47.0
     },
@@ -710,15 +707,15 @@
      "item": "aeon_disk",
      "share": 0.157,
      "elsewhere": 0.063,
-     "lift": 2.48,
+     "lift": 2.49,
      "win_with": 77.3,
      "win_without": 48.3
     },
     {
      "item": "force_staff",
      "share": 0.114,
-     "elsewhere": 0.069,
-     "lift": 1.66,
+     "elsewhere": 0.068,
+     "lift": 1.67,
      "win_with": 50.0,
      "win_without": 53.2
     },
@@ -726,7 +723,7 @@
      "item": "staff_of_wizardry",
      "share": 0.2,
      "elsewhere": 0.153,
-     "lift": 1.3,
+     "lift": 1.31,
      "win_with": 50.0,
      "win_without": 53.6
     },
@@ -734,14 +731,14 @@
      "item": "greater_famango",
      "share": 0.1,
      "elsewhere": 0.079,
-     "lift": 1.26,
+     "lift": 1.27,
      "win_with": 64.3,
      "win_without": 51.6
     },
     {
      "item": "ghost",
      "share": 0.286,
-     "elsewhere": 0.233,
+     "elsewhere": 0.232,
      "lift": 1.23,
      "win_with": 47.5,
      "win_without": 55.0
@@ -749,15 +746,15 @@
     {
      "item": "blink",
      "share": 0.607,
-     "elsewhere": 0.497,
-     "lift": 1.22,
+     "elsewhere": 0.495,
+     "lift": 1.23,
      "win_with": 64.7,
      "win_without": 34.5
     },
     {
      "item": "glimmer_cape",
      "share": 0.264,
-     "elsewhere": 0.243,
+     "elsewhere": 0.242,
      "lift": 1.09,
      "win_with": 59.5,
      "win_without": 50.5
@@ -765,8 +762,8 @@
     {
      "item": "magic_wand",
      "share": 0.857,
-     "elsewhere": 0.82,
-     "lift": 1.05,
+     "elsewhere": 0.821,
+     "lift": 1.04,
      "win_with": 52.5,
      "win_without": 55.0
     },
@@ -781,7 +778,7 @@
     {
      "item": "guardian_greaves",
      "share": 0.1,
-     "elsewhere": 0.106,
+     "elsewhere": 0.105,
      "lift": 0.95,
      "win_with": 78.6,
      "win_without": 50.0
@@ -790,7 +787,7 @@
      "item": "headdress",
      "share": 0.143,
      "elsewhere": 0.153,
-     "lift": 0.93,
+     "lift": 0.94,
      "win_with": 65.0,
      "win_without": 50.8
     }
@@ -811,7 +808,7 @@
     {
      "item": "great_famango",
      "share": 0.148,
-     "elsewhere": 0.126,
+     "elsewhere": 0.125,
      "lift": 1.18,
      "win_with": 25.0,
      "win_without": 39.1
@@ -819,7 +816,7 @@
     {
      "item": "blink",
      "share": 0.593,
-     "elsewhere": 0.54,
+     "elsewhere": 0.538,
      "lift": 1.1,
      "win_with": 43.8,
      "win_without": 27.3
@@ -827,15 +824,15 @@
     {
      "item": "guardian_greaves",
      "share": 0.111,
-     "elsewhere": 0.103,
-     "lift": 1.08,
+     "elsewhere": 0.102,
+     "lift": 1.09,
      "win_with": 33.3,
      "win_without": 37.5
     },
     {
      "item": "arcane_boots",
      "share": 0.963,
-     "elsewhere": 0.894,
+     "elsewhere": 0.891,
      "lift": 1.08,
      "win_with": 34.6,
      "win_without": 100.0
@@ -843,7 +840,7 @@
     {
      "item": "ring_of_basilius",
      "share": 0.963,
-     "elsewhere": 0.901,
+     "elsewhere": 0.898,
      "lift": 1.07,
      "win_with": 34.6,
      "win_without": 100.0
@@ -860,7 +857,7 @@
      "item": "headdress",
      "share": 0.148,
      "elsewhere": 0.149,
-     "lift": 0.99,
+     "lift": 1.0,
      "win_with": 25.0,
      "win_without": 39.1
     },
@@ -875,15 +872,15 @@
     {
      "item": "holy_locket",
      "share": 0.148,
-     "elsewhere": 0.156,
-     "lift": 0.95,
+     "elsewhere": 0.155,
+     "lift": 0.96,
      "win_with": 25.0,
      "win_without": 39.1
     },
     {
      "item": "aether_lens",
      "share": 0.333,
-     "elsewhere": 0.361,
+     "elsewhere": 0.363,
      "lift": 0.92,
      "win_with": 33.3,
      "win_without": 38.9
@@ -906,14 +903,14 @@
      "item": "urn_of_shadows",
      "share": 0.1,
      "elsewhere": 0.033,
-     "lift": 2.99,
+     "lift": 3.0,
      "win_with": 66.7,
      "win_without": 59.3
     },
     {
      "item": "staff_of_wizardry",
      "share": 0.267,
-     "elsewhere": 0.164,
+     "elsewhere": 0.163,
      "lift": 1.63,
      "win_with": 62.5,
      "win_without": 59.1
@@ -921,7 +918,7 @@
     {
      "item": "holy_locket",
      "share": 0.2,
-     "elsewhere": 0.151,
+     "elsewhere": 0.15,
      "lift": 1.33,
      "win_with": 66.7,
      "win_without": 58.3
@@ -930,15 +927,15 @@
      "item": "glimmer_cape",
      "share": 0.3,
      "elsewhere": 0.247,
-     "lift": 1.21,
+     "lift": 1.22,
      "win_with": 55.6,
      "win_without": 61.9
     },
     {
      "item": "aether_lens",
      "share": 0.4,
-     "elsewhere": 0.355,
-     "lift": 1.13,
+     "elsewhere": 0.357,
+     "lift": 1.12,
      "win_with": 83.3,
      "win_without": 44.4
     },
@@ -959,25 +956,25 @@
      "win_without": null
     },
     {
-     "item": "arcane_boots",
+     "item": "ring_of_basilius",
      "share": 0.9,
-     "elsewhere": 0.9,
+     "elsewhere": 0.903,
      "lift": 1.0,
      "win_with": 63.0,
      "win_without": 33.3
     },
     {
-     "item": "ring_of_basilius",
+     "item": "arcane_boots",
      "share": 0.9,
-     "elsewhere": 0.906,
-     "lift": 0.99,
+     "elsewhere": 0.897,
+     "lift": 1.0,
      "win_with": 63.0,
      "win_without": 33.3
     },
     {
      "item": "magic_wand",
      "share": 0.8,
-     "elsewhere": 0.839,
+     "elsewhere": 0.84,
      "lift": 0.95,
      "win_with": 58.3,
      "win_without": 66.7
@@ -985,7 +982,7 @@
     {
      "item": "blink",
      "share": 0.467,
-     "elsewhere": 0.552,
+     "elsewhere": 0.55,
      "lift": 0.85,
      "win_with": 78.6,
      "win_without": 43.8
@@ -993,7 +990,7 @@
     {
      "item": "ghost",
      "share": 0.2,
-     "elsewhere": 0.261,
+     "elsewhere": 0.26,
      "lift": 0.77,
      "win_with": 66.7,
      "win_without": 58.3
@@ -1015,7 +1012,7 @@
     {
      "item": "aghanims_shard",
      "share": 0.217,
-     "elsewhere": 0.154,
+     "elsewhere": 0.153,
      "lift": 1.42,
      "win_with": 60.0,
      "win_without": 61.1
@@ -1023,18 +1020,10 @@
     {
      "item": "staff_of_wizardry",
      "share": 0.217,
-     "elsewhere": 0.17,
+     "elsewhere": 0.169,
      "lift": 1.28,
      "win_with": 60.0,
      "win_without": 61.1
-    },
-    {
-     "item": "aether_lens",
-     "share": 0.435,
-     "elsewhere": 0.353,
-     "lift": 1.23,
-     "win_with": 80.0,
-     "win_without": 46.2
     },
     {
      "item": "glimmer_cape",
@@ -1045,9 +1034,17 @@
      "win_without": 62.5
     },
     {
+     "item": "aether_lens",
+     "share": 0.435,
+     "elsewhere": 0.355,
+     "lift": 1.22,
+     "win_with": 80.0,
+     "win_without": 46.2
+    },
+    {
      "item": "magic_wand",
      "share": 0.913,
-     "elsewhere": 0.83,
+     "elsewhere": 0.831,
      "lift": 1.1,
      "win_with": 57.1,
      "win_without": 100.0
@@ -1063,7 +1060,7 @@
     {
      "item": "arcane_boots",
      "share": 0.913,
-     "elsewhere": 0.899,
+     "elsewhere": 0.896,
      "lift": 1.02,
      "win_with": 61.9,
      "win_without": 50.0
@@ -1071,7 +1068,7 @@
     {
      "item": "ring_of_basilius",
      "share": 0.913,
-     "elsewhere": 0.905,
+     "elsewhere": 0.902,
      "lift": 1.01,
      "win_with": 61.9,
      "win_without": 50.0
@@ -1087,7 +1084,7 @@
     {
      "item": "ghost",
      "share": 0.217,
-     "elsewhere": 0.258,
+     "elsewhere": 0.257,
      "lift": 0.84,
      "win_with": 80.0,
      "win_without": 55.6
@@ -1095,7 +1092,7 @@
     {
      "item": "blink",
      "share": 0.435,
-     "elsewhere": 0.552,
+     "elsewhere": 0.55,
      "lift": 0.79,
      "win_with": 90.0,
      "win_without": 38.5
@@ -1109,39 +1106,39 @@
     {
      "item": "aghanims_shard",
      "share": 0.199,
-     "elsewhere": 0.108,
-     "lift": 1.84,
+     "elsewhere": 0.107,
+     "lift": 1.85,
      "win_with": 50.0,
      "win_without": 51.0
     },
     {
      "item": "glimmer_cape",
      "share": 0.293,
-     "elsewhere": 0.203,
-     "lift": 1.44,
+     "elsewhere": 0.201,
+     "lift": 1.45,
      "win_with": 49.1,
      "win_without": 51.6
     },
     {
-     "item": "aether_lens",
-     "share": 0.398,
-     "elsewhere": 0.311,
-     "lift": 1.28,
-     "win_with": 70.8,
-     "win_without": 37.6
-    },
-    {
      "item": "holy_locket",
      "share": 0.171,
-     "elsewhere": 0.135,
-     "lift": 1.27,
+     "elsewhere": 0.134,
+     "lift": 1.28,
      "win_with": 61.3,
      "win_without": 48.7
     },
     {
+     "item": "aether_lens",
+     "share": 0.398,
+     "elsewhere": 0.315,
+     "lift": 1.26,
+     "win_with": 70.8,
+     "win_without": 37.6
+    },
+    {
      "item": "staff_of_wizardry",
      "share": 0.177,
-     "elsewhere": 0.169,
+     "elsewhere": 0.168,
      "lift": 1.05,
      "win_with": 62.5,
      "win_without": 48.3
@@ -1157,8 +1154,8 @@
     {
      "item": "magic_wand",
      "share": 0.845,
-     "elsewhere": 0.824,
-     "lift": 1.03,
+     "elsewhere": 0.826,
+     "lift": 1.02,
      "win_with": 53.6,
      "win_without": 35.7
     },
@@ -1173,32 +1170,32 @@
     {
      "item": "ring_of_basilius",
      "share": 0.895,
-     "elsewhere": 0.919,
-     "lift": 0.97,
+     "elsewhere": 0.913,
+     "lift": 0.98,
      "win_with": 51.9,
      "win_without": 42.1
     },
     {
      "item": "arcane_boots",
      "share": 0.884,
-     "elsewhere": 0.919,
-     "lift": 0.96,
+     "elsewhere": 0.913,
+     "lift": 0.97,
      "win_with": 51.9,
      "win_without": 42.9
     },
     {
      "item": "mekansm",
      "share": 0.133,
-     "elsewhere": 0.142,
-     "lift": 0.93,
+     "elsewhere": 0.141,
+     "lift": 0.94,
      "win_with": 70.8,
      "win_without": 47.8
     },
     {
      "item": "headdress",
      "share": 0.144,
-     "elsewhere": 0.155,
-     "lift": 0.92,
+     "elsewhere": 0.154,
+     "lift": 0.93,
      "win_with": 65.4,
      "win_without": 48.4
     }
@@ -1212,7 +1209,7 @@
      "item": "ogre_axe",
      "share": 0.107,
      "elsewhere": 0.033,
-     "lift": 3.22,
+     "lift": 3.24,
      "win_with": 66.7,
      "win_without": 40.0
     },
@@ -1220,15 +1217,15 @@
      "item": "staff_of_wizardry",
      "share": 0.25,
      "elsewhere": 0.166,
-     "lift": 1.5,
+     "lift": 1.51,
      "win_with": 71.4,
      "win_without": 33.3
     },
     {
      "item": "guardian_greaves",
      "share": 0.143,
-     "elsewhere": 0.1,
-     "lift": 1.43,
+     "elsewhere": 0.099,
+     "lift": 1.44,
      "win_with": 75.0,
      "win_without": 37.5
     },
@@ -1236,14 +1233,14 @@
      "item": "headdress",
      "share": 0.179,
      "elsewhere": 0.146,
-     "lift": 1.22,
+     "lift": 1.23,
      "win_with": 80.0,
      "win_without": 34.8
     },
     {
      "item": "glimmer_cape",
      "share": 0.286,
-     "elsewhere": 0.249,
+     "elsewhere": 0.248,
      "lift": 1.15,
      "win_with": 25.0,
      "win_without": 50.0
@@ -1252,7 +1249,7 @@
      "item": "aghanims_shard",
      "share": 0.179,
      "elsewhere": 0.156,
-     "lift": 1.14,
+     "lift": 1.15,
      "win_with": 60.0,
      "win_without": 39.1
     },
@@ -1260,22 +1257,22 @@
      "item": "great_famango",
      "share": 0.143,
      "elsewhere": 0.126,
-     "lift": 1.13,
+     "lift": 1.14,
      "win_with": 0.0,
      "win_without": 50.0
     },
     {
      "item": "aether_lens",
      "share": 0.393,
-     "elsewhere": 0.355,
-     "lift": 1.11,
+     "elsewhere": 0.358,
+     "lift": 1.1,
      "win_with": 63.6,
      "win_without": 29.4
     },
     {
      "item": "arcane_boots",
      "share": 0.964,
-     "elsewhere": 0.894,
+     "elsewhere": 0.891,
      "lift": 1.08,
      "win_with": 44.4,
      "win_without": 0.0
@@ -1283,7 +1280,7 @@
     {
      "item": "ring_of_basilius",
      "share": 0.964,
-     "elsewhere": 0.9,
+     "elsewhere": 0.897,
      "lift": 1.07,
      "win_with": 44.4,
      "win_without": 0.0
@@ -1314,7 +1311,7 @@
      "item": "aghanims_shard",
      "share": 0.417,
      "elsewhere": 0.148,
-     "lift": 2.81,
+     "lift": 2.82,
      "win_with": 60.0,
      "win_without": 14.3
     },
@@ -1337,8 +1334,8 @@
     {
      "item": "aether_lens",
      "share": 0.417,
-     "elsewhere": 0.356,
-     "lift": 1.17,
+     "elsewhere": 0.358,
+     "lift": 1.16,
      "win_with": 60.0,
      "win_without": 14.3
     },
@@ -1351,25 +1348,25 @@
      "win_without": null
     },
     {
-     "item": "arcane_boots",
+     "item": "ring_of_basilius",
      "share": 0.917,
-     "elsewhere": 0.899,
+     "elsewhere": 0.903,
      "lift": 1.02,
      "win_with": 36.4,
      "win_without": 0.0
     },
     {
-     "item": "ring_of_basilius",
+     "item": "arcane_boots",
      "share": 0.917,
-     "elsewhere": 0.905,
-     "lift": 1.01,
+     "elsewhere": 0.896,
+     "lift": 1.02,
      "win_with": 36.4,
      "win_without": 0.0
     },
     {
      "item": "magic_wand",
      "share": 0.75,
-     "elsewhere": 0.839,
+     "elsewhere": 0.84,
      "lift": 0.89,
      "win_with": 33.3,
      "win_without": 33.3
@@ -1377,7 +1374,7 @@
     {
      "item": "blink",
      "share": 0.25,
-     "elsewhere": 0.555,
+     "elsewhere": 0.553,
      "lift": 0.45,
      "win_with": 66.7,
      "win_without": 22.2
@@ -1392,7 +1389,7 @@
    "item": "aeon_disk",
    "share": 0.157,
    "elsewhere": 0.063,
-   "lift": 2.48,
+   "lift": 2.49,
    "win_with": 77.3,
    "win_without": 48.3
   },
@@ -1402,19 +1399,19 @@
    "item": "guardian_greaves",
    "share": 0.2,
    "elsewhere": 0.09,
-   "lift": 2.22,
+   "lift": 2.23,
    "win_with": 62.5,
    "win_without": 43.8
   },
   {
    "group": "illusions",
-   "games": 30,
+   "games": 31,
    "item": "force_staff",
-   "share": 0.167,
+   "share": 0.161,
    "elsewhere": 0.08,
-   "lift": 2.08,
+   "lift": 2.01,
    "win_with": 60.0,
-   "win_without": 48.0
+   "win_without": 46.2
   }
  ]
 }
