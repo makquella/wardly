@@ -7,484 +7,484 @@
   "uk": {
    "general": [
     {
-     "title": "Global Mechanics",
+     "title": "Загальні механіки",
      "notes": [
       {
        "level": 1,
-       "text": "Hero Stats"
+       "text": "Статистика героїв"
       },
       {
        "level": 1,
-       "text": "Base hero Health increased from 120 to 200"
+       "text": "Базове здоров’я героя збільшено: 120 → 200."
       },
       {
        "level": 1,
-       "text": "Health gained per point of Strength decreased from 22 to 20"
+       "text": "Приріст здоров’я за одиницю сили зменшено: 22 → 20."
       },
       {
        "level": 1,
-       "text": "Magic Resistance gained per point of Intelligence increased from 0.1% to 0.125%",
-       "info": "8 intelligence for 1% magic resistance"
+       "text": "Приріст опору до магії за одиницю інтелекту збільшено: 0,1% → 0,125%.",
+       "info": "8 інтелекту дає 1% опору до магії."
       },
       {
        "level": 1,
-       "text": "Gold and Experience"
+       "text": "Золото та досвід"
       },
       {
        "level": 1,
-       "text": "Passive gold per minute no longer scales over game time",
-       "info": "Used to increase from 90 to 111 at 60:00. Now it's a constant 90 gold per minute"
+       "text": "Пасивне золото за хвилину більше не зростає з часом гри.",
+       "info": "Раніше збільшувалося з 90 до 111 на 60:00. Зараз це постійні 90 золота за хвилину."
       },
       {
        "level": 1,
-       "text": "Hero kill bounty rescaled",
-       "info": "OLD: 125 + (8 * VictimLevel) + KillstreakFactor NEW: 100 + (10 * VictimLevel) + KillstreakFactor"
+       "text": "Нагороду за вбивство героя змінено.",
+       "info": "БУЛО: 125 + (8 × рівень жертви) + коефіцієнт серії СТАЛО: 100 + (10 × рівень жертви) + коефіцієнт серії."
       },
       {
        "level": 1,
-       "text": "Buildings no longer have variable last hit bounties"
+       "text": "Будівлі більше не мають змінної нагороди за останній удар."
       },
       {
        "level": 1,
-       "text": "Building bounty decreased"
+       "text": "Нагороду за споруди зменшено."
       },
       {
        "level": 2,
-       "text": "Tier 1 tower last hit gold decreased from 110-130 to 100"
+       "text": "Золото за останній удар по вежі 1-го ступеня зменшено: 110—130 → 100."
       },
       {
        "level": 2,
-       "text": "Tier 1 tower gold per player decreased from 90 to 75"
+       "text": "Золото на гравця за знищення вежі 1-го ступеня зменшено: 90 → 75."
       },
       {
        "level": 2,
-       "text": "Tier 2 tower last hit gold decreased from 130-150 to 125"
+       "text": "Золото за останній удар по вежі 2-го ступеня зменшено: 130—150 → 125."
       },
       {
        "level": 2,
-       "text": "Tier 2 tower gold per player decreased from 110 to 100"
+       "text": "Золото на гравця за знищення вежі 2-го ступеня зменшено: 110 → 100."
       },
       {
        "level": 2,
-       "text": "Tier 3 tower last hit gold decreased from 150-170 to 150"
+       "text": "Золото за останній удар по вежі 3-го ступеня зменшено: 150—170 → 150."
       },
       {
        "level": 2,
-       "text": "Tier 4 tower last hit gold rescaled from 170-190 to 175"
+       "text": "Золото за останній удар по вежі 4-го ступеня змінено: 170—190 → 175."
       },
       {
        "level": 2,
-       "text": "Tier 4 tower gold per player increased from 145 to 150"
+       "text": "Золото на гравця за знищення вежі 4-го ступеня збільшено: 145 → 150."
       },
       {
        "level": 2,
-       "text": "Barracks last hit gold rescaled from 90-135 to 100"
+       "text": "Золото за останній удар по казармах змінено: 90—135 → 100."
       },
       {
        "level": 2,
-       "text": "Melee Barracks gold per player decreased from 155 to 125"
+       "text": "Золото на гравця за знищення казарм мечників зменшено: 155 → 125."
       },
       {
        "level": 2,
-       "text": "Ranged Barracks gold per player increased from 90 to 100"
+       "text": "Золото на гравця за знищення казарм магів збільшено: 90 → 100."
       },
       {
        "level": 1,
-       "text": "Roshan gold per player decreased from 135 to 125"
+       "text": "Золото на гравця за вбивство Рошана зменшено: 135 → 125."
       },
       {
        "level": 1,
-       "text": "All heroes now passively receive 50 experience per minute after the starting horn",
-       "info": "Experience is gained even while dead"
+       "text": "Усі герої тепер пасивно отримують 50 досвіду на хвилину після звуку стартового рогу.",
+       "info": "Досвід здобувається навіть тоді, коли герой мертвий."
       },
       {
        "level": 1,
-       "text": "Total amount of experience needed to reach level 30 increased from 64400 to 66600",
-       "info": "Level -- Old -- New -- Total Increase 2 -- 240 -- 250 -- 10 3 -- 400 -- 400 -- 10 4 -- 520 -- 550 -- 40 5 -- 600 -- 800 -- 240 6 -- 680 -- 850 -- 410 7 -- 760 -- 925 -- 575 8 -- 800 -- 1050 -- 825 9 -- 900 -- 1150 -- 1075 10 -- 1000 -- 1225 -- 1300 11 -- 1100 -- 1300 -- 1500 12 -- 1200 -- 1375 -- 1675 13 -- 1300 -- 1450 -- 1825 14 -- 1400 -- 1525 -- 1950 15 -- 1500 -- 1600 -- 2050 16 -- 1600 -- 1675 -- 2125 17 -- 1700 -- 1750 -- 2175 18 -- 1800 -- 1825 -- 2200 19 -- 1900 -- 1900 -- 2200 20 -- 2000 -- 2000 -- 2200 21 -- 2200 -- 2200 -- 2200 22 -- 2400 -- 2400 -- 2200 23 -- 2600 -- 2600 -- 2200 24 -- 2800 -- 2800 -- 2200 25 -- 3000 -- 3000 -- 2200 26 -- 4000 -- 4000 -- 2200 27 -- 5000 -- 5000 -- 2200 28 -- 6000 -- 6000 -- 2200 29 -- 7000 -- 7000 -- 2200 30 -- 8000 -- 8000 -- 2200 An easy way to approximate the xp needed per level is to use this formula: 0.000976484x^5 − 0.0159378x^4 − 0.247763x^3 + 1.81832x^2 + 132.642x + 147.113 where X is the current level of the hero"
+       "text": "Загальний обсяг досвіду, необхідного для досягнення 30-го рівня, збільшено: 64400 → 66600.",
+       "info": "Рівень -- Було -- Стало -- Загальне збільшення 2 -- 240 -- 250 -- 10 3 -- 400 -- 400 -- 10 4 -- 520 -- 550 -- 40 5 -- 600 -- 800 -- 240 6 -- 680 -- 850 -- 410 7 -- 760 -- 925 -- 575 8 -- 800 -- 1050 -- 825 9 -- 900 -- 1150 -- 1075 10 -- 1000 -- 1225 -- 1300 11 -- 1100 -- 1300 -- 1500 12 -- 1200 -- 1375 -- 1675 13 -- 1300 -- 1450 -- 1825 14 -- 1400 -- 1525 -- 1950 15 -- 1500 -- 1600 -- 2050 16 -- 1600 -- 1675 -- 2125 17 -- 1700 -- 1750 -- 2175 18 -- 1800 -- 1825 -- 2200 19 -- 1900 -- 1900 -- 2200 20 -- 2000 -- 2000 -- 2200 21 -- 2200 -- 2200 -- 2200 22 -- 2400 -- 2400 -- 2200 23 -- 2600 -- 2600 -- 2200 24 -- 2800 -- 2800 -- 2200 25 -- 3000 -- 3000 -- 2200 26 -- 4000 -- 4000 -- 2200 27 -- 5000 -- 5000 -- 2200 28 -- 6000 -- 6000 -- 2200 29 -- 7000 -- 7000 -- 2200 30 -- 8000 -- 8000 -- 2200 Порахувати необхідний для рівня досвід можна за допомогою цієї простенької формули: 0,000976484x^5 − 0,0159378x^4 − 0,247763x^3 + 1,81832x^2 + 132,642x + 147,113 (де X — це поточний рівень героя)."
       },
       {
        "level": 1,
-       "text": "Pip Health"
+       "text": "Сегменти здоров’я"
       },
       {
        "level": 1,
-       "text": "Standardized rules for units that take a fixed number of hits to destroy and unified the terminology"
+       "text": "Стандартизовано правила для істот, які знищуються за фіксовану кількість влучань, а також уніфіковано термінологію."
       },
       {
        "level": 1,
-       "text": "All units are now able to damage units with health bar pips",
-       "info": "* Couriers * Observer Wards * Sentry Wards * Clinkz' Skeleton Archers * Clockwerk's Power Cogs * Grimstroke's Phantom's Embrace * Gyrocopter's Homing Missile * Juggernaut's Healing Ward * Keeper of the Light's Will-O-Wisp * Lich's Ice Spire * Phoenix's Supernova * Pugna's Nether Ward * Radigull's Eggstremism * Roshan's Banner * Shadow Shaman's Mass Serpent Wards * Shadow Shaman's Urnaconda * Techies' M.A.D. * Techies' Proximity Mines * Templar Assassin's Psionic Trap * Tidehunter's Dead in the Water * Treant Protector's Eyes in the Forest * Undying's Tombstone * Undying's Tombstone Zombies * Weaver's The Swarm * Zeus' Nimbus"
+       "text": "Усі істоти тепер можуть завдавати шкоди істотам, у яких здоров’я поділене на сегменти.",
+       "info": "* Кур’єри * Оглядові варди * Вартові варди * Лучники-скелети Клінкза * Силові шестерні Годинникаря * Обійми фантома Чорнильника * Самонавідна ракета Ґірольота * Цілющий вард Джаґернаута * Мандрівні вогні Хранителя Світла * Льодяне вістря Ліча * Наднова Фенікса * Потойбічний вард Пуґни * Яйцестремізм Сяйвочайки * Стяг Рошана * Змієварди Шамана Тіней * Урнаконда Шамана Тіней * В.Г.З. Техніків * Наземні міни Техніків * Псіонна пастка Тамплієра-Вбивці * Якір Хвилеріза * Очі в гущавині Ента-Захисника * Надгробний камінь Невмирущого * Зомбі з Надгробного каменя Невмирущого * Рій Ткача * Німб Зевса"
       },
       {
        "level": 2,
-       "text": "Attacks from heroes, Roshan, towers, and the fountain deal 1 full pip per attack"
+       "text": "Атаки героїв, Рошана, веж і фонтана знищують 1 сегмент здоров’я за атаку."
       },
       {
        "level": 2,
-       "text": "Attacks from illusions and creeps deal 1/4 pip per attack"
+       "text": "Атаки ілюзій та кріпів знищують 1/4 сегмента за атаку."
       },
       {
        "level": 1,
-       "text": "Some units have a Fragile debuff that causes them to take two pips of damage from melee heroes",
-       "info": "Courier, Templar Assassin's Psionic Trap, Zeus's Nimbus, and Roshan's Banner"
+       "text": "Деякі істоти мають негативний ефект крихкості, через який вони зазнають удвічі більше шкоди від героїв ближнього бою.",
+       "info": "Кур’єр, псіонна пастка Тамплієра-Убивці, німб Зевса та стяг Рошана."
       },
       {
        "level": 2,
-       "text": "When playing as a melee hero, Fragile health bar pips have a visual indicator to show that your attacks will do two full pips each"
+       "text": "Коли ви граєте за героя ближнього бою, у крихких сегментів здоров’я з’являється візуальний індикатор, який показує, що кожна ваша атака знищуватиме два повні сегменти."
       },
       {
        "level": 1,
-       "text": "Spell Mechanics"
+       "text": "Механіки чарів"
       },
       {
        "level": 1,
-       "text": "Leashes that do not expressly pierce debuff immunity (such as Slark's Pounce) will no longer prevent movement-based abilities from being executed"
+       "text": "Прив’язі, які прямо не пробивають імунітет до негативних ефектів (як-от Наскок Сларка), більше не перешкоджатимуть застосуванню здібностей, заснованих на русі."
       },
       {
        "level": 1,
-       "text": "Abilities that pierce debuff immunity no longer ignore the magic resistance provided by debuff immunity",
-       "info": "* Ancient Apparition: Ice Blast * Batrider: Flaming Lasso * Beastmaster: Primal Roar * Clockwerk: Hookshot * Dark Seer: Wall of Replica * Dawnbreaker: Solar Guardian * Dragon Knight: Elder Dragon Form (Corrosive Breath) * Earth Spirit: Magnetize * Elder Titan: Earth Splitter * Faceless Void: Time Lock * Huskar: Life Break * Lifestealer: Infest * Lone Druid: Entangle * Magnus: Reverse Polarity * Phoenix: Supernova * Primal Beast: Pulverize * Pudge: Dismember * Shadow Demon: Demonic Purge * Spirit Breaker: Nether Strike * Treant Protector: Overgrowth * Vengeful Spirit: Nether Swap * Viper: Viper Strike * Void Spirit: Astral Step * Warlock: Chaotic Offering (Permanent Immolation)"
+       "text": "Шкода від здібностей, які пробивають імунітет до негативних ефектів, більше не ігнорує опір до магії від цього імунітету.",
+       "info": "* Древній Привид: Крижаний спалах * Летючий Вершник: Полум’яне ласо * Звіромайстер: Первісний рик * Годинникар: Кидок гака * Темновидець: Стіна ілюзій * Світанкова: Сонячна варта * Лицар-Дракон: Форма древнього дракона (Ядучий подих) * Земляний Дух: Магнетизм * Древній Титан: Земний розкол * Безликий: Часова пастка * Хускар: Переривання життя * Життєкрад: Паразитування * Самітний Друїд: Обплітання * Маґнус: Обернена полярність * Фенікс: Наднова * Первісний Звір: Подрібнення * Пузань: Розчленування * Тінистий Демон: Демонічне очищення * Винищувач Духів: Удар із потойбіччя * Ент-Захисник: Зарості * Мстива Душа: Підміна * Гадюка: Укус гадюки * Порожнечий Дух: Астральний крок * Чорнокнижник: Пожертва хаосу (Тривке горіння)"
       },
       {
        "level": 1,
-       "text": "Spell Lifesteal from multiple copies of the same item now stack additively (e.g. two Voodoo Masks will provide +30%)",
-       "info": "Previously they did not stack at all"
+       "text": "Вампіризм від чарів від кількох копій одного й того ж предмета тепер поєднується шляхом додавання (наприклад, дві Маски вуду даватимуть +30%).",
+       "info": "Раніше вони взагалі не поєднувалися."
       },
       {
        "level": 1,
-       "text": "Breakability rules of many innates updated"
+       "text": "Оновлено правила переривання багатьох вроджених здібностей."
       },
       {
        "level": 2,
-       "text": "Specifics for this changes can be found in the corresponding ability notes"
+       "text": "Подробиці цих змін можна знайти у відповідних примітках до здібностей."
       },
       {
        "level": 1,
-       "text": "Spell Power Reduction"
+       "text": "Зменшення сили чарів"
       },
       {
        "level": 1,
-       "text": "Decreased most item contributions to ability scaling, including Spell Amplification, Area of Effect, and Cast Range"
+       "text": "Зменшено внесок більшості предметів у масштабування здібностей, зокрема в посилення чарів, область дії та дальність застосування."
       },
       {
        "level": 1,
-       "text": "Decreased damage of the majority of Magic and Pure damage spells"
+       "text": "Зменшено шкоду від більшості чарів із магічною та абсолютною шкодою."
       },
       {
        "level": 1,
-       "text": "Decreased duration of some long duration slows"
+       "text": "Зменшено тривалість деяких довгих сповільнень."
       },
       {
        "level": 1,
-       "text": "Specifics for any of these changes can be found in the corresponding ability or item notes"
+       "text": "Подробиці цих змін можна знайти у відповідних примітках до здібностей чи предметів."
       },
       {
        "level": 1,
-       "text": "Item Potency"
+       "text": "Ефективність предметів"
       },
       {
        "level": 1,
-       "text": "Attacks from heroes (and hero-like units, including illusions) now have an attribute called Item Potency"
+       "text": "Атаки героїв (і схожих на героїв істот, зокрема ілюзій) тепер мають характеристику під назвою «Ефективність предметів»."
       },
       {
        "level": 1,
-       "text": "Some properties of items that apply on-hit effects, like Desolator or Eye of Skadi, are now scaled by the attack’s Item Potency",
-       "info": "For example, the amount of armor reduced by Orb of Blight or the stun chance of Skull Basher"
+       "text": "Деякі властивості предметів, що накладають ефекти в разі влучання, як-от від Спустошувача (Desolator) чи Ока Скаді (Eye of Skadi), тепер масштабуються залежно від ефективності предмета для цієї атаки.",
+       "info": "Наприклад, зменшення броні від Зіпсутої сфери (Orb of Blight) або шанс оглушення від Черепролома (Skull Basher)."
       },
       {
        "level": 1,
-       "text": "The default Item Potency value for an attack is 100%"
+       "text": "Стандартне значення ефективності предметів для атаки становить 100%."
       },
       {
        "level": 1,
-       "text": "When debuffs are applied from multiple sources, whichever source had the highest Item Potency will be used"
+       "text": "Коли негативні ефекти накладаються з кількох джерел, діє той ефект, чиє джерело має найвищу ефективність."
       },
       {
        "level": 2,
-       "text": "Examples"
+       "text": "Приклади"
       },
       {
        "level": 3,
-       "text": "Any hero attacking with a Tier 4 Evolved Enchantment has +20% Item Potency, so if they have a Desolator the attack would reduce armor by 7.2",
-       "info": "6 * 120%"
+       "text": "Будь-який герой, що атакує із зачаруванням 4-го ступеня («розвинене»), має +20% до ефективності предметів, тож якщо він має Спустошувач, ця атака зменшуватиме броню на 7,2.",
+       "info": "6 × 120%"
       },
       {
        "level": 3,
-       "text": "Attacks from Pangolier’s Swashbuckle now have 60% Item Potency, so if he has a Desolator the strikes would reduce armor by 3.6",
-       "info": "6 * 60%"
+       "text": "Атаки від Рубаки (Swashbuckle) Панґольєра тепер мають 60% ефективності предметів, тож якщо він має Спустошувач, удари зменшуватимуть броню на 3,6.",
+       "info": "6 × 60%"
       },
       {
        "level": 1,
-       "text": "Illusions have a default Item Potency of 20% and can now apply most item on hit effects",
-       "info": "Excluding Skull Basher and a few other items. Specific details can be found in the associated item and ability changes"
+       "text": "Базова ефективність предметів ілюзій становить 20%. Тепер ілюзії можуть накладати більшість ефектів від предметів у разі влучання.",
+       "info": "За винятком Череполома й кількох інших предметів. Подробиці можна знайти у відповідних примітках до здібностей чи предметів."
       }
      ]
     },
     {
-     "title": "Lane Creeps, Towers and Bases",
+     "title": "Лінійні кріпи, вежі та бази",
      "notes": [
       {
        "level": 1,
-       "text": "Creep Spawn Intervals"
+       "text": "Інтервали появи кріпів"
       },
       {
        "level": 1,
-       "text": "Number of melee creeps spawned no longer increases at 30:00"
+       "text": "Кількість появи кріпів-мечників більше не збільшується на 30:00."
       },
       {
        "level": 1,
-       "text": "Now makes Flagbearer creep spawn every wave after the 30:00 mark (instead of every other wave)"
+       "text": "Тепер кріп-прапороносець з'являється в кожній хвилі після 30:00 на таймері (замість кожної другої хвилі)."
       },
       {
        "level": 1,
-       "text": "Time at which 1 Ranged creep is added changed from 40:00 to 35:00"
+       "text": "Час появи додаткового кріпа-мага змінено: 40:00 → 35:00."
       },
       {
        "level": 1,
-       "text": "Reworked Siege creep spawn count after the 30:00 mark"
+       "text": "Змінено кількість катапульт, які з’являються після 30:00."
       },
       {
        "level": 2,
-       "text": "OLD:"
+       "text": "РАНІШЕ:"
       },
       {
        "level": 3,
-       "text": "0:00-29:59: Every 5 minutes, 1 siege creep spawns per wave"
+       "text": "0:00—29:59: кожні 5 хвилин у кожній хвилі з’являється 1 катапульта."
       },
       {
        "level": 3,
-       "text": "30:00-59:59: Every 5 minutes, 2 siege creeps spawn per wave"
+       "text": "30:00—59:59: кожні 5 хвилин у кожній хвилі з’являється 2 катапульти."
       },
       {
        "level": 3,
-       "text": "60:00+: Every 5 minutes, 3 siege creeps spawn per wave"
+       "text": "60:00+: кожні 5 хвилин у кожній хвилі з’являється 3 катапульти."
       },
       {
        "level": 2,
-       "text": "NEW:"
+       "text": "ТЕПЕР:"
       },
       {
        "level": 3,
-       "text": "0:00-29:59: Every 5 minutes, 1 siege creep spawns per wave"
+       "text": "0:00—29:59: кожні 5 хвилин у кожній хвилі з’являється 1 катапульта."
       },
       {
        "level": 3,
-       "text": "30:00-59:59: Every 2.5 minutes, 1 siege creep spawns per wave"
+       "text": "30:00—59:59: кожні 2,5 хвилини в кожній хвилі з’являється 1 катапульта."
       },
       {
        "level": 3,
-       "text": "60:00+: Every 2.5 minutes, 2 siege creeps spawn per wave"
+       "text": "60:00+: кожні 2,5 хвилини в кожній хвилі з’являється 2 катапульти."
       },
       {
        "level": 1,
-       "text": "Glyph of Fortification"
+       "text": "Гліф фортифікації"
       },
       {
        "level": 1,
-       "text": "No longer resets cooldown when specific buildings are destroyed"
+       "text": "Більше не скидає зарядку, коли знищуються певні будівлі."
       },
       {
        "level": 1,
-       "text": "Now has 2 charges with a 6 minute replenish time and a 7s cooldown between uses"
+       "text": "Тепер має 2 заряди з часом відновлення 6 хвилин і зарядкою 7 с між використаннями."
       },
       {
        "level": 1,
-       "text": "Miscellaneous"
+       "text": "Інше"
       },
       {
        "level": 1,
-       "text": "Couriers now have fragile pip health",
-       "info": "As a part of the comprehensive Pip Health Standardization"
+       "text": "Кур’єри тепер мають крихкі сегменти здоров’я.",
+       "info": "Це частина комплексної стандартизації сегментів здоров’я."
       },
       {
        "level": 1,
-       "text": "Lane creeps now move up to 25% slower if they are pulled out of lane",
-       "info": "Slow builds up over 10s"
+       "text": "Лінійні кріпи тепер рухаються до 25% повільніше, якщо їх виманили з лінії.",
+       "info": "Максимальне сповільнення настає через 10 с."
       },
       {
        "level": 2,
-       "text": "Pulls near Tier 1 safelane towers don't count and apply no slow"
+       "text": "Виманювання кріпів біля веж 1-го ступеня на легкій лінії не зараховуються і не дають сповільнення."
       },
       {
        "level": 1,
-       "text": "Siege creeps no longer switch aggro to the towers that attack heroes"
+       "text": "Агресія катапульт більше не перемикається на вежі, які атакують героїв."
       },
       {
        "level": 1,
-       "text": "Fountain's True Sight radius increased from 1200 to 1800"
+       "text": "Радіус істинного зору фонтана збільшено: 1200 → 1800."
       },
       {
        "level": 1,
-       "text": "Dire fountain moved ~300 units closer to the Dire Ancient",
-       "info": "Now closer to the distance between Radiant fountain and Ancient"
+       "text": "Фонтан Пітьми перенесено приблизно на 300 ближче до Древнього Пітьми.",
+       "info": "Тепер це ближче до відстані між фонтаном та Древнім Сяйва."
       }
      ]
     },
     {
-     "title": "Map Objectives",
+     "title": "Цілі на мапі",
      "notes": [
       {
        "level": 1,
-       "text": "Tormentor"
+       "text": "Мучитель"
       },
       {
        "level": 1,
-       "text": "Initial spawn time decreased from 20:00 to 15:00"
+       "text": "Час першої появи зменшено: 20:00 → 15:00."
       },
       {
        "level": 1,
-       "text": "Unyielding Shield: Base barrier increased from 3000 to 4000"
+       "text": "Базовий бар’єр Непохитного щита збільшено: 3000 → 4000."
       },
       {
        "level": 1,
-       "text": "Reflect: Base damage reflection decreased from 35% to 15% + 5% per Tormentor death, up to 30%",
-       "info": "Still grows over time"
+       "text": "Базове віддзеркалення шкоди Віддзеркаленням зменшено: 35% → 15% + 5% за смерть мучителя, до максимуму 30%.",
+       "info": "Усе ще зростає з часом."
       },
       {
        "level": 1,
-       "text": "Gold reward per player changed from 175 to 125 + 50 per Tormentor's death"
+       "text": "Нагороду золотом на гравця змінено: 175 → 125 + 50 за кожну смерть мучителя."
       },
       {
        "level": 1,
-       "text": "Now drops several items, similarly to Roshan"
+       "text": "Після смерті мучителя випадає кілька предметів, подібно до Рошана."
       },
       {
        "level": 2,
-       "text": "Now always drops Greater Horn of Battle"
+       "text": "Тепер завжди випадає Великий бойовий ріг."
       },
       {
        "level": 3,
-       "text": "New consumable item that summons a wave of Mega creeps on each of your lanes"
+       "text": "Новий витратний предмет, що прикликає хвилю мегакріпів на кожній із ваших ліній."
       },
       {
        "level": 2,
-       "text": "Starting with the 2nd death, always drops Aghanim's Shard with the same automatic distribution mechanics as before",
-       "info": "If everyone on the killing team has an Aghanim’s Shard, a gold bounty is awarded instead"
+       "text": "Починаючи з 2-ї смерті завжди випадає Уламок Аґаніма з такою самою механікою автоматичного розподілу, як і раніше.",
+       "info": "Якщо кожен герой у команді, що знищила мучителя, вже має Уламок Аґаніма, натомість дається нагорода золотом."
       },
       {
        "level": 1,
-       "text": "Roshan"
+       "text": "Рошан"
       },
       {
        "level": 1,
-       "text": "Base respawn timer now decreases by 1 minute every time Roshan is defeated, to a minimum of 5 minutes"
+       "text": "Базовий таймер відродження тепер зменшується на 1 хвилину щоразу після вбивства Рошана до мінімальних 5 хвилин."
       },
       {
        "level": 1,
-       "text": "Timer now visualizes the timer for the Aegis and who is carrying it"
+       "text": "Таймер тепер показує час дії Еґіди, а також того, хто її має."
       },
       {
        "level": 1,
-       "text": "Miscellaneous"
+       "text": "Інше"
       },
       {
        "level": 1,
-       "text": "Outposts can now be captured while silenced"
+       "text": "Застави тепер можна захоплювати під дією знемовлення."
       },
       {
        "level": 1,
-       "text": "Wisdom Shrine experience decreased from 200 + 300 per subsequent use to 200 + 200 per subsequent use"
+       "text": "Досвід зі святилища мудрості зменшено: 200 + 300 за кожне наступне застосування → 200 + 200 за кожне наступне застосування."
       },
       {
        "level": 1,
-       "text": "Invisibility Rune now also provides Disguise buff, that provides True Sight protection as long as you're not near enemy heroes or buildings. This effect is enabled 2s after the rune activation"
+       "text": "Руна невидимості тепер також дає ефект Маскування, що дає захист від істинного зору, доки нема поблизу ворожих героїв чи споруд. Цей ефект починає діяти через 2 с після застосування руни."
       },
       {
        "level": 2,
-       "text": "This effect is similar to Smoke of Deceit, but doesn't provide bonus movement speed"
+       "text": "Цей ефект схожий на дію Диму омани (Smoke of Deceit), але він не дає додаткову швидкість руху."
       },
       {
        "level": 1,
-       "text": "Illusions created by Illusion Rune now have 40% Item Potency"
+       "text": "Створені руною ілюзії тепер мають 40% ефективності предметів."
       }
      ]
     },
     {
-     "title": "Terrain Changes",
+     "title": "Зміни ландшафту",
      "notes": [
       {
        "level": 1,
-       "text": "Twin Gates"
+       "text": "Подвійні портали"
       },
       {
        "level": 1,
-       "text": "Twin Gates moved to the top and bottom rim of the map, where small flooded camps used to be"
+       "text": "Подвійні портали перенесено на верхній і нижній край мапи, де раніше були малі затоплені табори."
       },
       {
        "level": 2,
-       "text": "The Radiant one is in the exact position where that camp used to be, while Dire one is located above it, on the rim"
+       "text": "Портал Сяйва розташований точно там, де раніше був такий табір, а портал Пітьми знаходиться дещо вище, на самому краю."
       },
       {
        "level": 1,
-       "text": "Moved small flooded camps at the top/bottom rims closer to stream ends"
+       "text": "Малі затоплені табори біля верхнього та нижнього краю мапи переміщено ближче до кінців струмків."
       },
       {
        "level": 1,
-       "text": "Moved medium non-flooded camps at the end of streams to the highground that was previously occupied by the Twin Gates"
+       "text": "Середні незатоплені табори в кінці струмків переміщено на височину, яку раніше займали подвійні портали."
       },
       {
        "level": 1,
-       "text": "Mid Lane"
+       "text": "Центральна лінія"
       },
       {
        "level": 1,
-       "text": "Moved Radiant and Dire Tier 2 tower roughly 260 units away from Radiant base and Radiant and Dire Tier 1 towers roughly 350 units away from Radiant base"
+       "text": "Вежі 2-го ступеня Сяйва та Пітьми переміщено приблизно на 260 від бази Сяйва, а вежі 1-го ступеня Сяйва та Пітьми — приблизно на 350 від бази Сяйва."
       },
       {
        "level": 2,
-       "text": "This equalizes the distances from the respective Radiant/Dire bases to the corresponding tiers of towers",
-       "info": "Previously, the distance between the Radiant highground and Radiant Tier 2 was significantly shorter than between Dire highground and Dire Tier 2, whereas now they are closer in length"
+       "text": "Це вирівнює відстані від відповідних баз Сяйва й Пітьми до веж однакових ступенів.",
+       "info": "Раніше відстань між базою Сяйва та вежами Сяйва 2-го ступеня була значно меншою, ніж між базою Пітьми та вежами Пітьми 2-го ступеня, а зараз вони ближчі за відстанями."
       },
       {
        "level": 2,
-       "text": "To accommodate the move, reworked the geometry of the river where mid lanes meet, and moved Radiant mid wave creep spawn to be in front of the Radiant Tier 3 tower, as was already the case with the Dire mid wave spawn"
+       "text": "Щоб урахувати це переміщення, перероблено геометрію річки в місці зустрічі сторін на центральній лінії, а точку появи хвилі кріпів Сяйва на центральній лінії перенесено перед вежу Сяйва 3-го ступеня, як у випадку з точкою появи хвилі Пітьми на центральній лінії."
       },
       {
        "level": 1,
-       "text": "Cleaned up the trees by Dire Mid Tier 1 tower and did another pass on the cliff line on the radiant side"
+       "text": "Розчищено дерева біля вежі Пітьми 1-го ступеня на центральній лінії й додатково змінено межі скелі на стороні Сяйва."
       },
       {
        "level": 1,
-       "text": "Added some trees to the sides of Mid lane where they meet to break some lines of sight"
+       "text": "Додано кілька дерев по боках в місці, де зустрічаються центральні лінії, щоби перекрити частину ліній огляду."
       },
       {
        "level": 1,
-       "text": "Radiant Tier 1 tower moved ever so slightly to the south"
+       "text": "Вежу Сяйва 1-го ступеня зовсім трохи посунуто на південь."
       },
       {
        "level": 1,
-       "text": "Added more trees to the north of Radiant Tier 1 tower, and narrowed down the lane width where the Tier 1 tower is"
+       "text": "Додано більше дерев на північ від вежі Сяйва 1-го ступеня та звужено ширину лінії біля цієї вежі."
       },
       {
        "level": 1,
-       "text": "Slightly increased the amount of highground to the north of the Radiant midlane ramp"
+       "text": "Трохи збільшено розмір підвищення на північ від схилу центральної лінії Сяйва."
       },
       {
        "level": 1,
-       "text": "Miscellaneous"
+       "text": "Інше"
       },
       {
        "level": 1,
-       "text": "Removed a bunch of trees on the cliff overlooking the stream near the Safelane Tier 1 Towers"
+       "text": "Вилучено кілька дерев на скелях, які виходять на струмок біля веж 1-го ступеня легкої лінії."
       },
       {
        "level": 1,
-       "text": "Spawn boxes of the Safelane Tier 1 small and large camps have been decreased"
+       "text": "Зменшено зони появи малих і великих таборів біля веж 1-го ступеня на легкій лінії."
       },
       {
        "level": 1,
-       "text": "Y'ai 'ng'ngah, Shuggoth h'ee. Shuggoth fhtagn. Shuggoth ftaghu"
+       "text": "Й’ай ’нґ’нґах, Шуґот х’е. Шуґот фхтаґн. Шуґот фтаґху."
       },
       {
        "level": 1,
-       "text": "Slightly rearranged the trees around Radiant Safelane Tier 1 small camp"
+       "text": "Трохи змінено розташування дерев навколо малого табору біля вежі 1-го ступеня на легкій лінії Сяйва."
       }
      ]
     }
    ],
    "items": [
     {
-     "group": "Basic Items",
+     "group": "Базові предмети",
      "notes": []
     },
     {
@@ -492,43 +492,43 @@
      "notes": [
       {
        "level": 2,
-       "text": "Dropped from Tormentor on every death"
+       "text": "Випадає з мучителя після кожної смерті."
       },
       {
        "level": 2,
-       "text": "Use: Grand Call to Arms. Summons a wave of mega creeps on each of your lanes. The number of creeps depends on the current creep amount in a wave, but always summons at least 1 siege unit and 1 flagbearer on each lane"
+       "text": "Великий заклик до зброї (використ.). Прикликає хвилю мегакріпів на кожну свою лінію. Кількість кріпів залежить від поточної кількості кріпів у хвилі, але завжди прикликає щонайменше 1 катапульту й 1 прапороносця."
       },
       {
        "level": 2,
-       "text": "Global Cast Range. No Mana Cost. No cooldown"
+       "text": "Глобальна дальність застосування. Не вартує мани. Зарядка: 30 с."
       },
       {
        "level": 2,
-       "text": "Has 1 charge. Doesn't stack in inventory. Can be used from backpack"
+       "text": "Має 1 заряд. Не поєднується в інвентарі. Можна використовувати з рюкзака."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Quarterstaff",
      "notes": [
       {
        "level": 2,
-       "text": "Costs 900g"
+       "text": "Вартує 900 золота."
       },
       {
        "level": 2,
-       "text": "Provides +10 Damage and +10 Attack Speed"
+       "text": "Дає +10 до шкоди та +10 до швидкості атаки."
       }
      ],
-     "label": "Returning Item"
+     "label": "Предмет повернувся"
     },
     {
      "name": "Blood Grenade",
      "notes": [
       {
        "level": 1,
-       "text": "Restock time decreased from 180s to 150s"
+       "text": "Час поновлення запасу зменшено: 180 c → 150 c."
       }
      ]
     },
@@ -537,7 +537,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item removed from the game"
+       "text": "Предмет вилучено з гри."
       }
      ]
     },
@@ -546,11 +546,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "No longer has reduced damage taken from allies on the first pip of health"
+       "text": "Більше не зазнає зменшеної шкоди для першого сегменту здоров’я в разі удару від союзників."
       },
       {
        "level": 2,
-       "text": "Still can be hit by allies while at full health"
+       "text": "Союзники все ще можуть завдавати ударів, навіть коли здоров’я повне."
       }
      ]
     },
@@ -559,11 +559,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Lesser Corruption now works with illusions"
+       "text": "Тепер Мале псування (Lesser Corruption) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Lesser Corruption armor reduction is now modified by Item Potency"
+       "text": "Зменшення броні від Малого псування (Lesser Corruption) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -572,15 +572,15 @@
      "notes": [
       {
        "level": 1,
-       "text": "Frost now works with illusions"
+       "text": "Тепер Мороз (Frost) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Frost movement slow amount and health restoration reduction are now modified by Item Potency"
+       "text": "Сповільнення руху від Морозу (Frost) та зменшення відновлення здоров’я тепер залежать від ефективності предметів."
       },
       {
        "level": 1,
-       "text": "Frost now pierces debuff immunity"
+       "text": "Мороз (Frost) тепер пробиває імунітет до негативних ефектів."
       }
      ]
     },
@@ -589,7 +589,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Poison Attack now only triggers when attacking heroes"
+       "text": "Отруйний напад (Poison Attack) тепер спрацьовує лише в разі атаки на героїв."
       }
      ]
     },
@@ -598,12 +598,12 @@
      "notes": [
       {
        "level": 1,
-       "text": "Place Banner can now be used out of the backpack and has a visual effect denoting its radius when active"
+       "text": "Установити стяг тепер можна з рюкзака і предмет має візуальний ефект, що показує його радіус."
       },
       {
        "level": 1,
-       "text": "Now has fragile pip health",
-       "info": "As a part of the comprehensive Pip Health Standardization"
+       "text": "Тепер має крихкі сегменти здоров’я.",
+       "info": "Це частина комплексної стандартизації сегментів здоров’я."
       }
      ]
     },
@@ -612,11 +612,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "No longer has reduced damage taken from allies on the first pip of health"
+       "text": "Більше не зазнає зменшеної шкоди для першого сегменту здоров’я в разі удару від союзників."
       },
       {
        "level": 2,
-       "text": "Still can be hit by allies while at full health"
+       "text": "Союзники все ще можуть завдавати ударів, навіть коли здоров’я повне."
       }
      ]
     },
@@ -625,19 +625,19 @@
      "notes": [
       {
        "level": 1,
-       "text": "Max stock count increased from 3 to 4"
+       "text": "Максимальну кількість поєднань збільшено: 3 → 4."
       },
       {
        "level": 1,
-       "text": "Restock time decreased from 420s to 330s"
+       "text": "Час поновлення запасу зменшено: 420 c → 330 c."
       },
       {
        "level": 1,
-       "text": "Disguise bonus movement speed increased from 15% to 25%"
+       "text": "Додаткову швидкість руху від ефекту Маскування (Disguise) збільшено: 15% → 25%."
       },
       {
        "level": 1,
-       "text": "Disguise duration increased from 45s to 50s"
+       "text": "Тривалість Маскування (Disguise) збільшено: 45 с → 50 с."
       }
      ]
     },
@@ -646,12 +646,12 @@
      "notes": [
       {
        "level": 1,
-       "text": "Mana regen bonus decreased from +6 to +5"
+       "text": "Додаткову регенерацію мани зменшено: +6 → +5."
       }
      ]
     },
     {
-     "group": "Upgrades",
+     "group": "Покращення",
      "notes": []
     },
     {
@@ -659,175 +659,175 @@
      "notes": [
       {
        "level": 2,
-       "text": "Requires Sage Mask (175), Mantle of Intelligence (140), Mantle of Intelligence (140), Blood Grenade (50), and a recipe (420). Total cost: 925g"
+       "text": "Потрібні: Маска мудреця (Sage Mask, 175), Мантія інтелекту (Mantle of Intelligence, 140), Мантія інтелекту (Mantle of Intelligence, 140), Кривава граната (Blood Grenade, 50) та рецепт (420). Загальна вартість: 925 золота."
       },
       {
        "level": 2,
-       "text": "Provides +100 Health, +8 Intelligence and +1.25 Mana Regen"
+       "text": "Дає +100 до здоров’я, +8 до інтелекту та +1,25 до регенерації мани."
       },
       {
        "level": 2,
-       "text": "Active: Sling Grenade. Launch a grenade at the target area. Enemies in the area will take 50 impact damage and get their movement speed slowed by 30%. The slow gradually decreases down to 15% over the 5s duration, dealing 15 magical damage per second to affected enemies. Radius: 300. Cast Range: 1200. Health Cost: 75. Cooldown: 30s"
+       "text": "Кидок гранати (акт. ефект). Кидає гранату в цільову область. Вороги в області зазнають 50 початкової шкоди і сповільнюються на 30%. Сповільнення поступово зменшується до 15% впродовж 5 с тривалості. Зачеплені вороги зазнають 15 магічної шкоди за секунду. Радіус: 300. Дальність застосування: 1200. Витрата здоров’я: 75. Зарядка: 30 с."
       },
       {
        "level": 3,
-       "text": "Shares cooldown with Blood Grenade"
+       "text": "Має спільну зарядку з Кривавою гранатою (Blood Grenade)."
       },
       {
        "level": 3,
-       "text": "Compared to Blood Grenade:"
+       "text": "Порівняно з Кривавою гранатою:"
       },
       {
        "level": 4,
-       "text": "Cast range increased from 900 to 1200. Projectile speed increased from 1100 to 1400. Slow increased from 15% to 30% which returns to 15% over the duration"
+       "text": "Дальність застосування збільшено: 900 → 1200. Швидкість снаряда збільшено: 1100 → 1400. Сповільнення збільшено: 15% → 30%, що повертається до 15% упродовж тривалості дії."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Caduceus",
      "notes": [
       {
        "level": 2,
-       "text": "Requires Force Staff (2200), Phylactery (2600), and a recipe (600). Total cost: 5400g"
+       "text": "Потрібні Посох примусу (Force Staff, 2200), Філактерія (Phylactery, 2600) та рецепт (600). Загальна вартість: 5400."
       },
       {
        "level": 2,
-       "text": "Provides +8 Strength, +8 Agility, +20 Intelligence, +175 Health, +6 Health Regen and +3 Mana Regen"
+       "text": "Дає +8 до сили, +8 до спритності, +20 до інтелекту, +175 до здоров’я, +6 до регенерації здоров’я та +3 до регенерації мани."
       },
       {
        "level": 2,
-       "text": "Active: Force. Identical to Force Staff's active"
+       "text": "Поштовх (акт. ефект). Ідентичний активному ефекту Посоху примусу (Force Staff)."
       },
       {
        "level": 2,
-       "text": "Passive: Empower Spell. The next Unit Target spell you cast on an enemy deals a separate 175 bonus damage to the target and slows them by 40% for 2s. The next Unit Target spell you cast on an ally heals them for 200 and increases their movement speed by 20% for 2s. Allied and enemy effects have independent cooldowns of 8s each. Active Force spell always applies Empower Spell's effect on targets, ignoring and not triggering internal cooldowns of Empower Spell"
+       "text": "Зміцнення чарів (пас. ефект). Наступне спрямоване на істоту заклинання, що застосовується на ворога, окремо завдасть 175 додаткової шкоди та сповільнить ціль на 40% на 2 с. Наступне спрямоване на істоту заклинання, що застосовується на союзника, лікує його на 200 і збільшує його швидкість руху на 20% на 2 с. Ефекти для союзників і ворогів мають окремі зарядки по 8 с. Чари Поштовху (Force) завжди накладають ефект Зміцнення чарів на цілі, ігноруючи і не викликаючи спрацювання внутрішньої зарядки Зміцнення чарів."
       },
       {
        "level": 3,
-       "text": "Compared to Phylactery:"
+       "text": "Порівняно з Філактерією:"
       },
       {
        "level": 4,
-       "text": "Added allied interaction with a separate cooldown. Damage increased from 130 to 175"
+       "text": "Додано союзницьку взаємодію з окремою зарядкою. Шкоду збільшено: 130 → 175."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Ristul's Devotion",
      "notes": [
       {
        "level": 2,
-       "text": "Requires Vladmir's Offering (2200), Splintmail (950), and a Voodoo Mask (650). Total cost: 3800g"
+       "text": "Потрібні Пожертва Влада (Vladmir's Offering, 2200), Смугова кольчуга (Splintmail, 950) та Маска вуду (Voodoo Mask, 650). Загальна вартість: 3800 золота."
       },
       {
        "level": 2,
-       "text": "Provides +8 Armor, +1 Mana Regen"
+       "text": "Дає +8 до броні, +1 до регенерації мани."
       },
       {
        "level": 2,
-       "text": "Passive: Ristul's Aura. Grants 20% lifesteal, 18% spell lifesteal, 18% bonus damage, 1 mana regeneration, and 2 armor to nearby allies"
+       "text": "Рістульська аура (пас. ефект). Дає союзникам поблизу 20% вампіризму, 18% вампіризму від чарів, 18% додаткової шкоди, 1 регенерації мани та 2 броні."
       },
       {
        "level": 3,
-       "text": "Radius: 1200. Lifesteal on attacks against creeps reduced to 12%. Spell lifesteal against creeps reduced to 3.6%"
+       "text": "Радіус: 1200. Вампіризм від атак проти кріпів зменшено до 12%. Вампіризм від чарів проти кріпів зменшено до 3,6%."
       },
       {
        "level": 3,
-       "text": "Doesn't stack with Buckler's Buckler Aura"
+       "text": "Не поєднується з аурою Баклера (Buckler)."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Sabatons of Mordiggian",
      "notes": [
       {
        "level": 2,
-       "text": "Requires Phase Boots (1450), Armlet of Mordiggian (2500), and a recipe (2000). Total cost: 5950g"
+       "text": "Потрібні Фазисні черевики (Phase Boots, 1450), Нарукавник Мордіґіана (Armlet of Mordiggian, 2500) та рецепт (2000). Загальна вартість: 5950."
       },
       {
        "level": 2,
-       "text": "Provides +45/55 Movement Speed for Ranged/Melee Heroes, +40 Damage, +30 Attack Speed, +10 Armor and +5 Health Regen"
+       "text": "Дає +45/55 до швидкості руху для героїв дальнього/ближнього бою, +40 до шкоди, +30 до швидкості атаки, +10 до броні та +5 до регенерації здоров’я."
       },
       {
        "level": 2,
-       "text": "Toggle: Mordiggian's Oath. Drains 45 health per second to increase wielder's damage by 40, Strength by 30, and armor by 5. Also provides phased movement, improved turn rate and 20/10% increased movement speed on melee/ranged heroes. The effect provides slow resistance which scales with the wielder's health, starting at 40% at full health and falling down to no slow resistance at 0 health"
+       "text": "Клятва Мордіґіана (перемик.). Витягує 45 здоров’я за секунду, щоби збільшити шкоду носія на 40, силу на 30 і броню на 5. Також дає фазисний рух, пришвидшує поворот і дає 20/10% збільшення швидкості руху для героїв ближнього/дальнього бою. Ефект дає опір сповільненню, який масштабується зі здоров’ям носія, починаючи з 40% за повного здоров’я та спадаючи до відсутності опору сповільненню за 0 здоров’я."
       },
       {
        "level": 3,
-       "text": "You cannot die from the health drain, nor from the strength loss when deactivated"
+       "text": "Ви не можете померти від витягування здоров’я, а також від втрати сили після деактивації."
       },
       {
        "level": 3,
-       "text": "Can be cast while invisible"
+       "text": "Можна застосовувати в невидимості."
       },
       {
        "level": 3,
-       "text": "Movement speed bonuses from multiple pairs of boots do not stack"
+       "text": "Пришвидшення руху від кількох пар черевиків не складаються."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Skypiercer",
      "notes": [
       {
        "level": 2,
-       "text": "Requires Heaven's Halberd (2400), Sange (2000), Talisman of Evasion (1300), and a recipe (300). Total cost: 6000g"
+       "text": "Потрібні Небесна алебарда (Heaven's Halberd, 2400), Санж (Sange, 2000), Талісман ухилення (Talisman of Evasion, 1300) та рецепт (300). Загальна вартість: 6000."
       },
       {
        "level": 2,
-       "text": "Provides +35 Strength, +5 Armor, +5 Health Regen, +25% Slow Resistance, +20% Health Restoration, and +25% Evasion"
+       "text": "Дає +35 до сили, +5 до броні, +5 до регенерації здоров’я, +25% до опору сповільненню, +20% до відновлення здоров’я та +25% до ухилення."
       },
       {
        "level": 2,
        "text": "Active: Disarm. Prevents a target from attacking for 3s. Cast Range: 500. Mana Cost: 50. Cooldown: 15s",
-       "info": "Identical to Heaven's Halberd's spell"
+       "info": "Ідентично чарам Небесної алебарди (Heaven's Halberd)."
       },
       {
        "level": 3,
-       "text": "Dispellable only by strong dispels. Doesn't pierce Debuff Immunity"
+       "text": "Можна розвіяти лише сильним розвіюванням. Не пробиває імунітет до негативних ефектів."
       },
       {
        "level": 3,
-       "text": "Cooldown is shared with Heaven's Halberd"
+       "text": "Зарядка одна з Небесною алебардою (Heaven's Halberd)."
       },
       {
        "level": 2,
-       "text": "Passive: Riposte. Whenever the wielder is within 500 range of an enemy hero, Disarm gains 125% cooldown acceleration",
-       "info": "For every 1s of time, 2.25s are reduced from the cooldown of Disarm"
+       "text": "Парирування (пас. ефект). Роззброєння здобуває прискорення зарядки на 125%, коли власник перебуває в радіусі 500 від ворожого героя.",
+       "info": "За кожну 1 с часу зарядка Роззброєння зменшується на 2,25 с."
       },
       {
        "level": 3,
-       "text": "Enemy illusions and heroes in Fog of War also activate Riposte, but invisible heroes don't"
+       "text": "Ворожі ілюзії та герої в тумані війни також активують Парирування, але невидимі герої — ні."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Starforge",
      "notes": [
       {
        "level": 2,
-       "text": "Requires Meteor Hammer (2750), Ultimate Orb (2800) and recipe (450). Total cost: 6000g"
+       "text": "Потрібні Метеорний молот (Meteor Hammer, 2750), Ультимативна сфера (Ultimate Orb, 2800) та рецепт (450). Загальна вартість: 6000."
       },
       {
        "level": 2,
-       "text": "Provides +24 Strength, +24 Agility, +40 Intelligence, +6% Spell Amplification, and +20% Mana Regen Amplification"
+       "text": "Дає +24 до сили, +24 до спритності, +40 до інтелекту, +6% до посилення чарів і +20% до посилення регенерації мани."
       },
       {
        "level": 2,
-       "text": "Active: Meteor Hammer. Stronger version of basic Meteor Hammer"
+       "text": "Метеорний молот (акт. ефект). Сильніша версія звичайного Метеорного молота (Meteor Hammer)."
       },
       {
        "level": 3,
-       "text": "Mana Cost increased from 75 to 175"
+       "text": "Витрату мани збільшено: 75 → 175."
       },
       {
        "level": 3,
-       "text": "Each unit hit by the impact also takes damage equal to 15% of their max health. Not applicable to buildings"
+       "text": "Кожна істота, яка зазнала влучання від удару, також зазнає шкоди, що дорівнює 15% від її максимального здоров’я. Не діє на споруди."
       },
       {
        "level": 2,
@@ -835,30 +835,30 @@
       },
       {
        "level": 3,
-       "text": "Procs on Stun, Sleep, Banish, Cyclone, Hex, Hypnosis, Taunt and Fear from any ability or item"
+       "text": "Спрацьовує під час приголомшення, сну, вигнання, циклону, перетворення, гіпнозу, провокації та страху від будь-якої здібності чи предмета."
       },
       {
        "level": 3,
-       "text": "Burn damage stacks with the one from the active"
+       "text": "Шкода від горіння поєднується зі шкодою від активної здібності."
       },
       {
        "level": 3,
-       "text": "Doesn't apply to buildings"
+       "text": "Не діє на споруди."
       }
      ],
-     "label": "New Item"
+     "label": "Новий предмет"
     },
     {
      "name": "Aether Lens",
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 775 to 600. Total cost decreased from 2275g to 2100g"
+       "text": "Вартість рецепта зменшено: 775 → 600. Загальну вартість зменшено: 2275 → 2100."
       },
       {
        "level": 1,
-       "text": "Cast Range bonus decreased from +225 to +200",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "text": "Бонус дальності чаклування зменшено: +225 → +200.",
+       "info": "Це частина комплексного зменшення сили чарів."
       }
      ]
     },
@@ -867,15 +867,15 @@
      "notes": [
       {
        "level": 1,
-       "text": "Movement Speed bonus increased from +45 to +50"
+       "text": "Додаткову швидкість руху збільшено: +45 → +50."
       },
       {
        "level": 1,
-       "text": "Mana bonus increased from +125 to +150"
+       "text": "Додаткову ману збільшено: +125 → +150."
       },
       {
        "level": 1,
-       "text": "Replenish cooldown decreased from 55s to 50s"
+       "text": "Зарядку Наповнення (Replenish) зменшено: 55 с → 50 с."
       }
      ]
     },
@@ -884,15 +884,15 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 1175 to 1075. Total cost decreased from 4450g to 4350g"
+       "text": "Вартість рецепта зменшено: 1175 → 1075. Загальну вартість зменшено: 4450 → 4350."
       },
       {
        "level": 1,
-       "text": "Movement Speed bonus increased from +50 to +55"
+       "text": "Додаткову швидкість руху збільшено: +50 → +55."
       },
       {
        "level": 1,
-       "text": "Guardian Aura no longer provides 14.5 bonus health regeneration to the wearer when below 25% health"
+       "text": "Аура вартового (Guardian Aura) більше не дає 14,5 додаткової регенерації здоров’я носію, якщо в того менш як 25% здоров’я."
       }
      ]
     },
@@ -901,11 +901,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Unholy Strength can now be toggled without cancelling invisibility"
+       "text": "Нечисту силу (Unholy Strength) тепер можна вмикати й вимикати, не перериваючи невидимість."
       },
       {
        "level": 1,
-       "text": "Unholy Strength health drain now affects the health regen value on the healthbar (allowing it to go negative)"
+       "text": "Витягування здоров’я від Нечистої сили (Unholy Strength) тепер впливає на значення регенерації здоров’я на смузі здоров’я (дозволяючи йому опускатися в мінус)."
       }
      ]
     },
@@ -914,7 +914,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 450 to 400. Total cost decreased from 2400g to 2350g"
+       "text": "Вартість рецепта зменшено: 450 → 400. Загальну вартість зменшено: 2400 → 2350."
       }
      ]
     },
@@ -923,23 +923,23 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
-       "text": "No longer requires a Javelin (900)"
+       "text": "Більше не потрібен Метальний спис (Javelin, 900)."
       },
       {
        "level": 2,
-       "text": "Recipe cost increased from 600 to 1350. Total cost decreased from 6400g to 6250g"
+       "text": "Вартість рецепта збільшено: 600 → 1350. Загальну вартість зменшено: 6400 → 6250."
       },
       {
        "level": 1,
-       "text": "Soul Rend bonus creep damage on silenced target decreased from 25 to 20"
+       "text": "Додаткову шкоду кріпам по знемовленій цілі від Розриву душі (Soul Rend) зменшено: 25 → 20."
       },
       {
        "level": 1,
-       "text": "No longer has Pierce passive"
+       "text": "Більше не має пасивного ефекту Пробиття (Pierce)."
       }
      ]
     },
@@ -948,15 +948,15 @@
      "notes": [
       {
        "level": 1,
-       "text": "Armor bonus increased from +1 to +2"
+       "text": "Додаткову броню збільшено: +1 → +2."
       },
       {
        "level": 1,
-       "text": "Buckler Aura bonus armor decreased from 2 to 1"
+       "text": "Додаткову броню від Аури баклера (Buckler Aura) зменшено: 2 → 1."
       },
       {
        "level": 1,
-       "text": "Buckler Aura no longer stacks with Vladmir's Aura or Assault Aura"
+       "text": "Аура баклера (Buckler Aura) більше не поєднується з Вампірською аурою (Vladmir's Aura) або Штурмовою аурою (Assault Aura)."
       }
      ]
     },
@@ -965,31 +965,31 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
-       "text": "Now also requires Buckler (425)"
+       "text": "Тепер також потребує Баклер (Buckler, 425)."
       },
       {
        "level": 2,
-       "text": "Recipe cost decreased from 1050 to 625. Total cost unchanged at 3725"
+       "text": "Вартість рецепта зменшено: 1050 → 625. Загальна вартість не змінилася (3725)."
       },
       {
        "level": 1,
-       "text": "Armor bonus increased from +4 to +5"
+       "text": "Додаткову броню збільшено: +4 → +5."
       },
       {
        "level": 1,
-       "text": "Health Regen bonus decreased from +12 to +9"
+       "text": "Додаткову регенерацію здоров’я зменшено: +12 → +9."
       },
       {
        "level": 1,
-       "text": "Guard is now dispellable"
+       "text": "Ефект Стража (Guard) тепер можна розвіяти."
       },
       {
        "level": 1,
-       "text": "Now also provides Buckler Aura"
+       "text": "Тепер також дає Ауру баклера (Buckler Aura)."
       },
       {
        "level": 2,
@@ -997,7 +997,7 @@
       },
       {
        "level": 3,
-       "text": "Doesn't stack with Buckler's Buckler Aura. If both are present, Crimson Guard's is used, no matter which one affected the unit first"
+       "text": "Не поєднується з Аурою баклера (Buckler Aura). Якщо обидва присутні, використовується Багряний страж (Crimson Guard), незалежно від того, хто з них подіяв на істоту першим."
       }
      ]
     },
@@ -1006,11 +1006,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Armor bonus increased from +1 to +2"
+       "text": "Додаткову броню збільшено: +1 → +2."
       },
       {
        "level": 1,
-       "text": "Vladmir's Aura bonus armor decreased from 2 to 1"
+       "text": "Додаткову броню від Вампірської аури (Vladmir's Aura) зменшено: 2 → 1."
       }
      ]
     },
@@ -1019,27 +1019,27 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
-       "text": "Now requires Quarterstaff (900) instead of Claymore (1350)"
+       "text": "Тепер потрібен Дрюк (Quarterstaff, 900) замість Клеймори (Claymore, 1350)."
       },
       {
        "level": 2,
-       "text": "Total cost decreased from 5450g to 5000g"
+       "text": "Загальну вартість зменшено: 5450 → 5000."
       },
       {
        "level": 1,
-       "text": "No longer provides +20% Base Attack Speed Percentage"
+       "text": "Більше не надає +20% до відсотка базової швидкості атаки."
       },
       {
        "level": 1,
-       "text": "Now also provides +30 Attack Speed"
+       "text": "Тепер також дає +30 до швидкості атаки."
       },
       {
        "level": 1,
-       "text": "Evasion bonus decreased from +35% to +30%"
+       "text": "Додаткове ухилення зменшено: +35% → +30%."
       }
      ]
     },
@@ -1048,11 +1048,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Corruption now works with illusions"
+       "text": "Тепер Псування (Corruption) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Corruption armor reduction is now modified by Item Potency"
+       "text": "Зменшення броні від Псування (Corruption) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1061,7 +1061,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Manabreak now works with illusions"
+       "text": "Тепер Спалення мани (Manabreak) працює з ілюзіями."
       },
       {
        "level": 1,
@@ -1096,7 +1096,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
@@ -1129,7 +1129,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
@@ -1141,19 +1141,19 @@
       },
       {
        "level": 1,
-       "text": "No longer provides +10 Intelligence"
+       "text": "Більше не надає +10 до інтелекту."
       },
       {
        "level": 1,
-       "text": "Strength bonus increased from +25 to +30"
+       "text": "Додаткову силу збільшено: +25 → +30."
       },
       {
        "level": 1,
-       "text": "Agility bonus increased from +10 to +15"
+       "text": "Додаткову спритність збільшено: +10 → +15."
       },
       {
        "level": 1,
-       "text": "Mana Regen bonus increased from +2 to +2.5"
+       "text": "Додаткову регенерацію мани збільшено: +2 → +2,5."
       },
       {
        "level": 1,
@@ -1166,7 +1166,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "All Attributes bonus increased from +24 to +25"
+       "text": "Усі додаткові характеристики збільшено: +24 → +25."
       },
       {
        "level": 1,
@@ -1232,7 +1232,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
@@ -1252,11 +1252,11 @@
       },
       {
        "level": 1,
-       "text": "Armor bonus decreased from +9 to +4.5"
+       "text": "Додаткову броню зменшено: +9 → +4,5."
       },
       {
        "level": 1,
-       "text": "Health Regen bonus decreased from +6.5 to +4.5"
+       "text": "Додаткову регенерацію здоров’я зменшено: +6,5 → +4,5."
       },
       {
        "level": 1,
@@ -1281,7 +1281,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item removed from the game"
+       "text": "Предмет вилучено з гри."
       }
      ]
     },
@@ -1290,11 +1290,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 650 to 550. Total cost decreased from 2100g to 2000g"
+       "text": "Вартість рецепта зменшено: 650 → 550. Загальну вартість зменшено: 2100 → 2000."
       },
       {
        "level": 1,
-       "text": "Spell Amplification bonus decreased from +10% to +6%",
+       "text": "Додаткове посилення чарів зменшено: +10% → +6%.",
        "info": "As a part of the comprehensive Spell Power Reduction"
       }
      ]
@@ -1308,12 +1308,12 @@
       },
       {
        "level": 1,
-       "text": "Spell Amplification bonus decreased from +12% to +10%",
+       "text": "Додаткове посилення чарів зменшено: +12% → +10%.",
        "info": "As a part of the comprehensive Spell Power Reduction"
       },
       {
        "level": 1,
-       "text": "Mana Regen Amplification bonus decreased from +30% to +25%"
+       "text": "Додаткове посилення регенерації мани зменшено: +30% → +25%."
       },
       {
        "level": 1,
@@ -1330,16 +1330,16 @@
       },
       {
        "level": 1,
-       "text": "Intelligence bonus decreased from +24 to +22"
+       "text": "Додатковий інтелект зменшено: +24 → +22."
       },
       {
        "level": 1,
-       "text": "Spell Amplification bonus decreased from +10% to +6%",
+       "text": "Додаткове посилення чарів зменшено: +10% → +6%.",
        "info": "As a part of the comprehensive Spell Power Reduction"
       },
       {
        "level": 1,
-       "text": "Mana Regen Amplification bonus decreased from +25% to +20%"
+       "text": "Додаткове посилення регенерації мани зменшено: +25% → +20%."
       },
       {
        "level": 1,
@@ -1368,7 +1368,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "All Attributes bonus increased from +16 to +17"
+       "text": "Усі додаткові характеристики збільшено: +16 → +17."
       }
      ]
     },
@@ -1377,7 +1377,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
@@ -1420,23 +1420,23 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
-       "text": "Now requires Quarterstaff (900) instead of a Broadsword (1000)"
+       "text": "Тепер потрібен Дрюк (Quarterstaff, 900) замість Палаша (Broadsword, 1000)."
       },
       {
        "level": 2,
-       "text": "Total cost decreased from 1900g to 1800g"
+       "text": "Загальну вартість зменшено: 1900 → 1800."
       },
       {
        "level": 1,
-       "text": "Damage bonus decreased from +20 to +15"
+       "text": "Додаткову шкоду зменшено: +20 → +15."
       },
       {
        "level": 1,
-       "text": "Now also provides +10 Attack Speed"
+       "text": "Тепер також дає +10 до швидкості атаки."
       }
      ]
     },
@@ -1445,35 +1445,35 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
-       "text": "Now requires Quarterstaff (900) instead of Javelin (900)"
+       "text": "Тепер потрібен Дрюк (Quarterstaff, 900) замість Метального списа (Javelin, 900)."
       },
       {
        "level": 2,
-       "text": "Total cost unchanged at 5000g"
+       "text": "Загальна вартість не змінилася: 5000."
       },
       {
        "level": 1,
-       "text": "Damage bonus increased from +50 to +55"
+       "text": "Додаткову шкоду збільшено: +50 → +55."
       },
       {
        "level": 1,
-       "text": "No longer provides +50 Attack Range for melee heroes"
+       "text": "Більше не дає +50 до дальності атаки для героїв ближнього бою."
       },
       {
        "level": 1,
-       "text": "Pierce now works with illusions"
+       "text": "Тепер Пробиття (Pierce) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Pierce now has a separate bonus magic damage value of 30 for illusions"
+       "text": "Пробиття (Pierce) тепер має окреме значення додаткової магічної шкоди для ілюзій: 30."
       },
       {
        "level": 1,
-       "text": "Pierce chance is now modified by Item Potency"
+       "text": "Шанс Пробиття (Pierce) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1482,7 +1482,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Nullify now also makes the target to be 60% less susceptible to forced movement effects applied by their allies"
+       "text": "Ануляція (Nullify) тепер також робить союзні ефекти примусового руху на 60% менш ефективними на цілі."
       }
      ]
     },
@@ -1491,11 +1491,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "No longer increases max mana by 3%"
+       "text": "Більше не збільшує максимальну ману на 3%."
       },
       {
        "level": 1,
-       "text": "Now provides +60 Mana"
+       "text": "Тепер дає +60 до мани."
       }
      ]
     },
@@ -1504,7 +1504,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Cooldown Reduction bonus decreased from +25% to +20%"
+       "text": "Додаткове зменшення зарядки зменшено: +25% → +20%."
       }
      ]
     },
@@ -1513,7 +1513,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
@@ -1559,7 +1559,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 675 to 575. Total cost decreased from 1350g to 1250g"
+       "text": "Вартість рецепта зменшено: 675 → 575. Загальну вартість зменшено: 1350 → 1250."
       }
      ]
     },
@@ -1568,7 +1568,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost increased from 500g to 600g.Total cost unchanged at 2575g (due to Pavise cost decrease)"
+       "text": "Вартість рецепта збільшено: 500 → 600. Загальна вартість не змінилася (2575) через зменшення вартості Павези (Pavise)."
       },
       {
        "level": 1,
@@ -1619,7 +1619,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item removed from the game"
+       "text": "Предмет вилучено з гри."
       }
      ]
     },
@@ -1641,7 +1641,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Intelligence bonus increased from +12 to +15"
+       "text": "Додатковий інтелект збільшено: +12 → +15."
       }
      ]
     },
@@ -1650,7 +1650,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Intelligence bonus increased from +12 to +20"
+       "text": "Додатковий інтелект збільшено: +12 → +20."
       },
       {
        "level": 1,
@@ -1672,7 +1672,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 650 to 550. Total cost decreased from 2100g to 2000g"
+       "text": "Вартість рецепта зменшено: 650 → 550. Загальну вартість зменшено: 2100 → 2000."
       },
       {
        "level": 1,
@@ -1689,7 +1689,7 @@
       },
       {
        "level": 1,
-       "text": "Movement speed bonus decreased from +12% to +10%"
+       "text": "Додаткову швидкість руху зменшено: +12% → +10%."
       },
       {
        "level": 1,
@@ -1702,7 +1702,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Shadow Walk bonus movement speed decreased from 20% to 16%"
+       "text": "Додаткову швидкість руху Тіньової ходи (Shadow Walk) зменшено: 20% → 16%."
       }
      ]
     },
@@ -1711,7 +1711,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Shadow Walk bonus movement speed decreased from 20% to 18%"
+       "text": "Додаткову швидкість руху Тіньової ходи (Shadow Walk) зменшено: 20% → 18%."
       },
       {
        "level": 1,
@@ -1769,7 +1769,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost increased from 320 to 370. Total cost increased from 825g to 875g"
+       "text": "Вартість рецепта збільшено: 320 → 370. Загальну вартість збільшено: 825 → 875."
       }
      ]
     },
@@ -1809,7 +1809,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Bloodpact cooldown decreased from 35s to 30s"
+       "text": "Зарядку Кривавого пакту (Bloodpact) зменшено: 35 с → 30 с."
       },
       {
        "level": 1,
@@ -1827,7 +1827,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Movement Speed bonus decreased from +30 to +25"
+       "text": "Додаткову швидкість руху зменшено: +30 → +25."
       }
      ]
     },
@@ -1836,7 +1836,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe changed"
+       "text": "Рецепт змінено."
       },
       {
        "level": 2,
@@ -1844,7 +1844,7 @@
       },
       {
        "level": 2,
-       "text": "Recipe cost increased from 300 to 650. Total cost unchanged at 2775g"
+       "text": "Вартість рецепта збільшено: 300 → 650. Загальна вартість не змінилася: 2775."
       },
       {
        "level": 1,
@@ -1878,7 +1878,7 @@
       },
       {
        "level": 1,
-       "text": "Magic Corruption now works with illusions"
+       "text": "Тепер Магічне псування (Magic Corruption) працює з ілюзіями."
       },
       {
        "level": 1,
@@ -1891,7 +1891,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Attack Speed bonus increased from +6 to +10"
+       "text": "Додаткову швидкість атаки збільшено: +6 → +10."
       }
      ]
     },
@@ -1900,11 +1900,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 650 to 550. Total cost decreased from 2100g to 2000g"
+       "text": "Вартість рецепта зменшено: 650 → 550. Загальну вартість зменшено: 2100 → 2000."
       },
       {
        "level": 1,
-       "text": "Movement Speed bonus decreased from +10% to +6%"
+       "text": "Додаткову швидкість руху зменшено: +10% → +6%."
       }
      ]
     },
@@ -1917,16 +1917,16 @@
       },
       {
        "level": 1,
-       "text": "Spell Amplification bonus decreased from +12% to +10%",
+       "text": "Додаткове посилення чарів зменшено: +12% → +10%.",
        "info": "As a part of the comprehensive Spell Power Reduction"
       },
       {
        "level": 1,
-       "text": "Movement speed bonus decreased from +12% to +10%"
+       "text": "Додаткову швидкість руху зменшено: +12% → +10%."
       },
       {
        "level": 1,
-       "text": "Mana Regen Amplification bonus decreased from +30% to +25%"
+       "text": "Додаткове посилення регенерації мани зменшено: +30% → +25%."
       }
      ]
     },
@@ -1939,7 +1939,7 @@
       },
       {
        "level": 1,
-       "text": "Movement Speed bonus decreased from +10% to +6%"
+       "text": "Додаткову швидкість руху зменшено: +10% → +6%."
       },
       {
        "level": 1,
@@ -1950,7 +1950,7 @@
    ],
    "neutral": [
     {
-     "group": "Global Changes",
+     "group": "Глобальні зміни",
      "notes": [
       {
        "level": 1,
@@ -1987,7 +1987,7 @@
      ]
     },
     {
-     "group": "Artifact Changes",
+     "group": "Зміни артефактів",
      "notes": []
     },
     {
@@ -1995,7 +1995,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2004,7 +2004,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2013,7 +2013,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2045,14 +2045,14 @@
        "text": "Wealthy - Three enemy heroes with the highest networth"
       }
      ],
-     "label": "New Tier 1 Artifact"
+     "label": "Новий артефакт 1-го ступеня"
     },
     {
      "name": "Щит Легіону попелу",
      "notes": [
       {
        "level": 1,
-       "text": "Shield Wall damage barrier increased from 160 to 180"
+       "text": "Бар’єр проти шкоди в Щитової стіни (Shield Wall) збільшено: 160 → 180."
       }
      ]
     },
@@ -2158,7 +2158,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2167,7 +2167,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2176,7 +2176,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2185,7 +2185,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2217,7 +2217,7 @@
        "text": "If no barriers are left, remaining barrier damage is NOT dealt to the player"
       }
      ],
-     "label": "New Tier 2 Artifact"
+     "label": "Новий артефакт 2-го ступеня"
     },
     {
      "name": "Imp Claw",
@@ -2234,7 +2234,7 @@
      "label": "Returning Tier 2 Artifact"
     },
     {
-     "name": "Safety Bubble",
+     "name": "Бульбашка безпеки",
      "notes": [
       {
        "level": 2,
@@ -2252,7 +2252,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Hobble cast range increased from 650 to 700"
+       "text": "Дальність чаклування Кульгання (Hobble) збільшено: 650 → 700."
       },
       {
        "level": 1,
@@ -2286,7 +2286,7 @@
       },
       {
        "level": 2,
-       "text": "From 156 to 52 with Dormant Curio"
+       "text": "Зі Сплячою цінністю (Dormant Curio): 156 → 52."
       }
      ]
     },
@@ -2308,7 +2308,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Bottoms Up base mana restored increased from 70 to 90"
+       "text": "Відновлення базової мани від На здоров’я (Bottoms Up) збільшено: 70 → 90."
       }
      ]
     },
@@ -2386,7 +2386,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2402,7 +2402,7 @@
        "text": "Dormant Curio increases health regen to 15.6"
       }
      ],
-     "label": "New Tier 3 Artifact"
+     "label": "Новий артефакт 3-го ступеня"
     },
     {
      "name": "Церемоніальна роба",
@@ -2452,7 +2452,7 @@
        "text": "Stacks can be applied from different sources"
       }
      ],
-     "label": "New Tier 3 Artifact"
+     "label": "Новий артефакт 3-го ступеня"
     },
     {
      "name": "Кульбабовий амулет",
@@ -2506,7 +2506,7 @@
       },
       {
        "level": 1,
-       "text": "False Flight bonus evasion increased from 35% to 40%"
+       "text": "Додаткове ухилення від Фальшивого польоту (False Flight) збільшено: 35% → 40%."
       }
      ]
     },
@@ -2536,7 +2536,7 @@
       },
       {
        "level": 2,
-       "text": "From 117 to 143 with Dormant Curio"
+       "text": "Зі Сплячою цінністю (Dormant Curio): 117 → 143."
       }
      ]
     },
@@ -2557,7 +2557,7 @@
       },
       {
        "level": 1,
-       "text": "Gut 'Em now works with illusions"
+       "text": "Тепер Потрошіння (Gut 'Em) працює з ілюзіями."
       },
       {
        "level": 1,
@@ -2574,7 +2574,7 @@
       },
       {
        "level": 2,
-       "text": "From 91 to 117 with Dormant Curio"
+       "text": "Зі Сплячою цінністю (Dormant Curio): 91 → 117."
       }
      ]
     },
@@ -2583,7 +2583,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2592,7 +2592,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2601,7 +2601,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2610,7 +2610,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
@@ -2619,12 +2619,12 @@
      "notes": [
       {
        "level": 1,
-       "text": "Item Cycled Out"
+       "text": "Предмет тимчасово прибрано."
       }
      ]
     },
     {
-     "name": "Flicker",
+     "name": "Спалах",
      "notes": [
       {
        "level": 2,
@@ -2638,7 +2638,7 @@
      "label": "Returning Tier 4 Artifact"
     },
     {
-     "name": "Giant's Ring",
+     "name": "Перстень велета",
      "notes": [
       {
        "level": 2,
@@ -2671,7 +2671,7 @@
        "text": "Spirit Bear is a real hero so he does count"
       }
      ],
-     "label": "New Tier 4 Artifact"
+     "label": "Новий артефакт 4-го ступеня"
     },
     {
      "name": "Мозколам",
@@ -2825,7 +2825,7 @@
       },
       {
        "level": 1,
-       "text": "Tier 1"
+       "text": "Ступінь 1"
       },
       {
        "level": 2,
@@ -2845,7 +2845,7 @@
       },
       {
        "level": 1,
-       "text": "Tier 2"
+       "text": "Ступінь 2"
       },
       {
        "level": 2,
@@ -2865,7 +2865,7 @@
       },
       {
        "level": 1,
-       "text": "Tier 3"
+       "text": "Ступінь 3"
       },
       {
        "level": 2,
@@ -2885,7 +2885,7 @@
       },
       {
        "level": 1,
-       "text": "Tier 4"
+       "text": "Ступінь 4"
       },
       {
        "level": 2,
@@ -2906,7 +2906,7 @@
      ]
     },
     {
-     "group": "Enchantment Changes",
+     "group": "Зміни зачарувань",
      "notes": []
     },
     {
@@ -3053,7 +3053,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Tiers changed from 2-3 to 3"
+       "text": "Ступені змінено: 2—3 → 3."
       },
       {
        "level": 1,
@@ -3141,7 +3141,7 @@
       },
       {
        "level": 1,
-       "text": "Primary Attribute bonus decreased from +40 to +20"
+       "text": "Бонус основної характеристики зменшено: +40 → +20."
       },
       {
        "level": 1,
@@ -3254,7 +3254,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Agility gain decreased from 1.7 to 1.5"
+       "text": "Приріст спритності зменшено: 1,7 → 1,5."
       }
      ],
      "abilities": [
@@ -3263,7 +3263,7 @@
        "notes": [
         {
          "level": 1,
-         "text": "Movement Slow decreased from 18/22/26/30% to 16/19/22/25%",
+         "text": "Сповільнення руху зменшено: 18/22/26/30% → 16/19/22/25%.",
          "info": "As a part of the comprehensive Spell Power Reduction"
         }
        ]
@@ -3277,7 +3277,7 @@
         },
         {
          "level": 1,
-         "text": "Aghanim's Scepter Debuff Duration increased from 6s to 7s"
+         "text": "Тривалість негативного ефекту зі Скіпетром Аґаніма збільшено: 6 c → 7 c."
         }
        ]
       },
@@ -3294,7 +3294,7 @@
      "talents": [
       {
        "level": 1,
-       "text": "Level 25 Talent Berserker's Call AoE decreased from +85 to +70",
+       "text": "Талант 25-го рівня зменшено: «+85 до області дії Кличу берсерка (Berserker's Call)» → +70.",
        "info": "As a part of the comprehensive Spell Power Reduction"
       }
      ]
@@ -3310,7 +3310,7 @@
        "notes": [
         {
          "level": 1,
-         "text": "Aghanim's Shard Cooldown reduction increased from 3s to 4s",
+         "text": "Зменшення зарядки з Уламком Аґаніма збільшено: 3 c → 4 c.",
          "info": "As a result, cooldown decreased from 14/12/10/8s to 13/11/9/7s"
         }
        ]
@@ -3320,16 +3320,16 @@
        "notes": [
         {
          "level": 1,
-         "text": "Cooldown rescaled from 120/110/100s to 125/110/95s"
+         "text": "Зарядку змінено: 120/110/100 c → 125/110/95 c."
         },
         {
          "level": 1,
-         "text": "Aghanim's Scepter Cooldown Reduction decreased from 40s to 35s",
+         "text": "Зменшення зарядки зі Скіпетром Аґаніма зменшено: 40 c → 35 c.",
          "info": "As a result, cooldown with Aghanim's Scepter increased from 80/70/60s to 90/75/60s"
         },
         {
          "level": 1,
-         "text": "Aghanim's Scepter illusion incoming damage decreased from 225% to 200%"
+         "text": "Шкоду по ілюзіях зі Скіпетром Аґаніма зменшено: 225% → 200%."
         }
        ]
       }
@@ -3557,7 +3557,7 @@
         },
         {
          "level": 3,
-         "text": "Keeps attacking units even if the stop/hold command is issued and while stunned. Buildings are not automatically attacked"
+         "text": "Keeps attacking units even if the stop/hold command is issued. Buildings are not automatically attacked"
         },
         {
          "level": 3,
@@ -6444,11 +6444,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Base Intelligence increased from 22 to 23"
+       "text": "Базовий інтелект збільшено: 22 → 23."
       },
       {
        "level": 2,
-       "text": "Damage at level 1 unchanged at 38-42"
+       "text": "Шкода на 1-му рівні не змінилася (38—42)."
       }
      ],
      "abilities": [
@@ -6457,15 +6457,15 @@
        "notes": [
         {
          "level": 1,
-         "text": "Mana Cost increased from 22 to 25"
+         "text": "Витрату мани збільшено: 22 → 25."
         },
         {
          "level": 1,
-         "text": "Cooldown increased from 3s to 4s"
+         "text": "Зарядку збільшено: 3 c → 4 c."
         },
         {
          "level": 1,
-         "text": "Duration increased from 6s to 7s"
+         "text": "Тривалість збільшено: 6 c → 7 c."
         },
         {
          "level": 1,
@@ -7385,7 +7385,7 @@
        "notes": [
         {
          "level": 1,
-         "text": "New innate ability"
+         "text": "Нова вроджена здібність."
         },
         {
          "level": 2,
@@ -9832,7 +9832,7 @@
         },
         {
          "level": 1,
-         "text": "Base Damage increased from 40/70/100 to 40/80/120"
+         "text": "Базову шкоду збільшено: 40/70/100 → 50/100/150."
         },
         {
          "level": 1,
@@ -9918,7 +9918,7 @@
    ],
    "creeps": [
     {
-     "name": "General changes",
+     "name": "Загальні зміни",
      "notes": [
       {
        "level": 1,
@@ -10027,7 +10027,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Attack Range decreased from 500 to 450"
+       "text": "Дальність атаки зменшено: 500 → 450."
       },
       {
        "level": 1,
@@ -10035,7 +10035,7 @@
       },
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 18-20 to 16-18"
+       "text": "Винагороду золотом зменшено: 18—20 → 16—18."
       },
       {
        "level": 1,
@@ -10048,7 +10048,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Attack Range decreased from 600 to 500"
+       "text": "Дальність атаки зменшено: 600 → 500."
       },
       {
        "level": 1,
@@ -10056,7 +10056,7 @@
       },
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 18-20 to 16-18"
+       "text": "Винагороду золотом зменшено: 18—20 → 16—18."
       }
      ]
     },
@@ -10065,7 +10065,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 12-14 to 11-13"
+       "text": "Винагороду золотом зменшено: 12—14 → 11—13."
       },
       {
        "level": 1,
@@ -10087,19 +10087,19 @@
      "notes": [
       {
        "level": 1,
-       "text": "Health increased from 240 to 280"
+       "text": "Здоров’я збільшено: 240 → 280."
       },
       {
        "level": 1,
-       "text": "Damage increased from 15-16 to 18-19"
+       "text": "Шкоду збільшено: 15—16 → 18—19."
       },
       {
        "level": 1,
-       "text": "Gold Bounty increased from 3-5 to 6-8"
+       "text": "Винагороду золотом збільшено: 3—5 → 6—8."
       },
       {
        "level": 1,
-       "text": "XP Bounty increased from 14 to 18"
+       "text": "Винагороду досвідом збільшено: 14 → 18."
       }
      ]
     },
@@ -10127,11 +10127,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Mana decreased from 600 to 300"
+       "text": "Ману зменшено: 600 → 300."
       },
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 18-22 to 16-18"
+       "text": "Винагороду золотом зменшено: 18—22 → 16—18."
       },
       {
        "level": 1,
@@ -10144,15 +10144,15 @@
      "notes": [
       {
        "level": 1,
-       "text": "Gold Bounty increased from 12-14 to 15-17"
+       "text": "Винагороду золотом збільшено: 12—14 → 15—17."
       },
       {
        "level": 1,
-       "text": "XP Bounty increased from 24 to 30"
+       "text": "Винагороду досвідом збільшено: 24 → 30."
       },
       {
        "level": 1,
-       "text": "Purge: Cooldown increased from 3s to 8s"
+       "text": "Зарядку збільшено: 3 c → 8 c."
       },
       {
        "level": 1,
@@ -10190,7 +10190,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 4 Ranged Creep",
+       "text": "Новий кріп дальнього бою 4-го рівня.",
        "info": "800 Health 30-32 Damage 400 Mana 0 Armor 30% Magic Resistance 400 Attack Range 310 Movement Speed 34-36 Gold Bounty 62 XP Bounty"
       },
       {
@@ -10212,7 +10212,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 5 Melee Creep",
+       "text": "Новий кріп ближнього бою 5-го рівня.",
        "info": "600 Health 26-30 Damage 300 Mana 350 Movement Speed 150 Attack Speed 3 Armor 0% Magic Resistance 32-34 Gold Bounty 60 XP Bounty"
       },
       {
@@ -10234,7 +10234,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 3 Melee Creep",
+       "text": "Новий кріп ближнього бою 3-го рівня.",
        "info": "500 Health 16-18 Damage 200 Mana 350 Movement Speed 125 Attack Speed 1 Armor 0% Magic Resistance 18-22 Gold Bounty 40 XP Bounty"
       },
       {
@@ -10252,7 +10252,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 54-60 to 49-54"
+       "text": "Винагороду золотом зменшено: 54—60 → 49—54."
       }
      ]
     },
@@ -10261,7 +10261,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 58-64 to 52-58"
+       "text": "Винагороду золотом зменшено: 58—64 → 52—58."
       }
      ]
     },
@@ -10292,7 +10292,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 5 Melee Creep",
+       "text": "Новий кріп ближнього бою 5-го рівня.",
        "info": "950 Health 49-55 Damage 300 Mana 320 Movement Speed 135 Attack Speed 4 Armor 0% Magic Resistance 62-66 Gold Bounty 90 XP Bounty"
       },
       {
@@ -10314,7 +10314,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 4 Melee Creep",
+       "text": "Новий кріп ближнього бою 4-го рівня.",
        "info": "700 Health 39-44 Damage 0 Mana 320 Movement Speed 135 Attack Speed 3 Armor 0% Magic Resistance 30-38 Gold Bounty 66 XP Bounty"
       },
       {
@@ -10362,7 +10362,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 76-80 to 68-72"
+       "text": "Винагороду золотом зменшено: 76—80 → 68—72."
       }
      ]
     },
@@ -10371,7 +10371,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Gold Bounty decreased from 37-43 to 33-39"
+       "text": "Винагороду золотом зменшено: 37—43 → 33—39."
       }
      ]
     },
@@ -10380,7 +10380,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 6 Ancient Melee Creep",
+       "text": "Новий древній кріп ближнього бою 6-го рівня.",
        "info": "1700 Health 60-65 Damage 400 Mana 270 Movement Speed 150 Attack Range 3 Armor 30% Magic Resistance 68-72 Gold Bounty 124 XP Bounty"
       },
       {
@@ -10403,7 +10403,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "New Level 5 Ancient Melee Creep",
+       "text": "Новий древній кріп ближнього бою 5-го рівня.",
        "info": "800 Health 32-34 Damage 400 Mana 270 Movement Speed 128 Attack Range 3 Armor 50% Magic Resistance 76-80 Gold Bounty 124 XP Bounty"
       },
       {
@@ -10914,7 +10914,7 @@
       },
       {
        "level": 2,
-       "text": "Global Cast Range. No Mana Cost. No cooldown"
+       "text": "Global Cast Range. No Mana Cost. Cooldown: 30s"
       },
       {
        "level": 2,
@@ -13971,7 +13971,7 @@
         },
         {
          "level": 3,
-         "text": "Keeps attacking units even if the stop/hold command is issued and while stunned. Buildings are not automatically attacked"
+         "text": "Keeps attacking units even if the stop/hold command is issued. Buildings are not automatically attacked"
         },
         {
          "level": 3,
@@ -20246,7 +20246,7 @@
         },
         {
          "level": 1,
-         "text": "Base Damage increased from 40/70/100 to 40/80/120"
+         "text": "Base Damage increased from 40/70/100 to 50/100/150"
         },
         {
          "level": 1,
