@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
           cache: pip
@@ -115,7 +115,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ needs.post.outputs.sha || 'main' }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version-file: .python-version
       - name: Send the post
