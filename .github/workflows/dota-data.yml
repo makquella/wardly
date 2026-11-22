@@ -51,7 +51,7 @@ jobs:
         run: git diff --stat -- frontend/launcher/renderer/dota-data.js >> "$GITHUB_STEP_SUMMARY"
       - name: Open a pull request when it changed
         id: pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/dota-data
           commit-message: "Refresh hero and item icon data"
