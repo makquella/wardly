@@ -404,6 +404,28 @@
     }
   }
 
+  // --- folded patch notes ---------------------------------------------------------
+  // A patch page folds its items and heroes (<details>); a link from the table of
+  // contents, or an address with #hero-…, opens the folded card it points to.
+
+  const openTarget = () => {
+    let target = null;
+    try {
+      target = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+    } catch {
+      target = null;
+    }
+    if (!target) return;
+    for (let node = target; node; node = node.parentElement) {
+      if (node.tagName === "DETAILS") node.open = true;
+    }
+    target.scrollIntoView();
+  };
+  if (document.querySelector("details.patch-fold")) {
+    window.addEventListener("hashchange", openTarget);
+    openTarget();
+  }
+
   applyLanguage(initialLanguage());
   loadRelease();
   countVisit();

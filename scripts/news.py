@@ -133,6 +133,12 @@ TEXT = {
         "patch_creeps_title": "Нейтральні крипи",
         "patch_heroes_title": "Герої",
         "patch_talents": "Таланти",
+        "patch_changes": "змін: {count}",
+        "patch_changes_of": "позицій: {count}",
+        "patch_hero_page": "Сторінка героя {name} →",
+        "patch_toc": "Зміст",
+        "patch_fold_hint": "Предмети й герої згорнуті: натисніть на заголовок, щоб розгорнути.",
+        "patch_untranslated": "Частину змін, переважно героїв і нейтральних предметів, Valve поки що опублікувала лише англійською. Ми показуємо їх як є і оновимо сторінку, щойно з’явиться переклад.",
         "patch_source": "Джерело: офіційні нотатки Valve до патча {version}",
         "patch_share": "Скиньте друзям, що змінилося в патчі: усі герої й предмети на одній сторінці.",
         "patch_list": "Героїв змінено: {heroes} · предметів: {items}",
@@ -188,6 +194,12 @@ TEXT = {
         "patch_creeps_title": "Neutral creeps",
         "patch_heroes_title": "Heroes",
         "patch_talents": "Talents",
+        "patch_changes": "{count} changes",
+        "patch_changes_of": "{count} entries",
+        "patch_hero_page": "{name}'s hero page →",
+        "patch_toc": "Contents",
+        "patch_fold_hint": "Items and heroes are folded: tap a heading to open it.",
+        "patch_untranslated": "Valve has published part of these notes in English only.",
         "patch_source": "Source: Valve's official notes for patch {version}",
         "patch_share": "Tell your friends what the patch changed: every hero and item on one page.",
         "patch_list": "Heroes changed: {heroes} · items: {items}",
@@ -499,8 +511,25 @@ def _clean(value: Any) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def _clean_lines(value: Any) -> str:
+    """Like _clean, but every <br> stays a line break ("\n"; a blank line between
+    paragraphs): Valve's `info` holds tables («Level -- Was -- Now<br>2 -- 240 --
+    250») and lists («* Couriers<br>* Observer Wards») written line by line."""
+    if not isinstance(value, str):
+        return ""
+    text = re.sub(r"<br\s*/?>", "\n", value, flags=re.IGNORECASE)
+    text = html.unescape(re.sub(r"<[^>]+>", "", text))
+    lines = [re.sub(r"\s+", " ", line).strip() for line in text.split("\n")]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
+_SUBTITLE = re.compile(r"""<span[^>]*class=["']?Subtitle""", re.IGNORECASE)
+
+
 def _notes(raw: Any) -> list[dict[str, Any]]:
-    """[{"level": 1.., "text": ..., "info"?: ...}] without the empty spacer lines."""
+    """[{"level": 1.., "text": ..., "info"?: ..., "heading"?: True}] without the
+    empty spacer lines. A heading is Valve's «Subtitle» line (no bullet) that opens
+    the notes under it, such as «Hero Stats» in the general changes."""
     notes = []
     for item in raw if isinstance(raw, list) else []:
         if not isinstance(item, dict):
@@ -513,7 +542,9 @@ def _notes(raw: Any) -> list[dict[str, Any]]:
         except (TypeError, ValueError):
             level = 1
         note: dict[str, Any] = {"level": level, "text": text}
-        info = _clean(item.get("info"))
+        if isinstance(item.get("note"), str) and _SUBTITLE.search(item["note"]):
+            note["heading"] = True
+        info = _clean_lines(item.get("info"))
         if info:
             note["info"] = info
         notes.append(note)
@@ -989,28 +1020,146 @@ def patch_title(patch: dict[str, Any], lang: str) -> str:
     return TEXT[lang]["patch_title"].format(version=patch["version"])
 
 
-def _patch_notes(notes: list[dict[str, Any]]) -> str:
+_CYRILLIC = re.compile(r"[А-Яа-яЁёІіЇїЄєҐґ’]")
+_LATIN = re.compile(r"[A-Za-z]{2}")
+
+
+def untranslated(text: str, lang: str) -> bool:
+    """A Ukrainian note Valve left in English (its hero changes often come in
+    English first): Latin words and no Cyrillic letter."""
+    return lang == "uk" and not _CYRILLIC.search(text) and bool(_LATIN.search(text))
+
+
+def _all_notes(language: dict[str, Any]) -> list[dict[str, Any]]:
+    notes = [note for group in language["general"] for note in group["notes"]]
+    for key in ("items", "neutral", "creeps"):
+        notes += [note for entry in language[key] for note in entry["notes"]]
+    for hero in language["heroes"]:
+        notes += hero["notes"] + hero["talents"]
+        notes += [note for ability in hero["abilities"] for note in ability["notes"]]
+    return notes
+
+
+def untranslated_share(patch: dict[str, Any], lang: str = "uk") -> float:
+    """The share of this language's notes that Valve has not translated yet."""
+    language = patch.get("languages", {}).get(lang)
+    if not language:
+        return 0.0
+    notes = [note for note in _all_notes(language) if not note.get("heading")]
+    if not notes:
+        return 0.0
+    return sum(untranslated(note["text"], lang) for note in notes) / len(notes)
+
+
+def _info_runs(lines: list[str]) -> list[tuple[str, list[str]]]:
+    """Consecutive lines of the same kind: a table row («a -- b -- c»), a list
+    item («* a») or plain text."""
+    runs: list[tuple[str, list[str]]] = []
+    for line in lines:
+        kind = "table" if " -- " in line else "list" if line.startswith(("* ", "• ")) else "text"
+        if runs and runs[-1][0] == kind:
+            runs[-1][1].append(line)
+        else:
+            runs.append((kind, [line]))
+    return runs
+
+
+def _numeric(cell: str) -> bool:
+    return bool(re.fullmatch(r"[-+−]?[\d.,%/ ]+", cell))
+
+
+def _patch_info(info: str) -> str:
+    """Valve's `info` under a note: its tables and lists as a table and a list."""
     e = html.escape
-    items = "\n".join(
-        f'                <li class="patch-note patch-note-{note["level"]}">{e(note["text"])}'
-        + (f'<span class="patch-info">{e(note["info"])}</span>' if note.get("info") else "")
-        + "</li>"
-        for note in notes
+    parts = []
+    for paragraph in info.split("\n\n"):
+        for kind, lines in _info_runs([line for line in paragraph.split("\n") if line]):
+            if kind == "table" and len(lines) > 1:
+                rows = [[cell.strip() for cell in line.split(" -- ")] for line in lines]
+                head = "" if all(_numeric(cell) for cell in rows[0]) else rows.pop(0)
+                thead = (
+                    "<thead><tr>" + "".join(f"<th>{e(c)}</th>" for c in head) + "</tr></thead>"
+                    if head
+                    else ""
+                )
+                tbody = "".join(
+                    "<tr>" + "".join(f"<td>{e(c)}</td>" for c in row) + "</tr>" for row in rows
+                )
+                parts.append(
+                    f'<div class="patch-table-wrap"><table class="patch-table">'
+                    f"{thead}<tbody>{tbody}</tbody></table></div>"
+                )
+            elif kind == "list":
+                items = "".join(f"<li>{e(line[2:].strip())}</li>" for line in lines)
+                parts.append(f'<ul class="patch-info-list">{items}</ul>')
+            else:
+                parts.append(f"<p>{'<br />'.join(e(line) for line in lines)}</p>")
+    return f'<div class="patch-info">{"".join(parts)}</div>'
+
+
+def _patch_note(note: dict[str, Any], lang: str) -> str:
+    e = html.escape
+    english = ' lang="en"' if untranslated(note["text"], lang) else ""
+    info = _patch_info(note["info"]) if note.get("info") else ""
+    return (
+        f'                <li class="patch-note patch-note-{note["level"]}"{english}>'
+        f"{e(note['text'])}{info}</li>"
     )
-    return f'              <ul class="patch-notes">\n{items}\n              </ul>'
 
 
-def _patch_card(heading: str, body: list[str], extra: str = "", head: str = "") -> str:
-    """A card of notes; `head` replaces the plain heading (a hero with a picture)."""
+def _patch_notes(notes: list[dict[str, Any]], lang: str = "en", anchor: str = "") -> str:
+    """Notes as lists; a heading note («Hero Stats») closes the list before it and
+    becomes a subheading (id `<anchor>-<n>` when `anchor` is given)."""
+    e = html.escape
+    out: list[str] = []
+    items: list[str] = []
+
+    def flush() -> None:
+        if items:
+            out.append(
+                '              <ul class="patch-notes">\n'
+                + "\n".join(items)
+                + "\n              </ul>"
+            )
+            items.clear()
+
+    count = 0
+    for note in notes:
+        if note.get("heading"):
+            flush()
+            count += 1
+            ident = f' id="{anchor}-{count}"' if anchor else ""
+            english = ' lang="en"' if untranslated(note["text"], lang) else ""
+            out.append(
+                f'              <h3 class="patch-sub"{ident}{english}>{e(note["text"])}</h3>'
+            )
+        else:
+            items.append(_patch_note(note, lang))
+    flush()
+    return "\n".join(out)
+
+
+def _patch_card(
+    heading: str, body: list[str], extra: str = "", head: str = "", ident: str = "", fold: str = ""
+) -> str:
+    """A card of notes; `head` replaces the plain heading (a hero with a picture).
+    `fold` "open" or "closed" makes it a <details> card that folds by its heading."""
     title = head or f'<h2 class="news-card-title"><span>{html.escape(heading)}</span></h2>'
     inner = "\n".join(body)
-    return f"""            <article class="mode news-card patch-card{extra}">
+    id_attr = f' id="{ident}"' if ident else ""
+    if not fold:
+        return f"""            <article class="mode news-card patch-card{extra}"{id_attr}>
               {title}
 {inner}
             </article>"""
+    opened = " open" if fold == "open" else ""
+    return f"""            <details class="mode news-card patch-card patch-fold{extra}"{id_attr}{opened}>
+              <summary>{title}</summary>
+{inner}
+            </details>"""
 
 
-def _patch_entries(entries: list[dict[str, Any]]) -> list[str]:
+def _patch_entries(entries: list[dict[str, Any]], lang: str = "en") -> list[str]:
     e = html.escape
     out = []
     for entry in entries:
@@ -1020,8 +1169,16 @@ def _patch_entries(entries: list[dict[str, Any]]) -> list[str]:
             label = f" <small>{e(entry['label'])}</small>" if entry.get("label") else ""
             out.append(f'              <h3 class="patch-name">{e(entry["name"])}{label}</h3>')
         if entry["notes"]:
-            out.append(_patch_notes(entry["notes"]))
+            out.append(_patch_notes(entry["notes"], lang))
     return out
+
+
+def _hero_changes(hero: dict[str, Any]) -> int:
+    return (
+        len(hero["notes"])
+        + len(hero["talents"])
+        + sum(len(ability["notes"]) for ability in hero["abilities"])
+    )
 
 
 def _patch_hero(
@@ -1030,18 +1187,31 @@ def _patch_hero(
     e = html.escape
     body = []
     if hero["notes"]:
-        body.append(_patch_notes(hero["notes"]))
+        body.append(_patch_notes(hero["notes"], lang))
     for ability in hero["abilities"]:
         body.append(f'              <h3 class="patch-name">{e(ability["name"])}</h3>')
-        body.append(_patch_notes(ability["notes"]))
+        body.append(_patch_notes(ability["notes"], lang))
     if hero["talents"]:
         body.append(f'              <h3 class="patch-name">{e(TEXT[lang]["patch_talents"])}</h3>')
-        body.append(_patch_notes(hero["talents"]))
+        body.append(_patch_notes(hero["talents"], lang))
+    count = TEXT[lang]["patch_changes"].format(count=_hero_changes(hero))
+    # The name is not a link here: the heading folds the card.
     head = (
         f'<h2 class="news-card-title patch-hero">{_picture(hero, up, images, "lg")}'
-        f"<span>{_name(hero, links, home)}</span></h2>"
+        f'<span>{e(hero["name"])}</span><small class="patch-count">{e(count)}</small></h2>'
     )
-    return _patch_card(hero["name"], body, head=head)
+    if hero["name"] in links:
+        body.append(
+            f'              <p class="patch-hero-link"><a href="{home}heroes/{links[hero["name"]]}.html">'
+            f"{e(TEXT[lang]['patch_hero_page'].format(name=hero['name']))}</a></p>"
+        )
+    return _patch_card(hero["name"], body, head=head, ident=f"hero-{hero['key']}", fold="closed")
+
+
+def _toc_link(target: str, label: str, count: str = "", sub: str = "") -> str:
+    e = html.escape
+    extra = f" <small>{e(count)}</small>" if count else ""
+    return f'<li><a href="#{target}">{e(label)}</a>{extra}{sub}</li>'
 
 
 def patch_main(
@@ -1053,7 +1223,8 @@ def patch_main(
     images: set[str] | None = None,
 ) -> str:
     """The <main> of a patch page: Valve's notes in this language, the general
-    changes and items first, then every hero that changed."""
+    changes and items first, then every hero that changed. A table of contents
+    leads to each part; items and heroes fold so a phone is not a mile long."""
     t = TEXT[lang]
     e = html.escape
     images = images or set()
@@ -1079,26 +1250,72 @@ def patch_main(
         tiles.append(
             _tile("trophy", t["patch_neutral"], "", str(counts["neutral"]), t["patch_count_value"])
         )
-    cards = [
-        _patch_card(group["title"], [_patch_notes(group["notes"])], " patch-wide")
-        for group in notes["general"]
-    ]
+    cards = []
+    toc = []
+    for number, group in enumerate(notes["general"], 1):
+        anchor = f"general-{number}"
+        subs = [note["text"] for note in group["notes"] if note.get("heading")]
+        sub = (
+            '<ul class="patch-toc-sub">'
+            + "".join(_toc_link(f"{anchor}-{i}", text) for i, text in enumerate(subs, 1))
+            + "</ul>"
+            if subs
+            else ""
+        )
+        toc.append(_toc_link(anchor, group["title"] or t["patch_general"], sub=sub))
+        cards.append(
+            _patch_card(
+                group["title"],
+                [_patch_notes(group["notes"], lang, anchor)],
+                " patch-wide",
+                ident=anchor,
+                fold="open",
+            )
+        )
     for key, heading in (
         ("items", t["patch_items_title"]),
         ("neutral", t["patch_neutral_title"]),
         ("creeps", t["patch_creeps_title"]),
     ):
         if notes[key]:
-            body = (
-                _patch_entries(notes[key])
-                if key != "creeps"
-                else _patch_entries([{"name": c["name"], "notes": c["notes"]} for c in notes[key]])
+            named = sum(1 for entry in notes[key] if "name" in entry)
+            count = t["patch_changes_of"].format(count=named)
+            head = (
+                f'<h2 class="news-card-title"><span>{e(heading)}</span>'
+                f'<small class="patch-count">{e(count)}</small></h2>'
             )
-            cards.append(_patch_card(heading, body))
+            toc.append(_toc_link(key, heading, str(named)))
+            cards.append(
+                _patch_card(
+                    heading,
+                    _patch_entries(notes[key], lang),
+                    " patch-wide",
+                    head=head,
+                    ident=key,
+                    fold="closed",
+                )
+            )
     heroes = sorted(notes["heroes"], key=lambda hero: hero["name"])
+    if heroes:
+        toc.append(_toc_link("heroes", t["patch_heroes_title"], str(len(heroes))))
     hero_cards = "\n".join(_patch_hero(hero, lang, links, home, up, images) for hero in heroes)
     tiles_html = "\n".join(tiles)
     cards_html = "\n".join(cards)
+    notice = (
+        f'\n          <p class="mode-note patch-untranslated">{e(t["patch_untranslated"])}</p>'
+        if untranslated_share(patch, lang) > 0.05
+        else ""
+    )
+    toc_html = (
+        f"""
+          <nav class="patch-toc" aria-label="{e(t["patch_toc"])}">
+            <p class="patch-toc-title">{e(t["patch_toc"])}</p>
+            <ul>{"".join(toc)}</ul>
+            <p class="patch-toc-hint">{e(t["patch_fold_hint"])}</p>
+          </nav>"""
+        if len(toc) > 1
+        else ""
+    )
     rules = (
         f"""      <section class="section section-tight">
         <div class="wrap">
@@ -1113,10 +1330,10 @@ def patch_main(
         else ""
     )
     hero_section = (
-        f"""      <section class="section section-tight">
+        f"""      <section class="section section-tight" id="heroes">
         <div class="wrap">
           <h2 class="patch-section-title">{e(t["patch_heroes_title"])}</h2>
-          <div class="news-cards patch-cards">
+          <div class="news-cards patch-cards patch-heroes">
 {hero_cards}
           </div>
         </div>
@@ -1134,7 +1351,7 @@ def patch_main(
           <p class="lead">{e(t["patch_lead"])}</p>
           <div class="news-tiles">
 {tiles_html}
-          </div>
+          </div>{notice}{toc_html}
         </div>
       </section>
 

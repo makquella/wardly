@@ -23,7 +23,8 @@ After `meta` or `patch`, run scripts/build_site.py to write the pages.
 (the notes in Ukrainian and English, with the names of heroes, abilities and
 items) for each patch Valve released after the stored ones, one per run, oldest
 first, and otherwise rewrites the newest one for
-PATCH_REFRESH_DAYS after its release: Valve fixes its notes and adds the
+PATCH_REFRESH_DAYS after its release (PATCH_TRANSLATION_DAYS while its
+Ukrainian notes are still partly English): Valve fixes its notes and adds the
 translation later. Under GitHub Actions it sets the step outputs `version`,
 `new` and `changed`.
 """
@@ -53,6 +54,9 @@ HERO_WEEK = news.ROOT / "data" / "news" / "hero-week.json"
 
 HERO_STATS = "https://api.opendota.com/api/heroStats"
 PATCH_REFRESH_DAYS = 7
+# Valve often leaves the Ukrainian hero notes in English for a while: until they
+# are translated, the newest patch is fetched again for up to this many days.
+PATCH_TRANSLATION_DAYS = 30
 
 
 def fetch_hero_stats() -> list[dict]:
@@ -158,7 +162,9 @@ def write_patch(version: str | None, today: date) -> tuple[dict, bool, bool]:
     stored = next((p for p in patches if p["version"] == target), None)
     if stored and not version:
         age = (today - date.fromisoformat(stored["date"])).days
-        if age > PATCH_REFRESH_DAYS:
+        if age > PATCH_REFRESH_DAYS and not (
+            age <= PATCH_TRANSLATION_DAYS and news.untranslated_share(stored) > 0.05
+        ):
             print(f"patch {target} is already there")
             return stored, False, False
     post = fetch_patch(target)

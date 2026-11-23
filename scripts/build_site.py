@@ -43,7 +43,7 @@ import news_release  # noqa: E402
 # One version for styles.css, app.js and i18n-en.js on every page, hand-written
 # (index.html, heroes.html) and generated alike. Separate counters let one page
 # reuse a URL that browsers had already cached with older files.
-ASSET_VERSION = "28"
+ASSET_VERSION = "29"
 POSITIONS = ("carry", "mid", "offlane", "support")
 POSITION_NAMES = {
     "uk": {"carry": "Керрі", "mid": "Мід", "offlane": "Хардлайн", "support": "Саппорт"},

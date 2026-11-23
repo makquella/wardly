@@ -11,7 +11,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Статистика героїв"
+       "text": "Статистика героїв",
+       "heading": true
       },
       {
        "level": 1,
@@ -28,7 +29,8 @@
       },
       {
        "level": 1,
-       "text": "Золото та досвід"
+       "text": "Золото та досвід",
+       "heading": true
       },
       {
        "level": 1,
@@ -38,7 +40,7 @@
       {
        "level": 1,
        "text": "Нагороду за вбивство героя змінено.",
-       "info": "БУЛО: 125 + (8 × рівень жертви) + коефіцієнт серії СТАЛО: 100 + (10 × рівень жертви) + коефіцієнт серії."
+       "info": "БУЛО: 125 + (8 × рівень жертви) + коефіцієнт серії\nСТАЛО: 100 + (10 × рівень жертви) + коефіцієнт серії."
       },
       {
        "level": 1,
@@ -100,11 +102,12 @@
       {
        "level": 1,
        "text": "Загальний обсяг досвіду, необхідного для досягнення 30-го рівня, збільшено: 64400 → 66600.",
-       "info": "Рівень -- Було -- Стало -- Загальне збільшення 2 -- 240 -- 250 -- 10 3 -- 400 -- 400 -- 10 4 -- 520 -- 550 -- 40 5 -- 600 -- 800 -- 240 6 -- 680 -- 850 -- 410 7 -- 760 -- 925 -- 575 8 -- 800 -- 1050 -- 825 9 -- 900 -- 1150 -- 1075 10 -- 1000 -- 1225 -- 1300 11 -- 1100 -- 1300 -- 1500 12 -- 1200 -- 1375 -- 1675 13 -- 1300 -- 1450 -- 1825 14 -- 1400 -- 1525 -- 1950 15 -- 1500 -- 1600 -- 2050 16 -- 1600 -- 1675 -- 2125 17 -- 1700 -- 1750 -- 2175 18 -- 1800 -- 1825 -- 2200 19 -- 1900 -- 1900 -- 2200 20 -- 2000 -- 2000 -- 2200 21 -- 2200 -- 2200 -- 2200 22 -- 2400 -- 2400 -- 2200 23 -- 2600 -- 2600 -- 2200 24 -- 2800 -- 2800 -- 2200 25 -- 3000 -- 3000 -- 2200 26 -- 4000 -- 4000 -- 2200 27 -- 5000 -- 5000 -- 2200 28 -- 6000 -- 6000 -- 2200 29 -- 7000 -- 7000 -- 2200 30 -- 8000 -- 8000 -- 2200 Порахувати необхідний для рівня досвід можна за допомогою цієї простенької формули: 0,000976484x^5 − 0,0159378x^4 − 0,247763x^3 + 1,81832x^2 + 132,642x + 147,113 (де X — це поточний рівень героя)."
+       "info": "Рівень -- Було -- Стало -- Загальне збільшення\n2 -- 240 -- 250 -- 10\n3 -- 400 -- 400 -- 10\n4 -- 520 -- 550 -- 40\n5 -- 600 -- 800 -- 240\n6 -- 680 -- 850 -- 410\n7 -- 760 -- 925 -- 575\n8 -- 800 -- 1050 -- 825\n9 -- 900 -- 1150 -- 1075\n10 -- 1000 -- 1225 -- 1300\n11 -- 1100 -- 1300 -- 1500\n12 -- 1200 -- 1375 -- 1675\n13 -- 1300 -- 1450 -- 1825\n14 -- 1400 -- 1525 -- 1950\n15 -- 1500 -- 1600 -- 2050\n16 -- 1600 -- 1675 -- 2125\n17 -- 1700 -- 1750 -- 2175\n18 -- 1800 -- 1825 -- 2200\n19 -- 1900 -- 1900 -- 2200\n20 -- 2000 -- 2000 -- 2200\n21 -- 2200 -- 2200 -- 2200\n22 -- 2400 -- 2400 -- 2200\n23 -- 2600 -- 2600 -- 2200\n24 -- 2800 -- 2800 -- 2200\n25 -- 3000 -- 3000 -- 2200\n26 -- 4000 -- 4000 -- 2200\n27 -- 5000 -- 5000 -- 2200\n28 -- 6000 -- 6000 -- 2200\n29 -- 7000 -- 7000 -- 2200\n30 -- 8000 -- 8000 -- 2200\n\nПорахувати необхідний для рівня досвід можна за допомогою цієї простенької формули: 0,000976484x^5 − 0,0159378x^4 − 0,247763x^3 + 1,81832x^2 + 132,642x + 147,113 (де X — це поточний рівень героя)."
       },
       {
        "level": 1,
-       "text": "Сегменти здоров’я"
+       "text": "Сегменти здоров’я",
+       "heading": true
       },
       {
        "level": 1,
@@ -113,7 +116,7 @@
       {
        "level": 1,
        "text": "Усі істоти тепер можуть завдавати шкоди істотам, у яких здоров’я поділене на сегменти.",
-       "info": "* Кур’єри * Оглядові варди * Вартові варди * Лучники-скелети Клінкза * Силові шестерні Годинникаря * Обійми фантома Чорнильника * Самонавідна ракета Ґірольота * Цілющий вард Джаґернаута * Мандрівні вогні Хранителя Світла * Льодяне вістря Ліча * Наднова Фенікса * Потойбічний вард Пуґни * Яйцестремізм Сяйвочайки * Стяг Рошана * Змієварди Шамана Тіней * Урнаконда Шамана Тіней * В.Г.З. Техніків * Наземні міни Техніків * Псіонна пастка Тамплієра-Вбивці * Якір Хвилеріза * Очі в гущавині Ента-Захисника * Надгробний камінь Невмирущого * Зомбі з Надгробного каменя Невмирущого * Рій Ткача * Німб Зевса"
+       "info": "* Кур’єри\n* Оглядові варди\n* Вартові варди\n* Лучники-скелети Клінкза\n* Силові шестерні Годинникаря\n* Обійми фантома Чорнильника\n* Самонавідна ракета Ґірольота\n* Цілющий вард Джаґернаута\n* Мандрівні вогні Хранителя Світла\n* Льодяне вістря Ліча\n* Наднова Фенікса\n* Потойбічний вард Пуґни\n* Яйцестремізм Сяйвочайки\n* Стяг Рошана\n* Змієварди Шамана Тіней\n* Урнаконда Шамана Тіней\n* В.Г.З. Техніків\n* Наземні міни Техніків\n* Псіонна пастка Тамплієра-Вбивці\n* Якір Хвилеріза\n* Очі в гущавині Ента-Захисника\n* Надгробний камінь Невмирущого\n* Зомбі з Надгробного каменя Невмирущого\n* Рій Ткача\n* Німб Зевса"
       },
       {
        "level": 2,
@@ -134,7 +137,8 @@
       },
       {
        "level": 1,
-       "text": "Механіки чарів"
+       "text": "Механіки чарів",
+       "heading": true
       },
       {
        "level": 1,
@@ -143,7 +147,7 @@
       {
        "level": 1,
        "text": "Шкода від здібностей, які пробивають імунітет до негативних ефектів, більше не ігнорує опір до магії від цього імунітету.",
-       "info": "* Древній Привид: Крижаний спалах * Летючий Вершник: Полум’яне ласо * Звіромайстер: Первісний рик * Годинникар: Кидок гака * Темновидець: Стіна ілюзій * Світанкова: Сонячна варта * Лицар-Дракон: Форма древнього дракона (Ядучий подих) * Земляний Дух: Магнетизм * Древній Титан: Земний розкол * Безликий: Часова пастка * Хускар: Переривання життя * Життєкрад: Паразитування * Самітний Друїд: Обплітання * Маґнус: Обернена полярність * Фенікс: Наднова * Первісний Звір: Подрібнення * Пузань: Розчленування * Тінистий Демон: Демонічне очищення * Винищувач Духів: Удар із потойбіччя * Ент-Захисник: Зарості * Мстива Душа: Підміна * Гадюка: Укус гадюки * Порожнечий Дух: Астральний крок * Чорнокнижник: Пожертва хаосу (Тривке горіння)"
+       "info": "* Древній Привид: Крижаний спалах\n* Летючий Вершник: Полум’яне ласо\n* Звіромайстер: Первісний рик\n* Годинникар: Кидок гака\n* Темновидець: Стіна ілюзій\n* Світанкова: Сонячна варта\n* Лицар-Дракон: Форма древнього дракона (Ядучий подих)\n* Земляний Дух: Магнетизм\n* Древній Титан: Земний розкол\n* Безликий: Часова пастка\n* Хускар: Переривання життя\n* Життєкрад: Паразитування\n* Самітний Друїд: Обплітання\n* Маґнус: Обернена полярність\n* Фенікс: Наднова\n* Первісний Звір: Подрібнення\n* Пузань: Розчленування\n* Тінистий Демон: Демонічне очищення\n* Винищувач Духів: Удар із потойбіччя\n* Ент-Захисник: Зарості\n* Мстива Душа: Підміна\n* Гадюка: Укус гадюки\n* Порожнечий Дух: Астральний крок\n* Чорнокнижник: Пожертва хаосу (Тривке горіння)"
       },
       {
        "level": 1,
@@ -160,7 +164,8 @@
       },
       {
        "level": 1,
-       "text": "Зменшення сили чарів"
+       "text": "Зменшення сили чарів",
+       "heading": true
       },
       {
        "level": 1,
@@ -180,7 +185,8 @@
       },
       {
        "level": 1,
-       "text": "Ефективність предметів"
+       "text": "Ефективність предметів",
+       "heading": true
       },
       {
        "level": 1,
@@ -225,7 +231,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Інтервали появи кріпів"
+       "text": "Інтервали появи кріпів",
+       "heading": true
       },
       {
        "level": 1,
@@ -277,7 +284,8 @@
       },
       {
        "level": 1,
-       "text": "Гліф фортифікації"
+       "text": "Гліф фортифікації",
+       "heading": true
       },
       {
        "level": 1,
@@ -289,7 +297,8 @@
       },
       {
        "level": 1,
-       "text": "Інше"
+       "text": "Інше",
+       "heading": true
       },
       {
        "level": 1,
@@ -325,7 +334,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Мучитель"
+       "text": "Мучитель",
+       "heading": true
       },
       {
        "level": 1,
@@ -363,7 +373,8 @@
       },
       {
        "level": 1,
-       "text": "Рошан"
+       "text": "Рошан",
+       "heading": true
       },
       {
        "level": 1,
@@ -375,7 +386,8 @@
       },
       {
        "level": 1,
-       "text": "Інше"
+       "text": "Інше",
+       "heading": true
       },
       {
        "level": 1,
@@ -404,7 +416,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Подвійні портали"
+       "text": "Подвійні портали",
+       "heading": true
       },
       {
        "level": 1,
@@ -424,7 +437,8 @@
       },
       {
        "level": 1,
-       "text": "Центральна лінія"
+       "text": "Центральна лінія",
+       "heading": true
       },
       {
        "level": 1,
@@ -461,7 +475,8 @@
       },
       {
        "level": 1,
-       "text": "Інше"
+       "text": "Інше",
+       "heading": true
       },
       {
        "level": 1,
@@ -10191,7 +10206,7 @@
       {
        "level": 1,
        "text": "Новий кріп дальнього бою 4-го рівня.",
-       "info": "800 Health 30-32 Damage 400 Mana 0 Armor 30% Magic Resistance 400 Attack Range 310 Movement Speed 34-36 Gold Bounty 62 XP Bounty"
+       "info": "800 Health\n30-32 Damage\n400 Mana\n0 Armor\n30% Magic Resistance\n400 Attack Range\n310 Movement Speed\n34-36 Gold Bounty\n62 XP Bounty"
       },
       {
        "level": 1,
@@ -10213,7 +10228,7 @@
       {
        "level": 1,
        "text": "Новий кріп ближнього бою 5-го рівня.",
-       "info": "600 Health 26-30 Damage 300 Mana 350 Movement Speed 150 Attack Speed 3 Armor 0% Magic Resistance 32-34 Gold Bounty 60 XP Bounty"
+       "info": "600 Health\n26-30 Damage\n300 Mana\n350 Movement Speed\n150 Attack Speed\n3 Armor\n0% Magic Resistance\n32-34 Gold Bounty\n60 XP Bounty"
       },
       {
        "level": 1,
@@ -10235,7 +10250,7 @@
       {
        "level": 1,
        "text": "Новий кріп ближнього бою 3-го рівня.",
-       "info": "500 Health 16-18 Damage 200 Mana 350 Movement Speed 125 Attack Speed 1 Armor 0% Magic Resistance 18-22 Gold Bounty 40 XP Bounty"
+       "info": "500 Health\n16-18 Damage\n200 Mana\n350 Movement Speed\n125 Attack Speed\n1 Armor\n0% Magic Resistance\n18-22 Gold Bounty\n40 XP Bounty"
       },
       {
        "level": 1,
@@ -10293,7 +10308,7 @@
       {
        "level": 1,
        "text": "Новий кріп ближнього бою 5-го рівня.",
-       "info": "950 Health 49-55 Damage 300 Mana 320 Movement Speed 135 Attack Speed 4 Armor 0% Magic Resistance 62-66 Gold Bounty 90 XP Bounty"
+       "info": "950 Health\n49-55 Damage\n300 Mana\n320 Movement Speed\n135 Attack Speed\n4 Armor\n0% Magic Resistance\n62-66 Gold Bounty\n90 XP Bounty"
       },
       {
        "level": 1,
@@ -10315,7 +10330,7 @@
       {
        "level": 1,
        "text": "Новий кріп ближнього бою 4-го рівня.",
-       "info": "700 Health 39-44 Damage 0 Mana 320 Movement Speed 135 Attack Speed 3 Armor 0% Magic Resistance 30-38 Gold Bounty 66 XP Bounty"
+       "info": "700 Health\n39-44 Damage\n0 Mana\n320 Movement Speed\n135 Attack Speed\n3 Armor\n0% Magic Resistance\n30-38 Gold Bounty\n66 XP Bounty"
       },
       {
        "level": 1,
@@ -10381,7 +10396,7 @@
       {
        "level": 1,
        "text": "Новий древній кріп ближнього бою 6-го рівня.",
-       "info": "1700 Health 60-65 Damage 400 Mana 270 Movement Speed 150 Attack Range 3 Armor 30% Magic Resistance 68-72 Gold Bounty 124 XP Bounty"
+       "info": "1700 Health\n60-65 Damage\n400 Mana\n270 Movement Speed\n150 Attack Range\n3 Armor\n30% Magic Resistance\n68-72 Gold Bounty\n124 XP Bounty"
       },
       {
        "level": 1,
@@ -10404,7 +10419,7 @@
       {
        "level": 1,
        "text": "Новий древній кріп ближнього бою 5-го рівня.",
-       "info": "800 Health 32-34 Damage 400 Mana 270 Movement Speed 128 Attack Range 3 Armor 50% Magic Resistance 76-80 Gold Bounty 124 XP Bounty"
+       "info": "800 Health\n32-34 Damage\n400 Mana\n270 Movement Speed\n128 Attack Range\n3 Armor\n50% Magic Resistance\n76-80 Gold Bounty\n124 XP Bounty"
       },
       {
        "level": 1,
@@ -10425,7 +10440,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Hero Stats"
+       "text": "Hero Stats",
+       "heading": true
       },
       {
        "level": 1,
@@ -10442,7 +10458,8 @@
       },
       {
        "level": 1,
-       "text": "Gold and Experience"
+       "text": "Gold and Experience",
+       "heading": true
       },
       {
        "level": 1,
@@ -10452,7 +10469,7 @@
       {
        "level": 1,
        "text": "Hero kill bounty rescaled",
-       "info": "OLD: 125 + (8 * VictimLevel) + KillstreakFactor NEW: 100 + (10 * VictimLevel) + KillstreakFactor"
+       "info": "OLD: 125 + (8 * VictimLevel) + KillstreakFactor\nNEW: 100 + (10 * VictimLevel) + KillstreakFactor"
       },
       {
        "level": 1,
@@ -10514,11 +10531,12 @@
       {
        "level": 1,
        "text": "Total amount of experience needed to reach level 30 increased from 64400 to 66600",
-       "info": "Level -- Old -- New -- Total Increase 2 -- 240 -- 250 -- 10 3 -- 400 -- 400 -- 10 4 -- 520 -- 550 -- 40 5 -- 600 -- 800 -- 240 6 -- 680 -- 850 -- 410 7 -- 760 -- 925 -- 575 8 -- 800 -- 1050 -- 825 9 -- 900 -- 1150 -- 1075 10 -- 1000 -- 1225 -- 1300 11 -- 1100 -- 1300 -- 1500 12 -- 1200 -- 1375 -- 1675 13 -- 1300 -- 1450 -- 1825 14 -- 1400 -- 1525 -- 1950 15 -- 1500 -- 1600 -- 2050 16 -- 1600 -- 1675 -- 2125 17 -- 1700 -- 1750 -- 2175 18 -- 1800 -- 1825 -- 2200 19 -- 1900 -- 1900 -- 2200 20 -- 2000 -- 2000 -- 2200 21 -- 2200 -- 2200 -- 2200 22 -- 2400 -- 2400 -- 2200 23 -- 2600 -- 2600 -- 2200 24 -- 2800 -- 2800 -- 2200 25 -- 3000 -- 3000 -- 2200 26 -- 4000 -- 4000 -- 2200 27 -- 5000 -- 5000 -- 2200 28 -- 6000 -- 6000 -- 2200 29 -- 7000 -- 7000 -- 2200 30 -- 8000 -- 8000 -- 2200 An easy way to approximate the xp needed per level is to use this formula: 0.000976484x^5 − 0.0159378x^4 − 0.247763x^3 + 1.81832x^2 + 132.642x + 147.113 where X is the current level of the hero"
+       "info": "Level -- Old -- New -- Total Increase\n2 -- 240 -- 250 -- 10\n3 -- 400 -- 400 -- 10\n4 -- 520 -- 550 -- 40\n5 -- 600 -- 800 -- 240\n6 -- 680 -- 850 -- 410\n7 -- 760 -- 925 -- 575\n8 -- 800 -- 1050 -- 825\n9 -- 900 -- 1150 -- 1075\n10 -- 1000 -- 1225 -- 1300\n11 -- 1100 -- 1300 -- 1500\n12 -- 1200 -- 1375 -- 1675\n13 -- 1300 -- 1450 -- 1825\n14 -- 1400 -- 1525 -- 1950\n15 -- 1500 -- 1600 -- 2050\n16 -- 1600 -- 1675 -- 2125\n17 -- 1700 -- 1750 -- 2175\n18 -- 1800 -- 1825 -- 2200\n19 -- 1900 -- 1900 -- 2200\n20 -- 2000 -- 2000 -- 2200\n21 -- 2200 -- 2200 -- 2200\n22 -- 2400 -- 2400 -- 2200\n23 -- 2600 -- 2600 -- 2200\n24 -- 2800 -- 2800 -- 2200\n25 -- 3000 -- 3000 -- 2200\n26 -- 4000 -- 4000 -- 2200\n27 -- 5000 -- 5000 -- 2200\n28 -- 6000 -- 6000 -- 2200\n29 -- 7000 -- 7000 -- 2200\n30 -- 8000 -- 8000 -- 2200\n\nAn easy way to approximate the xp needed per level is to use this formula: 0.000976484x^5 − 0.0159378x^4 − 0.247763x^3 + 1.81832x^2 + 132.642x + 147.113 where X is the current level of the hero"
       },
       {
        "level": 1,
-       "text": "Pip Health"
+       "text": "Pip Health",
+       "heading": true
       },
       {
        "level": 1,
@@ -10527,7 +10545,7 @@
       {
        "level": 1,
        "text": "All units are now able to damage units with health bar pips",
-       "info": "* Couriers * Observer Wards * Sentry Wards * Clinkz' Skeleton Archers * Clockwerk's Power Cogs * Grimstroke's Phantom's Embrace * Gyrocopter's Homing Missile * Juggernaut's Healing Ward * Keeper of the Light's Will-O-Wisp * Lich's Ice Spire * Phoenix's Supernova * Pugna's Nether Ward * Radigull's Eggstremism * Roshan's Banner * Shadow Shaman's Mass Serpent Wards * Shadow Shaman's Urnaconda * Techies' M.A.D. * Techies' Proximity Mines * Templar Assassin's Psionic Trap * Tidehunter's Dead in the Water * Treant Protector's Eyes in the Forest * Undying's Tombstone * Undying's Tombstone Zombies * Weaver's The Swarm * Zeus' Nimbus"
+       "info": "* Couriers\n* Observer Wards\n* Sentry Wards\n* Clinkz' Skeleton Archers\n* Clockwerk's Power Cogs\n* Grimstroke's Phantom's Embrace\n* Gyrocopter's Homing Missile\n* Juggernaut's Healing Ward\n* Keeper of the Light's Will-O-Wisp\n* Lich's Ice Spire\n* Phoenix's Supernova\n* Pugna's Nether Ward\n* Radigull's Eggstremism\n* Roshan's Banner\n* Shadow Shaman's Mass Serpent Wards\n* Shadow Shaman's Urnaconda\n* Techies' M.A.D.\n* Techies' Proximity Mines\n* Templar Assassin's Psionic Trap\n* Tidehunter's Dead in the Water\n* Treant Protector's Eyes in the Forest\n* Undying's Tombstone\n* Undying's Tombstone Zombies\n* Weaver's The Swarm\n* Zeus' Nimbus"
       },
       {
        "level": 2,
@@ -10548,7 +10566,8 @@
       },
       {
        "level": 1,
-       "text": "Spell Mechanics"
+       "text": "Spell Mechanics",
+       "heading": true
       },
       {
        "level": 1,
@@ -10557,7 +10576,7 @@
       {
        "level": 1,
        "text": "Abilities that pierce debuff immunity no longer ignore the magic resistance provided by debuff immunity",
-       "info": "* Ancient Apparition: Ice Blast * Batrider: Flaming Lasso * Beastmaster: Primal Roar * Clockwerk: Hookshot * Dark Seer: Wall of Replica * Dawnbreaker: Solar Guardian * Dragon Knight: Elder Dragon Form (Corrosive Breath) * Earth Spirit: Magnetize * Elder Titan: Earth Splitter * Faceless Void: Time Lock * Huskar: Life Break * Lifestealer: Infest * Lone Druid: Entangle * Magnus: Reverse Polarity * Phoenix: Supernova * Primal Beast: Pulverize * Pudge: Dismember * Shadow Demon: Demonic Purge * Spirit Breaker: Nether Strike * Treant Protector: Overgrowth * Vengeful Spirit: Nether Swap * Viper: Viper Strike * Void Spirit: Astral Step * Warlock: Chaotic Offering (Permanent Immolation)"
+       "info": "* Ancient Apparition: Ice Blast\n* Batrider: Flaming Lasso\n* Beastmaster: Primal Roar\n* Clockwerk: Hookshot\n* Dark Seer: Wall of Replica\n* Dawnbreaker: Solar Guardian\n* Dragon Knight: Elder Dragon Form (Corrosive Breath)\n* Earth Spirit: Magnetize\n* Elder Titan: Earth Splitter\n* Faceless Void: Time Lock\n* Huskar: Life Break\n* Lifestealer: Infest\n* Lone Druid: Entangle\n* Magnus: Reverse Polarity\n* Phoenix: Supernova\n* Primal Beast: Pulverize\n* Pudge: Dismember\n* Shadow Demon: Demonic Purge\n* Spirit Breaker: Nether Strike\n* Treant Protector: Overgrowth\n* Vengeful Spirit: Nether Swap\n* Viper: Viper Strike\n* Void Spirit: Astral Step\n* Warlock: Chaotic Offering (Permanent Immolation)"
       },
       {
        "level": 1,
@@ -10574,7 +10593,8 @@
       },
       {
        "level": 1,
-       "text": "Spell Power Reduction"
+       "text": "Spell Power Reduction",
+       "heading": true
       },
       {
        "level": 1,
@@ -10594,7 +10614,8 @@
       },
       {
        "level": 1,
-       "text": "Item Potency"
+       "text": "Item Potency",
+       "heading": true
       },
       {
        "level": 1,
@@ -10639,7 +10660,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Creep Spawn Intervals"
+       "text": "Creep Spawn Intervals",
+       "heading": true
       },
       {
        "level": 1,
@@ -10691,7 +10713,8 @@
       },
       {
        "level": 1,
-       "text": "Glyph of Fortification"
+       "text": "Glyph of Fortification",
+       "heading": true
       },
       {
        "level": 1,
@@ -10703,7 +10726,8 @@
       },
       {
        "level": 1,
-       "text": "Miscellaneous"
+       "text": "Miscellaneous",
+       "heading": true
       },
       {
        "level": 1,
@@ -10739,7 +10763,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Tormentor"
+       "text": "Tormentor",
+       "heading": true
       },
       {
        "level": 1,
@@ -10777,7 +10802,8 @@
       },
       {
        "level": 1,
-       "text": "Roshan"
+       "text": "Roshan",
+       "heading": true
       },
       {
        "level": 1,
@@ -10789,7 +10815,8 @@
       },
       {
        "level": 1,
-       "text": "Miscellaneous"
+       "text": "Miscellaneous",
+       "heading": true
       },
       {
        "level": 1,
@@ -10818,7 +10845,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Twin Gates"
+       "text": "Twin Gates",
+       "heading": true
       },
       {
        "level": 1,
@@ -10838,7 +10866,8 @@
       },
       {
        "level": 1,
-       "text": "Mid Lane"
+       "text": "Mid Lane",
+       "heading": true
       },
       {
        "level": 1,
@@ -10875,7 +10904,8 @@
       },
       {
        "level": 1,
-       "text": "Miscellaneous"
+       "text": "Miscellaneous",
+       "heading": true
       },
       {
        "level": 1,
@@ -20605,7 +20635,7 @@
       {
        "level": 1,
        "text": "New Level 4 Ranged Creep",
-       "info": "800 Health 30-32 Damage 400 Mana 0 Armor 30% Magic Resistance 400 Attack Range 310 Movement Speed 34-36 Gold Bounty 62 XP Bounty"
+       "info": "800 Health\n30-32 Damage\n400 Mana\n0 Armor\n30% Magic Resistance\n400 Attack Range\n310 Movement Speed\n34-36 Gold Bounty\n62 XP Bounty"
       },
       {
        "level": 1,
@@ -20627,7 +20657,7 @@
       {
        "level": 1,
        "text": "New Level 5 Melee Creep",
-       "info": "600 Health 26-30 Damage 300 Mana 350 Movement Speed 150 Attack Speed 3 Armor 0% Magic Resistance 32-34 Gold Bounty 60 XP Bounty"
+       "info": "600 Health\n26-30 Damage\n300 Mana\n350 Movement Speed\n150 Attack Speed\n3 Armor\n0% Magic Resistance\n32-34 Gold Bounty\n60 XP Bounty"
       },
       {
        "level": 1,
@@ -20649,7 +20679,7 @@
       {
        "level": 1,
        "text": "New Level 3 Melee Creep",
-       "info": "500 Health 16-18 Damage 200 Mana 350 Movement Speed 125 Attack Speed 1 Armor 0% Magic Resistance 18-22 Gold Bounty 40 XP Bounty"
+       "info": "500 Health\n16-18 Damage\n200 Mana\n350 Movement Speed\n125 Attack Speed\n1 Armor\n0% Magic Resistance\n18-22 Gold Bounty\n40 XP Bounty"
       },
       {
        "level": 1,
@@ -20707,7 +20737,7 @@
       {
        "level": 1,
        "text": "New Level 5 Melee Creep",
-       "info": "950 Health 49-55 Damage 300 Mana 320 Movement Speed 135 Attack Speed 4 Armor 0% Magic Resistance 62-66 Gold Bounty 90 XP Bounty"
+       "info": "950 Health\n49-55 Damage\n300 Mana\n320 Movement Speed\n135 Attack Speed\n4 Armor\n0% Magic Resistance\n62-66 Gold Bounty\n90 XP Bounty"
       },
       {
        "level": 1,
@@ -20729,7 +20759,7 @@
       {
        "level": 1,
        "text": "New Level 4 Melee Creep",
-       "info": "700 Health 39-44 Damage 0 Mana 320 Movement Speed 135 Attack Speed 3 Armor 0% Magic Resistance 30-38 Gold Bounty 66 XP Bounty"
+       "info": "700 Health\n39-44 Damage\n0 Mana\n320 Movement Speed\n135 Attack Speed\n3 Armor\n0% Magic Resistance\n30-38 Gold Bounty\n66 XP Bounty"
       },
       {
        "level": 1,
@@ -20795,7 +20825,7 @@
       {
        "level": 1,
        "text": "New Level 6 Ancient Melee Creep",
-       "info": "1700 Health 60-65 Damage 400 Mana 270 Movement Speed 150 Attack Range 3 Armor 30% Magic Resistance 68-72 Gold Bounty 124 XP Bounty"
+       "info": "1700 Health\n60-65 Damage\n400 Mana\n270 Movement Speed\n150 Attack Range\n3 Armor\n30% Magic Resistance\n68-72 Gold Bounty\n124 XP Bounty"
       },
       {
        "level": 1,
@@ -20818,7 +20848,7 @@
       {
        "level": 1,
        "text": "New Level 5 Ancient Melee Creep",
-       "info": "800 Health 32-34 Damage 400 Mana 270 Movement Speed 128 Attack Range 3 Armor 50% Magic Resistance 76-80 Gold Bounty 124 XP Bounty"
+       "info": "800 Health\n32-34 Damage\n400 Mana\n270 Movement Speed\n128 Attack Range\n3 Armor\n50% Magic Resistance\n76-80 Gold Bounty\n124 XP Bounty"
       },
       {
        "level": 1,
