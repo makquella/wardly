@@ -17,7 +17,7 @@
     <meta property="og:image" content="https://luhovyimvp.dev/assets/og.jpg?v=7" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="../../assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="../../styles.css?v=28" />
+    <link rel="stylesheet" href="../../styles.css?v=29" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -82,14 +82,19 @@
               </div>
             </div>
           </div>
+          <nav class="patch-toc" aria-label="Contents">
+            <p class="patch-toc-title">Contents</p>
+            <ul><li><a href="#items">Items</a> <small>16</small></li><li><a href="#neutral">Neutral items</a> <small>1</small></li><li><a href="#heroes">Heroes</a> <small>35</small></li></ul>
+            <p class="patch-toc-hint">Items and heroes are folded: tap a heading to open it.</p>
+          </nav>
         </div>
       </section>
 
       <section class="section section-tight">
         <div class="wrap">
           <div class="news-cards patch-cards">
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title"><span>Items</span></h2>
+            <details class="mode news-card patch-card patch-fold patch-wide" id="items">
+              <summary><h2 class="news-card-title"><span>Items</span><small class="patch-count">16 entries</small></h2></summary>
               <h3 class="patch-name">Infused Raindrops</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Mana Regen bonus decreased from +0.8 to +0.6</li>
@@ -157,45 +162,46 @@
                 <li class="patch-note patch-note-1">Shadow Walk cooldown increased from 22s to 23s</li>
                 <li class="patch-note patch-note-1">Shadow Walk bonus movement speed decreased from 22% to 20%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title"><span>Neutral items</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold patch-wide" id="neutral">
+              <summary><h2 class="news-card-title"><span>Neutral items</span><small class="patch-count">1 entries</small></h2></summary>
               <h3 class="patch-group">Enchantment Changes</h3>
               <h3 class="patch-name">Greedy</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Attack Damage penalty increased from 30/60 to 35/70</li>
               </ul>
-            </article>
+            </details>
           </div>
         </div>
       </section>
 
-      <section class="section section-tight">
+      <section class="section section-tight" id="heroes">
         <div class="wrap">
           <h2 class="patch-section-title">Heroes</h2>
-          <div class="news-cards patch-cards">
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/antimage.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/anti-mage.html">Anti-Mage</a></span></h2>
+          <div class="news-cards patch-cards patch-heroes">
+            <details class="mode news-card patch-card patch-fold" id="hero-antimage">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/antimage.webp" alt="" width="256" height="144" loading="lazy" /><span>Anti-Mage</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Mana Break</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Mana Burned as Damage increased from 60% to 65%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/bane.webp" alt="" width="256" height="144" loading="lazy" /><span>Bane</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/anti-mage.html">Anti-Mage&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-bane">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/bane.webp" alt="" width="256" height="144" loading="lazy" /><span>Bane</span><small class="patch-count">1 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Armor decreased by 1</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/batrider.webp" alt="" width="256" height="144" loading="lazy" /><span>Batrider</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-batrider">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/batrider.webp" alt="" width="256" height="144" loading="lazy" /><span>Batrider</span><small class="patch-count">2 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Intelligence gain increased from 2.9 to 3.2</li>
                 <li class="patch-note patch-note-2">Damage gain per level increased from 3.5 to 3.6</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/bounty_hunter.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/bounty-hunter.html">Bounty Hunter</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-bounty_hunter">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/bounty_hunter.webp" alt="" width="256" height="144" loading="lazy" /><span>Bounty Hunter</span><small class="patch-count">5 changes</small></h2></summary>
               <h3 class="patch-name">Track</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Self bonus gold decreased from 130/225/320 to 80/160/240</li>
@@ -207,16 +213,17 @@
                 <li class="patch-note patch-note-1">Level 20 Talent Track Grants Shared Vision replaced with +190 Shuriken Toss Damage</li>
                 <li class="patch-note patch-note-1">Level 25 Talent +250 Shuriken Toss Damage replaced with Track Grants Shared Vision</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/broodmother.webp" alt="" width="256" height="144" loading="lazy" /><span>Broodmother</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/bounty-hunter.html">Bounty Hunter&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-broodmother">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/broodmother.webp" alt="" width="256" height="144" loading="lazy" /><span>Broodmother</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Insatiable Hunger</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Mana Cost decreased from 80 to 70</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/centaur.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/centaur-warrunner.html">Centaur Warrunner</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-centaur">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/centaur.webp" alt="" width="256" height="144" loading="lazy" /><span>Centaur Warrunner</span><small class="patch-count">4 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Damage decreased by 2</li>
                 <li class="patch-note patch-note-2">Damage at level 1 decreased from 64-66 to 62-64</li>
@@ -226,9 +233,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Cast Range decreased from 250 to 200</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/chen.webp" alt="" width="256" height="144" loading="lazy" /><span>Chen</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/centaur-warrunner.html">Centaur Warrunner&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-chen">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/chen.webp" alt="" width="256" height="144" loading="lazy" /><span>Chen</span><small class="patch-count">2 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Strength gain increased from 2.0 to 2.2</li>
               </ul>
@@ -236,24 +244,26 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Zealot respawn time changed from 60s to 60s - 1s per hero level</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/rattletrap.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/clockwerk.html">Clockwerk</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-rattletrap">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/rattletrap.webp" alt="" width="256" height="144" loading="lazy" /><span>Clockwerk</span><small class="patch-count">2 changes</small></h2></summary>
               <h3 class="patch-name">Power Cogs</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Mana Cost increased from 75 to 90</li>
                 <li class="patch-note patch-note-1">Knockback Duration decreased from 0.8s to 0.7s</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/disruptor.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/disruptor.html">Disruptor</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/clockwerk.html">Clockwerk&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-disruptor">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/disruptor.webp" alt="" width="256" height="144" loading="lazy" /><span>Disruptor</span><small class="patch-count">2 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Intelligence increased from 20 to 21</li>
                 <li class="patch-note patch-note-2">Damage at level 1 increased from 47-51 to 48-52</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/earth_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/earth-spirit.html">Earth Spirit</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/disruptor.html">Disruptor&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-earth_spirit">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/earth_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span>Earth Spirit</span><small class="patch-count">6 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Attack Speed decreased from 100 to 95</li>
               </ul>
@@ -268,16 +278,18 @@
                 <li class="patch-note patch-note-1">Level 20 Talent +175% Rolling Boulder Damage from Strength replaced with +200 Geomagnetic Grip Remnant Damage</li>
                 <li class="patch-note patch-note-1">Level 25 Talent +250 Geomagnetic Grip Remnant Damage replaced with +250% Rolling Boulder Damage from Strength</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/ember_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/ember-spirit.html">Ember Spirit</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/earth-spirit.html">Earth Spirit&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-ember_spirit">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/ember_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span>Ember Spirit</span><small class="patch-count">2 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Agility decreased from 22 to 21</li>
                 <li class="patch-note patch-note-2">Damage at level 1 decreased from 52-56 to 51-55</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/enigma.webp" alt="" width="256" height="144" loading="lazy" /><span>Enigma</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/ember-spirit.html">Ember Spirit&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-enigma">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/enigma.webp" alt="" width="256" height="144" loading="lazy" /><span>Enigma</span><small class="patch-count">3 changes</small></h2></summary>
               <h3 class="patch-name">Demonic Summoning</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Eidolon Attack Range decreased from 425/450/475/500 to 380/420/460/500</li>
@@ -290,23 +302,24 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Level 20 Talent Eidolon Damage decreased from +40 to +30</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/hoodwink.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/hoodwink.html">Hoodwink</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-hoodwink">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/hoodwink.webp" alt="" width="256" height="144" loading="lazy" /><span>Hoodwink</span><small class="patch-count">1 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Strength decreased from 17 to 16</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/huskar.webp" alt="" width="256" height="144" loading="lazy" /><span>Huskar</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/hoodwink.html">Hoodwink&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-huskar">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/huskar.webp" alt="" width="256" height="144" loading="lazy" /><span>Huskar</span><small class="patch-count">3 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Strength decreased from 23 to 22</li>
                 <li class="patch-note patch-note-2">Damage at level 1 decreased from 44-49 to 43-48</li>
                 <li class="patch-note patch-note-1">Strength gain increased from 3.3 to 3.4</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/invoker.webp" alt="" width="256" height="144" loading="lazy" /><span>Invoker</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-invoker">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/invoker.webp" alt="" width="256" height="144" loading="lazy" /><span>Invoker</span><small class="patch-count">2 changes</small></h2></summary>
               <h3 class="patch-name">Cold Snap</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Cooldown increased from 18s to 19s</li>
@@ -315,16 +328,16 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Aghanim&#x27;s Shard no longer applies damage to non-Hero units</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/wisp.webp" alt="" width="256" height="144" loading="lazy" /><span>Io</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-wisp">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/wisp.webp" alt="" width="256" height="144" loading="lazy" /><span>Io</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Talents</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Level 15 Talent Spirits Damage decreased from +50% to +40%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/keeper_of_the_light.webp" alt="" width="256" height="144" loading="lazy" /><span>Keeper of the Light</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-keeper_of_the_light">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/keeper_of_the_light.webp" alt="" width="256" height="144" loading="lazy" /><span>Keeper of the Light</span><small class="patch-count">4 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Attack Speed decreased from 100 to 90</li>
               </ul>
@@ -337,9 +350,9 @@
                 <li class="patch-note patch-note-1">Illuminate Heal decreased from 70% to 60%</li>
                 <li class="patch-note patch-note-2">Illuminate Heal with Aghanim&#x27;s Shard unchanged at 100%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/kez.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/kez.html">Kez</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-kez">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/kez.webp" alt="" width="256" height="144" loading="lazy" /><span>Kez</span><small class="patch-count">3 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Damage decreased by 1</li>
                 <li class="patch-note patch-note-2">Damage at level 1 decreased from 50-56 to 49-55</li>
@@ -348,16 +361,17 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Level 20 Talent Kazurai Katana Damage Per Second decreased from +4% to +3.5%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/largo.webp" alt="" width="256" height="144" loading="lazy" /><span>Largo</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/kez.html">Kez&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-largo">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/largo.webp" alt="" width="256" height="144" loading="lazy" /><span>Largo</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Island Elixir</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Heal rescaled from 34/56/78 to 30/55/80</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/life_stealer.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/lifestealer.html">Lifestealer</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-life_stealer">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/life_stealer.webp" alt="" width="256" height="144" loading="lazy" /><span>Lifestealer</span><small class="patch-count">3 changes</small></h2></summary>
               <h3 class="patch-name">Rage</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Cooldown increased from 20/19/18/17s to 21/20/19/18s</li>
@@ -370,9 +384,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Level 10 Talent Movement Speed decreased from +20 to +15</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/lina.webp" alt="" width="256" height="144" loading="lazy" /><span>Lina</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/lifestealer.html">Lifestealer&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-lina">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/lina.webp" alt="" width="256" height="144" loading="lazy" /><span>Lina</span><small class="patch-count">4 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Intelligence decreased from 30 to 28</li>
                 <li class="patch-note patch-note-2">Damage at level 1 decreased from 51-59 to 49-57</li>
@@ -382,29 +397,30 @@
                 <li class="patch-note patch-note-1">Attack Speed Bonus decreased from 8/16/24/32 to 7/14/21/28</li>
                 <li class="patch-note patch-note-1">Duration decreased from 18s to 16s</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/lone_druid.webp" alt="" width="256" height="144" loading="lazy" /><span>Lone Druid</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-lone_druid">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/lone_druid.webp" alt="" width="256" height="144" loading="lazy" /><span>Lone Druid</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Entangle</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Stack Duration decreased from 10s to 7/8/9/10s</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/marci.webp" alt="" width="256" height="144" loading="lazy" /><span>Marci</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-marci">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/marci.webp" alt="" width="256" height="144" loading="lazy" /><span>Marci</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Rebound</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Ally bonus movement speed rescaled from 15/20/25/30% to 25%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/mars.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/mars.html">Mars</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-mars">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/mars.webp" alt="" width="256" height="144" loading="lazy" /><span>Mars</span><small class="patch-count">1 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Armor increased by 1</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/mirana.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/mirana.html">Mirana</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/mars.html">Mars&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-mirana">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/mirana.webp" alt="" width="256" height="144" loading="lazy" /><span>Mirana</span><small class="patch-count">2 changes</small></h2></summary>
               <h3 class="patch-name">Celestial Quiver</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Charge Restore Time increased from 6s to 7s</li>
@@ -413,9 +429,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Maximum Stun decreased from 2.6/3.4/4.2/5s to 2.3/3.2/4.1/5s</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/necrolyte.webp" alt="" width="256" height="144" loading="lazy" /><span>Necrophos</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/mirana.html">Mirana&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-necrolyte">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/necrolyte.webp" alt="" width="256" height="144" loading="lazy" /><span>Necrophos</span><small class="patch-count">2 changes</small></h2></summary>
               <h3 class="patch-name">Sadist</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Hero Kill Multiplier decreased from 6 to 4</li>
@@ -424,12 +441,12 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Restoration Amplification decreased from 55/65/75/85% to 45/55/65/75%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/nevermore.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/shadow-fiend.html">Shadow Fiend</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-nevermore">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/nevermore.webp" alt="" width="256" height="144" loading="lazy" /><span>Shadow Fiend</span><small class="patch-count">3 changes</small></h2></summary>
               <h3 class="patch-name">Necromastery</h3>
               <ul class="patch-notes">
-                <li class="patch-note patch-note-1">Damage per soul changed from 1.35 + 0.15 damage per level to 1 + 0.8 damage per 6 levels<span class="patch-info">From 1.5-5.85 to 1-5</span></li>
+                <li class="patch-note patch-note-1">Damage per soul changed from 1.35 + 0.15 damage per level to 1 + 0.8 damage per 6 levels<div class="patch-info"><p>From 1.5-5.85 to 1-5</p></div></li>
               </ul>
               <h3 class="patch-name">Shadowraze</h3>
               <ul class="patch-notes">
@@ -439,9 +456,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Level 15 Talent Presence Armor Reduction decreased from +2 to +1.5</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/slardar.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/slardar.html">Slardar</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/shadow-fiend.html">Shadow Fiend&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-slardar">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/slardar.webp" alt="" width="256" height="144" loading="lazy" /><span>Slardar</span><small class="patch-count">2 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Health Regen decreased by 0.25</li>
               </ul>
@@ -449,16 +467,18 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Damage decreased from 75/150/225/300 to 60/140/220/300</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/spectre.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/spectre.html">Spectre</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/slardar.html">Slardar&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-spectre">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/spectre.webp" alt="" width="256" height="144" loading="lazy" /><span>Spectre</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Desolate</h3>
               <ul class="patch-notes">
-                <li class="patch-note patch-note-1">Damage decreased from 23 + 2 per level to 23.5 + 1.5 per level<span class="patch-info">From 25-83 to 25-68.5</span></li>
+                <li class="patch-note patch-note-1">Damage decreased from 23 + 2 per level to 23.5 + 1.5 per level<div class="patch-info"><p>From 25-83 to 25-68.5</p></div></li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/treant.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/treant-protector.html">Treant Protector</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/spectre.html">Spectre&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-treant">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/treant.webp" alt="" width="256" height="144" loading="lazy" /><span>Treant Protector</span><small class="patch-count">6 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Intelligence decreased from 20 to 17</li>
               </ul>
@@ -479,9 +499,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Level 10 Talent +3 Living Armor Heal per Second replaced with +3s Living Armor Duration</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/abyssal_underlord.webp" alt="" width="256" height="144" loading="lazy" /><span>Underlord</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/treant-protector.html">Treant Protector&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-abyssal_underlord">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/abyssal_underlord.webp" alt="" width="256" height="144" loading="lazy" /><span>Underlord</span><small class="patch-count">2 changes</small></h2></summary>
               <h3 class="patch-name">Pit of Malice</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">No longer upgraded with Aghanim&#x27;s Scepter</li>
@@ -490,9 +511,9 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Aghanim&#x27;s Scepter Cooldown decreased from 100/95/90s to 90/85/80s</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/undying.webp" alt="" width="256" height="144" loading="lazy" /><span>Undying</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-undying">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/undying.webp" alt="" width="256" height="144" loading="lazy" /><span>Undying</span><small class="patch-count">2 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Health Regen decreased by 0.25</li>
               </ul>
@@ -500,22 +521,24 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Mana Cost increased from 100 to 110</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/ursa.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/ursa.html">Ursa</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-ursa">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/ursa.webp" alt="" width="256" height="144" loading="lazy" /><span>Ursa</span><small class="patch-count">1 changes</small></h2></summary>
               <h3 class="patch-name">Maul</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Health As Damage increased from 1.25% to 1.75%</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/warlock.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/warlock.html">Warlock</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/ursa.html">Ursa&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-warlock">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/warlock.webp" alt="" width="256" height="144" loading="lazy" /><span>Warlock</span><small class="patch-count">1 changes</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Base Attack Speed increased from 90 to 95</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/winter_wyvern.webp" alt="" width="256" height="144" loading="lazy" /><span>Winter Wyvern</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/warlock.html">Warlock&#x27;s hero page →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-winter_wyvern">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../../assets/heroes/winter_wyvern.webp" alt="" width="256" height="144" loading="lazy" /><span>Winter Wyvern</span><small class="patch-count">2 changes</small></h2></summary>
               <h3 class="patch-name">Arctic Burn</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Cooldown increased from 26/24/22/20s to 29/26/23/20s</li>
@@ -524,7 +547,7 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Max HP Heal per second decreased from 2.25/3/3.75/4.5% to 1.5/2.5/3.5/4.5%</li>
               </ul>
-            </article>
+            </details>
           </div>
         </div>
       </section>
@@ -588,7 +611,7 @@
       </defs>
     </svg>
 
-    <script src="../../i18n-en.js?v=28" defer></script>
-    <script src="../../app.js?v=28" defer></script>
+    <script src="../../i18n-en.js?v=29" defer></script>
+    <script src="../../app.js?v=29" defer></script>
   </body>
 </html>

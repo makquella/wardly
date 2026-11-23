@@ -17,7 +17,7 @@
     <meta property="og:image" content="https://luhovyimvp.dev/assets/og.jpg?v=7" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="../assets/favicon.png" type="image/png" />
-    <link rel="stylesheet" href="../styles.css?v=28" />
+    <link rel="stylesheet" href="../styles.css?v=29" />
   </head>
   <body>
     <a class="skip" href="#main">Перейти до вмісту</a>
@@ -82,14 +82,19 @@
               </div>
             </div>
           </div>
+          <nav class="patch-toc" aria-label="Зміст">
+            <p class="patch-toc-title">Зміст</p>
+            <ul><li><a href="#items">Предмети</a> <small>16</small></li><li><a href="#neutral">Нейтральні предмети</a> <small>1</small></li><li><a href="#heroes">Герої</a> <small>35</small></li></ul>
+            <p class="patch-toc-hint">Предмети й герої згорнуті: натисніть на заголовок, щоб розгорнути.</p>
+          </nav>
         </div>
       </section>
 
       <section class="section section-tight">
         <div class="wrap">
           <div class="news-cards patch-cards">
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title"><span>Предмети</span></h2>
+            <details class="mode news-card patch-card patch-fold patch-wide" id="items">
+              <summary><h2 class="news-card-title"><span>Предмети</span><small class="patch-count">позицій: 16</small></h2></summary>
               <h3 class="patch-name">Infused Raindrops</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Додаткову регенерацію мани зменшено: +0,8 → +0,6.</li>
@@ -157,45 +162,46 @@
                 <li class="patch-note patch-note-1">Зарядку Тіньової ходи (Shadow Walk) збільшено: 22 с → 23 с.</li>
                 <li class="patch-note patch-note-1">Додаткову швидкість руху Тіньової ходи (Shadow Walk) зменшено: 22% → 20%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title"><span>Нейтральні предмети</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold patch-wide" id="neutral">
+              <summary><h2 class="news-card-title"><span>Нейтральні предмети</span><small class="patch-count">позицій: 1</small></h2></summary>
               <h3 class="patch-group">Зміни зачарувань</h3>
               <h3 class="patch-name">Жадібне</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Штраф шкоди для атаки збільшено: 30/60 → 35/70.</li>
               </ul>
-            </article>
+            </details>
           </div>
         </div>
       </section>
 
-      <section class="section section-tight">
+      <section class="section section-tight" id="heroes">
         <div class="wrap">
           <h2 class="patch-section-title">Герої</h2>
-          <div class="news-cards patch-cards">
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/antimage.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/anti-mage.html">Anti-Mage</a></span></h2>
+          <div class="news-cards patch-cards patch-heroes">
+            <details class="mode news-card patch-card patch-fold" id="hero-antimage">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/antimage.webp" alt="" width="256" height="144" loading="lazy" /><span>Anti-Mage</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Спалення мани</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Випалену ману як шкоду збільшено: 60% → 65%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/bane.webp" alt="" width="256" height="144" loading="lazy" /><span>Bane</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/anti-mage.html">Сторінка героя Anti-Mage →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-bane">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/bane.webp" alt="" width="256" height="144" loading="lazy" /><span>Bane</span><small class="patch-count">змін: 1</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову броню зменшено на 1.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/batrider.webp" alt="" width="256" height="144" loading="lazy" /><span>Batrider</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-batrider">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/batrider.webp" alt="" width="256" height="144" loading="lazy" /><span>Batrider</span><small class="patch-count">змін: 2</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Приріст інтелекту збільшено: 2,9 → 3,2.</li>
                 <li class="patch-note patch-note-2">Приріст шкоди за рівень збільшено: 3,5 → 3,6.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/bounty_hunter.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/bounty-hunter.html">Bounty Hunter</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-bounty_hunter">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/bounty_hunter.webp" alt="" width="256" height="144" loading="lazy" /><span>Bounty Hunter</span><small class="patch-count">змін: 5</small></h2></summary>
               <h3 class="patch-name">Вистежування</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Додаткове золото собі зменшено: 130/225/320 → 80/160/240.</li>
@@ -207,16 +213,17 @@
                 <li class="patch-note patch-note-1">Талант 20-го рівня змінено: «Вистежування (Track) дає спільну видимість» → «+190 до шкоди Кидка сюрикена (Shuriken Toss)».</li>
                 <li class="patch-note patch-note-1">Талант 25-го рівня змінено: «+250 до шкоди Кидка сюрикена (Shuriken Toss)» → «Вистежування (Track) дає спільну видимість».</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/broodmother.webp" alt="" width="256" height="144" loading="lazy" /><span>Broodmother</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/bounty-hunter.html">Сторінка героя Bounty Hunter →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-broodmother">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/broodmother.webp" alt="" width="256" height="144" loading="lazy" /><span>Broodmother</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Невситимий голод</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Витрату мани зменшено: 80 → 70.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/centaur.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/centaur-warrunner.html">Centaur Warrunner</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-centaur">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/centaur.webp" alt="" width="256" height="144" loading="lazy" /><span>Centaur Warrunner</span><small class="patch-count">змін: 4</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову шкоду зменшено на 2.</li>
                 <li class="patch-note patch-note-2">Шкоду на 1-му рівні зменшено: 64—66 → 62—64.</li>
@@ -226,9 +233,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Дальність чаклування зменшено: 250 → 200.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/chen.webp" alt="" width="256" height="144" loading="lazy" /><span>Chen</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/centaur-warrunner.html">Сторінка героя Centaur Warrunner →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-chen">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/chen.webp" alt="" width="256" height="144" loading="lazy" /><span>Chen</span><small class="patch-count">змін: 2</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Приріст сили збільшено: 2 → 2,2.</li>
               </ul>
@@ -236,24 +244,26 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Час відродження зилота змінено: 60 с → 60 с - 1 с за рівень героя.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/rattletrap.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/clockwerk.html">Clockwerk</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-rattletrap">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/rattletrap.webp" alt="" width="256" height="144" loading="lazy" /><span>Clockwerk</span><small class="patch-count">змін: 2</small></h2></summary>
               <h3 class="patch-name">Силові шестерні</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Витрату мани збільшено: 75 → 90.</li>
                 <li class="patch-note patch-note-1">Тривалість приголомшення відкиданням зменшено: 0,8 c → 0,7 c.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/disruptor.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/disruptor.html">Disruptor</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/clockwerk.html">Сторінка героя Clockwerk →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-disruptor">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/disruptor.webp" alt="" width="256" height="144" loading="lazy" /><span>Disruptor</span><small class="patch-count">змін: 2</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базовий інтелект збільшено: 20 → 21.</li>
                 <li class="patch-note patch-note-2">Шкоду на 1-му рівні збільшено: 47—51 → 48—52.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/earth_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/earth-spirit.html">Earth Spirit</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/disruptor.html">Сторінка героя Disruptor →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-earth_spirit">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/earth_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span>Earth Spirit</span><small class="patch-count">змін: 6</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову швидкість атаки зменшено: 100 → 95.</li>
               </ul>
@@ -268,16 +278,18 @@
                 <li class="patch-note patch-note-1">Талант 20-го рівня змінено: «+175% до шкоди Плющильної брили (Rolling Boulder) від сили» → «+200 до шкоди боввана від Геомагнітного захвату (Geomagnetic Grip)».</li>
                 <li class="patch-note patch-note-1">Талант 25-го рівня змінено: «+250 до шкоди боввана від Геомагнітного захвату (Geomagnetic Grip)» → «+250% до шкоди Плющильної брили (Rolling Boulder) від сили».</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/ember_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/ember-spirit.html">Ember Spirit</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/earth-spirit.html">Сторінка героя Earth Spirit →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-ember_spirit">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/ember_spirit.webp" alt="" width="256" height="144" loading="lazy" /><span>Ember Spirit</span><small class="patch-count">змін: 2</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову спритність зменшено: 22 → 21.</li>
                 <li class="patch-note patch-note-2">Шкоду на 1-му рівні зменшено: 52—56 → 51—55.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/enigma.webp" alt="" width="256" height="144" loading="lazy" /><span>Enigma</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/ember-spirit.html">Сторінка героя Ember Spirit →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-enigma">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/enigma.webp" alt="" width="256" height="144" loading="lazy" /><span>Enigma</span><small class="patch-count">змін: 3</small></h2></summary>
               <h3 class="patch-name">Демонічне прикликання</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Дальність атаки ейдолона зменшено: 425/450/475/500 → 380/420/460/500.</li>
@@ -290,23 +302,24 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Талант 20-го рівня зменшено: «+40 до шкоди ейдолонів» → +30.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/hoodwink.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/hoodwink.html">Hoodwink</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-hoodwink">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/hoodwink.webp" alt="" width="256" height="144" loading="lazy" /><span>Hoodwink</span><small class="patch-count">змін: 1</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову силу зменшено: 17 → 16.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/huskar.webp" alt="" width="256" height="144" loading="lazy" /><span>Huskar</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/hoodwink.html">Сторінка героя Hoodwink →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-huskar">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/huskar.webp" alt="" width="256" height="144" loading="lazy" /><span>Huskar</span><small class="patch-count">змін: 3</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову силу зменшено: 23 → 22.</li>
                 <li class="patch-note patch-note-2">Шкоду на 1-му рівні зменшено: 44—49 → 43—48.</li>
                 <li class="patch-note patch-note-1">Приріст сили збільшено з 3,3 до 3,4</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/invoker.webp" alt="" width="256" height="144" loading="lazy" /><span>Invoker</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-invoker">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/invoker.webp" alt="" width="256" height="144" loading="lazy" /><span>Invoker</span><small class="patch-count">змін: 2</small></h2></summary>
               <h3 class="patch-name">Обійми холоду</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Зарядку збільшено: 18 c → 19 c.</li>
@@ -315,16 +328,16 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Уламок Аґаніма більше не завдає шкоди негероям.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/wisp.webp" alt="" width="256" height="144" loading="lazy" /><span>Io</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-wisp">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/wisp.webp" alt="" width="256" height="144" loading="lazy" /><span>Io</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Таланти</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Талант 15-го рівня зменшено: «+50% до шкоди від духів» → +40%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/keeper_of_the_light.webp" alt="" width="256" height="144" loading="lazy" /><span>Keeper of the Light</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-keeper_of_the_light">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/keeper_of_the_light.webp" alt="" width="256" height="144" loading="lazy" /><span>Keeper of the Light</span><small class="patch-count">змін: 4</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову швидкість атаки зменшено: 100 → 90.</li>
               </ul>
@@ -337,9 +350,9 @@
                 <li class="patch-note patch-note-1">Лікування Освітленням (Illuminate) зменшено: 70% → 60%.</li>
                 <li class="patch-note patch-note-2">Фактичне значення лікування Освітленням (Illuminate) на 100% з Уламком Аґаніма не змінилося.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/kez.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/kez.html">Kez</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-kez">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/kez.webp" alt="" width="256" height="144" loading="lazy" /><span>Kez</span><small class="patch-count">змін: 3</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову шкоду зменшено на 1.</li>
                 <li class="patch-note patch-note-2">Шкоду на 1-му рівні зменшено: 50—56 → 49—55.</li>
@@ -348,16 +361,17 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Талант 20-го рівня зменшено: «+4% до шкоди за с від катани» → +3,5%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/largo.webp" alt="" width="256" height="144" loading="lazy" /><span>Largo</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/kez.html">Сторінка героя Kez →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-largo">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/largo.webp" alt="" width="256" height="144" loading="lazy" /><span>Largo</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Острівний еліксир</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Лікування змінено: 34/56/78 → 30/55/80.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/life_stealer.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/lifestealer.html">Lifestealer</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-life_stealer">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/life_stealer.webp" alt="" width="256" height="144" loading="lazy" /><span>Lifestealer</span><small class="patch-count">змін: 3</small></h2></summary>
               <h3 class="patch-name">Лють</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Зарядку збільшено: 20/19/18/17 c → 21/20/19/18 c.</li>
@@ -370,9 +384,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Талант 10-го рівня зменшено: «+20 до швидкості руху» → +15.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/lina.webp" alt="" width="256" height="144" loading="lazy" /><span>Lina</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/lifestealer.html">Сторінка героя Lifestealer →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-lina">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/lina.webp" alt="" width="256" height="144" loading="lazy" /><span>Lina</span><small class="patch-count">змін: 4</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базовий інтелект зменшено: 30 → 28.</li>
                 <li class="patch-note patch-note-2">Шкоду на 1-му рівні зменшено: 51—59 → 49—57.</li>
@@ -382,29 +397,30 @@
                 <li class="patch-note patch-note-1">Додаткову швидкість атаки зменшено: 8/16/24/32 → 7/14/21/28.</li>
                 <li class="patch-note patch-note-1">Тривалість зменшено: 18 c → 16 c.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/lone_druid.webp" alt="" width="256" height="144" loading="lazy" /><span>Lone Druid</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-lone_druid">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/lone_druid.webp" alt="" width="256" height="144" loading="lazy" /><span>Lone Druid</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Обплітання</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Тривалість заряду зменшено: 10 c → 7/8/9/10 c.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/marci.webp" alt="" width="256" height="144" loading="lazy" /><span>Marci</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-marci">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/marci.webp" alt="" width="256" height="144" loading="lazy" /><span>Marci</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Перескок</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Додаткову швидкість руху союзника змінено: 15/20/25/30% → 25%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/mars.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/mars.html">Mars</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-mars">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/mars.webp" alt="" width="256" height="144" loading="lazy" /><span>Mars</span><small class="patch-count">змін: 1</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову броню збільшено на 1.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/mirana.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/mirana.html">Mirana</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/mars.html">Сторінка героя Mars →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-mirana">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/mirana.webp" alt="" width="256" height="144" loading="lazy" /><span>Mirana</span><small class="patch-count">змін: 2</small></h2></summary>
               <h3 class="patch-name">Небесний сагайдак</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базовий час відновлення заряду збільшено: 6 c → 7 c.</li>
@@ -413,9 +429,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Максимальне приголомшення зменшено: 2,6/3,4/4,2/5 c → 2,3/3,2/4,1/5 c.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/necrolyte.webp" alt="" width="256" height="144" loading="lazy" /><span>Necrophos</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/mirana.html">Сторінка героя Mirana →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-necrolyte">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/necrolyte.webp" alt="" width="256" height="144" loading="lazy" /><span>Necrophos</span><small class="patch-count">змін: 2</small></h2></summary>
               <h3 class="patch-name">Садист</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Множник за вбивство героя зменшено: 6 → 4.</li>
@@ -424,12 +441,12 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Посилення відновлення зменшено: 55/65/75/85% → 45/55/65/75%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/nevermore.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/shadow-fiend.html">Shadow Fiend</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-nevermore">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/nevermore.webp" alt="" width="256" height="144" loading="lazy" /><span>Shadow Fiend</span><small class="patch-count">змін: 3</small></h2></summary>
               <h3 class="patch-name">Душоловство</h3>
               <ul class="patch-notes">
-                <li class="patch-note patch-note-1">Шкоду за душу змінено: 1,35 + 0,15 за рівень → 1 + 0,8 за 6 рівнів.<span class="patch-info">Зменшено: 1,5—5,85 → 1—5.</span></li>
+                <li class="patch-note patch-note-1">Шкоду за душу змінено: 1,35 + 0,15 за рівень → 1 + 0,8 за 6 рівнів.<div class="patch-info"><p>Зменшено: 1,5—5,85 → 1—5.</p></div></li>
               </ul>
               <h3 class="patch-name">Нищівна тінь</h3>
               <ul class="patch-notes">
@@ -439,9 +456,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Талант 15-го рівня зменшено: «+2 послаблення броні від Присутності темного володаря (Presence of the Dark Lord)» → +1,5.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/slardar.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/slardar.html">Slardar</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/shadow-fiend.html">Сторінка героя Shadow Fiend →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-slardar">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/slardar.webp" alt="" width="256" height="144" loading="lazy" /><span>Slardar</span><small class="patch-count">змін: 2</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову регенерацію здоров’я зменшено на 0,25.</li>
               </ul>
@@ -449,16 +467,18 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Шкоду зменшено: 75/150/225/300 → 60/140/220/300.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/spectre.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/spectre.html">Spectre</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/slardar.html">Сторінка героя Slardar →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-spectre">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/spectre.webp" alt="" width="256" height="144" loading="lazy" /><span>Spectre</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Відчуження</h3>
               <ul class="patch-notes">
-                <li class="patch-note patch-note-1">Шкоду зменшено: 23 + 2 за рівень → 23,5 + 1,5 за рівень.<span class="patch-info">Зменшено: 25—83 → 25—68,5.</span></li>
+                <li class="patch-note patch-note-1">Шкоду зменшено: 23 + 2 за рівень → 23,5 + 1,5 за рівень.<div class="patch-info"><p>Зменшено: 25—83 → 25—68,5.</p></div></li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/treant.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/treant-protector.html">Treant Protector</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/spectre.html">Сторінка героя Spectre →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-treant">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/treant.webp" alt="" width="256" height="144" loading="lazy" /><span>Treant Protector</span><small class="patch-count">змін: 6</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базовий інтелект зменшено: 20 → 17.</li>
               </ul>
@@ -479,9 +499,10 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Талант 10-го рівня змінено: «+3 до лікування за с Живою бронею (Living Armor)» → «+3 с до дії Живої броні».</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/abyssal_underlord.webp" alt="" width="256" height="144" loading="lazy" /><span>Underlord</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/treant-protector.html">Сторінка героя Treant Protector →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-abyssal_underlord">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/abyssal_underlord.webp" alt="" width="256" height="144" loading="lazy" /><span>Underlord</span><small class="patch-count">змін: 2</small></h2></summary>
               <h3 class="patch-name">Вирва злості</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Більше не покращується Скіпетром Аґаніма.</li>
@@ -490,9 +511,9 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Зарядку зі Скіпетром Аґаніма зменшено: 100/95/90 c → 90/85/80 c.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/undying.webp" alt="" width="256" height="144" loading="lazy" /><span>Undying</span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-undying">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/undying.webp" alt="" width="256" height="144" loading="lazy" /><span>Undying</span><small class="patch-count">змін: 2</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову регенерацію здоров’я зменшено на 0,25.</li>
               </ul>
@@ -500,22 +521,24 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Витрату мани збільшено: 100 → 110.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/ursa.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/ursa.html">Ursa</a></span></h2>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-ursa">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/ursa.webp" alt="" width="256" height="144" loading="lazy" /><span>Ursa</span><small class="patch-count">змін: 1</small></h2></summary>
               <h3 class="patch-name">Міць</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Шкоду від здоров’я збільшено: 1,25% → 1,75%.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/warlock.webp" alt="" width="256" height="144" loading="lazy" /><span><a href="../heroes/warlock.html">Warlock</a></span></h2>
+              <p class="patch-hero-link"><a href="../heroes/ursa.html">Сторінка героя Ursa →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-warlock">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/warlock.webp" alt="" width="256" height="144" loading="lazy" /><span>Warlock</span><small class="patch-count">змін: 1</small></h2></summary>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Базову швидкість атаки збільшено: 90 → 95.</li>
               </ul>
-            </article>
-            <article class="mode news-card patch-card">
-              <h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/winter_wyvern.webp" alt="" width="256" height="144" loading="lazy" /><span>Winter Wyvern</span></h2>
+              <p class="patch-hero-link"><a href="../heroes/warlock.html">Сторінка героя Warlock →</a></p>
+            </details>
+            <details class="mode news-card patch-card patch-fold" id="hero-winter_wyvern">
+              <summary><h2 class="news-card-title patch-hero"><img class="hero-pic hero-pic-lg" src="../assets/heroes/winter_wyvern.webp" alt="" width="256" height="144" loading="lazy" /><span>Winter Wyvern</span><small class="patch-count">змін: 2</small></h2></summary>
               <h3 class="patch-name">Арктичний опік</h3>
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Зарядку збільшено: 26/24/22/20 c → 29/26/23/20 c.</li>
@@ -524,7 +547,7 @@
               <ul class="patch-notes">
                 <li class="patch-note patch-note-1">Максимальне лікування за секунду зменшено: 2,25/3/3,75/4,5% → 1,5/2,5/3,5/4,5%.</li>
               </ul>
-            </article>
+            </details>
           </div>
         </div>
       </section>
@@ -588,7 +611,7 @@
       </defs>
     </svg>
 
-    <script src="../i18n-en.js?v=28" defer></script>
-    <script src="../app.js?v=28" defer></script>
+    <script src="../i18n-en.js?v=29" defer></script>
+    <script src="../app.js?v=29" defer></script>
   </body>
 </html>

@@ -180,6 +180,100 @@ def test_the_patch_page_and_the_news_list():
     assert "Героїв змінено: 2 · предметів: 1" in listing
 
 
+def _structured_feed() -> dict:
+    """The shapes of 7.42's general notes: «Subtitle» lines, a table and a list
+    written into `info` line by line with <br>."""
+    return {
+        "general_notes": [
+            {
+                "title": "Global Mechanics",
+                "generic": [
+                    {
+                        "indent_level": 1,
+                        "hide_dot": True,
+                        "note": '<span class="Subtitle">Hero Stats</span>',
+                    },
+                    {"indent_level": 1, "note": "Base hero Health increased from 120 to 200"},
+                    {"indent_level": 1, "hide_dot": True, "note": "<br>"},
+                    {
+                        "indent_level": 1,
+                        "hide_dot": True,
+                        "note": '<span class="Subtitle">Gold &amp; XP</span>',
+                    },
+                    {
+                        "indent_level": 1,
+                        "note": "Total XP to reach level 30 increased",
+                        "info": "Level -- Was -- Now<br>2 -- 240 -- 250<br>3 -- 400 -- 400"
+                        "<br><br>A formula follows",
+                    },
+                    {
+                        "indent_level": 1,
+                        "note": "All units can damage segmented units",
+                        "info": "* Couriers <br> * Observer Wards",
+                    },
+                ],
+            }
+        ],
+        "heroes": [
+            {
+                "hero_id": 1,
+                "hero_notes": [
+                    {"indent_level": 1, "note": "Базову силу зменшено: 20 → 19."},
+                    {"indent_level": 1, "note": "Base Agility increased from 24 to 25"},
+                ],
+            }
+        ],
+    }
+
+
+def test_subtitles_tables_and_lists_keep_their_shape():
+    names = {"heroes": {1: {"name": "Anti-Mage", "key": "antimage"}}, "abilities": {}, "items": {}}
+    language = news.patch_language(_structured_feed(), names)
+    notes = language["general"][0]["notes"]
+    assert notes[0] == {"level": 1, "text": "Hero Stats", "heading": True}
+    assert notes[2] == {"level": 1, "text": "Gold & XP", "heading": True}
+    assert (
+        notes[3]["info"]
+        == "Level -- Was -- Now\n2 -- 240 -- 250\n3 -- 400 -- 400\n\nA formula follows"
+    )
+    assert notes[4]["info"] == "* Couriers\n* Observer Wards"
+
+    patch = {
+        "kind": "patch",
+        "version": "7.42",
+        "date": "2026-11-18",
+        "languages": {"uk": language, "en": language},
+    }
+    page = news.patch_main(patch, "uk", {"Anti-Mage": "anti-mage"}, "../", "../", set())
+    # A subheading, not a bullet; reachable from the table of contents.
+    assert '<h3 class="patch-sub" id="general-1-1" lang="en">Hero Stats</h3>' in page
+    assert 'href="#general-1-2"' in page and 'class="patch-toc"' in page
+    assert "<thead><tr><th>Level</th><th>Was</th><th>Now</th></tr></thead>" in page
+    assert "<tr><td>2</td><td>240</td><td>250</td></tr>" in page
+    assert "<p>A formula follows</p>" in page
+    assert '<ul class="patch-info-list"><li>Couriers</li><li>Observer Wards</li></ul>' in page
+    # Heroes fold; the English line Valve left untranslated is marked and explained.
+    assert '<details class="mode news-card patch-card patch-fold" id="hero-antimage">' in page
+    assert '<li class="patch-note patch-note-1" lang="en">Base Agility' in page
+    assert '<li class="patch-note patch-note-1">Базову силу' in page
+    assert 'class="mode-note patch-untranslated"' in page
+    assert 'href="../heroes/anti-mage.html"' in page
+    assert news.untranslated_share(patch, "uk") == 0.8
+    english = news.patch_main(patch, "en", {}, "../", "../", set())
+    assert 'lang="en"' not in english and "patch-untranslated" not in english
+
+
+def test_untranslated_notes_are_fetched_again_for_a_month(tmp_path, monkeypatch):
+    monkeypatch.setattr(news, "PATCHES", tmp_path)
+    calls: list[str] = []
+    monkeypatch.setattr(build_news, "fetch_feed", _fake_feed(calls))
+    build_news.write_patch(None, date(2026, 9, 15))
+    # Bane's notes are English on the Ukrainian side: past the week, still fetched.
+    calls.clear()
+    build_news.write_patch(None, date(2026, 9, 30))
+    assert any(call.startswith("patchnotes?") for call in calls)
+
+
 def test_the_telegram_patch_post_shows_what_changed_and_links_the_page():
     patch = _patch()
     top = news.patch_highlights(patch)
