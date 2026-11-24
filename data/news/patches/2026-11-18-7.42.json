@@ -783,7 +783,7 @@
       },
       {
        "level": 2,
-       "text": "Active: Disarm. Prevents a target from attacking for 3s. Cast Range: 500. Mana Cost: 50. Cooldown: 15s",
+       "text": "Роззброєння (акт. ефект). Не дає цілі атакувати впродовж 3 с. Дальність застосування: 500. Витрата мани: 50. Зарядка: 15 с.",
        "info": "Ідентично чарам Небесної алебарди (Heaven's Halberd)."
       },
       {
@@ -831,7 +831,7 @@
       },
       {
        "level": 2,
-       "text": "Passive: Celestial Flare. After any of the wearer's disables ends on an enemy unit, they burn for 60 damage a second and move 15% slower for 3s. Burn tick rate: 1s"
+       "text": "Небесний спалах (пас. ефект). Після завершення дії будь-якого накладеного власником знерухомлення на ворожу істоту вона зазнає 60 шкоди від горіння за секунду та рухається на 15% повільніше впродовж 3 с. Частота спрацювання горіння: 1 с."
       },
       {
        "level": 3,
@@ -993,7 +993,7 @@
       },
       {
        "level": 2,
-       "text": "Passive. Grants 2 armor to allied player units. Radius: 1200"
+       "text": "Пасивний ефект. Дає 2 броні істотам, контрольованим союзними гравцями. Радіус: 1200."
       },
       {
        "level": 3,
@@ -1065,7 +1065,7 @@
       },
       {
        "level": 1,
-       "text": "Manabreak burn amount is now modified by Item Potency"
+       "text": "Обсяг Спалення мани (Manabreak) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1074,11 +1074,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Manabreak now works with illusions"
+       "text": "Тепер Спалення мани (Manabreak) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Manabreak burn amount is now modified by Item Potency"
+       "text": "Обсяг Спалення мани (Manabreak) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1087,7 +1087,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Now also provides +25 Attack Range (Melee Only)"
+       "text": "Тепер також дає +25 до дальності атаки (лише для ближнього бою)."
       }
      ]
     },
@@ -1100,27 +1100,27 @@
       },
       {
        "level": 2,
-       "text": "Now requires Dragon Lance (2000) instead of Sange (2100)"
+       "text": "Тепер потрібен Спис дракона (Dragon Lance, 2000) замість Санжа (Sange, 2100)."
       },
       {
        "level": 2,
-       "text": "Total cost decreased from 6250g to 6150g"
+       "text": "Загальну вартість зменшено: 6250 → 6150."
       },
       {
        "level": 1,
-       "text": "No longer provides +16% Health Restoration or +30% Slow Resistance"
+       "text": "Більше не надає +16% до відновлення здоров’я або +30% до опору сповільненню."
       },
       {
        "level": 1,
-       "text": "Now also provides +15 Agility and +25 Attack Range (Melee Only)"
+       "text": "Тепер також дає +15 до спритності та +25 до дальності атаки (лише для ближнього бою)."
       },
       {
        "level": 1,
-       "text": "Overwhelm cast range increased from 150 to 175"
+       "text": "Дальність застосування Знерухомлення (Overwhelm) збільшено: 150 → 175."
       },
       {
        "level": 1,
-       "text": "Bash chance is now modified by Item Potency"
+       "text": "Шанс Оглушення (Bash) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1133,11 +1133,11 @@
       },
       {
        "level": 2,
-       "text": "Now requires Dragon Lance (2000) instead of Diadem (1000) and a recipe (1000)."
+       "text": "Тепер потрібен Спис дракона (Dragon Lance, 2000) замість Діадеми (Diadem, 1000) та рецепт (1000)."
       },
       {
        "level": 2,
-       "text": "Total cost unchanged at 4700g"
+       "text": "Загальна вартість не змінилася: 4700."
       },
       {
        "level": 1,
@@ -1157,7 +1157,7 @@
       },
       {
        "level": 1,
-       "text": "Now also provides +25 Attack Range (Melee Only)"
+       "text": "Тепер також дає +25 до дальності атаки (лише для ближнього бою)."
       }
      ]
     },
@@ -1170,7 +1170,7 @@
       },
       {
        "level": 1,
-       "text": "Ether Blast cooldown decreased from 22s to 20s"
+       "text": "Зарядку ефекту Ефірний сплеск (Ether Blast) зменшено: 22 с → 20 с."
       }
      ]
     },
@@ -1179,20 +1179,20 @@
      "notes": [
       {
        "level": 1,
-       "text": "Cold Attack now works with Illusions"
+       "text": "Тепер Морозна атака (Cold Attack) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Cold Attack movement slow amount, attack slow amount, and health restoration loss are now modified by Item Potency"
+       "text": "Сповільнення руху від Морозної атаки (Cold Attack), сповільнення атаки та втрата відновлення здоров’я тепер залежать від ефективності предметів."
       },
       {
        "level": 1,
-       "text": "Cold Attack now pierces debuff immunity"
+       "text": "Морозна атака (Cold Attack) тепер пробиває імунітет до негативних ефектів."
       },
       {
        "level": 1,
-       "text": "Cold Attack slow decreased from 25/50% (melee/ranged) to 20/40% (melee/ranged)",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "text": "Сповільнення від Морозної атаки (Cold Attack) зменшено: 25/50% (ближній/дальній бій) → 20/40% (ближній/дальній бій).",
+       "info": "Це частина комплексного зменшення сили чарів."
       }
      ]
     },
@@ -1201,7 +1201,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Force's push now cannot be dispelled"
+       "text": "Поштовх (Force) тепер не можна розвіяти."
       }
      ]
     },
@@ -1210,11 +1210,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Hurricane Thrust's push now cannot be dispelled"
+       "text": "Ураганний поштовх (Hurricane Thrust) тепер не можна розвіяти."
       },
       {
        "level": 2,
-       "text": "Extra attacks when casting on enemies still can be dispelled"
+       "text": "Додаткові атаки в разі застосування на ворогів все ще можна розвіяти."
       }
      ]
     },
@@ -1223,7 +1223,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Regeneration Aura now only applies to player controlled units"
+       "text": "Аура регенерації (Regeneration Aura) тепер накладається лише на контрольованих гравцем істот."
       }
      ]
     },
@@ -1236,19 +1236,19 @@
       },
       {
        "level": 2,
-       "text": "Now requires Ogre Axe (1000), Helm of Iron Will (975), and a recipe (425)"
+       "text": "Тепер потрібна Огрова сокира (Ogre Axe, 1000), Шолом сталевої волі (Helm of Iron Will, 975) та рецепт (425)."
       },
       {
        "level": 3,
-       "text": "Used to require Talisman of Evasion (1300), Splintmail (950), Ring of Health (700) and a recipe (350)"
+       "text": "Раніше були потрібні Талісман ухилення (Talisman of Evasion, 1300), Смугова кольчуга (Splintmail, 950), Перстень здоров’я (Ring of Health, 700) та рецепт (350)."
       },
       {
        "level": 2,
-       "text": "Total cost decreased from 3300g to 2400g"
+       "text": "Загальну вартість зменшено: 3300 → 2400."
       },
       {
        "level": 1,
-       "text": "No longer provides +25% Evasion"
+       "text": "Більше не дає +25% до ухилення."
       },
       {
        "level": 1,
@@ -1260,19 +1260,19 @@
       },
       {
        "level": 1,
-       "text": "Now also provides +12 Strength"
+       "text": "Тепер також дає +12 до сили."
       },
       {
        "level": 1,
-       "text": "Disarm cast range decreased from 750 to 500"
+       "text": "Дальність застосування Роззброєння (Disarm) зменшено: 750 → 500."
       },
       {
        "level": 1,
-       "text": "Disarm mana cost increased from 25 to 50"
+       "text": "Витрату мани на Роззброєння (Disarm) збільшено: 25 → 50."
       },
       {
        "level": 1,
-       "text": "Disarm duration decreased from 3.5s to 3s"
+       "text": "Тривалість Роззброєння (Disarm) зменшено: 3,5 c → 3 c."
       }
      ]
     },
@@ -1295,7 +1295,7 @@
       {
        "level": 1,
        "text": "Додаткове посилення чарів зменшено: +10% → +6%.",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "info": "Це частина комплексного зменшення сили чарів."
       }
      ]
     },
@@ -1304,12 +1304,12 @@
      "notes": [
       {
        "level": 1,
-       "text": "Total cost decreased from 4200g to 4000g (due to... Kaya and Sange cost decrease. Individually)"
+       "text": "Загальну вартість зменшено: 4200 → 4000. Це відбулося через зменшення вартості Каї (Kaya) та Санжа (Sange)."
       },
       {
        "level": 1,
        "text": "Додаткове посилення чарів зменшено: +12% → +10%.",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 1,
@@ -1317,7 +1317,7 @@
       },
       {
        "level": 1,
-       "text": "Health Restoration bonus increased from +16% to +20%"
+       "text": "Бонус відновлення здоров’я збільшено: +16% → +20%"
       }
      ]
     },
@@ -1326,7 +1326,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Total cost decreased from 2850g to 2750g (due to Kaya cost decrease)"
+       "text": "Загальну вартість зменшено: 2850 → 2750. Це відбулося через зменшення вартості Каї (Kaya)."
       },
       {
        "level": 1,
@@ -1335,7 +1335,7 @@
       {
        "level": 1,
        "text": "Додаткове посилення чарів зменшено: +10% → +6%.",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 1,
@@ -1343,23 +1343,23 @@
       },
       {
        "level": 1,
-       "text": "Meteor Hammer now deals 75% Impact and Burn Damage to buildings instead of having separate values"
+       "text": "Метеорний молот (Meteor Hammer) тепер завдає 75% шкоди від удару та шкоди від горіння спорудам замість окремих значень."
       },
       {
        "level": 1,
-       "text": "Meteor Hammer Impact Damage increased from 130 to 150"
+       "text": "Шкоду від удару Метеорного молота (Meteor Hammer) збільшено: 130 → 150."
       },
       {
        "level": 1,
-       "text": "Meteor Hammer Burn Damage increased from 50 to 60"
+       "text": "Шкоду горіння від Метеорного молота (Meteor Hammer) збільшено: 50 → 60."
       },
       {
        "level": 2,
-       "text": "As a result, for buildings impact damage increased from 90 to 112.5, and burn damage decreased from 50 to 45"
+       "text": "Як наслідок, для споруд шкоду від удару збільшено (90 → 112,5), а шкоду від горіння зменшено (50 → 45)."
       },
       {
        "level": 1,
-       "text": "Meteor Hammer Slow decreased from 20% to 15%"
+       "text": "Сповільнення від Метеорного молота (Meteor Hammer) зменшено: 20% → 15%."
       }
      ]
     },
@@ -1381,15 +1381,15 @@
       },
       {
        "level": 2,
-       "text": "Now requires a recipe (900) instead of a Javelin (900)"
+       "text": "Тепер потрібен рецепт (900) замість Метального списа (Javelin, 900)."
       },
       {
        "level": 2,
-       "text": "Total cost unchanged at 2950g"
+       "text": "Загальна вартість не змінилася: 2950."
       },
       {
        "level": 1,
-       "text": "Chain Lightning chance is now modified by Item Potency"
+       "text": "Шанс Ланцюгової блискавки (Chain Lightning) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1398,7 +1398,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Chain Lightning chance is now modified by Item Potency"
+       "text": "Шанс Ланцюгової блискавки (Chain Lightning) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1407,11 +1407,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Mage Slayer now works with illusions"
+       "text": "Тепер Магоріз (Mage Slayer) працює з ілюзіями."
       },
       {
        "level": 1,
-       "text": "Mage Slayer spell damage reduction is now modified by Item Potency"
+       "text": "Зменшення шкоди від чарів у Магоріза (Mage Slayer) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1517,15 +1517,15 @@
       },
       {
        "level": 2,
-       "text": "Now requires 2x Slippers of Agility (2x 140) instead of Band of Elvenskin (450)"
+       "text": "Тепер потрібні дві пари Капців спритності (Slippers of Agility, 2×140) замість Ельфійських чоботів (Band of Elvenskin, 450)."
       },
       {
        "level": 2,
-       "text": "Total cost decreased from 1050g to 880g"
+       "text": "Загальну вартість зменшено: 1050 → 880."
       },
       {
        "level": 1,
-       "text": "Corrosion now works with illusions"
+       "text": "Тепер Корозія (Corrosion) працює з ілюзіями."
       },
       {
        "level": 1,
@@ -1533,7 +1533,7 @@
       },
       {
        "level": 1,
-       "text": "Corrosion now pierces debuff immunity"
+       "text": "Корозія (Corrosion) тепер пробиває імунітет до негативних ефектів."
       }
      ]
     },
@@ -1542,11 +1542,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Overwhelming Blink attack slow increased from 50 to 70"
+       "text": "Сповільнення атаки від Вражаючого стрибка (Overwhelming Blink) збільшено: 50 → 70."
       },
       {
        "level": 1,
-       "text": "Overwhelming Blink movement slow decreased from 50% to 35%"
+       "text": "Сповільнення руху від Вражаючого стрибка (Overwhelming Blink) зменшено: 50% → 35%."
       },
       {
        "level": 1,
@@ -1585,11 +1585,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Movement Speed bonus changed from +50 to +45/55 for Ranged/Melee Heroes"
+       "text": "Додаткову швидкість руху змінено: +50 → +45/55 для героїв дальнього/ближнього бою."
       },
       {
        "level": 1,
-       "text": "Damage bonus changed from +18/12 for melee/ranged heroes to +15 for any wearer"
+       "text": "Додаткову шкоду змінено: +18/12 для героїв ближнього/дальнього бою → +15."
       }
      ]
     },
@@ -1598,19 +1598,19 @@
      "notes": [
       {
        "level": 1,
-       "text": "Empower Spell Cooldown decreased from 9s to 8s"
+       "text": "Зарядку Зміцнення чарів (Empower Spell) зменшено: 9 c → 8 c."
       },
       {
        "level": 1,
-       "text": "Empower Spell Movement Speed slow increased from 30% to 40%"
+       "text": "Сповільнення руху від Зміцнення чарів (Empower Spell) збільшено: 30% → 40%."
       },
       {
        "level": 1,
-       "text": "Empower Spell Duration decreased from 3s to 2s"
+       "text": "Тривалість Зміцнення чарів (Empower Spell) зменшено: 3 c → 2 c."
       },
       {
        "level": 1,
-       "text": "Empower Spell Damage decreased from 150 to 130"
+       "text": "Шкоду від Зміцнення чарів (Empower Spell) зменшено: 150 → 130."
       }
      ]
     },
@@ -1628,11 +1628,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Barrier cooldown decreased from 60s to 50s"
+       "text": "Зарядку бар’єра зменшено: 60 с → 50 с."
       },
       {
        "level": 1,
-       "text": "Barrier is now dispellable"
+       "text": "Бар’єр тепер можна розвіяти."
       }
      ]
     },
@@ -1654,8 +1654,8 @@
       },
       {
        "level": 1,
-       "text": "Area of Effect bonus decreased from +75 to +60",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "text": "Додаткову область дії ефектів зменшено: +75 → +60.",
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 1,
@@ -1663,7 +1663,7 @@
       },
       {
        "level": 1,
-       "text": "Eternal Chains cooldown decreased from 18s to 17s"
+       "text": "Зарядку Вічних оков (Eternal Chains) зменшено: 18 с → 17 с."
       }
      ]
     },
@@ -1676,7 +1676,7 @@
       },
       {
        "level": 1,
-       "text": "Health Restoration bonus increased from +12% to +16%"
+       "text": "Бонус відновлення здоров’я збільшено: +12% → +16%."
       }
      ]
     },
@@ -1685,7 +1685,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Total cost decreased from 4200g to 4000g (due to... Sange and Yasha cost decrease. Separately)"
+       "text": "Загальну вартість зменшено: 4200 → 4000. Це відбулося через зменшення вартості Санжа (Sange) та Яші (Yasha)."
       },
       {
        "level": 1,
@@ -1693,7 +1693,7 @@
       },
       {
        "level": 1,
-       "text": "Health Restoration bonus increased from +16% to +20%"
+       "text": "Бонус відновлення здоров’я збільшено: +16% → +20%."
       }
      ]
     },
@@ -1715,7 +1715,7 @@
       },
       {
        "level": 1,
-       "text": "Shadow Walk debuff duration is now modified by Item Potency"
+       "text": "Тривалість негативного ефекту Тіньової ходи (Shadow Walk) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1724,8 +1724,8 @@
      "notes": [
       {
        "level": 1,
-       "text": "Area of Effect bonus decreased from +75 to +60",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "text": "Додаткову область дії ефектів зменшено: +75 → +60.",
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 1,
@@ -1733,8 +1733,8 @@
       },
       {
        "level": 1,
-       "text": "Arctic Blast slow decreased from 40% to 30%",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "text": "Сповільнення від Арктичної хвилі (Arctic Blast) зменшено: 40% → 30%.",
+       "info": "Це частина комплексного зменшення сили чарів."
       }
      ]
     },
@@ -1743,7 +1743,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Bash chance is now modified by Item Potency"
+       "text": "Шанс Оглушення (Bash) тепер залежить від ефективності предметів."
       }
      ]
     },
@@ -1752,15 +1752,15 @@
      "notes": [
       {
        "level": 1,
-       "text": "Break renamed to Respite"
+       "text": "Переривання (Break) перейменовано на Перепочинок (Respite)."
       },
       {
        "level": 1,
-       "text": "Respite Health Regen bonus lost during Respite decreased from 14 to 12"
+       "text": "Додаткову регенерацію здоров’я від Перепочинку (Respite), що втрачається під час дії цього ефекту, зменшено: 14 → 12."
       },
       {
        "level": 2,
-       "text": "Now provides 2 Health Regen while on cooldown instead of 0"
+       "text": "Тепер дає 2 регенерації здоров’я під час зарядки замість 0."
       }
      ]
     },
@@ -1778,11 +1778,11 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 200 to 150. Total cost unchanged at 1775g (due to Urn of Shadows cost increase)"
+       "text": "Вартість рецепта зменшено: 200 → 150. Загальна вартість не змінилася (1775) через збільшення вартості Урни тіней (Urn of Shadows)."
       },
       {
        "level": 1,
-       "text": "Soul Release cast range decreased from 1000 to 850"
+       "text": "Дальність чаклування Вивільнення душі (Soul Release) зменшено: 1000 → 850."
       }
      ]
     },
@@ -1791,7 +1791,7 @@
      "notes": [
       {
        "level": 1,
-       "text": "Recipe cost decreased from 900 to 850. Total cost unchanged at 2725g (due to Urn of Shadows cost increase)"
+       "text": "Вартість рецепта зменшено: 900 → 850. Загальна вартість не змінилася (2725) через збільшення вартості Урни тіней (Urn of Shadows)."
       }
      ]
     },
@@ -1813,12 +1813,12 @@
       },
       {
        "level": 1,
-       "text": "Bloodpact Spell Lifesteal increased from 60% to 70%"
+       "text": "Вампіризм від чарів Кривавого пакту (Bloodpact) збільшено: 60% → 70%."
       },
       {
        "level": 1,
-       "text": "Spell Weakness Aura extra spell damage decreased from 10% to 8%",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "text": "Додаткову шкоду від чарів від Аури слабкості до чарів (Spell Weakness Aura) зменшено: 10% → 8%.",
+       "info": "Це частина комплексного зменшення сили чарів."
       }
      ]
     },
@@ -1870,7 +1870,7 @@
       {
        "level": 1,
        "text": "Magic Corruption magic resistance reduction decreased from 20% to 15%",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 1,
@@ -1918,7 +1918,7 @@
       {
        "level": 1,
        "text": "Додаткове посилення чарів зменшено: +12% → +10%.",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 1,
@@ -2343,7 +2343,7 @@
       {
        "level": 1,
        "text": "Brand extra spell damage decreased from 9% to 7%",
-       "info": "As a part of the comprehensive Spell Power Reduction"
+       "info": "Це частина комплексного зменшення сили чарів."
       },
       {
        "level": 2,
@@ -10031,7 +10031,7 @@
       },
       {
        "level": 1,
-       "text": "Attack Projectile speed increased from 1200 to 1500"
+       "text": "Швидкість снарядів від атаки збільшено: 1200 → 1500."
       },
       {
        "level": 1,
@@ -10052,7 +10052,7 @@
       },
       {
        "level": 1,
-       "text": "Attack Projectile speed increased from 900 to 1500"
+       "text": "Швидкість снарядів від атаки збільшено: 900 → 1500."
       },
       {
        "level": 1,
